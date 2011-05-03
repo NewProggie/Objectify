@@ -2,6 +2,7 @@ package de.hsrm.objectify;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -42,7 +43,8 @@ public class MainActivity extends Activity {
     		Toast.makeText(context, "share", Toast.LENGTH_SHORT).show();
     		break;
     	case R.id.dashboard_camera_button:
-    		Toast.makeText(context, "camera", Toast.LENGTH_SHORT).show();
+    		Intent camera = new Intent(context, CameraActivity.class);
+    		startActivity(camera);
     		break;
     	}
     }
