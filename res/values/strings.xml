@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="hello">Hello World, MainActivity!</string>
     <string name="app_name">Objectify</string>
+    <string name="gallery">Galerie</string>
+    <string name="howto">Howto</string>
+    <string name="export">Export</string>
+    <string name="share">Teilen</string>
+    <string name="camera">Kamera</string>
 </resources>
