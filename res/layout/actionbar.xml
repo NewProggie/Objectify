@@ -4,6 +4,15 @@
 	android:layout_height="48dip"
 	android:background="@drawable/actionbackrepeat" 
 	android:orientation="horizontal">
+	<TextView
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_centerVertical="true"
+		android:layout_alignParentLeft="true"
+		android:paddingLeft="7dip"
+		android:text="@string/app_name"
+		android:textSize="20dip"
+		style="@style/ShadowedText" />
 	<ImageButton
 		android:id="@+id/actionbar_cam_button"
 		android:layout_width="48dip"
