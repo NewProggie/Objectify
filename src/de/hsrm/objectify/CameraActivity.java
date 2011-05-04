@@ -1,59 +1,105 @@
 package de.hsrm.objectify;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.Color;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
-import android.hardware.Camera.PreviewCallback;
 import android.hardware.Camera.ShutterCallback;
-import android.hardware.Camera.Size;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.SystemClock;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.Window;
+import android.widget.LinearLayout;
+import android.widget.SlidingDrawer;
 
 public class CameraActivity extends Activity {
 
 	private static final String TAG = "CameraActivity";
 	private CameraPreview cameraPreview;
+	private LinearLayout lo, ro, lu, ru;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setContentView(R.layout.lights);
+		lo = (LinearLayout) findViewById(R.id.light_lo);
+		ro = (LinearLayout) findViewById(R.id.light_ro);
+		lu = (LinearLayout) findViewById(R.id.light_lu);
+		ru = (LinearLayout) findViewById(R.id.light_ru);
 		
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		cameraPreview = new CameraPreview(this);
-		this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-		setContentView(cameraPreview);
+		new ShowLights().execute();
+//		requestWindowFeature(Window.FEATURE_NO_TITLE);
+//		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+//		cameraPreview = new CameraPreview(this);
+//		setContentView(cameraPreview);
 	}
 	
 	@Override
 	public boolean onTrackballEvent(MotionEvent event) {
 		if (event != null && event.getAction() == MotionEvent.ACTION_UP) {
-			cameraPreview.takePictures();
-			Intent backToMain = new Intent(this, MainActivity.class);
-			startActivity(backToMain);
+			
 		}
 		return super.onTrackballEvent(event);
 	}
 	
-	
+	private class ShowLights extends AsyncTask<Void, Integer, Void> {
+
+		@Override
+		protected Void doInBackground(Void... params) {
+			publishProgress(1);
+			SystemClock.sleep(1000);
+			publishProgress(2);
+			SystemClock.sleep(1000);
+			publishProgress(3);
+			SystemClock.sleep(1000);
+			publishProgress(4);
+			SystemClock.sleep(1000);
+			return null;
+		}
+		
+		@Override
+		protected void onProgressUpdate(Integer... values) {
+			int which = values[0];
+			switch (which) {
+			case 1:
+				lo.setBackgroundColor(Color.BLUE);
+				break;
+			case 2:
+				lo.setBackgroundColor(Color.BLACK);
+				ro.setBackgroundColor(Color.BLUE);
+				break;
+			case 3:
+				ro.setBackgroundColor(Color.BLACK);
+				lu.setBackgroundColor(Color.BLUE);
+				break;
+			case 4:
+				lu.setBackgroundColor(Color.BLACK);
+				ru.setBackgroundColor(Color.BLUE);
+				break;
+			}
+		}
+		
+		@Override
+		protected void onPostExecute(Void result) {
+			ru.setBackgroundColor(Color.BLACK);
+		}
+		
+	}
 }
+
+
 
 class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
 	
-	private static final String TAG = "CameraPreview";
 	private SurfaceHolder holder;
 	private Camera camera;
-	private final int NUMBER_OF_PICTURES = 3;
-	private int counter;
 	
 	public CameraPreview(Context context) {
 		super(context);
@@ -73,35 +119,11 @@ class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
 		}
 	}
 	
-	public void takePictures() {
-		counter = 0;
-		camera.takePicture(shutterCallback(), pictureCallback(), pictureJpegCallback());
-	}
-		
-	public void surfaceDestroyed(SurfaceHolder holder) {
-		camera.setPreviewCallback(null);
-		camera.stopPreview();
-		camera.release();
-		camera = null;
-	}
-	
-	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-		Camera.Parameters parameters = camera.getParameters();
-		ArrayList<Size> supportedSizes = new ArrayList<Size>(parameters.getSupportedPreviewSizes());
-		Size size = camera.getParameters().getPreviewSize();
-		// setting highest resolution for pictures
-		for (Size tmp : supportedSizes) {
-			if (compareSizes(tmp, size)==1) {
-				size = tmp;
-			}
-		}
-		parameters.setPreviewSize(size.width, size.height);
-		camera.setParameters(parameters);
-		camera.startPreview();
+	public void takePicture() {
+		camera.takePicture(shutterCallback(), pictureCallback(), null);
 	}
 	
 	private Camera.ShutterCallback shutterCallback() {
-		Log.d(TAG, "shutterCallback()");
 		ShutterCallback shutterCall = new ShutterCallback() {
 			
 			@Override
@@ -112,18 +134,7 @@ class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
 		return shutterCall;
 	}
 	
-	private Camera.PictureCallback pictureJpegCallback() {
-		Log.d(TAG, "pictureJpegCallback()");
-		counter++;
-		Log.d("numberOfPictures: ", String.valueOf(counter));
-		if (counter < NUMBER_OF_PICTURES) {
-			camera.takePicture(shutterCallback(), pictureCallback(), pictureJpegCallback());
-		} 
-		return null;
-	}
-	
 	private Camera.PictureCallback pictureCallback() {
-		Log.d(TAG, "pictureCallback()");
 		Camera.PictureCallback pictureCall = new PictureCallback() {
 			
 			@Override
@@ -133,16 +144,18 @@ class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
 		};
 		return pictureCall;
 	}
+		
+	public void surfaceDestroyed(SurfaceHolder holder) {
+		camera.stopPreview();
+		camera.release();
+		camera = null;
+	}
 	
-	private int compareSizes(Size a, Size b) {
-		int a2 = a.width*a.height;
-		int b2 = b.width*b.height;
-		if (a2 > b2) {
-			return 1;
-		} else if (a2 == b2) {
-			return 0;
-		} else {
-			return -1;
-		}
+	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+		Camera.Parameters parameters = camera.getParameters();
+		parameters.setPreviewSize(width, height);
+		parameters.set("orientation", "portrait");
+		camera.setParameters(parameters);
+		camera.startPreview();
 	}
 }
