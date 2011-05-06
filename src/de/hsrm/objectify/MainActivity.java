@@ -1,5 +1,6 @@
 package de.hsrm.objectify;
 
+import de.hsrm.objectify.camera.CameraActivity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
