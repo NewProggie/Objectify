@@ -2,7 +2,9 @@ package de.hsrm.objectify.camera;
 
 import java.io.IOException;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.hardware.Camera;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -21,6 +23,23 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 		holder.addCallback(this);
 		holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 	}
+
+	
+	public CameraPreview(Context context, AttributeSet attrs, int defStyle) {
+		super(context, attrs, defStyle);
+		holder = getHolder();
+		holder.addCallback(this);
+		holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+	}
+
+
+	public CameraPreview(Context context, AttributeSet attrs) {
+		super(context, attrs);
+		holder = getHolder();
+		holder.addCallback(this);
+		holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+	}
+
 
 	public void surfaceCreated(SurfaceHolder holder) {
 		camera = openFrontFacingCamera();
@@ -43,10 +62,6 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 	}
 
 	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-		Camera.Parameters parameters = camera.getParameters();
-		parameters.setPreviewSize(width, height);
-		parameters.set("orientation", "portrait");
-		camera.setParameters(parameters);
 		camera.startPreview();
 	}
 
@@ -69,6 +84,10 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 					}
 				}
 			}
+			// TODO remove hack for devices without front-facing cam
+			if (camera == null) {
+				camera = Camera.open();
+			}
 		} else {
 			// froyo (2.2)
 			camera = Camera.open();
@@ -78,9 +97,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 				params.set("camera-id", 2); // using front-cam (2) instead
 											// of back-cam (1)
 				camera.setParameters(params);
-			} else {
-				camera = Camera.open();
-			}
+			} 
 		}
 		return camera;
 	}

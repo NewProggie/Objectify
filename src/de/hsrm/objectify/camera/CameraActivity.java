@@ -14,7 +14,7 @@ import de.hsrm.objectify.R;
 public class CameraActivity extends Activity {
 
 	private static final String TAG = "CameraActivity";
-	private SurfaceView cameraPreview;
+	private CameraPreview cameraPreview;
 	private Button triggerPicture;
 
 	@Override
@@ -22,11 +22,11 @@ public class CameraActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.camera);
 
-		cameraPreview = (SurfaceView) findViewById(R.id.camera_surface);
+		cameraPreview = (CameraPreview) findViewById(R.id.camera_surface);
 		triggerPicture = (Button) findViewById(R.id.trigger_picture_button);
 		
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-		cameraPreview = new CameraPreview(this);
+//		cameraPreview = new CameraPreview(this);
 //		setContentView(cameraPreview);
 	}
 
