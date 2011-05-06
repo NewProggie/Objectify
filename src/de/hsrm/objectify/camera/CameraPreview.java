@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import android.content.Context;
 import android.hardware.Camera;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -13,10 +14,9 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 	private static final String TAG = "CameraPreview";
 	private SurfaceHolder holder;
 	private Camera camera;
-	
+
 	public CameraPreview(Context context) {
 		super(context);
-
 		holder = getHolder();
 		holder.addCallback(this);
 		holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
@@ -79,7 +79,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 											// of back-cam (1)
 				camera.setParameters(params);
 			} else {
-				camera = camera.open();
+				camera = Camera.open();
 			}
 		}
 		return camera;

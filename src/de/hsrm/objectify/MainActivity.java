@@ -22,7 +22,6 @@ public class MainActivity extends Activity {
         setContentView(R.layout.main);
         context = this;
         
-        Toast.makeText(this, android.os.Build.PRODUCT, Toast.LENGTH_SHORT).show();
         galleryButton = (Button) findViewById(R.id.dashboard_gallery_button);
         howtoButton = (Button) findViewById(R.id.dashboard_howto_button);
         exportButton = (Button) findViewById(R.id.dashboard_export_button);

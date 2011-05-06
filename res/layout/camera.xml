@@ -3,10 +3,19 @@
 	android:layout_width="fill_parent" 
 	android:layout_height="fill_parent"
 	android:orientation="vertical">
-	<SurfaceView
-		android:id="@+id/camera_surface"
+	<FrameLayout
 		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:layout_weight="1" />
-
+		android:layout_height="0px"
+		android:layout_weight="1">
+		<SurfaceView
+			android:id="@+id/camera_surface"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent" />
+		<Button 
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content"
+			android:text="@string/trigger"
+			android:id="@+id/trigger_picture_button" 
+			android:layout_gravity="bottom" />
+	</FrameLayout>
 </LinearLayout>

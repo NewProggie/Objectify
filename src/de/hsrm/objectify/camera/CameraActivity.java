@@ -1,12 +1,14 @@
 package de.hsrm.objectify.camera;
 
+import java.util.ArrayList;
+
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.SurfaceView;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import de.hsrm.objectify.R;
 
 public class CameraActivity extends Activity {
@@ -21,9 +23,9 @@ public class CameraActivity extends Activity {
 		setContentView(R.layout.camera);
 
 		cameraPreview = (SurfaceView) findViewById(R.id.camera_surface);
-//		triggerPicture = (Button) findViewById(R.id.trigger_picture_button);
+		triggerPicture = (Button) findViewById(R.id.trigger_picture_button);
 		
-//		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		cameraPreview = new CameraPreview(this);
 //		setContentView(cameraPreview);
 	}
