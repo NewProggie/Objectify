@@ -9,9 +9,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
+import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.ShutterCallback;
+import android.hardware.Camera.Size;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -19,7 +21,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.Window;
+import android.view.WindowManager;
 import android.widget.LinearLayout;
 
 public class CameraActivity extends Activity {
@@ -36,6 +38,15 @@ public class CameraActivity extends Activity {
 		ro = (LinearLayout) findViewById(R.id.light_ro);
 		lu = (LinearLayout) findViewById(R.id.light_lu);
 		ru = (LinearLayout) findViewById(R.id.light_ru);
+		
+		// changing screen brightness
+		WindowManager.LayoutParams lp = getWindow().getAttributes();
+		float brightness = 1;
+		Log.d("Brightness before: ", String.valueOf(getWindow().getAttributes().screenBrightness));
+		lp.screenBrightness = brightness;
+		getWindow().setAttributes(lp);
+		Log.d("Brightness after: ", String.valueOf(getWindow().getAttributes().screenBrightness));
+		
 
 //		new ShowLights().execute();
 		 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -120,83 +131,37 @@ class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
 		}
 	}
 	
-	/**
-	 * Open the camera. First attempt to find and open the front-facing camera.
-	 * If that attempt fails, then fall back to whatever camera is available.
-	 * 
-	 * @return a Camera object
-	 */
 	private Camera openFrontFacingCamera() {
 		Camera camera = null;
 
-		// Look for front-facing camera, using the Gingerbread API.
-		// Java reflection is used for backwards compatibility with
-		// pre-Gingerbread APIs.
-		try {
-			Class<?> cameraClass = Class.forName("android.hardware.Camera");
-			Object cameraInfo = null;
-			Field field = null;
+		int currentApiVersion = android.os.Build.VERSION.SDK_INT;
+		if (currentApiVersion > android.os.Build.VERSION_CODES.FROYO) {
+			// gingerbread (2.3) and above
 			int cameraCount = 0;
-			Method getNumberOfCamerasMethod = cameraClass.getMethod("getNumberOfCameras");
-			if (getNumberOfCamerasMethod != null) {
-				cameraCount = (Integer) getNumberOfCamerasMethod.invoke(null, (Object[]) null);
-			}
-			Class<?> cameraInfoClass = Class.forName("android.hardware.Camera$CameraInfo");
-			if (cameraInfoClass != null) {
-				cameraInfo = cameraInfoClass.newInstance();
-			}
-			if (cameraInfo != null) {
-				field = cameraInfo.getClass().getField("facing");
-			}
-			Method getCameraInfoMethod = cameraClass.getMethod("getCameraInfo", Integer.TYPE, cameraInfoClass);
-			if (getCameraInfoMethod != null && cameraInfoClass != null && field != null) {
-				for (int camIdx = 0; camIdx < cameraCount; camIdx++) {
-					getCameraInfoMethod.invoke(null, camIdx, cameraInfo);
-					int facing = field.getInt(cameraInfo);
-					if (facing == 1) { // Camera.CameraInfo.CAMERA_FACING_FRONT
-						try {
-							Method cameraOpenMethod = cameraClass.getMethod("open", Integer.TYPE);
-							if (cameraOpenMethod != null) {
-								camera = (Camera) cameraOpenMethod.invoke(null, camIdx);
-							}
-						} catch (RuntimeException e) {
-							Log.e(TAG, "Camera failed to open: " + e.getLocalizedMessage());
-						}
+			Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
+			cameraCount = Camera.getNumberOfCameras();
+			for (int camIdx = 0; camIdx < cameraCount; camIdx++) {
+				Camera.getCameraInfo(camIdx, cameraInfo);
+				if (cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+					try {
+						camera = Camera.open(camIdx);
+					} catch (RuntimeException e) {
+						Log.e(TAG, "Failed to open camera:" + e.getMessage());
 					}
 				}
 			}
-		}
-		// Ignore the bevy of checked exceptions the Java Reflection API throws
-		// - if it fails, who cares.
-		catch (ClassNotFoundException e) {
-			Log.e(TAG, "ClassNotFoundException" + e.getLocalizedMessage());
-		} catch (NoSuchMethodException e) {
-			Log.e(TAG, "NoSuchMethodException" + e.getLocalizedMessage());
-		} catch (NoSuchFieldException e) {
-			Log.e(TAG, "NoSuchFieldException" + e.getLocalizedMessage());
-		} catch (IllegalAccessException e) {
-			Log.e(TAG, "IllegalAccessException" + e.getLocalizedMessage());
-		} catch (InvocationTargetException e) {
-			Log.e(TAG, "InvocationTargetException" + e.getLocalizedMessage());
-		} catch (InstantiationException e) {
-			Log.e(TAG, "InstantiationException" + e.getLocalizedMessage());
-		} catch (SecurityException e) {
-			Log.e(TAG, "SecurityException" + e.getLocalizedMessage());
-		}
-
-		if (camera == null) {
-			// Try using the pre-Gingerbread APIs to open the camera.
-			try {
-				camera = Camera.open();
-				// Samsung Galaxy S hack
-				Camera.Parameters parameters = camera.getParameters();
-				parameters.set("camera-id", 2);
-				camera.setParameters(parameters);
-			} catch (RuntimeException e) {
-				Log.e(TAG, "Camera failed to open: " + e.getLocalizedMessage());
+		} else {
+			// froyo (2.2)
+			camera = Camera.open();
+			if (android.os.Build.PRODUCT.equals("GT-P1000")) {
+				// we're running on samsung galaxy tab
+				Camera.Parameters params = camera.getParameters();
+				params.set("camera-id", 2); // using front-cam (2) instead of back-cam (1)
+				camera.setParameters(params);
+			} else {
+				camera = camera.open();
 			}
 		}
-
 		return camera;
 	}
 
