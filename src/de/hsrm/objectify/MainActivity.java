@@ -1,6 +1,7 @@
 package de.hsrm.objectify;
 
 import de.hsrm.objectify.camera.CameraActivity;
+import de.hsrm.objectify.gallery.GalleryActivity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -32,7 +33,8 @@ public class MainActivity extends Activity {
     public void buttonClick(View target) {
     	switch (target.getId()) {
     	case R.id.dashboard_gallery_button:
-    		Toast.makeText(context, "gallery", Toast.LENGTH_SHORT).show();
+    		Intent gallery = new Intent(context, GalleryActivity.class);
+    		startActivity(gallery);
     		break;
     	case R.id.dashboard_howto_button:
     		Toast.makeText(context, "howto", Toast.LENGTH_SHORT).show();

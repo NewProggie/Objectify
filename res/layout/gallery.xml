@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent" 
+	android:layout_height="fill_parent"
+	android:background="@drawable/backrepeat"
+	android:orientation="vertical">
+	<Gallery
+		android:id="@+id/picture_gallery"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content" />
+	<ImageView
+		android:id="@+id/current_img_gallery"
+		android:layout_width="120dip"
+		android:layout_height="wrap_content"
+		android:layout_below="@id/picture_gallery"
+		android:layout_alignParentLeft="true" />
+</RelativeLayout>
