@@ -1,10 +1,12 @@
 package de.hsrm.objectify.camera;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
@@ -16,8 +18,6 @@ public class CameraActivity extends Activity {
 	private static final String TAG = "CameraActivity";
 	private CameraPreview cameraPreview;
 	private Button triggerPicture;
-	private static final int NUMBER_OF_FOTOS = 4;
-	private int counter = 1;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +28,7 @@ public class CameraActivity extends Activity {
 		triggerPicture = (Button) findViewById(R.id.trigger_picture_button);
 		triggerPicture.setOnClickListener(onClickListener());
 		
+		setScreenBrightness(1);
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 	}
 
@@ -36,34 +37,13 @@ public class CameraActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				Camera cam = cameraPreview.getCamera();
-				cam.takePicture(null, rawCallback(), jpegCallback());
+				Intent takePicture = new Intent(v.getContext(), TakePictureActivity.class);
+				startActivity(takePicture);
 			}
 		};
 		return listener;
 	}
-	
-	private Camera.PictureCallback rawCallback() {
-		PictureCallback callback = new PictureCallback() {
-			
-			@Override
-			public void onPictureTaken(byte[] data, Camera camera) {
 
-			}
-		};
-		return callback;
-	}
-	
-	private Camera.PictureCallback jpegCallback() {
-		PictureCallback callback = new PictureCallback() {
-
-			@Override
-			public void onPictureTaken(byte[] data, Camera camera) {
-
-			}
-		};
-		return callback;
-	}
 
 	/**
 	 * Setting screen brightness. A value of less than 0, the default, means to

@@ -15,7 +15,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
 	private static final String TAG = "CameraPreview";
 	private SurfaceHolder holder;
-	private Camera camera;
+	private static Camera camera;
 
 	public CameraPreview(Context context) {
 		super(context);
@@ -51,11 +51,13 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 		}
 	}
 	
-	public Camera getCamera() {
+	public static Camera getCamera() {
 		return camera;
 	}
 	
 	public void surfaceDestroyed(SurfaceHolder holder) {
+		Log.d(TAG, "surfaceDestroyed");
+		camera.setPreviewCallback(null);
 		camera.stopPreview();
 		camera.release();
 		camera = null;
@@ -65,7 +67,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 		camera.startPreview();
 	}
 
-	private Camera openFrontFacingCamera() {
+	public static Camera openFrontFacingCamera() {
 		Camera camera = null;
 
 		int currentApiVersion = android.os.Build.VERSION.SDK_INT;
@@ -94,6 +96,9 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 			if (android.os.Build.PRODUCT.equals("GT-P1000")) {
 				// we're running on samsung galaxy tab
 				Camera.Parameters params = camera.getParameters();
+				// only working size for samsung galaxy tab
+				params.setPictureSize(800, 600);
+				params.setPreviewSize(800, 600);
 				params.set("camera-id", 2); // using front-cam (2) instead
 											// of back-cam (1)
 				camera.setParameters(params);

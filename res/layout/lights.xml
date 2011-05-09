@@ -11,11 +11,15 @@
 			android:id="@+id/light_lo"
 			android:layout_width="wrap_content"
 			android:layout_height="fill_parent"
+			android:background="@color/white"
+			android:visibility="invisible"
 			android:layout_weight="1" />
 		<LinearLayout
 			android:id="@+id/light_ro"
 			android:layout_width="wrap_content"
 			android:layout_height="fill_parent"
+			android:background="@color/white"
+			android:visibility="invisible"
 			android:layout_weight="1"/>
 	</LinearLayout>
 	<LinearLayout 
@@ -26,11 +30,15 @@
 			android:id="@+id/light_lu"
 			android:layout_width="wrap_content"
 			android:layout_height="fill_parent"
+			android:background="@color/white"
+			android:visibility="invisible"
 			android:layout_weight="1"/>
 		<LinearLayout
 			android:id="@+id/light_ru"
 			android:layout_width="wrap_content"
 			android:layout_height="fill_parent"
+			android:background="@color/white"
+			android:visibility="invisible"
 			android:layout_weight="1"/>
 	</LinearLayout>
 </LinearLayout>
