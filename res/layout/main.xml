@@ -13,7 +13,7 @@
 	<TableRow>
 		<Button
 			android:id="@+id/dashboard_gallery_button"
-			android:drawableTop="@drawable/icon"
+			android:drawableTop="@drawable/gallery_button_selector"
 			android:background="#00000000"
 			android:text="@string/gallery"
 			android:onClick="buttonClick"
@@ -21,34 +21,10 @@
 			style="@style/ShadowedText"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content" 
-			android:layout_margin="20dip"/>
-		<Button
-			android:id="@+id/dashboard_howto_button"
-			android:drawableTop="@drawable/icon"
-			android:background="#00000000"
-			android:text="@string/howto"
-			android:onClick="buttonClick"
-			android:textSize="16dip"
-			style="@style/ShadowedText"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content" 
-			android:layout_margin="20dip"/>
-	</TableRow>    
-	<TableRow>
-		<Button
-			android:id="@+id/dashboard_export_button"
-			android:drawableTop="@drawable/icon"
-			android:background="#00000000"
-			android:text="@string/export"
-			android:onClick="buttonClick"
-			android:textSize="16dip"
-			style="@style/ShadowedText"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content" 
-			android:layout_margin="20dip"/>
+			android:layout_margin="15dip"/>
 		<Button
 			android:id="@+id/dashboard_share_button"
-			android:drawableTop="@drawable/icon"
+			android:drawableTop="@drawable/share_button_selector"
 			android:background="#00000000"
 			android:text="@string/share"
 			android:onClick="buttonClick"
@@ -56,12 +32,36 @@
 			style="@style/ShadowedText"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content" 
-			android:layout_margin="20dip"/>
+			android:layout_margin="15dip"/>
+	</TableRow>    
+	<TableRow>
+		<Button
+			android:id="@+id/dashboard_export_button"
+			android:drawableTop="@drawable/export_button_selector"
+			android:background="#00000000"
+			android:text="@string/export"
+			android:onClick="buttonClick"
+			android:textSize="16dip"
+			style="@style/ShadowedText"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content" 
+			android:layout_margin="15dip"/>
+		<Button
+			android:id="@+id/dashboard_howto_button"
+			android:drawableTop="@drawable/howto_button_selector"
+			android:background="#00000000"
+			android:text="@string/howto"
+			android:onClick="buttonClick"
+			android:textSize="16dip"
+			style="@style/ShadowedText"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content" 
+			android:layout_margin="15dip"/>
 	</TableRow> 
 	<TableRow>
 		<Button
 			android:id="@+id/dashboard_camera_button"
-			android:drawableTop="@drawable/camera_icon"
+			android:drawableTop="@drawable/camera_button_selector"
 			android:background="#00000000"
 			android:text="@string/camera"
 			android:onClick="buttonClick"
@@ -69,7 +69,7 @@
 			style="@style/ShadowedText"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content" 
-			android:layout_margin="20dip"/>
+			android:layout_margin="15dip"/>
 	</TableRow> 
 </TableLayout>
 </LinearLayout>
