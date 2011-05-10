@@ -17,5 +17,31 @@
 			android:text="@string/trigger"
 			android:id="@+id/trigger_picture_button" 
 			android:layout_gravity="bottom" />
+		<LinearLayout
+			android:id="@+id/shadow"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:visibility="invisible"
+			android:background="#BB000000" />
+		<LinearLayout
+			android:id="@+id/progress"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:visibility="invisible"
+			android:layout_marginTop="30dip"
+			android:gravity="center"
+			android:orientation="vertical">
+			<ProgressBar
+				android:layout_width="20dip"
+				android:layout_height="20dip"
+				android:visibility="visible" />
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/please_wait"
+				style="@style/ShadowedText"
+				android:textSize="20dip" />
+		</LinearLayout>
+		<include layout="@layout/lights" />
 	</FrameLayout>
 </LinearLayout>

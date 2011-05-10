@@ -3,42 +3,81 @@
 	android:layout_width="fill_parent" 
 	android:layout_height="fill_parent"
 	android:orientation="vertical">
-	<LinearLayout 
+	<FrameLayout
 		android:layout_width="fill_parent"
-		android:layout_height="wrap_content" 
+		android:layout_height="0px"
 		android:layout_weight="1">
 		<LinearLayout
-			android:id="@+id/light_lo"
-			android:layout_width="wrap_content"
+			android:id="@+id/light_left"
+			android:layout_width="fill_parent"
 			android:layout_height="fill_parent"
-			android:background="@color/white"
 			android:visibility="invisible"
-			android:layout_weight="1" />
+			android:orientation="horizontal">
+			<LinearLayout
+				android:layout_width="wrap_content"
+				android:layout_height="fill_parent"
+				android:layout_weight="1"
+				android:background="@color/white"
+				android:visibility="visible" />
+			<LinearLayout
+				android:layout_width="wrap_content"
+				android:layout_height="fill_parent"
+				android:layout_weight="1"
+				android:visibility="invisible" />
+		</LinearLayout>
 		<LinearLayout
-			android:id="@+id/light_ro"
-			android:layout_width="wrap_content"
+			android:id="@+id/light_right"
+			android:layout_width="fill_parent"
 			android:layout_height="fill_parent"
-			android:background="@color/white"
 			android:visibility="invisible"
-			android:layout_weight="1"/>
-	</LinearLayout>
-	<LinearLayout 
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content" 
-		android:layout_weight="1">
+			android:orientation="horizontal">
+			<LinearLayout
+				android:layout_width="wrap_content"
+				android:layout_height="fill_parent"
+				android:layout_weight="1"
+				android:visibility="invisible" />
+			<LinearLayout
+				android:layout_width="wrap_content"
+				android:layout_height="fill_parent"
+				android:background="@color/white"
+				android:layout_weight="1"
+				android:visibility="visible" />		
+		</LinearLayout>
 		<LinearLayout
-			android:id="@+id/light_lu"
-			android:layout_width="wrap_content"
+			android:id="@+id/light_up"
+			android:layout_width="fill_parent"
 			android:layout_height="fill_parent"
-			android:background="@color/white"
 			android:visibility="invisible"
-			android:layout_weight="1"/>
+			android:orientation="vertical">
+			<LinearLayout
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:background="@color/white"
+				android:visibility="visible" />
+			<LinearLayout
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:visibility="invisible" />		
+		</LinearLayout>
 		<LinearLayout
-			android:id="@+id/light_ru"
-			android:layout_width="wrap_content"
+			android:id="@+id/light_down"
+			android:layout_width="fill_parent"
 			android:layout_height="fill_parent"
-			android:background="@color/white"
 			android:visibility="invisible"
-			android:layout_weight="1"/>
-	</LinearLayout>
+			android:orientation="vertical">
+			<LinearLayout
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:visibility="invisible" />
+			<LinearLayout
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:background="@color/white"
+				android:layout_weight="1"
+				android:visibility="visible" />		
+		</LinearLayout>
+	</FrameLayout>
 </LinearLayout>

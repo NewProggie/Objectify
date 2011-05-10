@@ -6,6 +6,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.hardware.Camera;
+import android.hardware.Camera.PictureCallback;
+import android.hardware.Camera.ShutterCallback;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
@@ -66,7 +68,15 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
 		camera.startPreview();
 	}
-
+	
+	public void takePicture(ShutterCallback shutter, PictureCallback raw, PictureCallback jpeg) {
+		camera.takePicture(shutter, raw, jpeg);
+	}
+	
+	public void startPreview() {
+		camera.startPreview();
+	}
+	
 	public static Camera openFrontFacingCamera() {
 		Camera camera = null;
 
