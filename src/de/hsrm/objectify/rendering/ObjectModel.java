@@ -7,6 +7,8 @@ import java.nio.ShortBuffer;
 import javax.microedition.khronos.opengles.GL10;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Matrix;
 
 public class ObjectModel {
 	
@@ -44,6 +46,22 @@ public class ObjectModel {
 	public void loadGLTexture(GL10 gl, Context context) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	/**
+	 * Scales image to valid texture
+	 * @param image original image
+	 * @param size preferred width and height size
+	 * @return scaled image
+	 */
+	private Bitmap scaleTexture(Bitmap image, int size) {
+		int width = image.getWidth();
+		int height = image.getHeight();
+		float scaleWidth = ((float) size) / width;
+		float scaleHeight = ((float) size) / height;
+		Matrix matrix = new Matrix();
+		matrix.postScale(scaleWidth, scaleHeight);
+		return Bitmap.createBitmap(image, 0, 0, width, height, matrix, true);
 	}
 
 }

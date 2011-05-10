@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
+import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
@@ -27,6 +28,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import de.hsrm.objectify.MainActivity;
 import de.hsrm.objectify.R;
+import de.hsrm.objectify.utils.ExternalDirectory;
 
 public class CameraActivity extends Activity {
 
@@ -161,7 +163,20 @@ public class CameraActivity extends Activity {
 		
 		@Override
 		protected Boolean doInBackground(CompositePicture... params) {
-			SystemClock.sleep(2000);
+			CompositePicture pic = params[0];
+			Bitmap image = Bitmap.createBitmap(convertByteArray(pic.getUp()), 800, 600, Config.RGB_565);
+			try {
+				FileOutputStream fos = new FileOutputStream(ExternalDirectory.getExternalDirectory() + "/foo.png");
+				BufferedOutputStream bos = new BufferedOutputStream(fos);
+				image.compress(CompressFormat.PNG, 100, bos);
+				bos.flush();
+				bos.close();
+			} catch (FileNotFoundException e) {
+				Log.e(TAG, e.getMessage());
+			} catch (IOException e) {
+				Log.e(TAG, e.getMessage());
+			}
+			SystemClock.sleep(1000);
 			return true;
 		}
 		
@@ -170,6 +185,19 @@ public class CameraActivity extends Activity {
 			progress.setVisibility(View.GONE);
 			Intent main = new Intent(context, MainActivity.class);
 			startActivity(main);
+		}
+		
+		public int[] convertByteArray(byte[] byteArray) {
+			int[] intArray = new int[((int) byteArray.length/4)];
+			int idx = 0;
+			for (int i=16; i<byteArray.length;i+=4) {
+				intArray[idx] = (byteArray[i] & 0xFF) << 24 +
+								(byteArray[i+1] & 0xFF) << 16 +
+								(byteArray[i+2] & 0xFF) << 8 +
+								(byteArray[i+3] & 0xFF) << 0;
+				idx += 1;
+			}
+			return intArray;
 		}
 	}
 	
