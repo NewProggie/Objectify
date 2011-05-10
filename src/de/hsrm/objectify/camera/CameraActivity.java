@@ -1,13 +1,23 @@
 package de.hsrm.objectify.camera;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
+import android.graphics.BitmapFactory;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
@@ -15,7 +25,6 @@ import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import de.hsrm.objectify.MainActivity;
 import de.hsrm.objectify.R;
 
@@ -115,16 +124,16 @@ public class CameraActivity extends Activity {
 			public void onPictureTaken(byte[] data, Camera camera) {
 				switch (counter) {
 				case 1:
-					pic.setLo_pic(data);
+					pic.setLeft(data);
 					break;
 				case 2:
-					pic.setRo_pic(data);
+					pic.setRight(data);
 					break;
 				case 3:
-					pic.setLu_pic(data);
+					pic.setUp(data);
 					break;
 				case 4:
-					pic.setRu_pic(data);
+					pic.setDown(data);
 					break;
 				}
 				if (counter < NUMBER_OF_PICTURES) {

@@ -1,5 +1,7 @@
 package de.hsrm.objectify.camera;
 
+import java.util.Arrays;
+
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -7,31 +9,46 @@ import android.os.Parcelable;
 public class CompositePicture  {
 	
 	private static final String TAG = "CompositePicture";
-	private byte[] lo_pic, ro_pic, lu_pic, ru_pic;
+	private byte[] right, up, left, down;
 	
-	public byte[] getLo_pic() {
-		return lo_pic;
+	public CompositePicture() {}
+	
+	public CompositePicture(CompositePicture other) {
+		copy(other.right, this.right);
+		copy(other.up, this.up);
+		copy(other.left, this.left);
+		copy(other.down, this.down);
 	}
-	public void setLo_pic(byte[] lo_pic) {
-		this.lo_pic = lo_pic;
+	
+	public byte[] getRight() {
+		return right;
 	}
-	public byte[] getRo_pic() {
-		return ro_pic;
+	public void setRight(byte[] right) {
+		this.right = right;
 	}
-	public void setRo_pic(byte[] ro_pic) {
-		this.ro_pic = ro_pic;
+	public byte[] getUp() {
+		return up;
 	}
-	public byte[] getLu_pic() {
-		return lu_pic;
+	public void setUp(byte[] up) {
+		this.up = up;
 	}
-	public void setLu_pic(byte[] lu_pic) {
-		this.lu_pic = lu_pic;
+	public byte[] getLeft() {
+		return left;
 	}
-	public byte[] getRu_pic() {
-		return ru_pic;
+	public void setLeft(byte[] left) {
+		this.left = left;
 	}
-	public void setRu_pic(byte[] ru_pic) {
-		this.ru_pic = ru_pic;
+	public byte[] getDown() {
+		return down;
+	}
+	public void setDown(byte[] down) {
+		this.down = down;
+	}
+	
+	private void copy(byte[] from, byte[] to) {
+		for (int i=0;i<from.length;i++) {
+			to[i] = from[i];
+		}
 	}
 
 }

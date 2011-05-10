@@ -13,4 +13,7 @@
     <string name="external_not_mounted">Das externe Speicherverzeichnis wurde nicht gefunden</string>
     <string name="error">Fehler</string>
     <string name="please_wait">Bitte warten...</string>
+    
+    <string name="const_sd_path">/.objectify/</string>
+    <string name="const_sd_img_path">/.objectify/img/</string>
 </resources>
