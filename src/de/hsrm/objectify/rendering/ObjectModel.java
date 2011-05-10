@@ -1,9 +1,12 @@
 package de.hsrm.objectify.rendering;
 
+import java.io.InputStream;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
 import javax.microedition.khronos.opengles.GL10;
+
+import android.content.Context;
 
 public class ObjectModel {
 	
@@ -20,6 +23,10 @@ public class ObjectModel {
 		
 	}
 	
+	public ObjectModel(InputStream is) {
+		// TODO Auto-generated constructor stub
+	}
+
 	public void draw(GL10 gl) {
 		gl.glBindTexture(GL10.GL_TEXTURE_2D, textures[0]);
 		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
@@ -32,6 +39,11 @@ public class ObjectModel {
 		gl.glDisableClientState(GL10.GL_NORMAL_ARRAY);
 		gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
 		gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+	}
+
+	public void loadGLTexture(GL10 gl, Context context) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
