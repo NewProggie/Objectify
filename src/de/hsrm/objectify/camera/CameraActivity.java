@@ -28,6 +28,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import de.hsrm.objectify.MainActivity;
 import de.hsrm.objectify.R;
+import de.hsrm.objectify.rendering.ObjectViewer;
 import de.hsrm.objectify.utils.ExternalDirectory;
 
 public class CameraActivity extends Activity {
@@ -142,7 +143,7 @@ public class CameraActivity extends Activity {
 					counter++;
 					takePictures();
 				} else {
-					Log.d("Alles fertig", "mit der Cam");
+					Log.d(TAG, "Photos taken. Creating Object.");
 					new Calc3DObject().execute(pic);
 				}
 			}
@@ -164,7 +165,7 @@ public class CameraActivity extends Activity {
 		@Override
 		protected Boolean doInBackground(CompositePicture... params) {
 			CompositePicture pic = params[0];
-			Bitmap image = Bitmap.createBitmap(convertByteArray(pic.getUp()), 800, 600, Config.RGB_565);
+			Bitmap image = Bitmap.createBitmap(convertByteArray(pic.getUp()), 600, 400, Config.RGB_565);
 			try {
 				FileOutputStream fos = new FileOutputStream(ExternalDirectory.getExternalDirectory() + "/foo.png");
 				BufferedOutputStream bos = new BufferedOutputStream(fos);
@@ -183,18 +184,19 @@ public class CameraActivity extends Activity {
 		@Override
 		protected void onPostExecute(Boolean result) {
 			progress.setVisibility(View.GONE);
-			Intent main = new Intent(context, MainActivity.class);
+			Intent main = new Intent(context, ObjectViewer.class);
 			startActivity(main);
+			((Activity) context).finish();
 		}
 		
-		public int[] convertByteArray(byte[] byteArray) {
+		private int[] convertByteArray(byte[] byteArray) {
 			int[] intArray = new int[((int) byteArray.length/4)];
 			int idx = 0;
-			for (int i=16; i<byteArray.length;i+=4) {
-				intArray[idx] = (byteArray[i] & 0xFF) << 24 +
-								(byteArray[i+1] & 0xFF) << 16 +
-								(byteArray[i+2] & 0xFF) << 8 +
-								(byteArray[i+3] & 0xFF) << 0;
+			for (int i=0; i<byteArray.length;i+=4) {
+				intArray[idx] = (0xFF & byteArray[i]) << 24 |
+								(0xFF & byteArray[i+1]) << 16 |
+								(0xFF & byteArray[i+2]) << 8 |
+								(0xFF & byteArray[i+3]) << 0;
 				idx += 1;
 			}
 			return intArray;
