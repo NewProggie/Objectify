@@ -40,18 +40,12 @@ public class ArcBall {
 	 *            vector from objects middlepoint to fingertouch
 	 */
 	public void mapToSphere(Point point, Vector3f vector) {
-
-		Log.d("POINT: ", String.valueOf(point.x) + ","
-				+ String.valueOf(point.y));
-		Log.d("VEKTOR: ", String.valueOf(vector.toString()));
 		PointF tempPoint = new PointF(point.x, point.y);
 
 		tempPoint.x = (tempPoint.x * this.adjustWidth) - 1.0f;
 		tempPoint.y = 1.0f - (tempPoint.y * this.adjustHeight);
 
-		float length = (tempPoint.x * tempPoint.x)
-				+ (tempPoint.y * tempPoint.y);
-		Log.d("length: ", String.valueOf(length));
+		float length = (tempPoint.x * tempPoint.x) + (tempPoint.y * tempPoint.y);
 
 		if (length > 1.0f) {
 			float norm = (float) (1.0 / Math.sqrt(length));

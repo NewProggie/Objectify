@@ -97,7 +97,26 @@ public class TouchSurfaceView extends GLSurfaceView {
 		
 		public ObjectModelRenderer(Context context, InputStream is) {
 			this.context = context;
-			objectModel = new ObjectModel(is);
+			objectModel = new ObjectModel();
+			float[] vertices = new float[] 
+			                             { 0.0f, 1.0f, 0.0f,
+											1.0f, 1.0f, 0.0f,
+											1.0f, 1.0f, 1.0f, 
+											0.0f, 1.0f, 1.0f,
+											0.0f, 0.0f, 0.0f,
+											1.0f, 0.0f, 0.0f,
+											1.0f, 0.0f, 1.0f,
+											0.0f, 0.0f, 1.0f };
+			objectModel.putVertices(vertices);
+			float[] normals = new float[] 
+			                            {  0.0f, 0.0f, -1.0f,
+											0.0f, 0.0f, -1.0f,
+											0.0f, 1.0f, 0.0f,
+											0.0f, 1.0f, 0.0f,
+											0.0f, 0.0f, -1.0f,
+											0.0f, 0.0f, -1.0f,
+											-1.0f, 0.0f, 0.0f,};
+			objectModel.putNVertices(normals);
 			lastRot.setIdentity();
 			thisRot.setIdentity();
 			thisRot.map(matrix);

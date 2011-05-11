@@ -22,7 +22,7 @@
 			android:layout_width="fill_parent"
 			android:layout_height="fill_parent"
 			android:visibility="invisible"
-			android:background="#BB000000" />
+			android:background="#FF000000" />
 		<LinearLayout
 			android:id="@+id/progress"
 			android:layout_width="fill_parent"
