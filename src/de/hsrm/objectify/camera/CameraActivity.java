@@ -86,7 +86,7 @@ public class CameraActivity extends Activity {
 	private void takePictures() {
 		cameraPreview.startPreview();
 		setLightning();
-		SystemClock.sleep(1000);
+		SystemClock.sleep(100);
 		cameraPreview.takePicture(null, null, jpegCallback());
 	}
 	
@@ -155,6 +155,7 @@ public class CameraActivity extends Activity {
 	private class Calc3DObject extends AsyncTask<CompositePicture, Void, Boolean> {
 		
 		private static final String TAG = "Calc3DObject";
+		private Bitmap image;
 		
 		@Override
 		protected void onPreExecute() {
@@ -165,7 +166,7 @@ public class CameraActivity extends Activity {
 		@Override
 		protected Boolean doInBackground(CompositePicture... params) {
 			CompositePicture pic = params[0];
-			Bitmap image = Bitmap.createBitmap(convertByteArray(pic.getUp()), 600, 400, Config.RGB_565);
+			image = Bitmap.createBitmap(convertByteArray(pic.getUp()), 600, 400, Config.RGB_565);
 			try {
 				FileOutputStream fos = new FileOutputStream(ExternalDirectory.getExternalDirectory() + "/foo.png");
 				BufferedOutputStream bos = new BufferedOutputStream(fos);
