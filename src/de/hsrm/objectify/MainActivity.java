@@ -11,8 +11,9 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 import de.hsrm.objectify.camera.CameraActivity;
 import de.hsrm.objectify.gallery.GalleryActivity;
+import de.hsrm.objectify.ui.BaseActivity;
 
-public class MainActivity extends Activity {
+public class MainActivity extends BaseActivity {
 	
 	private static final String TAG = "MainActivity";
 	private Context context;
@@ -23,7 +24,8 @@ public class MainActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
+        setContentView(R.layout.dashboard);
+//        setContentView(R.layout.main);
         context = this;
         
         galleryButton = (Button) findViewById(R.id.dashboard_gallery_button);
@@ -32,7 +34,7 @@ public class MainActivity extends Activity {
         shareButton = (Button) findViewById(R.id.dashboard_share_button);
         cameraButton = (Button) findViewById(R.id.dashboard_camera_button);
 //        actionbarCamButton = (ImageButton) findViewById(R.id.actionbar_cam_button);
-        actionbarCamButton.setOnClickListener(onClickListener());
+//        actionbarCamButton.setOnClickListener(onClickListener());
     }
     
     public void buttonClick(View target) {
