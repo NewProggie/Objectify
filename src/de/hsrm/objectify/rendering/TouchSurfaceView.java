@@ -29,14 +29,14 @@ public class TouchSurfaceView extends GLSurfaceView {
 	private ScaleGestureDetector scaleDetector;
 	private float skalierung = 1;
 	
-	public TouchSurfaceView(Context context, InputStream is, int width, int height) {
+	public TouchSurfaceView(Context context, byte[] bb, int width, int height) {
 		super(context);
 		this.width = width;
 		this.height = height;
 		
 		glu = new GLU();
 		arcBall.setBounds((float) width, (float) height);
-		renderer = new ObjectModelRenderer(context, is);
+		renderer = new ObjectModelRenderer(context, bb);
 		setRenderer(renderer);
 		setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 		scaleDetector = new ScaleGestureDetector(context, new SimpleScaleListener());
@@ -95,28 +95,15 @@ public class TouchSurfaceView extends GLSurfaceView {
 		private Context context;
 		public float angleX, angleY;
 		
-		public ObjectModelRenderer(Context context, InputStream is) {
+		public ObjectModelRenderer(Context context, byte[] bb) {
 			this.context = context;
-			objectModel = new ObjectModel();
+			objectModel = new ObjectModel(bb);
 			float[] vertices = new float[] 
-			                             { 0.0f, 1.0f, 0.0f,
-											1.0f, 1.0f, 0.0f,
-											1.0f, 1.0f, 1.0f, 
-											0.0f, 1.0f, 1.0f,
-											0.0f, 0.0f, 0.0f,
-											1.0f, 0.0f, 0.0f,
-											1.0f, 0.0f, 1.0f,
-											0.0f, 0.0f, 1.0f };
+			                             { -1.0f, -1.0f, 0.0f,
+											1.0f, -1.0f, 0.0f, 
+											-1.0f, 1.0f, 0.0f, 	
+											1.0f, 1.0f, 0.0f };
 			objectModel.putVertices(vertices);
-			float[] normals = new float[] 
-			                            {  0.0f, 0.0f, -1.0f,
-											0.0f, 0.0f, -1.0f,
-											0.0f, 1.0f, 0.0f,
-											0.0f, 1.0f, 0.0f,
-											0.0f, 0.0f, -1.0f,
-											0.0f, 0.0f, -1.0f,
-											-1.0f, 0.0f, 0.0f,};
-			objectModel.putNVertices(normals);
 			lastRot.setIdentity();
 			thisRot.setIdentity();
 			thisRot.map(matrix);

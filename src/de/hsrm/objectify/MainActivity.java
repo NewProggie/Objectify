@@ -31,7 +31,7 @@ public class MainActivity extends Activity {
         exportButton = (Button) findViewById(R.id.dashboard_export_button);
         shareButton = (Button) findViewById(R.id.dashboard_share_button);
         cameraButton = (Button) findViewById(R.id.dashboard_camera_button);
-        actionbarCamButton = (ImageButton) findViewById(R.id.actionbar_cam_button);
+//        actionbarCamButton = (ImageButton) findViewById(R.id.actionbar_cam_button);
         actionbarCamButton.setOnClickListener(onClickListener());
     }
     

@@ -9,9 +9,13 @@ import java.util.ArrayList;
 
 import javax.microedition.khronos.opengles.GL10;
 
+import de.hsrm.objectify.utils.ImageHelper;
+
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
 import android.graphics.Matrix;
+import android.opengl.GLUtils;
 
 public class ObjectModel {
 	
@@ -23,12 +27,14 @@ public class ObjectModel {
 	private float vertices[];
 	private float n_vertices[];
 	private short faces[];
+	private byte[] bb;
 	
-	public ObjectModel() {
+	public ObjectModel(byte[] bb) {
 		textures = new int[1];
 		vertices = new float[1];
 		n_vertices = new float[1];
 		faces = new short[1];
+		this.bb = bb;
 		setVertexBuffer(vertices);
 		setNormalBuffer(n_vertices);
 		setFacesBuffer(faces);
@@ -83,7 +89,7 @@ public class ObjectModel {
 	}
 	
 	public void draw(GL10 gl) {
-//		gl.glBindTexture(GL10.GL_TEXTURE_2D, textures[0]);
+		gl.glBindTexture(GL10.GL_TEXTURE_2D, textures[0]);
 		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
 		gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 		gl.glEnableClientState(GL10.GL_NORMAL_ARRAY);
@@ -101,7 +107,19 @@ public class ObjectModel {
 	}
 
 	public void loadGLTexture(GL10 gl, Context context) {
-		// TODO Auto-generated method stub
+		Bitmap image = Bitmap.createBitmap(ImageHelper.convertByteArray(bb), 600, 400, Config.ARGB_8888);
+		Bitmap texture = scaleTexture(image, 256);
+		
+		gl.glGenTextures(1, textures, 0);
+		gl.glBindTexture(GL10.GL_TEXTURE_2D, textures[0]);
+		gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_NEAREST);
+		gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_LINEAR);
+		gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_S, GL10.GL_REPEAT);
+		gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T, GL10.GL_REPEAT);
+		
+		if (texture != null) {
+			GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, texture, 0);
+		}
 		
 	}
 	

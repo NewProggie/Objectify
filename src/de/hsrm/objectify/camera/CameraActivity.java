@@ -30,6 +30,7 @@ import de.hsrm.objectify.MainActivity;
 import de.hsrm.objectify.R;
 import de.hsrm.objectify.rendering.ObjectViewer;
 import de.hsrm.objectify.utils.ExternalDirectory;
+import de.hsrm.objectify.utils.ImageHelper;
 
 public class CameraActivity extends Activity {
 
@@ -156,6 +157,7 @@ public class CameraActivity extends Activity {
 		
 		private static final String TAG = "Calc3DObject";
 		private Bitmap image;
+		private byte[] bb;
 		
 		@Override
 		protected void onPreExecute() {
@@ -166,11 +168,11 @@ public class CameraActivity extends Activity {
 		@Override
 		protected Boolean doInBackground(CompositePicture... params) {
 			CompositePicture pic = params[0];
-			image = Bitmap.createBitmap(convertByteArray(pic.getUp()), 600, 400, Config.RGB_565);
+			image = Bitmap.createBitmap(ImageHelper.convertByteArray(pic.getUp()), 600, 400, Config.ARGB_8888);
 			try {
 				FileOutputStream fos = new FileOutputStream(ExternalDirectory.getExternalDirectory() + "/foo.png");
 				BufferedOutputStream bos = new BufferedOutputStream(fos);
-				image.compress(CompressFormat.PNG, 100, bos);
+				image.compress(CompressFormat.JPEG, 100, bos);
 				bos.flush();
 				bos.close();
 			} catch (FileNotFoundException e) {
@@ -186,22 +188,12 @@ public class CameraActivity extends Activity {
 		protected void onPostExecute(Boolean result) {
 			progress.setVisibility(View.GONE);
 			Intent main = new Intent(context, ObjectViewer.class);
+			main.putExtra("bb", pic.getUp());
 			startActivity(main);
 			((Activity) context).finish();
 		}
 		
-		private int[] convertByteArray(byte[] byteArray) {
-			int[] intArray = new int[((int) byteArray.length/4)];
-			int idx = 0;
-			for (int i=0; i<byteArray.length;i+=4) {
-				intArray[idx] = (0xFF & byteArray[i]) << 24 |
-								(0xFF & byteArray[i+1]) << 16 |
-								(0xFF & byteArray[i+2]) << 8 |
-								(0xFF & byteArray[i+3]) << 0;
-				idx += 1;
-			}
-			return intArray;
-		}
+
 	}
 	
 }

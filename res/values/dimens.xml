@@ -1,0 +1,4 @@
+<resources>
+    <!-- UI elements -->
+    <dimen name="actionbar_height">45dp</dimen>
+</resources>
