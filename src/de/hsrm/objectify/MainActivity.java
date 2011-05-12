@@ -1,6 +1,5 @@
 package de.hsrm.objectify;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -25,7 +24,6 @@ public class MainActivity extends BaseActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dashboard);
-//        setContentView(R.layout.main);
         context = this;
         
         galleryButton = (Button) findViewById(R.id.dashboard_gallery_button);

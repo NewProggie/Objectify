@@ -7,6 +7,7 @@
     <string name="share">Teilen</string>
     <string name="camera">Kamera</string>
     <string name="trigger">Auslöser</string>
+    <string name="home">Home</string>
     <string name="submit">Ok</string>
     <string name="no_objects_saved">Bisher wurden noch keine Objekte gespeichert</string>
     <string name="couldnt_create_directory">Leider trat beim Erstellen eines Verzeichnisses ein Fehler auf</string>

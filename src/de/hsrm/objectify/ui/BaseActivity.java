@@ -7,7 +7,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 /**
  * A base activity that implements common functionality across app activities such as the actionbar.
@@ -17,10 +20,57 @@ import android.widget.LinearLayout;
  */
 public abstract class BaseActivity extends Activity {
 
+	private ViewGroup content;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_empty);
+		super.setContentView(R.layout.activity_empty);
+		content = (ViewGroup) super.findViewById(R.id.layout_container);
+		setupActionBar(getTitle(), 0);
+	}
+	
+	@Override
+	protected void onStart() {
+		super.onStart();
+	}
+	
+	@Override
+	protected void onStop() {
+		super.onStop();
+	}
+	
+	@Override
+	protected void onRestart() {
+		// TODO Auto-generated method stub
+		super.onRestart();
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+	}
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+	}
+	
+	@Override
+	public void setContentView(int layoutResID) {
+		content.removeAllViews();
+		getLayoutInflater().inflate(layoutResID, content);
+	}
+	
+	@Override
+	public View findViewById(int id) {
+		return content.findViewById(id);
+	}
+	
+	
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
 	}
 	
 	/**
@@ -33,7 +83,7 @@ public abstract class BaseActivity extends Activity {
 	 * @param color color of title
 	 */
 	private void setupActionBar(CharSequence title, int color) {
-		ViewGroup actionBar = (ViewGroup) findViewById(R.id.actionbar);
+		ViewGroup actionBar = (ViewGroup) super.findViewById(R.id.actionbar);
 		if (actionBar == null) {
 			return;
 		}
@@ -47,8 +97,27 @@ public abstract class BaseActivity extends Activity {
 		};
 		
 		if (title != null) {
+			addActionButton(R.drawable.ic_title_home, R.string.home, homeClickListener);
 			
+			TextView titleText = new TextView(this);
+			titleText.setLayoutParams(layoutParams);
+			titleText.setText(title);
+			actionBar.addView(titleText);
 		}
+	}
+	
+	/**
+	 * Adds an button onto the actionbar.
+	 */
+	private View addActionButton(int iconResId, int textResId, View.OnClickListener clickListener) {
+		ImageButton actionButton = new ImageButton(this);
+		actionButton.setLayoutParams(new ViewGroup.LayoutParams((int) this.getResources().getDimension(R.dimen.actionbar_height), ViewGroup.LayoutParams.FILL_PARENT));
+		actionButton.setImageResource(iconResId);
+		actionButton.setScaleType(ImageView.ScaleType.CENTER);
+		actionButton.setContentDescription(this.getResources().getString(textResId));
+		actionButton.setOnClickListener(clickListener);
+		
+		return actionButton;
 	}
 	
 	/**
