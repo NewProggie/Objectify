@@ -87,7 +87,7 @@ public abstract class BaseActivity extends Activity {
 		if (actionBar == null) {
 			return;
 		}
-		LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.FILL_PARENT);
+		LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.FILL_PARENT);
 		View.OnClickListener homeClickListener = new View.OnClickListener() {
 			
 			@Override
