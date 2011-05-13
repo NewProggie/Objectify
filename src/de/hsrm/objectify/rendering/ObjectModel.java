@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 import java.util.ArrayList;
 
@@ -13,6 +14,7 @@ import de.hsrm.objectify.utils.ImageHelper;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Bitmap.Config;
 import android.graphics.Matrix;
 import android.opengl.GLUtils;
@@ -28,13 +30,14 @@ public class ObjectModel {
 	private float n_vertices[];
 	private short faces[];
 	private byte[] bb;
+	private Bitmap image;
 	
-	public ObjectModel(byte[] bb) {
+	public ObjectModel(String path) {
 		textures = new int[1];
 		vertices = new float[1];
 		n_vertices = new float[1];
 		faces = new short[1];
-		this.bb = bb;
+		image = BitmapFactory.decodeFile(path);
 		setVertexBuffer(vertices);
 		setNormalBuffer(n_vertices);
 		setFacesBuffer(faces);
@@ -107,7 +110,6 @@ public class ObjectModel {
 	}
 
 	public void loadGLTexture(GL10 gl, Context context) {
-		Bitmap image = Bitmap.createBitmap(ImageHelper.convertByteArray(bb), 600, 400, Config.ARGB_8888);
 		Bitmap texture = scaleTexture(image, 256);
 		
 		gl.glGenTextures(1, textures, 0);
@@ -118,7 +120,21 @@ public class ObjectModel {
 		gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T, GL10.GL_REPEAT);
 		
 		if (texture != null) {
-			GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, texture, 0);
+//			GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, texture, 0);
+			// Alternative
+//			ByteBuffer bytebuf = ByteBuffer.allocateDirect(texture.getHeight() * texture.getWidth() * 4);
+//			bytebuf.order(ByteOrder.nativeOrder());
+//			IntBuffer pixelbuf = bytebuf.asIntBuffer();
+//			
+//			for (int y = 0; y < texture.getHeight(); y++) {
+//				for (int x = 0; x < texture.getWidth(); x++) {
+//					pixelbuf.put(texture.getPixel(x, y));
+//				}
+//			}
+//			pixelbuf.position(0);
+//			bytebuf.position(0);
+//			
+//			gl.glTexImage2D(GL10.GL_TEXTURE_2D, 0, GL10.GL_RGBA, texture.getWidth(), texture.getHeight(), 0, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, pixelbuf);
 		}
 		
 	}

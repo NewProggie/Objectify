@@ -1,7 +1,6 @@
 package de.hsrm.objectify.camera;
 
 import java.io.BufferedOutputStream;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -13,12 +12,10 @@ import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.Bitmap.Config;
-import android.graphics.BitmapFactory;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
@@ -26,20 +23,26 @@ import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import de.hsrm.objectify.MainActivity;
 import de.hsrm.objectify.R;
 import de.hsrm.objectify.rendering.ObjectViewer;
+import de.hsrm.objectify.ui.BaseActivity;
 import de.hsrm.objectify.utils.ExternalDirectory;
 import de.hsrm.objectify.utils.ImageHelper;
 
-public class CameraActivity extends Activity {
+/**
+ * This activity opens up the camera and processes the shot photos.
+ * @author kwolf001
+ *
+ */
+public class CameraActivity extends BaseActivity {
 
 	private static final String TAG = "CameraActivity";
 	private CameraPreview cameraPreview;
 	private Button triggerPicture;
 	private LinearLayout left, right, up, down, shadow, progress;
-	private CompositePicture pic;
 	private int counter = 1;
+	private long timestamp;
+	private byte[] bb;
 	private Context context;
 	private static final int NUMBER_OF_PICTURES = 4;
 	
@@ -48,6 +51,7 @@ public class CameraActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.camera);
 		context = this;
+		disableActionBar();
 		
 		cameraPreview = (CameraPreview) findViewById(R.id.camera_surface);
 		left = (LinearLayout) findViewById(R.id.light_left);
@@ -56,7 +60,6 @@ public class CameraActivity extends Activity {
 		down = (LinearLayout) findViewById(R.id.light_down);
 		shadow = (LinearLayout) findViewById(R.id.shadow);
 		progress = (LinearLayout) findViewById(R.id.progress);
-		pic = new CompositePicture();
 		triggerPicture = (Button) findViewById(R.id.trigger_picture_button);
 		triggerPicture.setOnClickListener(new OnClickListener() {
 			
@@ -84,13 +87,21 @@ public class CameraActivity extends Activity {
 		getWindow().setAttributes(lp);
 	}
 	
+	/**
+	 * Takes several pictures in sequence. 
+	 */
 	private void takePictures() {
 		cameraPreview.startPreview();
+		timestamp = System.currentTimeMillis();
 		setLightning();
 		SystemClock.sleep(100);
 		cameraPreview.takePicture(null, null, jpegCallback());
 	}
 	
+	/**
+	 * Sets up the white spaces on the screen to light up different parts of the
+	 * object
+	 */
 	private void setLightning() {
 		switch (counter) {
 		case 1:
@@ -114,6 +125,9 @@ public class CameraActivity extends Activity {
 		
 	}
 	
+	/**
+	 * Makes the whole screen black.
+	 */
 	private void darken() {
 		left.setVisibility(View.INVISIBLE);
 		right.setVisibility(View.INVISIBLE);
@@ -128,16 +142,17 @@ public class CameraActivity extends Activity {
 			public void onPictureTaken(byte[] data, Camera camera) {
 				switch (counter) {
 				case 1:
-					pic.setLeft(data);
+					// left image
 					break;
 				case 2:
-					pic.setRight(data);
+					// right image
 					break;
 				case 3:
-					pic.setUp(data);
+					bb = new byte[data.length];
+					System.arraycopy(data, 0, bb, 0, data.length);
 					break;
 				case 4:
-					pic.setDown(data);
+					// down image
 					break;
 				}
 				if (counter < NUMBER_OF_PICTURES) {
@@ -145,7 +160,7 @@ public class CameraActivity extends Activity {
 					takePictures();
 				} else {
 					Log.d(TAG, "Photos taken. Creating Object.");
-					new Calc3DObject().execute(pic);
+					new Calc3DObject().execute(bb);
 				}
 			}
 		};
@@ -153,11 +168,12 @@ public class CameraActivity extends Activity {
 		return callback;
 	}
 	
-	private class Calc3DObject extends AsyncTask<CompositePicture, Void, Boolean> {
+	private class Calc3DObject extends AsyncTask<byte[], Void, Boolean> {
 		
 		private static final String TAG = "Calc3DObject";
 		private Bitmap image;
 		private byte[] bb;
+		private String path;
 		
 		@Override
 		protected void onPreExecute() {
@@ -166,11 +182,12 @@ public class CameraActivity extends Activity {
 		}
 		
 		@Override
-		protected Boolean doInBackground(CompositePicture... params) {
-			CompositePicture pic = params[0];
-			image = Bitmap.createBitmap(ImageHelper.convertByteArray(pic.getUp()), 600, 400, Config.ARGB_8888);
+		protected Boolean doInBackground(byte[]... params) {
+			bb = params[0];
+			Bitmap image = Bitmap.createBitmap(ImageHelper.convertByteArray(bb), 600, 400, Config.ARGB_8888);
 			try {
-				FileOutputStream fos = new FileOutputStream(ExternalDirectory.getExternalDirectory() + "/foo.png");
+				path = ExternalDirectory.getExternalDirectory() + "/foo.jpg";
+				FileOutputStream fos = new FileOutputStream(path);
 				BufferedOutputStream bos = new BufferedOutputStream(fos);
 				image.compress(CompressFormat.JPEG, 100, bos);
 				bos.flush();
@@ -188,7 +205,7 @@ public class CameraActivity extends Activity {
 		protected void onPostExecute(Boolean result) {
 			progress.setVisibility(View.GONE);
 			Intent main = new Intent(context, ObjectViewer.class);
-			main.putExtra("bb", pic.getUp());
+			main.putExtra("path", path);
 			startActivity(main);
 			((Activity) context).finish();
 		}

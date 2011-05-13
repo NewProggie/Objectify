@@ -1,5 +1,8 @@
 package de.hsrm.objectify.utils;
 
+import android.content.Context;
+import android.util.TypedValue;
+
 public class ImageHelper {
 	
 	public static int[] convertByteArray(byte[] byteArray) {
@@ -15,4 +18,8 @@ public class ImageHelper {
 		return intArray;
 	}
 
+	public static int dipToPx(int dpValue, Context c) {
+		return (int) TypedValue.applyDimension(
+				TypedValue.COMPLEX_UNIT_DIP, dpValue, c.getResources().getDisplayMetrics());
+	}
 }

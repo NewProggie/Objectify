@@ -17,13 +17,13 @@ public class MainActivity extends BaseActivity {
 	private static final String TAG = "MainActivity";
 	private Context context;
 	private Button galleryButton, howtoButton, exportButton, shareButton, cameraButton;
-	private ImageButton actionbarCamButton;
 	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dashboard);
+        setupActionBar(null, 0);
         context = this;
         
         galleryButton = (Button) findViewById(R.id.dashboard_gallery_button);
@@ -31,8 +31,6 @@ public class MainActivity extends BaseActivity {
         exportButton = (Button) findViewById(R.id.dashboard_export_button);
         shareButton = (Button) findViewById(R.id.dashboard_share_button);
         cameraButton = (Button) findViewById(R.id.dashboard_camera_button);
-//        actionbarCamButton = (ImageButton) findViewById(R.id.actionbar_cam_button);
-//        actionbarCamButton.setOnClickListener(onClickListener());
     }
     
     public void buttonClick(View target) {
@@ -56,16 +54,5 @@ public class MainActivity extends BaseActivity {
     		break;
     	}
     }
-    
-    private OnClickListener onClickListener() {
-    	OnClickListener listener = new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				Intent camera = new Intent(context, CameraActivity.class);
-				startActivity(camera);
-			}
-		};
-		return listener;
-    }
+   
 }

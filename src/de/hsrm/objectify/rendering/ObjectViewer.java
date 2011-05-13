@@ -14,8 +14,8 @@ public class ObjectViewer extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Display display = getWindowManager().getDefaultDisplay();
-		byte[] bb = getIntent().getByteArrayExtra("bb");
-		glSurfaceView = new TouchSurfaceView(this, bb, display.getWidth(), display.getHeight());
+		String path = getIntent().getStringExtra("path");
+		glSurfaceView = new TouchSurfaceView(this, path, display.getWidth(), display.getHeight());
 		setContentView(glSurfaceView);
 	}
 	

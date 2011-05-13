@@ -29,14 +29,14 @@ public class TouchSurfaceView extends GLSurfaceView {
 	private ScaleGestureDetector scaleDetector;
 	private float skalierung = 1;
 	
-	public TouchSurfaceView(Context context, byte[] bb, int width, int height) {
+	public TouchSurfaceView(Context context, String path, int width, int height) {
 		super(context);
 		this.width = width;
 		this.height = height;
 		
 		glu = new GLU();
 		arcBall.setBounds((float) width, (float) height);
-		renderer = new ObjectModelRenderer(context, bb);
+		renderer = new ObjectModelRenderer(context, path);
 		setRenderer(renderer);
 		setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 		scaleDetector = new ScaleGestureDetector(context, new SimpleScaleListener());
@@ -95,9 +95,9 @@ public class TouchSurfaceView extends GLSurfaceView {
 		private Context context;
 		public float angleX, angleY;
 		
-		public ObjectModelRenderer(Context context, byte[] bb) {
+		public ObjectModelRenderer(Context context, String path) {
 			this.context = context;
-			objectModel = new ObjectModel(bb);
+			objectModel = new ObjectModel(path);
 			float[] vertices = new float[] 
 			                             { -1.0f, -1.0f, 0.0f,
 											1.0f, -1.0f, 0.0f, 

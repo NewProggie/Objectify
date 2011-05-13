@@ -2,9 +2,12 @@ package de.hsrm.objectify.ui;
 
 import de.hsrm.objectify.MainActivity;
 import de.hsrm.objectify.R;
+import de.hsrm.objectify.utils.ImageHelper;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -27,7 +30,6 @@ public abstract class BaseActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		super.setContentView(R.layout.activity_empty);
 		content = (ViewGroup) super.findViewById(R.id.layout_container);
-		setupActionBar(getTitle(), 0);
 	}
 	
 	@Override
@@ -82,12 +84,13 @@ public abstract class BaseActivity extends Activity {
 	 * @param title title of actionbar
 	 * @param color color of title
 	 */
-	private void setupActionBar(CharSequence title, int color) {
+	protected void setupActionBar(CharSequence title, int color) {
 		ViewGroup actionBar = (ViewGroup) super.findViewById(R.id.actionbar);
 		if (actionBar == null) {
 			return;
 		}
-		LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.FILL_PARENT);
+		LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.FILL_PARENT);
+		layoutParams.weight = 1;
 		View.OnClickListener homeClickListener = new View.OnClickListener() {
 			
 			@Override
@@ -97,13 +100,43 @@ public abstract class BaseActivity extends Activity {
 		};
 		
 		if (title != null) {
-			addActionButton(R.drawable.ic_title_home, R.string.home, homeClickListener);
-			
+			// adding home button
+			actionBar.addView(addActionButton(R.drawable.ic_title_home, R.string.home, homeClickListener));
+			// adding title text
 			TextView titleText = new TextView(this);
 			titleText.setLayoutParams(layoutParams);
 			titleText.setText(title);
 			actionBar.addView(titleText);
+		} else {
+			TextView appName = new TextView(this);
+			appName.setText(getString(R.string.app_name));
+			appName.setTextColor(Color.WHITE);
+			appName.setTextSize(ImageHelper.dipToPx(16, this));
+			appName.setShadowLayer(1.0f, 1.0f, 1.0f, Color.BLACK);
+			
+			appName.setOnClickListener(homeClickListener);
+			actionBar.addView(appName);
+			
+			// dummy layout for aligning future items to the right
+			View dummy = new View(this);
+			dummy.setLayoutParams(layoutParams);
+			actionBar.addView(dummy);
 		}
+	}
+	
+	/**
+	 * Returns the {@link ViewGroup} for the actionbar. May return null.
+	 */
+	protected ViewGroup getActionBar() {
+		return (ViewGroup) super.findViewById(R.id.actionbar);
+	}
+	
+	/**
+	 * Disables the actionbar. 
+	 */
+	protected void disableActionBar() {
+		ViewGroup actionBar = (ViewGroup) super.findViewById(R.id.actionbar);
+		actionBar.setVisibility(View.GONE);
 	}
 	
 	/**
@@ -111,7 +144,8 @@ public abstract class BaseActivity extends Activity {
 	 */
 	private View addActionButton(int iconResId, int textResId, View.OnClickListener clickListener) {
 		ImageButton actionButton = new ImageButton(this);
-		actionButton.setLayoutParams(new ViewGroup.LayoutParams((int) this.getResources().getDimension(R.dimen.actionbar_height), ViewGroup.LayoutParams.FILL_PARENT));
+		actionButton.setLayoutParams(new ViewGroup.LayoutParams((int) this.getResources().getDimension(
+				R.dimen.actionbar_height), ViewGroup.LayoutParams.FILL_PARENT));
 		actionButton.setImageResource(iconResId);
 		actionButton.setScaleType(ImageView.ScaleType.CENTER);
 		actionButton.setContentDescription(this.getResources().getString(textResId));
