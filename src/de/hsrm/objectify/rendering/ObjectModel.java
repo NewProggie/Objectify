@@ -121,7 +121,7 @@ public class ObjectModel {
 		
 		if (texture != null) {
 //			GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, texture, 0);
-			// Alternative
+//			// Alternative
 //			ByteBuffer bytebuf = ByteBuffer.allocateDirect(texture.getHeight() * texture.getWidth() * 4);
 //			bytebuf.order(ByteOrder.nativeOrder());
 //			IntBuffer pixelbuf = bytebuf.asIntBuffer();

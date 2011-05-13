@@ -23,6 +23,7 @@ import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import de.hsrm.objectify.R;
 import de.hsrm.objectify.rendering.ObjectViewer;
 import de.hsrm.objectify.ui.BaseActivity;
@@ -31,8 +32,9 @@ import de.hsrm.objectify.utils.ImageHelper;
 
 /**
  * This activity opens up the camera and processes the shot photos.
+ * 
  * @author kwolf001
- *
+ * 
  */
 public class CameraActivity extends BaseActivity {
 
@@ -41,11 +43,10 @@ public class CameraActivity extends BaseActivity {
 	private Button triggerPicture;
 	private LinearLayout left, right, up, down, shadow, progress;
 	private int counter = 1;
-	private long timestamp;
-	private byte[] bb;
 	private Context context;
+	private CompositePicture compositePicture;
 	private static final int NUMBER_OF_PICTURES = 4;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -92,8 +93,8 @@ public class CameraActivity extends BaseActivity {
 	 */
 	private void takePictures() {
 		cameraPreview.startPreview();
-		timestamp = System.currentTimeMillis();
 		setLightning();
+		compositePicture = new CompositePicture();
 		SystemClock.sleep(100);
 		cameraPreview.takePicture(null, null, jpegCallback());
 	}
@@ -143,24 +144,29 @@ public class CameraActivity extends BaseActivity {
 				switch (counter) {
 				case 1:
 					// left image
+					compositePicture.setPicture1(data);
 					break;
 				case 2:
 					// right image
+					compositePicture.setPicture2(data);
 					break;
 				case 3:
-					bb = new byte[data.length];
-					System.arraycopy(data, 0, bb, 0, data.length);
+					// upper image
+					// TODO saving image for texture
+					compositePicture.setPicture3(data);
 					break;
 				case 4:
-					// down image
+					// lower image
+					compositePicture.setPicture4(data);
 					break;
 				}
 				if (counter < NUMBER_OF_PICTURES) {
 					counter++;
 					takePictures();
 				} else {
-					Log.d(TAG, "Photos taken. Creating Object.");
-					new Calc3DObject().execute(bb);
+					Log.d(TAG, "Photos taken. Calculating Object.");
+					counter = 1;
+					new CalculateModel().execute();
 				}
 			}
 		};
@@ -168,12 +174,19 @@ public class CameraActivity extends BaseActivity {
 		return callback;
 	}
 	
-	private class Calc3DObject extends AsyncTask<byte[], Void, Boolean> {
+	/**
+	 * Calculates normalmap and heightmap from given photos. The parameters
+	 * for the AsyncTask are: <ul>
+	 * <li>String: Path to an image used for texture</li>
+	 * <li>Void: We use the static {@link CompositePicture} for memory reasons</li>
+	 * <li>Boolean: Indicating whether we were successful or not</li></ul>
+	 * 
+	 * @author kwolf001
+	 * 
+	 */
+	private class CalculateModel extends AsyncTask<String, Void, Boolean> {
 		
-		private static final String TAG = "Calc3DObject";
-		private Bitmap image;
-		private byte[] bb;
-		private String path;
+		private static final String TAG = "CalculateModel";
 		
 		@Override
 		protected void onPreExecute() {
@@ -182,22 +195,21 @@ public class CameraActivity extends BaseActivity {
 		}
 		
 		@Override
-		protected Boolean doInBackground(byte[]... params) {
-			bb = params[0];
-			Bitmap image = Bitmap.createBitmap(ImageHelper.convertByteArray(bb), 600, 400, Config.ARGB_8888);
-			try {
-				path = ExternalDirectory.getExternalDirectory() + "/foo.jpg";
-				FileOutputStream fos = new FileOutputStream(path);
-				BufferedOutputStream bos = new BufferedOutputStream(fos);
-				image.compress(CompressFormat.JPEG, 100, bos);
-				bos.flush();
-				bos.close();
-			} catch (FileNotFoundException e) {
-				Log.e(TAG, e.getMessage());
-			} catch (IOException e) {
-				Log.e(TAG, e.getMessage());
-			}
-			SystemClock.sleep(1000);
+		protected Boolean doInBackground(String... params) {
+			String path = params[0];
+//			try {
+//				path = ExternalDirectory.getExternalDirectory() + "/foo.jpg";
+//				FileOutputStream fos = new FileOutputStream(path);
+//				BufferedOutputStream bos = new BufferedOutputStream(fos);
+//				image.compress(CompressFormat.JPEG, 100, bos);
+//				bos.flush();
+//				bos.close();
+//			} catch (FileNotFoundException e) {
+//				Log.e(TAG, e.getMessage());
+//			} catch (IOException e) {
+//				Log.e(TAG, e.getMessage());
+//			}
+//			SystemClock.sleep(1000);
 			return true;
 		}
 		
@@ -205,7 +217,6 @@ public class CameraActivity extends BaseActivity {
 		protected void onPostExecute(Boolean result) {
 			progress.setVisibility(View.GONE);
 			Intent main = new Intent(context, ObjectViewer.class);
-			main.putExtra("path", path);
 			startActivity(main);
 			((Activity) context).finish();
 		}

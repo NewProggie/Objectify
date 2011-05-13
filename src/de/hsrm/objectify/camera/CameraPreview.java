@@ -13,6 +13,13 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+/**
+ * Shows preview of camera and holds different lightning setups for taking
+ * several photos
+ * 
+ * @author kwolf001
+ * 
+ */
 public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
 
 	private static final String TAG = "CameraPreview";
@@ -58,7 +65,6 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 	}
 	
 	public void surfaceDestroyed(SurfaceHolder holder) {
-		Log.d(TAG, "surfaceDestroyed");
 		camera.setPreviewCallback(null);
 		camera.stopPreview();
 		camera.release();
@@ -77,6 +83,11 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 		camera.startPreview();
 	}
 	
+	/**
+	 * Convenience method for opening front facing cameras on devices < 2.3
+	 * 
+	 * @return front facing camera
+	 */
 	public static Camera openFrontFacingCamera() {
 		Camera camera = null;
 

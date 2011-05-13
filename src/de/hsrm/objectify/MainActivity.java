@@ -12,13 +12,20 @@ import de.hsrm.objectify.camera.CameraActivity;
 import de.hsrm.objectify.gallery.GalleryActivity;
 import de.hsrm.objectify.ui.BaseActivity;
 
+/**
+ * Front door {@link Activity} that displays Dashboardlayout with different
+ * features of the app. Inherits an actionbar from {@link BaseActivity} and
+ * initializes it.
+ * 
+ * @author kwolf001
+ * 
+ */
 public class MainActivity extends BaseActivity {
 	
 	private static final String TAG = "MainActivity";
 	private Context context;
 	private Button galleryButton, howtoButton, exportButton, shareButton, cameraButton;
 	
-    /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,7 +40,7 @@ public class MainActivity extends BaseActivity {
         cameraButton = (Button) findViewById(R.id.dashboard_camera_button);
     }
     
-    public void buttonClick(View target) {
+    private void buttonClick(View target) {
     	switch (target.getId()) {
     	case R.id.dashboard_gallery_button:
     		Intent gallery = new Intent(context, GalleryActivity.class);
