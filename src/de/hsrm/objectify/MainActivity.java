@@ -40,7 +40,7 @@ public class MainActivity extends BaseActivity {
         cameraButton = (Button) findViewById(R.id.dashboard_camera_button);
     }
     
-    private void buttonClick(View target) {
+    public void buttonClick(View target) {
     	switch (target.getId()) {
     	case R.id.dashboard_gallery_button:
     		Intent gallery = new Intent(context, GalleryActivity.class);

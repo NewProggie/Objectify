@@ -1,11 +1,26 @@
 package de.hsrm.objectify.utils;
 
 import android.content.Context;
+import android.graphics.Bitmap.Config;
 import android.util.TypedValue;
 
 public class ImageHelper {
 	
-	public static int[] convertByteArray(byte[] byteArray) {
+	public static int[] convertByteArray(byte[] byteArray, Config config) {
+		if (config.equals(Config.ARGB_8888)) {
+			return convertFromARGB_8888(byteArray);
+		} else if (config.equals(Config.RGB_565)) {
+			return convertFromRGB_565(byteArray);
+		} else {
+			return null;
+		}
+	}
+	
+	private static int[] convertFromRGB_565(byte[] byteArray) {
+		return null;
+	}
+	
+	private static int[] convertFromARGB_8888(byte[] byteArray) {
 		int[] intArray = new int[((int) byteArray.length/4)];
 		int idx = 0;
 		for (int i=0; i<byteArray.length;i+=4) {

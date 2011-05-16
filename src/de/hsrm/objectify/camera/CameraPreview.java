@@ -2,9 +2,8 @@ package de.hsrm.objectify.camera;
 
 import java.io.IOException;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.pm.ActivityInfo;
+import android.graphics.PixelFormat;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.ShutterCallback;
@@ -25,7 +24,8 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 	private static final String TAG = "CameraPreview";
 	private SurfaceHolder holder;
 	private static Camera camera;
-
+	public static Size previewSize;
+	
 	public CameraPreview(Context context) {
 		super(context);
 		holder = getHolder();
@@ -117,9 +117,11 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 			if (android.os.Build.PRODUCT.equals("GT-P1000")) {
 				// we're running on samsung galaxy tab
 				Camera.Parameters params = camera.getParameters();
-				// only working size for samsung galaxy tab
-				params.setPictureSize(800, 600);
-				params.setPreviewSize(800, 600);
+				// only working size and picture format for samsung galaxy tab
+				previewSize = new Size(800,600);
+				params.setPictureSize(previewSize.getWidth(), previewSize.getHeight());
+				params.setPreviewSize(previewSize.getWidth(), previewSize.getHeight());
+				params.setPictureFormat(PixelFormat.RGB_565);
 				params.set("camera-id", 2); // using front-cam (2) instead
 											// of back-cam (1)
 				camera.setParameters(params);
