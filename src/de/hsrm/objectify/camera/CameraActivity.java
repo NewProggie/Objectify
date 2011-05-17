@@ -12,7 +12,6 @@ import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.Bitmap.Config;
-import android.graphics.BitmapFactory;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.os.AsyncTask;
@@ -24,7 +23,6 @@ import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import de.hsrm.objectify.R;
 import de.hsrm.objectify.rendering.ObjectViewer;
 import de.hsrm.objectify.ui.BaseActivity;
@@ -188,6 +186,7 @@ public class CameraActivity extends BaseActivity {
 	private class CalculateModel extends AsyncTask<Void, Void, Boolean> {
 		
 		private static final String TAG = "CalculateModel";
+		private String image_suffix;
 		
 		@Override
 		protected void onPreExecute() {
@@ -198,16 +197,15 @@ public class CameraActivity extends BaseActivity {
 		@Override
 		protected Boolean doInBackground(Void... params) {
 			try {
-				String path = ExternalDirectory.getExternalDirectory() + "/bar.jpg";
+				image_suffix = String.valueOf(System.currentTimeMillis());
+				String path = ExternalDirectory.getExternalImageDirectory() + "/" +  image_suffix + ".png";
 				FileOutputStream fos = new FileOutputStream(path);
 				BufferedOutputStream bos = new BufferedOutputStream(fos);
 				byte[] bb = compositePicture.getPicture4();
 				int[] pixels = ImageHelper.convertByteArray(bb, Config.RGB_565);
-				Log.d("length bb", String.valueOf(bb.length));
-				Log.d("length pixels", String.valueOf(pixels.length));
 				Bitmap image = Bitmap.createBitmap(pixels, cameraPreview.previewSize.getWidth(),
 						cameraPreview.previewSize.getHeight(), Config.RGB_565);
-				image.compress(CompressFormat.JPEG, 100, bos);
+				image.compress(CompressFormat.PNG, 100, bos);
 				bos.flush();
 				bos.close();
 			} catch (FileNotFoundException e) {

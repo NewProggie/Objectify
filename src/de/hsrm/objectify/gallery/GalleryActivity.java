@@ -17,8 +17,10 @@ import android.widget.Gallery;
 import android.widget.ImageView;
 import de.hsrm.objectify.R;
 import de.hsrm.objectify.SettingsActivity;
+import de.hsrm.objectify.ui.BaseActivity;
+import de.hsrm.objectify.utils.ExternalDirectory;
 
-public class GalleryActivity extends Activity {
+public class GalleryActivity extends BaseActivity {
 
 	private static final String TAG = "GalleryActivity";
 	private Gallery gallery;
@@ -35,44 +37,19 @@ public class GalleryActivity extends Activity {
 		gallery = (Gallery) findViewById(R.id.picture_gallery);
 		currentImg = (ImageView) findViewById(R.id.current_img_gallery);
 		
-		SharedPreferences prefs = SettingsActivity.getSettings(this);
-		String path = prefs.getString("path", null);
-		if (path == null) {
-			if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-				File savingDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/.objectify/");
-				if (savingDir.mkdirs()) {
-					Editor editor = prefs.edit();
-					editor.putString("path", Environment.getExternalStorageDirectory().getAbsolutePath() + "/.objectify/");
-					editor.commit();
-					path = savingDir.getAbsolutePath() + "/";
-					File[] imageList = new File(path).listFiles(filterPictures());
-					if (imageList.length == 0) {
-						showMessageAndExit(getString(R.string.gallery), getString(R.string.no_objects_saved));
-					} else {
-						adapter = new GalleryAdapter(this, imageList);
-						gallery.setAdapter(adapter);
-					}
-				} else {
-					if (!savingDir.exists()) {
-						showMessageAndExit(getString(R.string.error), getString(R.string.couldnt_create_directory));
-					}	
-				}
-			} else {
-				showMessageAndExit(getString(R.string.error), getString(R.string.external_not_mounted));
-			}
-		} else {
-			File[] imageList = new File(path).listFiles(filterPictures());
-			if (imageList.length == 0) {
-				showMessageAndExit(getString(R.string.gallery), getString(R.string.no_objects_saved));
-			} else {
-				adapter = new GalleryAdapter(this, imageList);
-				gallery.setAdapter(adapter);
-			}
+		String path = ExternalDirectory.getExternalImageDirectory();
+		File[] imageList = new File(path).listFiles(filterPictures());
+		adapter = new GalleryAdapter(this, imageList);
+		gallery.setAdapter(adapter);
+		
+		if (adapter.getCount() == 0) {
+			showMessageAndExit(getString(R.string.gallery), getString(R.string.no_objects_saved));
 		}
 	}
 	
 	/**
-	 * Filter all images in given directory
+	 * Filter all images in given directory which ends with jpg or png.
+	 * 
 	 * @return new FilenameFilter
 	 */
 	private FilenameFilter filterPictures() {
