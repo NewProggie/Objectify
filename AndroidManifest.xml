@@ -24,5 +24,6 @@
 		<activity android:name=".gallery.GalleryActivity" />
 		<activity android:name=".rendering.ObjectViewer" />
 		<activity android:name=".howto.HowToActivity" />
+		<provider android:name=".database.DatabaseProvider" android:authorities="de.hsrm.objectify.databaseprovider.content" />
     </application>
 </manifest>

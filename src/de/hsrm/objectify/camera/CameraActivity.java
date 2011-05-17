@@ -186,7 +186,7 @@ public class CameraActivity extends BaseActivity {
 	private class CalculateModel extends AsyncTask<Void, Void, Boolean> {
 		
 		private static final String TAG = "CalculateModel";
-		private String image_suffix;
+		private String path;
 		
 		@Override
 		protected void onPreExecute() {
@@ -197,8 +197,8 @@ public class CameraActivity extends BaseActivity {
 		@Override
 		protected Boolean doInBackground(Void... params) {
 			try {
-				image_suffix = String.valueOf(System.currentTimeMillis());
-				String path = ExternalDirectory.getExternalImageDirectory() + "/" +  image_suffix + ".png";
+				String image_suffix = String.valueOf(System.currentTimeMillis());
+				path = ExternalDirectory.getExternalImageDirectory() + "/" +  image_suffix + ".png";
 				FileOutputStream fos = new FileOutputStream(path);
 				BufferedOutputStream bos = new BufferedOutputStream(fos);
 				byte[] bb = compositePicture.getPicture4();
@@ -220,8 +220,9 @@ public class CameraActivity extends BaseActivity {
 		@Override
 		protected void onPostExecute(Boolean result) {
 			progress.setVisibility(View.GONE);
-			Intent main = new Intent(context, ObjectViewer.class);
-			startActivity(main);
+			Intent objectViewer = new Intent(context, ObjectViewer.class);
+			objectViewer.putExtra("image_path", path);
+			startActivity(objectViewer);
 			((Activity) context).finish();
 		}
 		
