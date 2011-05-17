@@ -47,7 +47,6 @@ public class DatabaseProvider extends ContentProvider {
 		return true;
 	}
 	
-	/** {@inheritDoc} **/
 	@Override
 	public String getType(Uri uri) {
 		switch (uriMatcher.match(uri)) {
@@ -58,7 +57,6 @@ public class DatabaseProvider extends ContentProvider {
 		}
 	}
 	
-	/** {@inheritDoc} **/
 	@Override
 	public Uri insert(Uri uri, ContentValues values) {
 		long rowId;
@@ -73,7 +71,6 @@ public class DatabaseProvider extends ContentProvider {
 		return null;
 	}
 	
-	/** {@inheritDoc} **/
 	@Override
 	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
 		int code = uriMatcher.match(uri);
@@ -86,7 +83,6 @@ public class DatabaseProvider extends ContentProvider {
 		}
 	}
 	
-	/** {@inheritDoc} **/
 	@Override
 	public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
 		switch (uriMatcher.match(uri)) {

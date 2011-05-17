@@ -1,6 +1,7 @@
 package de.hsrm.objectify.camera;
 
 import java.io.BufferedOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -205,16 +206,20 @@ public class CameraActivity extends BaseActivity {
 			try {
 				String image_suffix = String.valueOf(System.currentTimeMillis());
 				path = ExternalDirectory.getExternalImageDirectory() + "/" +  image_suffix + ".png";
+				
 				FileOutputStream fos = new FileOutputStream(path);
 				BufferedOutputStream bos = new BufferedOutputStream(fos);
+				
 				byte[] bb = compositePicture.getPicture4();
 				int[] pixels = ImageHelper.convertByteArray(bb, Config.RGB_565);
-				Bitmap image = Bitmap.createBitmap(pixels, cameraPreview.previewSize.getWidth(),
-						cameraPreview.previewSize.getHeight(), Config.RGB_565);
+				
+				Size size = cameraPreview.getPreviewSize();
+				Bitmap image = Bitmap.createBitmap(pixels, size.getWidth(), size.getHeight(), Config.RGB_565);
 				image.compress(CompressFormat.PNG, 100, bos);
 				bos.flush();
 				bos.close();
-//				writeToDatabase(path, 1024, 512, 1024, "800x600");
+				long length = new File(path).length();
+				writeToDatabase(path, length, 0, 0,	size.toString());
 			} catch (FileNotFoundException e) {
 				Log.e(TAG, e.getMessage());
 			} catch (IOException e) {
@@ -224,7 +229,7 @@ public class CameraActivity extends BaseActivity {
 			return true;
 		}
 		
-		private void writeToDatabase(String imagePath, int size, int faces, int vertices, String dimensions) {
+		private void writeToDatabase(String imagePath, long size, int faces, int vertices, String dimensions) {
 			ContentValues values = new ContentValues();
 			values.put(DatabaseAdapter.GALLERY_IMAGE_PATH_KEY, imagePath);
 			values.put(DatabaseAdapter.GALLERY_SIZE_KEY, String.valueOf(size));

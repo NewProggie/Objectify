@@ -24,7 +24,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 	private static final String TAG = "CameraPreview";
 	private SurfaceHolder holder;
 	private static Camera camera;
-	public static Size previewSize;
+	private Size previewSize;
 	
 	public CameraPreview(Context context) {
 		super(context);
@@ -64,6 +64,10 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 		return camera;
 	}
 	
+	public Size getPreviewSize() {
+		return previewSize;
+	}
+	
 	public void surfaceDestroyed(SurfaceHolder holder) {
 		camera.setPreviewCallback(null);
 		camera.stopPreview();
@@ -88,7 +92,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 	 * 
 	 * @return front facing camera
 	 */
-	public static Camera openFrontFacingCamera() {
+	public Camera openFrontFacingCamera() {
 		Camera camera = null;
 
 		int currentApiVersion = android.os.Build.VERSION.SDK_INT;

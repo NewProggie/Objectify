@@ -3,7 +3,6 @@ package de.hsrm.objectify.utils;
 import java.io.File;
 
 import android.os.Environment;
-import android.util.Log;
 
 /**
  * This class takes care of state of external storage and creates folder
@@ -13,8 +12,6 @@ import android.util.Log;
  * 
  */
 public class ExternalDirectory {
-
-	private static final String TAG = "ExternalDirectory";
 	
 	/**
 	 * Takes care of state of external storage and throws a

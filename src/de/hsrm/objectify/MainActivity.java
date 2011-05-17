@@ -1,12 +1,11 @@
 package de.hsrm.objectify;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.Toast;
 import de.hsrm.objectify.camera.CameraActivity;
 import de.hsrm.objectify.gallery.GalleryActivity;
@@ -14,7 +13,7 @@ import de.hsrm.objectify.ui.BaseActivity;
 
 /**
  * Front door {@link Activity} that displays Dashboardlayout with different
- * features of the app. Inherits an actionbar from {@link BaseActivity} and
+ * features of this app. Inherits an action bar from {@link BaseActivity} and
  * initializes it.
  * 
  * @author kwolf001
@@ -22,8 +21,9 @@ import de.hsrm.objectify.ui.BaseActivity;
  */
 public class MainActivity extends BaseActivity {
 	
-	private static final String TAG = "MainActivity";
 	private Context context;
+	
+	@SuppressWarnings("unused")
 	private Button galleryButton, howtoButton, exportButton, shareButton, cameraButton;
 	
     @Override

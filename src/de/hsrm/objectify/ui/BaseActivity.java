@@ -1,25 +1,26 @@
 package de.hsrm.objectify.ui;
 
-import de.hsrm.objectify.MainActivity;
-import de.hsrm.objectify.R;
-import de.hsrm.objectify.utils.ImageHelper;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import de.hsrm.objectify.MainActivity;
+import de.hsrm.objectify.R;
+import de.hsrm.objectify.utils.ImageHelper;
 
 /**
- * A base activity that implements common functionality across app activities such as the actionbar.
- * This class mustn't be used directly, instead activities should inherit from 
+ * A base activity that implements common functionality across app activities
+ * such as the actionbar. This class mustn't be used directly, instead
+ * activities should inherit from
+ * 
  * @author kwolf001
- *
+ * 
  */
 public abstract class BaseActivity extends Activity {
 
@@ -68,7 +69,6 @@ public abstract class BaseActivity extends Activity {
 	public View findViewById(int id) {
 		return content.findViewById(id);
 	}
-	
 	
 	@Override
 	protected void onDestroy() {
@@ -130,9 +130,9 @@ public abstract class BaseActivity extends Activity {
 	protected ViewGroup getActionBar() {
 		return (ViewGroup) super.findViewById(R.id.actionbar);
 	}
-	
+
 	/**
-	 * Disables the actionbar. 
+	 * Disables the actionbar.
 	 */
 	protected void disableActionBar() {
 		ViewGroup actionBar = (ViewGroup) super.findViewById(R.id.actionbar);
@@ -155,7 +155,8 @@ public abstract class BaseActivity extends Activity {
 	}
 	
 	/**
-	 * Starting home activity, returning to {@link de.hsrm.objectify.MainActivity }.
+	 * Starting home activity, returning to
+	 * {@link MainActivity }.
 	 */
 	private void backToMain() {
 		Intent intent = new Intent(this, MainActivity.class);

@@ -5,21 +5,22 @@ import java.io.FilenameFilter;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
-import android.os.Environment;
-import android.util.Log;
 import android.widget.Gallery;
 import android.widget.ImageView;
 import de.hsrm.objectify.R;
-import de.hsrm.objectify.SettingsActivity;
 import de.hsrm.objectify.ui.BaseActivity;
 import de.hsrm.objectify.utils.ExternalDirectory;
 
+/**
+ * An activity with a gallery included, showing all images made within this app
+ * and displaying some info about the 3D objects.
+ * 
+ * @author kwolf001
+ * 
+ */
 public class GalleryActivity extends BaseActivity {
 
 	private static final String TAG = "GalleryActivity";
@@ -48,7 +49,7 @@ public class GalleryActivity extends BaseActivity {
 	}
 	
 	/**
-	 * Filter all images in given directory which ends with jpg or png.
+	 * Filter all images in given directory which ends with <code>jpg</code> or <code>png</code>.
 	 * 
 	 * @return new FilenameFilter
 	 */
@@ -64,9 +65,12 @@ public class GalleryActivity extends BaseActivity {
 	}
 	
 	/**
-	 * Shows specific Dialog to user and finishes current Activity 
-	 * @param title title of dialog
-	 * @param msg message of dialog
+	 * Shows specific Dialog to user and finishes current Activity
+	 * 
+	 * @param title
+	 *            title of dialog
+	 * @param msg
+	 *            message of dialog
 	 */
 	private void showMessageAndExit(String title, String msg) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(context);

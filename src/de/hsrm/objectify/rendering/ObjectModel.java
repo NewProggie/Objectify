@@ -1,24 +1,24 @@
 package de.hsrm.objectify.rendering;
 
-import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
-import java.util.ArrayList;
 
 import javax.microedition.khronos.opengles.GL10;
-
-import de.hsrm.objectify.utils.ImageHelper;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Bitmap.Config;
 import android.graphics.Matrix;
-import android.opengl.GLUtils;
 
+/**
+ * A representation of an actual object. Vertices, normals and texture can be
+ * added after an instance of this class has been made.
+ * 
+ * @author kwolf001
+ * 
+ */
 public class ObjectModel {
 	
 	private static final String TAG = "ObjectModel";
@@ -141,8 +141,11 @@ public class ObjectModel {
 	
 	/**
 	 * Scales image to valid texture
-	 * @param image original image
-	 * @param size preferred width and height size
+	 * 
+	 * @param image
+	 *            original image
+	 * @param size
+	 *            preferred width and height size
 	 * @return scaled image
 	 */
 	private Bitmap scaleTexture(Bitmap image, int size) {

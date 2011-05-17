@@ -12,6 +12,15 @@ import android.view.ScaleGestureDetector;
 import de.hsrm.objectify.math.Matrix4f;
 import de.hsrm.objectify.math.Quat4f;
 
+/**
+ * Creates a touchable surface view to move, scale and spin a rendered object on
+ * the display screen. This class extends {@link GLSurfaceView} and makes use of
+ * {@link ScaleGestureDetector} which was introduced with Android version 2.2
+ * (Froyo).
+ * 
+ * @author kwolf001
+ * 
+ */
 public class TouchSurfaceView extends GLSurfaceView {
 	
 	private static final String TAG = "TouchSurfaceView";
@@ -75,8 +84,9 @@ public class TouchSurfaceView extends GLSurfaceView {
 	
 	/**
 	 * Pinch-and-Zoom implementation. New since Android 2.2 Froyo
+	 * 
 	 * @author kwolf001
-	 *
+	 * 
 	 */
 	private class SimpleScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
 		
@@ -87,6 +97,13 @@ public class TouchSurfaceView extends GLSurfaceView {
 		}
 	}
 	
+	/**
+	 * This class takes care of the rendering of the model, implementing
+	 * {@link GLSurfaceView.Renderer} and adapting for our needs.
+	 * 
+	 * @author kwolf001
+	 * 
+	 */
 	private class ObjectModelRenderer implements GLSurfaceView.Renderer {
 		
 		private ObjectModel objectModel;

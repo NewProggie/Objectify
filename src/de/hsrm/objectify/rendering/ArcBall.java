@@ -2,12 +2,13 @@ package de.hsrm.objectify.rendering;
 
 import android.graphics.Point;
 import android.graphics.PointF;
-import android.util.Log;
 import de.hsrm.objectify.math.Quat4f;
 import de.hsrm.objectify.math.Vector3f;
 
 /**
- * This class implements an arcball rotation for the objectviewer
+ * This class implements an <a
+ * href="http://de.wikipedia.org/wiki/Rolling-Ball-Rotation">arcball</a>
+ * rotation for our object viewer.
  */
 public class ArcBall {
 	private static final float Epsilon = 1.0e-5f;

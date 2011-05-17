@@ -36,5 +36,10 @@ public class Size {
 	public void setHeight(int height) {
 		this.height = height;
 	}
+	
+	@Override
+	public String toString() {
+		return String.valueOf(width) + "x" + String.valueOf(height);
+	}
 
 }
