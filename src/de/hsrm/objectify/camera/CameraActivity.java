@@ -214,7 +214,7 @@ public class CameraActivity extends BaseActivity {
 				image.compress(CompressFormat.PNG, 100, bos);
 				bos.flush();
 				bos.close();
-				writeToDatabase(path, 1024, 512, 1024, "800x600");
+//				writeToDatabase(path, 1024, 512, 1024, "800x600");
 			} catch (FileNotFoundException e) {
 				Log.e(TAG, e.getMessage());
 			} catch (IOException e) {

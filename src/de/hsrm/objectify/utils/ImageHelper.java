@@ -31,25 +31,9 @@ public class ImageHelper {
 			g <<= 2;
 			b <<= 3;
 			intArray[idx] = 0xFF000000 | r << 16 | g << 8 | b;
+			idx++;
 		}
 		return intArray;
-	}
-	
-	public static void conv_rgb565_to_rgb24(int[] out, byte[] data, int width, int height) {
-		int pos = 0;
-		  int bound = (width * height) << 1;
-		  for (int i = 0; i < bound; ++i) {
-		    int lo = ((int) data[i] & 0x00FF);
-		    int hi = ((int) data[i + 1] & 0x00FF);
-		    int rgb = (hi << 8) | lo;
-		    int r = (rgb & 0xF800) >> 11;
-		    int g = (rgb & 0x07E00) >> 5;
-		    int b = rgb & 0x001F;
-		    r <<= 3;
-		    g <<= 2;
-		    b <<= 3;
-		    out[pos++] = 0xff000000 | r << 16 | g << 8 | b;
-		  }
 	}
 	
 	private static int[] convertFromARGB_8888(byte[] byteArray) {
