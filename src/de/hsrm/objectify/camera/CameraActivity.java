@@ -6,6 +6,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import android.app.Activity;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -24,6 +26,8 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import de.hsrm.objectify.R;
+import de.hsrm.objectify.database.DatabaseAdapter;
+import de.hsrm.objectify.database.DatabaseProvider;
 import de.hsrm.objectify.rendering.ObjectViewer;
 import de.hsrm.objectify.ui.BaseActivity;
 import de.hsrm.objectify.utils.ExternalDirectory;
@@ -187,11 +191,13 @@ public class CameraActivity extends BaseActivity {
 		
 		private static final String TAG = "CalculateModel";
 		private String path;
+		private ContentResolver cr;
 		
 		@Override
 		protected void onPreExecute() {
 			darken();
 			progress.setVisibility(View.VISIBLE);
+			cr = getContentResolver();
 		}
 		
 		@Override
@@ -208,13 +214,25 @@ public class CameraActivity extends BaseActivity {
 				image.compress(CompressFormat.PNG, 100, bos);
 				bos.flush();
 				bos.close();
+				writeToDatabase(path, 1024, 512, 1024, "800x600");
 			} catch (FileNotFoundException e) {
 				Log.e(TAG, e.getMessage());
 			} catch (IOException e) {
 				Log.e(TAG, e.getMessage());
 			}
-			SystemClock.sleep(1000);
+			
 			return true;
+		}
+		
+		private void writeToDatabase(String imagePath, int size, int faces, int vertices, String dimensions) {
+			ContentValues values = new ContentValues();
+			values.put(DatabaseAdapter.GALLERY_IMAGE_PATH_KEY, imagePath);
+			values.put(DatabaseAdapter.GALLERY_SIZE_KEY, String.valueOf(size));
+			values.put(DatabaseAdapter.GALLERY_FACES_KEY, String.valueOf(faces));
+			values.put(DatabaseAdapter.GALLERY_VERTICES_KEY, String.valueOf(vertices));
+			values.put(DatabaseAdapter.GALLERY_DIMENSIONS_KEY, dimensions);
+			values.put(DatabaseAdapter.GALLERY_DATE_KEY, "2011-17-05 13:39:55");
+			cr.insert(DatabaseProvider.CONTENT_URI.buildUpon().appendPath("gallery").build(), values);
 		}
 		
 		@Override
