@@ -34,10 +34,10 @@ public class GalleryActivity extends BaseActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setContentView(R.layout.gallery);
 		context = this;
 		
-		gallery = new Gallery(this);
-		setContentView(gallery);
+		gallery = (Gallery) findViewById(R.id.object_gallery);
 		
 		Uri uri = DatabaseProvider.CONTENT_URI.buildUpon().appendPath("gallery").build();
 		Cursor cursor = this.managedQuery(uri, null, null, null, null);
