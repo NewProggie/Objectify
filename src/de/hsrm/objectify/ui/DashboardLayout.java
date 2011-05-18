@@ -13,8 +13,10 @@ import android.view.ViewGroup;
  */
 public class DashboardLayout extends ViewGroup {
 
-	private int maxChildWidth = 0;
-	private int maxChildHeight = 0;
+	private static final int UNEVEN_GRID_PENALTY_MULTIPLIER = 10;
+
+    private int maxChildWidth = 0;
+    private int maxChildHeight = 0;
 	
 	public DashboardLayout(Context context) {
 		super(context, null);
@@ -52,99 +54,100 @@ public class DashboardLayout extends ViewGroup {
 		setMeasuredDimension(resolveSize(maxChildWidth, widthMeasureSpec), resolveSize(maxChildHeight, heightMeasureSpec));
 	}
 	
-	@Override
-	protected void onLayout(boolean changed, int l, int t, int r, int b) {
-		int width = r - l;
-		int height = b - t;
-		
-		final int count = getChildCount();
-		
-		int visibleCount = 0;
-		for (int i=0; i < count; i++) {
-			final View child = getChildAt(i);
-			if (child.getVisibility() == GONE) {
-				continue;
-			}
-			++visibleCount;
-		}
-		
-		if (visibleCount == 0) {
-			return;
-		}
-		
-		// Calculate what number of rows and columns will optimize for even horizontal and
-        // vertical whitespace between items. Start with a 1 x N grid, then try 2 x N, and so on.
-        int bestSpaceDifference = Integer.MAX_VALUE;
-        int spaceDifference;
+	   @Override
+	    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+	        int width = r - l;
+	        int height = b - t;
 
-        // Horizontal and vertical space between items
-        int hSpace = 0;
-        int vSpace = 0;
+	        final int count = getChildCount();
 
-        int cols = 2;
-        int rows;
+	        // Calculate the number of visible children.
+	        int visibleCount = 0;
+	        for (int i = 0; i < count; i++) {
+	            final View child = getChildAt(i);
+	            if (child.getVisibility() == GONE) {
+	                continue;
+	            }
+	            ++visibleCount;
+	        }
 
-        while (true) {
-            rows = (visibleCount - 1) / cols + 1;
+	        if (visibleCount == 0) {
+	            return;
+	        }
 
-            hSpace = ((width - maxChildWidth * cols) / (cols + 1));
-            vSpace = ((height - maxChildHeight * rows) / (rows + 1));
+	        // Calculate what number of rows and columns will optimize for even horizontal and
+	        // vertical whitespace between items. Start with a 1 x N grid, then try 2 x N, and so on.
+	        int bestSpaceDifference = Integer.MAX_VALUE;
+	        int spaceDifference;
 
-            spaceDifference = Math.abs(vSpace - hSpace);
-            if (rows * cols != visibleCount) {
-                spaceDifference *= 10;
-            }
+	        // Horizontal and vertical space between items
+	        int hSpace = 0;
+	        int vSpace = 0;
 
-            if (spaceDifference < bestSpaceDifference) {
-                // Found a better whitespace squareness/ratio
-                bestSpaceDifference = spaceDifference;
+	        int cols = 2;
+	        int rows;
 
-                // If we found a better whitespace squareness and there's only 1 row, this is
-                // the best we can do.
-                if (rows == 1) {
-                    break;
-                }
-            } else {
-                // This is a worse whitespace ratio, use the previous value of cols and exit.
-                --cols;
-                rows = (visibleCount - 1) / cols + 1;
-                hSpace = ((width - maxChildWidth * cols) / (cols + 1));
-                vSpace = ((height - maxChildHeight * rows) / (rows + 1));
-                break;
-            }
+	        while (true) {
+	            rows = (visibleCount - 1) / cols + 1;
 
-            ++cols;
-        }
+	            hSpace = ((width - maxChildWidth * cols) / (cols + 1));
+	            vSpace = ((height - maxChildHeight * rows) / (rows + 1));
 
-        // Lay out children based on calculated best-fit number of rows and cols.
+	            spaceDifference = Math.abs(vSpace - hSpace);
+	            if (rows * cols != visibleCount) {
+	                spaceDifference *= UNEVEN_GRID_PENALTY_MULTIPLIER;
+	            }
 
-        // If we chose a layout that has negative horizontal or vertical space, force it to zero.
-        hSpace = Math.max(0, hSpace);
-        vSpace = Math.max(0, vSpace);
+	            if (spaceDifference < bestSpaceDifference) {
+	                // Found a better whitespace squareness/ratio
+	                bestSpaceDifference = spaceDifference;
 
-        // Re-use width/height variables to be child width/height.
-        width = (width - hSpace * (cols + 1)) / cols;
-        height = (height - vSpace * (rows + 1)) / rows;
+	                // If we found a better whitespace squareness and there's only 1 row, this is
+	                // the best we can do.
+	                if (rows == 1) {
+	                    break;
+	                }
+	            } else {
+	                // This is a worse whitespace ratio, use the previous value of cols and exit.
+	                --cols;
+	                rows = (visibleCount - 1) / cols + 1;
+	                hSpace = ((width - maxChildWidth * cols) / (cols + 1));
+	                vSpace = ((height - maxChildHeight * rows) / (rows + 1));
+	                break;
+	            }
 
-        int left, top;
-        int col, row;
-        int visibleIndex = 0;
-        for (int i = 0; i < count; i++) {
-            final View child = getChildAt(i);
-            if (child.getVisibility() == GONE) {
-                continue;
-            }
+	            ++cols;
+	        }
 
-            row = visibleIndex / cols;
-            col = visibleIndex % cols;
+	        // Lay out children based on calculated best-fit number of rows and cols.
 
-            left = l + hSpace * (col + 1) + width * col;
-            top = t + vSpace * (row + 1) + height * row;
+	        // If we chose a layout that has negative horizontal or vertical space, force it to zero.
+	        hSpace = Math.max(0, hSpace);
+	        vSpace = Math.max(0, vSpace);
 
-            child.layout(left, top,
-                    (hSpace == 0 && col == cols - 1) ? r : (left + width),
-                    (vSpace == 0 && row == rows - 1) ? b : (top + height));
-            ++visibleIndex;
-        }
-	}
+	        // Re-use width/height variables to be child width/height.
+	        width = (width - hSpace * (cols + 1)) / cols;
+	        height = (height - vSpace * (rows + 1)) / rows;
+
+	        int left, top;
+	        int col, row;
+	        int visibleIndex = 0;
+	        for (int i = 0; i < count; i++) {
+	            final View child = getChildAt(i);
+	            if (child.getVisibility() == GONE) {
+	                continue;
+	            }
+
+	            row = visibleIndex / cols;
+	            col = visibleIndex % cols;
+
+	            left = l + hSpace * (col + 1) + width * col;
+	            top = t + vSpace * (row + 1) + height * row;
+
+	            child.layout(left, top,
+	                    (hSpace == 0 && col == cols - 1) ? r : (left + width),
+	                    (vSpace == 0 && row == rows - 1) ? b : (top + height));
+	            ++visibleIndex;
+	        }
+	    }
 }

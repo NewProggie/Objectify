@@ -25,6 +25,10 @@
 		<item name="android:textSize">@dimen/text_size_small</item>
 		<item name="android:textStyle">bold</item>
 		<item name="android:textColor">@color/dashboard_text</item>
+		<item name="android:shadowColor">@color/black</item>
+    	<item name="android:shadowDx">1</item>
+   	 	<item name="android:shadowDy">1</item>
+    	<item name="android:shadowRadius">1</item>
 		<item name="android:background">@null</item>
 	</style>
 </resources>

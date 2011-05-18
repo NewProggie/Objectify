@@ -110,16 +110,16 @@ public class ObjectModel {
 	}
 
 	public void loadGLTexture(GL10 gl, Context context) {
-		Bitmap texture = scaleTexture(image, 256);
+//		Bitmap texture = scaleTexture(image, 256);
+//		
+//		gl.glGenTextures(1, textures, 0);
+//		gl.glBindTexture(GL10.GL_TEXTURE_2D, textures[0]);
+//		gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_NEAREST);
+//		gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_LINEAR);
+//		gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_S, GL10.GL_REPEAT);
+//		gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T, GL10.GL_REPEAT);
 		
-		gl.glGenTextures(1, textures, 0);
-		gl.glBindTexture(GL10.GL_TEXTURE_2D, textures[0]);
-		gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_NEAREST);
-		gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_LINEAR);
-		gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_S, GL10.GL_REPEAT);
-		gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T, GL10.GL_REPEAT);
-		
-		if (texture != null) {
+//		if (texture != null) {
 //			GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, texture, 0);
 //			// Alternative
 //			ByteBuffer bytebuf = ByteBuffer.allocateDirect(texture.getHeight() * texture.getWidth() * 4);
@@ -135,7 +135,7 @@ public class ObjectModel {
 //			bytebuf.position(0);
 //			
 //			gl.glTexImage2D(GL10.GL_TEXTURE_2D, 0, GL10.GL_RGBA, texture.getWidth(), texture.getHeight(), 0, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, pixelbuf);
-		}
+//		}
 		
 	}
 	
