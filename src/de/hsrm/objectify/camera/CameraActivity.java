@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Calendar;
 
 import android.app.Activity;
 import android.content.ContentResolver;
@@ -236,7 +237,7 @@ public class CameraActivity extends BaseActivity {
 			values.put(DatabaseAdapter.GALLERY_FACES_KEY, String.valueOf(faces));
 			values.put(DatabaseAdapter.GALLERY_VERTICES_KEY, String.valueOf(vertices));
 			values.put(DatabaseAdapter.GALLERY_DIMENSIONS_KEY, dimensions);
-			values.put(DatabaseAdapter.GALLERY_DATE_KEY, "2011-17-05 13:39:55");
+			values.put(DatabaseAdapter.GALLERY_DATE_KEY, String.valueOf(Calendar.getInstance().getTimeInMillis()));
 			cr.insert(DatabaseProvider.CONTENT_URI.buildUpon().appendPath("gallery").build(), values);
 		}
 		

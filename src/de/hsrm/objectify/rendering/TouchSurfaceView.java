@@ -7,6 +7,7 @@ import android.content.Context;
 import android.graphics.Point;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
+import android.os.SystemClock;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import de.hsrm.objectify.math.Matrix4f;

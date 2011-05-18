@@ -1,64 +1,56 @@
 package de.hsrm.objectify.gallery;
 
-import java.io.File;
-import java.util.ArrayList;
-
 import de.hsrm.objectify.R;
-
+import de.hsrm.objectify.database.DatabaseAdapter;
 import android.content.Context;
-import android.content.res.TypedArray;
-import android.graphics.Bitmap;
+import android.database.Cursor;
 import android.graphics.BitmapFactory;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.Gallery;
+import android.widget.CursorAdapter;
 import android.widget.ImageView;
+import android.widget.TextView;
 
-public class GalleryAdapter extends BaseAdapter {
+public class GalleryAdapter extends CursorAdapter {
 	
 	private static final String TAG  = "GalleryAdapter";
 	private Context context;
-	private final float SCALE;
-	private File[] images;
-	private int galleryItemBackground;
+	private Cursor cursor;
+	private LayoutInflater inflater;
 	
-	public GalleryAdapter(Context context, File[] images) {
+	public GalleryAdapter(Context context, Cursor c) {
+		super(context, c);
 		this.context = context;
-		this.images = images;
-		SCALE = context.getResources().getDisplayMetrics().density;
-		TypedArray a = context.obtainStyledAttributes(R.styleable.galleryStyle);
-		galleryItemBackground = a.getResourceId(R.styleable.galleryStyle_android_galleryItemBackground, 0);
-		a.recycle();
+		this.cursor = c;
+		inflater = LayoutInflater.from(context);
 	}
 
 	@Override
-	public int getCount() {
-		return images.length;
+	public void bindView(View view, Context context, Cursor cursor) {
+		ImageView image = (ImageView) view.findViewById(R.id.gallery_image);
+		String imagePath = cursor.getString(DatabaseAdapter.GALLERY_IMAGE_PATH_COLUMN);
+		image.setImageBitmap(BitmapFactory.decodeFile(imagePath));
+		
+		TextView tvSize = (TextView) view.findViewById(R.id.gallery_size_textview);
+		tvSize.setText(cursor.getString(DatabaseAdapter.GALLERY_SIZE_COLUMN));
+		
+		TextView tvFaces = (TextView) view.findViewById(R.id.gallery_faces_textview);
+		tvFaces.setText(cursor.getString(DatabaseAdapter.GALLERY_FACES_COLUMN));
+		
+		TextView tvVertices = (TextView) view.findViewById(R.id.gallery_vertices_textview);
+		tvVertices.setText(cursor.getString(DatabaseAdapter.GALLERY_VERTICES_COLUMN));
+		
+		TextView tvDimension = (TextView) view.findViewById(R.id.gallery_dimension_textview);
+		tvDimension.setText(cursor.getString(DatabaseAdapter.GALLERY_DIMENSIONS_COLUMN));
+		
+		TextView tvDate = (TextView) view.findViewById(R.id.gallery_date_textview);
+		tvDate.setText(cursor.getString(DatabaseAdapter.GALLERY_DATE_COLUMN));
 	}
-
 	@Override
-	public Object getItem(int position) {
-		return images[position];
-	}
-
-	@Override
-	public long getItemId(int position) {
-		return position;
-	}
-
-	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
-		File file = images[position];
-		Bitmap bmp = BitmapFactory.decodeFile(file.getAbsolutePath());
-		ImageView img = new ImageView(context);
-		int width = (int) (250 * SCALE + 0.5f);
-		int height = (int) (200 * SCALE + 0.5f);
-		img.setLayoutParams(new Gallery.LayoutParams(width, height));
-		img.setScaleType(ImageView.ScaleType.FIT_XY);
-		img.setBackgroundResource(galleryItemBackground);
-		img.setImageBitmap(bmp);
-		return img;
+	public View newView(Context context, Cursor cursor, ViewGroup parent) {
+		final View view = inflater.inflate(R.layout.gallery_item, null);
+		return view;
 	}
 
 }

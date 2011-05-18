@@ -7,10 +7,13 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.widget.Gallery;
-import android.widget.ImageView;
 import de.hsrm.objectify.R;
+import de.hsrm.objectify.database.DatabaseAdapter;
+import de.hsrm.objectify.database.DatabaseProvider;
 import de.hsrm.objectify.ui.BaseActivity;
 import de.hsrm.objectify.utils.ExternalDirectory;
 
@@ -26,42 +29,24 @@ public class GalleryActivity extends BaseActivity {
 	private static final String TAG = "GalleryActivity";
 	private Gallery gallery;
 	private GalleryAdapter adapter;
-	private ImageView currentImg;
 	private Context context;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.gallery);
 		context = this;
 		
-		gallery = (Gallery) findViewById(R.id.picture_gallery);
-		currentImg = (ImageView) findViewById(R.id.current_img_gallery);
+		gallery = new Gallery(this);
+		setContentView(gallery);
 		
-		String path = ExternalDirectory.getExternalImageDirectory();
-		File[] imageList = new File(path).listFiles(filterPictures());
-		adapter = new GalleryAdapter(this, imageList);
+		Uri uri = DatabaseProvider.CONTENT_URI.buildUpon().appendPath("gallery").build();
+		Cursor cursor = this.managedQuery(uri, null, null, null, null);
+		adapter = new GalleryAdapter(this, cursor);
 		gallery.setAdapter(adapter);
 		
 		if (adapter.getCount() == 0) {
 			showMessageAndExit(getString(R.string.gallery), getString(R.string.no_objects_saved));
 		}
-	}
-	
-	/**
-	 * Filter all images in given directory which ends with <code>jpg</code> or <code>png</code>.
-	 * 
-	 * @return new FilenameFilter
-	 */
-	private FilenameFilter filterPictures() {
-		FilenameFilter filter = new FilenameFilter() {
-			
-			@Override
-			public boolean accept(File dir, String filename) {
-				return (filename.endsWith(".jpg") || filename.endsWith(".png"));
-			}
-		};
-		return filter;
 	}
 	
 	/**

@@ -15,6 +15,13 @@
     <string name="error">Fehler</string>
     <string name="please_wait">Bitte warten...</string>
     
+    <!-- Gallery -->
+    <string name="size">Größe:</string>
+    <string name="faces">Faces:</string>
+    <string name="vertices">Vertices:</string>
+    <string name="dimension">Maße:</string>
+    <string name="date">Datum:</string>
+    
     <string name="const_sd_path">/.objectify/</string>
     <string name="const_sd_img_path">/.objectify/img/</string>
 </resources>
