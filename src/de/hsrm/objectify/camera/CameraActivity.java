@@ -16,6 +16,7 @@ import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.Bitmap.Config;
+import android.graphics.BitmapFactory;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.os.AsyncTask;
@@ -212,10 +213,13 @@ public class CameraActivity extends BaseActivity {
 				BufferedOutputStream bos = new BufferedOutputStream(fos);
 				
 				byte[] bb = compositePicture.getPicture4();
-				int[] pixels = ImageHelper.convertByteArray(bb, Config.RGB_565);
+				int[] pixels = ImageHelper.convertByteArray(bb, Config.RGB_565, cameraPreview.getPreviewSize(), cameraPreview.getPictureSize(), cameraPreview.getImageFormat());
 				
 				Size size = cameraPreview.getPreviewSize();
-				Bitmap image = Bitmap.createBitmap(pixels, size.getWidth(), size.getHeight(), Config.RGB_565);
+				Log.d("pixels", String.valueOf(pixels.length));
+				Bitmap image;
+				image = BitmapFactory.decodeByteArray(bb, 0, bb.length);
+//				image = Bitmap.createBitmap(pixels, size.getWidth(), size.getHeight(), Config.RGB_565);
 				image.compress(CompressFormat.PNG, 100, bos);
 				bos.flush();
 				bos.close();

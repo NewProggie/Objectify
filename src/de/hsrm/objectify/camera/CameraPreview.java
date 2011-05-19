@@ -3,6 +3,7 @@ package de.hsrm.objectify.camera;
 import java.io.IOException;
 
 import android.content.Context;
+import android.graphics.ImageFormat;
 import android.graphics.PixelFormat;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
@@ -25,6 +26,8 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 	private SurfaceHolder holder;
 	private static Camera camera;
 	private Size previewSize;
+	private Size pictureSize;
+	private int imageFormat;
 	
 	public CameraPreview(Context context) {
 		super(context);
@@ -66,6 +69,14 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 	
 	public Size getPreviewSize() {
 		return previewSize;
+	}
+	
+	public Size getPictureSize() {
+		return pictureSize;
+	}
+	
+	public int getImageFormat() {
+		return imageFormat;
 	}
 	
 	public void surfaceDestroyed(SurfaceHolder holder) {
@@ -114,13 +125,14 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 			// TODO remove hack for devices without front-facing cam
 			if (camera == null) {
 				camera = Camera.open();
+				previewSize = new Size(camera.getParameters().getPreviewSize().width, camera.getParameters().getPreviewSize().height);
 			}
 		} else {
 			// froyo (2.2)
-			camera = Camera.open();
+			camera = Camera.open();		
+			Camera.Parameters params = camera.getParameters();
 			if (android.os.Build.PRODUCT.equals("GT-P1000")) {
 				// we're running on samsung galaxy tab
-				Camera.Parameters params = camera.getParameters();
 				// only working size and picture format for samsung galaxy tab
 				previewSize = new Size(800,600);
 				params.setPictureSize(previewSize.getWidth(), previewSize.getHeight());
@@ -128,8 +140,20 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 				params.setPictureFormat(PixelFormat.RGB_565);
 				params.set("camera-id", 2); // using front-cam (2) instead
 											// of back-cam (1)
-				camera.setParameters(params);
-			} 
+			} else {
+				Camera.Size s = params.getSupportedPreviewSizes().get(0);
+				Camera.Size p = params.getSupportedPictureSizes().get(params.getSupportedPictureSizes().size()-1);
+				for (Integer i : params.getSupportedPictureFormats()) {
+					Log.d("format", i.toString());
+				}
+				imageFormat = params.getSupportedPictureFormats().get(0);
+				previewSize = new Size(s.width, s.height);
+				pictureSize = new Size(p.width, p.height);
+				params.setPictureSize(pictureSize.getWidth(), pictureSize.getHeight());
+				params.setPreviewSize(previewSize.getWidth(), previewSize.getHeight());
+				params.setPictureFormat(imageFormat);
+			}
+			camera.setParameters(params);
 		}
 		return camera;
 	}

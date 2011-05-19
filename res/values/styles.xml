@@ -9,6 +9,13 @@
    	 	<item name="android:shadowDy">1</item>
     	<item name="android:shadowRadius">1</item>
 	</style>
+	<style name="ShadowedBlackText">
+		<item name="android:textColor">@color/black</item>
+		<item name="android:shadowColor">@color/white</item>
+		<item name="android:shadowDx">1</item>
+   	 	<item name="android:shadowDy">1</item>
+    	<item name="android:shadowRadius">1</item>
+	</style>
 	<style name="ActionBar">
 		<item name="android:layout_width">fill_parent</item>
 		<item name="android:layout_height">@dimen/actionbar_height</item>

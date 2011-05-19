@@ -1,7 +1,7 @@
 package de.hsrm.objectify.gallery;
 
-import java.io.File;
-import java.io.FilenameFilter;
+import java.util.Calendar;
+import java.util.Date;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -10,12 +10,15 @@ import android.content.DialogInterface;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Gallery;
+import android.widget.TextView;
 import de.hsrm.objectify.R;
 import de.hsrm.objectify.database.DatabaseAdapter;
 import de.hsrm.objectify.database.DatabaseProvider;
 import de.hsrm.objectify.ui.BaseActivity;
-import de.hsrm.objectify.utils.ExternalDirectory;
 
 /**
  * An activity with a gallery included, showing all images made within this app
@@ -30,6 +33,8 @@ public class GalleryActivity extends BaseActivity {
 	private Gallery gallery;
 	private GalleryAdapter adapter;
 	private Context context;
+	private TextView size, faces, vertices, dimension, date;
+	private Uri galleryUri;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -38,15 +43,46 @@ public class GalleryActivity extends BaseActivity {
 		context = this;
 		
 		gallery = (Gallery) findViewById(R.id.object_gallery);
+		size = (TextView) findViewById(R.id.gallery_size_textview);
+		faces = (TextView) findViewById(R.id.gallery_faces_textview);
+		vertices = (TextView) findViewById(R.id.gallery_vertices_textview);
+		dimension = (TextView) findViewById(R.id.gallery_dimension_textview);
+		date = (TextView) findViewById(R.id.gallery_date_textview);
 		
-		Uri uri = DatabaseProvider.CONTENT_URI.buildUpon().appendPath("gallery").build();
-		Cursor cursor = this.managedQuery(uri, null, null, null, null);
+		galleryUri = DatabaseProvider.CONTENT_URI.buildUpon().appendPath("gallery").build();
+		Cursor cursor = this.managedQuery(galleryUri, null, null, null, null);
 		adapter = new GalleryAdapter(this, cursor);
 		gallery.setAdapter(adapter);
+		gallery.setOnItemSelectedListener(galleryItemSelectedListener());
 		
 		if (adapter.getCount() == 0) {
 			showMessageAndExit(getString(R.string.gallery), getString(R.string.no_objects_saved));
 		}
+	}
+	
+	private OnItemSelectedListener galleryItemSelectedListener() {
+		OnItemSelectedListener listener = new OnItemSelectedListener() {
+
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
+				String[] args = { String.valueOf(id) };
+				Cursor c = getContentResolver().query(galleryUri, null, DatabaseAdapter.GALLERY_ID_KEY+"=?", args, null);
+				c.moveToFirst();
+				float s = Integer.valueOf(c.getString(DatabaseAdapter.GALLERY_SIZE_COLUMN))/1024;
+				size.setText(String.valueOf(s) + " KB");
+				faces.setText(c.getString(DatabaseAdapter.GALLERY_FACES_COLUMN));
+				vertices.setText(c.getString(DatabaseAdapter.GALLERY_VERTICES_COLUMN));
+				dimension.setText(c.getString(DatabaseAdapter.GALLERY_DIMENSIONS_COLUMN));
+				Date d = new Date(Long.parseLong(c.getString(DatabaseAdapter.GALLERY_DATE_COLUMN)));
+				date.setText(d.toLocaleString());
+				c.close();
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {}
+		};
+		
+		return listener;
 	}
 	
 	/**
