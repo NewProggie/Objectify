@@ -14,6 +14,7 @@
     <string name="external_not_mounted">Das externe Speicherverzeichnis wurde nicht gefunden</string>
     <string name="error">Fehler</string>
     <string name="please_wait">Bitte warten...</string>
+    <string name="search">Suche</string>
     
     <!-- Gallery -->
     <string name="size">Größe:</string>

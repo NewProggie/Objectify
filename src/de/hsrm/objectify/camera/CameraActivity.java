@@ -33,6 +33,7 @@ import de.hsrm.objectify.database.DatabaseAdapter;
 import de.hsrm.objectify.database.DatabaseProvider;
 import de.hsrm.objectify.rendering.ObjectViewer;
 import de.hsrm.objectify.ui.BaseActivity;
+import de.hsrm.objectify.utils.BitmapUtils;
 import de.hsrm.objectify.utils.ExternalDirectory;
 import de.hsrm.objectify.utils.ImageHelper;
 
@@ -213,18 +214,13 @@ public class CameraActivity extends BaseActivity {
 				BufferedOutputStream bos = new BufferedOutputStream(fos);
 				
 				byte[] bb = compositePicture.getPicture4();
-				int[] pixels = ImageHelper.convertByteArray(bb, Config.RGB_565, cameraPreview.getPreviewSize(), cameraPreview.getPictureSize(), cameraPreview.getImageFormat());
 				
-				Size size = cameraPreview.getPreviewSize();
-				Log.d("pixels", String.valueOf(pixels.length));
-				Bitmap image;
-				image = BitmapFactory.decodeByteArray(bb, 0, bb.length);
-//				image = Bitmap.createBitmap(pixels, size.getWidth(), size.getHeight(), Config.RGB_565);
+				Bitmap image = BitmapUtils.createBitmap(bb, cameraPreview.getPictureSize(), cameraPreview.getImageFormat());
 				image.compress(CompressFormat.PNG, 100, bos);
 				bos.flush();
 				bos.close();
 				long length = new File(path).length();
-				writeToDatabase(path, length, 0, 0,	size.toString());
+				writeToDatabase(path, length, 0, 0,	cameraPreview.getPictureSize().toString());
 			} catch (FileNotFoundException e) {
 				Log.e(TAG, e.getMessage());
 			} catch (IOException e) {

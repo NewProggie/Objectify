@@ -1,6 +1,5 @@
 package de.hsrm.objectify.gallery;
 
-import java.util.Calendar;
 import java.util.Date;
 
 import android.app.Activity;
@@ -11,10 +10,12 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Gallery;
 import android.widget.TextView;
+import android.widget.Toast;
 import de.hsrm.objectify.R;
 import de.hsrm.objectify.database.DatabaseAdapter;
 import de.hsrm.objectify.database.DatabaseProvider;
@@ -40,6 +41,21 @@ public class GalleryActivity extends BaseActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.gallery);
+		setupActionBar(getString(R.string.gallery), 0);
+		addNewActionButton(R.drawable.ic_title_share, R.string.share, new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Toast.makeText(v.getContext(), "share", Toast.LENGTH_SHORT).show();
+			}
+		});
+		addNewActionButton(R.drawable.ic_title_search, R.string.search, new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Toast.makeText(v.getContext(), "suche", Toast.LENGTH_SHORT).show();
+			}
+		});
 		context = this;
 		
 		gallery = (Gallery) findViewById(R.id.object_gallery);

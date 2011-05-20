@@ -135,9 +135,11 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 				// we're running on samsung galaxy tab
 				// only working size and picture format for samsung galaxy tab
 				previewSize = new Size(800,600);
-				params.setPictureSize(previewSize.getWidth(), previewSize.getHeight());
+				pictureSize = new Size(800, 600);
+				imageFormat = params.getSupportedPictureFormats().get(0);
+				params.setPictureSize(pictureSize.getWidth(), pictureSize.getHeight());
 				params.setPreviewSize(previewSize.getWidth(), previewSize.getHeight());
-				params.setPictureFormat(PixelFormat.RGB_565);
+				params.setPictureFormat(imageFormat);
 				params.set("camera-id", 2); // using front-cam (2) instead
 											// of back-cam (1)
 			} else {
