@@ -1,4 +1,4 @@
-package de.hsrm.objectify.camera;
+package de.hsrm.objectify.utils;
 
 /**
  * Simple class for maintaining preview sizes

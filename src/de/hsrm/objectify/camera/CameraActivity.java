@@ -15,19 +15,20 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
-import android.graphics.Bitmap.Config;
-import android.graphics.BitmapFactory;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 import de.hsrm.objectify.R;
 import de.hsrm.objectify.database.DatabaseAdapter;
 import de.hsrm.objectify.database.DatabaseProvider;
@@ -35,7 +36,6 @@ import de.hsrm.objectify.rendering.ObjectViewer;
 import de.hsrm.objectify.ui.BaseActivity;
 import de.hsrm.objectify.utils.BitmapUtils;
 import de.hsrm.objectify.utils.ExternalDirectory;
-import de.hsrm.objectify.utils.ImageHelper;
 
 /**
  * This activity opens up the camera and processes the shot photos.
@@ -46,11 +46,13 @@ import de.hsrm.objectify.utils.ImageHelper;
 public class CameraActivity extends BaseActivity {
 
 	private static final String TAG = "CameraActivity";
-	private CameraPreview cameraPreview;
+	private SurfaceView cameraPreview;
 	private Button triggerPicture;
 	private LinearLayout left, right, up, down, shadow, progress;
 	private int counter = 1;
 	private Context context;
+	private static Camera camera;
+	private CameraFinder cameraFinder;
 	private CompositePicture compositePicture;
 	private static final int NUMBER_OF_PICTURES = 4;
 
@@ -61,7 +63,8 @@ public class CameraActivity extends BaseActivity {
 		context = this;
 		disableActionBar();
 		
-		cameraPreview = (CameraPreview) findViewById(R.id.camera_surface);
+		cameraPreview = (SurfaceView) findViewById(R.id.camera_surface);
+		cameraPreview = new CameraPreview(context);
 		left = (LinearLayout) findViewById(R.id.light_left);
 		right = (LinearLayout) findViewById(R.id.light_right);
 		up = (LinearLayout) findViewById(R.id.light_up);
@@ -87,7 +90,7 @@ public class CameraActivity extends BaseActivity {
 	 * use the preferred screen brightness.
 	 * 
 	 * @param intensity
-	 *            value between 0 and 1
+	 *            value between 0 and 1, where 0 is darkness and 1 is brightness
 	 */
 	private void setScreenBrightness(float intensity) {
 		WindowManager.LayoutParams lp = getWindow().getAttributes();
@@ -99,11 +102,12 @@ public class CameraActivity extends BaseActivity {
 	 * Takes several pictures in sequence. 
 	 */
 	private void takePictures() {
-		cameraPreview.startPreview();
+		camera.startPreview();
 		setLightning();
 		compositePicture = new CompositePicture();
+		// a bit of delay, so the display has a chance to illuminate properly
 		SystemClock.sleep(100);
-		cameraPreview.takePicture(null, null, jpegCallback());
+		camera.takePicture(null, null, jpegCallback());
 	}
 	
 	/**
@@ -143,12 +147,18 @@ public class CameraActivity extends BaseActivity {
 		down.setVisibility(View.INVISIBLE);
 	}
 	
+	private void showToastAndFinish(String message) {
+		Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+		finish();
+	}
+	
 	private PictureCallback jpegCallback() {
 		PictureCallback callback = new PictureCallback() {
 			
 			@Override
 			public void onPictureTaken(byte[] data, Camera camera) {
 				switch (counter) {
+				// TODO refactoring, damit nur noch NUMBER_OF_PICTURES verwendet werden kann
 				case 1:
 					// left image
 					compositePicture.setPicture1(data);
@@ -179,6 +189,48 @@ public class CameraActivity extends BaseActivity {
 		};
 
 		return callback;
+	}
+	
+	private class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
+
+		private static final String TAG = "CameraPreview";
+		private SurfaceHolder holder;
+		
+		public CameraPreview(Context context) {
+			super(context);
+			holder = getHolder();
+			holder.addCallback(this);
+			holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+		}
+
+		@Override
+		public void surfaceCreated(SurfaceHolder holder) {
+			cameraFinder = CameraFinder.INSTANCE;
+			camera = cameraFinder.open();
+			if (camera == null)
+				showToastAndFinish(getString(R.string.no_ffc_was_found));
+			else {
+				try {
+					camera.setPreviewDisplay(holder);
+				} catch (IOException e) {
+					camera.release();
+					camera = null;
+				}
+			}
+		}
+		
+		@Override
+		public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+			camera.startPreview();
+		}
+
+		@Override
+		public void surfaceDestroyed(SurfaceHolder holder) {
+			camera.setPreviewCallback(null);
+			camera.stopPreview();
+			camera.release();
+			camera = null;
+		}
 	}
 	
 	/**
@@ -215,12 +267,12 @@ public class CameraActivity extends BaseActivity {
 				
 				byte[] bb = compositePicture.getPicture4();
 				
-				Bitmap image = BitmapUtils.createBitmap(bb, cameraPreview.getPictureSize(), cameraPreview.getImageFormat());
+				Bitmap image = BitmapUtils.createBitmap(bb, cameraFinder.pictureSize, cameraFinder.imageFormat);
 				image.compress(CompressFormat.PNG, 100, bos);
 				bos.flush();
 				bos.close();
 				long length = new File(path).length();
-				writeToDatabase(path, length, 0, 0,	cameraPreview.getPictureSize().toString());
+				writeToDatabase(path, length, 0, 0,	cameraFinder.pictureSize.toString());
 			} catch (FileNotFoundException e) {
 				Log.e(TAG, e.getMessage());
 			} catch (IOException e) {
