@@ -31,7 +31,7 @@ public class FrontCameraFinder extends CameraFinder {
 				params.setPictureFormat(imageFormat);
 				camera.setParameters(params);
 				// TODO setting Camera.Parameters properly, also for nexus s problem
-				return (Camera.open(i));
+				return camera;
 			}
 		}
 		return null;

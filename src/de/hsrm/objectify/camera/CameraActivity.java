@@ -21,10 +21,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -46,25 +45,33 @@ import de.hsrm.objectify.utils.ExternalDirectory;
 public class CameraActivity extends BaseActivity {
 
 	private static final String TAG = "CameraActivity";
-	private SurfaceView cameraPreview;
+	private CameraPreview cameraPreview;
 	private Button triggerPicture;
 	private LinearLayout left, right, up, down, shadow, progress;
-	private int counter = 1;
+	/**
+	 * used for saving shot photos onto the sd using the same suffix for later identifying.
+	 */
+	private String image_suffix;
 	private Context context;
-	private static Camera camera;
+	public static Camera camera;
 	private CameraFinder cameraFinder;
-	private CompositePicture compositePicture;
+	private int counter = 1;
 	private static final int NUMBER_OF_PICTURES = 4;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+//		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+		
 		setContentView(R.layout.camera);
 		context = this;
 		disableActionBar();
 		
-		cameraPreview = (SurfaceView) findViewById(R.id.camera_surface);
-		cameraPreview = new CameraPreview(context);
+		cameraPreview = (CameraPreview) findViewById(R.id.camera_surface);
+		cameraFinder = CameraFinder.INSTANCE;
 		left = (LinearLayout) findViewById(R.id.light_left);
 		right = (LinearLayout) findViewById(R.id.light_right);
 		up = (LinearLayout) findViewById(R.id.light_up);
@@ -77,12 +84,16 @@ public class CameraActivity extends BaseActivity {
 			@Override
 			public void onClick(View v) {
 				shadow.setVisibility(View.VISIBLE);
+				image_suffix = String.valueOf(System.currentTimeMillis());
 				takePictures();
 			}
 		});
 		
 		setScreenBrightness(1);
-		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+		
+		camera = cameraFinder.open();
+		if (camera == null)
+			showToastAndFinish(getString(R.string.no_ffc_was_found));
 	}
 
 	/**
@@ -104,7 +115,6 @@ public class CameraActivity extends BaseActivity {
 	private void takePictures() {
 		camera.startPreview();
 		setLightning();
-		compositePicture = new CompositePicture();
 		// a bit of delay, so the display has a chance to illuminate properly
 		SystemClock.sleep(100);
 		camera.takePicture(null, null, jpegCallback());
@@ -115,24 +125,21 @@ public class CameraActivity extends BaseActivity {
 	 * object
 	 */
 	private void setLightning() {
-		switch (counter) {
-		case 1:
-			left.setVisibility(View.VISIBLE);
-			break;
-		case 2:
+		if (left.getVisibility() == View.VISIBLE) {
 			left.setVisibility(View.INVISIBLE);
 			right.setVisibility(View.VISIBLE);
-			break;
-		case 3:
+		} else if (right.getVisibility() == View.VISIBLE) {
 			right.setVisibility(View.INVISIBLE);
 			up.setVisibility(View.VISIBLE);
-			break;
-		case 4:
+		} else if (up.getVisibility() == View.VISIBLE) {
 			up.setVisibility(View.INVISIBLE);
 			down.setVisibility(View.VISIBLE);
-			break;
-		default:
+		} else if (down.getVisibility() == View.VISIBLE) {
+			down.setVisibility(View.INVISIBLE);
+			left.setVisibility(View.VISIBLE);
+		} else {
 			darken();
+			left.setVisibility(View.VISIBLE);
 		}
 		
 	}
@@ -157,33 +164,26 @@ public class CameraActivity extends BaseActivity {
 			
 			@Override
 			public void onPictureTaken(byte[] data, Camera camera) {
-				switch (counter) {
-				// TODO refactoring, damit nur noch NUMBER_OF_PICTURES verwendet werden kann
-				case 1:
-					// left image
-					compositePicture.setPicture1(data);
-					break;
-				case 2:
-					// right image
-					compositePicture.setPicture2(data);
-					break;
-				case 3:
-					// upper image
-					// TODO saving image for texture
-					compositePicture.setPicture3(data);
-					break;
-				case 4:
-					// lower image
-					compositePicture.setPicture4(data);
-					break;
-				}
-				if (counter < NUMBER_OF_PICTURES) {
-					counter++;
-					takePictures();
-				} else {
-					Log.d(TAG, "Photos taken. Calculating Object.");
-					counter = 1;
+				if (counter >= NUMBER_OF_PICTURES) {
+					Log.d(TAG, "Photos taken, calculating object");
 					new CalculateModel().execute();
+				} else {
+					try {
+						String path = ExternalDirectory.getExternalImageDirectory() + "/" + image_suffix + ".png";
+						
+						FileOutputStream fos = new FileOutputStream(path);
+						BufferedOutputStream bos = new BufferedOutputStream(fos);
+						
+						Bitmap image = BitmapUtils.createBitmap(data, cameraFinder.pictureSize, cameraFinder.imageFormat);
+						image.compress(CompressFormat.PNG, 100, bos);
+						bos.flush();
+						bos.close();
+						long length = new File(path).length();
+						writeToDatabase(path, length, 0, 0, cameraFinder.pictureSize.toString());
+					} catch (IOException e) {
+						Log.e(TAG, e.getMessage());
+					}
+					
 				}
 			}
 		};
@@ -191,46 +191,15 @@ public class CameraActivity extends BaseActivity {
 		return callback;
 	}
 	
-	private class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
-
-		private static final String TAG = "CameraPreview";
-		private SurfaceHolder holder;
-		
-		public CameraPreview(Context context) {
-			super(context);
-			holder = getHolder();
-			holder.addCallback(this);
-			holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-		}
-
-		@Override
-		public void surfaceCreated(SurfaceHolder holder) {
-			cameraFinder = CameraFinder.INSTANCE;
-			camera = cameraFinder.open();
-			if (camera == null)
-				showToastAndFinish(getString(R.string.no_ffc_was_found));
-			else {
-				try {
-					camera.setPreviewDisplay(holder);
-				} catch (IOException e) {
-					camera.release();
-					camera = null;
-				}
-			}
-		}
-		
-		@Override
-		public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-			camera.startPreview();
-		}
-
-		@Override
-		public void surfaceDestroyed(SurfaceHolder holder) {
-			camera.setPreviewCallback(null);
-			camera.stopPreview();
-			camera.release();
-			camera = null;
-		}
+	private void writeToDatabase(String imagePath, long size, int faces, int vertices, String dimensions) {
+		ContentValues values = new ContentValues();
+		values.put(DatabaseAdapter.GALLERY_IMAGE_PATH_KEY, imagePath);
+		values.put(DatabaseAdapter.GALLERY_SIZE_KEY, String.valueOf(size));
+		values.put(DatabaseAdapter.GALLERY_FACES_KEY, String.valueOf(faces));
+		values.put(DatabaseAdapter.GALLERY_VERTICES_KEY, String.valueOf(vertices));
+		values.put(DatabaseAdapter.GALLERY_DIMENSIONS_KEY, dimensions);
+		values.put(DatabaseAdapter.GALLERY_DATE_KEY, String.valueOf(Calendar.getInstance().getTimeInMillis()));
+		getContentResolver().insert(DatabaseProvider.CONTENT_URI.buildUpon().appendPath("gallery").build(), values);
 	}
 	
 	/**
@@ -258,40 +227,11 @@ public class CameraActivity extends BaseActivity {
 		
 		@Override
 		protected Boolean doInBackground(Void... params) {
-			try {
-				String image_suffix = String.valueOf(System.currentTimeMillis());
-				path = ExternalDirectory.getExternalImageDirectory() + "/" +  image_suffix + ".png";
-				
-				FileOutputStream fos = new FileOutputStream(path);
-				BufferedOutputStream bos = new BufferedOutputStream(fos);
-				
-				byte[] bb = compositePicture.getPicture4();
-				
-				Bitmap image = BitmapUtils.createBitmap(bb, cameraFinder.pictureSize, cameraFinder.imageFormat);
-				image.compress(CompressFormat.PNG, 100, bos);
-				bos.flush();
-				bos.close();
-				long length = new File(path).length();
-				writeToDatabase(path, length, 0, 0,	cameraFinder.pictureSize.toString());
-			} catch (FileNotFoundException e) {
-				Log.e(TAG, e.getMessage());
-			} catch (IOException e) {
-				Log.e(TAG, e.getMessage());
-			}
 			
 			return true;
 		}
 		
-		private void writeToDatabase(String imagePath, long size, int faces, int vertices, String dimensions) {
-			ContentValues values = new ContentValues();
-			values.put(DatabaseAdapter.GALLERY_IMAGE_PATH_KEY, imagePath);
-			values.put(DatabaseAdapter.GALLERY_SIZE_KEY, String.valueOf(size));
-			values.put(DatabaseAdapter.GALLERY_FACES_KEY, String.valueOf(faces));
-			values.put(DatabaseAdapter.GALLERY_VERTICES_KEY, String.valueOf(vertices));
-			values.put(DatabaseAdapter.GALLERY_DIMENSIONS_KEY, dimensions);
-			values.put(DatabaseAdapter.GALLERY_DATE_KEY, String.valueOf(Calendar.getInstance().getTimeInMillis()));
-			cr.insert(DatabaseProvider.CONTENT_URI.buildUpon().appendPath("gallery").build(), values);
-		}
+		
 		
 		@Override
 		protected void onPostExecute(Boolean result) {
