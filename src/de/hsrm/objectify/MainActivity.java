@@ -5,10 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.Toast;
-import de.hsrm.objectify.camera.CameraActivity;
+import de.hsrm.objectify.camera.CameraPreview;
 import de.hsrm.objectify.gallery.GalleryActivity;
 import de.hsrm.objectify.ui.BaseActivity;
 
@@ -65,7 +64,7 @@ public class MainActivity extends BaseActivity {
     		Toast.makeText(context, "share", Toast.LENGTH_SHORT).show();
     		break;
     	case R.id.dashboard_camera_button:
-    		Intent camera = new Intent(context, CameraActivity.class);
+    		Intent camera = new Intent(context, CameraPreview.class);
     		startActivity(camera);
     		break;
     	}

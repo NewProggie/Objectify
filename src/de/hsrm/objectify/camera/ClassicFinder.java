@@ -22,13 +22,12 @@ public class ClassicFinder extends CameraFinder {
 			// running on samsun galaxy tab, using only working size and picture format on this device
 			Camera camera = Camera.open();
 			Camera.Parameters params = camera.getParameters();
-			Size s = params.getSupportedPictureSizes().get(0);
-			pictureSize = new de.hsrm.objectify.utils.Size(s.width, s.height);
+			pictureSize = new de.hsrm.objectify.utils.Size(800, 600);
 			imageFormat = params.getSupportedPictureFormats().get(0);
 			params.setPictureSize(pictureSize.getWidth(), pictureSize.getHeight());
 			params.setPictureFormat(imageFormat);
 			params.set("camera-id", 2); 
-			camera.setParameters(params);
+//			camera.setParameters(params);
 			return camera;
 		}
 		return null;
