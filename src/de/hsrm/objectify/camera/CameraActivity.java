@@ -138,20 +138,9 @@ public class CameraActivity extends BaseActivity {
 			down.setVisibility(View.INVISIBLE);
 			left.setVisibility(View.VISIBLE);
 		} else {
-			darken();
 			left.setVisibility(View.VISIBLE);
 		}
 		
-	}
-	
-	/**
-	 * Makes the whole screen black.
-	 */
-	private void darken() {
-		left.setVisibility(View.INVISIBLE);
-		right.setVisibility(View.INVISIBLE);
-		up.setVisibility(View.INVISIBLE);
-		down.setVisibility(View.INVISIBLE);
 	}
 	
 	private void showToastAndFinish(String message) {
@@ -220,7 +209,6 @@ public class CameraActivity extends BaseActivity {
 		
 		@Override
 		protected void onPreExecute() {
-			darken();
 			progress.setVisibility(View.VISIBLE);
 			cr = getContentResolver();
 		}

@@ -7,7 +7,7 @@
 		android:layout_width="fill_parent"
 		android:layout_height="0px"
 		android:layout_weight="1">
-		<de.hsrm.objectify.camera.CameraPreview
+		<SurfaceView
 			android:id="@+id/camera_surface"
 			android:layout_width="fill_parent"
 			android:layout_height="fill_parent" />
