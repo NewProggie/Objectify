@@ -10,10 +10,24 @@ import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.util.Log;
 
+/**
+ * Helper class for creating bitmaps, considering different picture sizes and
+ * image formats depending on the android device.
+ * 
+ * @author kwolf001
+ * 
+ */
 public class BitmapUtils {
 
 	private static final String TAG = "BitmapUtils";
 
+	/**
+	 * Creates a bitmap depending on the specific image format. Can return null.
+	 * @param data Image data provided by the jpeg callback from the camera
+	 * @param pictureSize Picture size set in {@link CameraFinder}
+	 * @param imageFormat Image format set in {@link CameraFinder}
+	 * @return New bitmap or null
+	 */
 	public static Bitmap createBitmap(byte[] data, Size pictureSize, int imageFormat) {
 		switch (imageFormat) {
 		case ImageFormat.JPEG:
@@ -35,6 +49,11 @@ public class BitmapUtils {
 		}
 	}
 
+	/**
+	 * Creates an integer array from a byte array, assuming argb order
+	 * @param byteArray Byte array data provided by the device camera
+	 * @return Converted integer array
+	 */
 	private static int[] convertByteArray(byte[] byteArray) {
 		int[] intArray = new int[byteArray.length / 2];
 		int idx = 0;

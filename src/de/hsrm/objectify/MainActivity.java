@@ -14,7 +14,7 @@ import de.hsrm.objectify.howto.HowToActivity;
 import de.hsrm.objectify.ui.BaseActivity;
 
 /**
- * Front door {@link Activity} that displays Dashboardlayout with different
+ * Front door {@link Activity} that displays {@link DashboardLayout} with different
  * features of this app. Inherits an action bar from {@link BaseActivity} and
  * initializes it.
  * 
@@ -32,6 +32,7 @@ public class MainActivity extends BaseActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dashboard);
+        context = this;     
         
         setupActionBar(null, 0);
         addNewActionButton(R.drawable.ic_title_camera, R.string.camera, new OnClickListener() {
@@ -42,8 +43,7 @@ public class MainActivity extends BaseActivity {
 				startActivity(camera);
 			}
 		});
-
-        context = this;        
+   
         galleryButton = (Button) findViewById(R.id.dashboard_gallery_button);
         howtoButton = (Button) findViewById(R.id.dashboard_howto_button);
         exportButton = (Button) findViewById(R.id.dashboard_export_button);
