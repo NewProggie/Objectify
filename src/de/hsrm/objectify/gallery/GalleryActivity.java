@@ -59,6 +59,13 @@ public class GalleryActivity extends BaseActivity {
 				c.close();
 			}
 		});
+		addNewActionButton(R.drawable.ic_title_delete, R.string.delete, new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Toast.makeText(context, getString(R.string.delete), Toast.LENGTH_SHORT).show();
+			}
+		});
 				
 		context = this;
 		
