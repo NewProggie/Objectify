@@ -26,12 +26,11 @@ public class FrontCameraFinder extends CameraFinder {
 				Camera.Parameters params = camera.getParameters();
 				Size s = params.getSupportedPictureSizes().get(0);
 				pictureSize = new de.hsrm.objectify.utils.Size(s.width, s.height);
-				imageFormat = params.getSupportedPictureFormats().get(0);
+				imageFormat = params.getSupportedPreviewFormats().get(0);
 				params.setPictureSize(pictureSize.getWidth(), pictureSize.getHeight());
 				params.setPictureFormat(imageFormat);
 				camera.setParameters(params);
 				camera.setDisplayOrientation(90);
-				// TODO setting Camera.Parameters properly, also for nexus s problem
 				return camera;
 			}
 		}

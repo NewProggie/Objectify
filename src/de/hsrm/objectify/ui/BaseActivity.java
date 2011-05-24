@@ -173,14 +173,13 @@ public abstract class BaseActivity extends Activity {
 		actionButton.setOnClickListener(clickListener);
 		
 		// adding separator properly
-//		if (!separatorAfter)
-//			actionBar.addView(separator);
+		if (!separatorAfter)
+			actionBar.addView(separator);
 		
-		actionBar.addView(separator);
 		actionBar.addView(actionButton);
 		
-//		if (separatorAfter)
-//			actionBar.addView(separator);
+		if (separatorAfter)
+			actionBar.addView(separator);
 		
 		return actionButton;
 	}

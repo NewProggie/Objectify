@@ -1,19 +1,22 @@
 package de.hsrm.objectify.camera;
 
 import java.io.BufferedOutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Calendar;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -22,6 +25,8 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 import de.hsrm.objectify.R;
+import de.hsrm.objectify.database.DatabaseAdapter;
+import de.hsrm.objectify.database.DatabaseProvider;
 import de.hsrm.objectify.rendering.ObjectViewer;
 import de.hsrm.objectify.ui.BaseActivity;
 import de.hsrm.objectify.utils.BitmapUtils;
@@ -94,7 +99,11 @@ public class CameraActivity extends BaseActivity {
 	 * Takes {@code NUMBER_OF_PICTURES} pictures in sequence.
 	 */
 	private void takePictures() {
-		
+		camera.startPreview();
+		setLights();
+		// a bit of delay, so the display has a chance to illuminate properly
+		SystemClock.sleep(100);
+		camera.takePicture(null, null, jpegCallback());
 	}
 	
 	/**
@@ -137,9 +146,11 @@ public class CameraActivity extends BaseActivity {
 			public void onPictureTaken(byte[] data, Camera camera) {
 				if (counter >= NUMBER_OF_PICTURES) {
 					Log.d(TAG, "Photos taken, calculating object");
-					new CalculateModel().execute();
+					new CalculateModel().execute(image_suffix);
 				} else {
 					try {
+						counter += 1;
+						
 						String path = ExternalDirectory.getExternalImageDirectory() + "/" + image_suffix + ".png";
 						FileOutputStream fos = new FileOutputStream(path);
 						BufferedOutputStream bos = new BufferedOutputStream(fos);
@@ -148,6 +159,9 @@ public class CameraActivity extends BaseActivity {
 						image.compress(CompressFormat.PNG, 100, bos);
 						bos.flush();
 						bos.close();
+						long length = new File(path).length();
+						writeToDatabase(path, length, 0, 0, CameraFinder.pictureSize.toString());
+						takePictures();
 					} catch (IOException e) {
 						Log.e(TAG, e.getMessage());
 					}
@@ -156,6 +170,17 @@ public class CameraActivity extends BaseActivity {
 		};
 		
 		return callback;
+	}
+	
+	private void writeToDatabase(String imagePath, long size, int faces, int vertices, String dimensions) {
+		ContentValues values = new ContentValues();
+		values.put(DatabaseAdapter.GALLERY_IMAGE_PATH_KEY, imagePath);
+		values.put(DatabaseAdapter.GALLERY_SIZE_KEY, String.valueOf(size));
+		values.put(DatabaseAdapter.GALLERY_FACES_KEY, String.valueOf(faces));
+		values.put(DatabaseAdapter.GALLERY_VERTICES_KEY, String.valueOf(vertices));
+		values.put(DatabaseAdapter.GALLERY_DIMENSIONS_KEY, dimensions);
+		values.put(DatabaseAdapter.GALLERY_DATE_KEY, String.valueOf(Calendar.getInstance().getTimeInMillis()));
+		getContentResolver().insert(DatabaseProvider.CONTENT_URI.buildUpon().appendPath("gallery").build(), values);
 	}
 	
 	/**

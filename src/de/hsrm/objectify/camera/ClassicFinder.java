@@ -1,7 +1,7 @@
 package de.hsrm.objectify.camera;
 
 import android.hardware.Camera;
-import android.hardware.Camera.Size;
+import android.util.Log;
 
 /**
  * Returns a front facing camera from current device guessing from device
@@ -24,7 +24,7 @@ public class ClassicFinder extends CameraFinder {
 			Camera camera = Camera.open();
 			Camera.Parameters params = camera.getParameters();
 			pictureSize = new de.hsrm.objectify.utils.Size(800, 600);
-			imageFormat = params.getSupportedPictureFormats().get(0);
+			imageFormat = params.getSupportedPreviewFormats().get(0);
 			params.setPictureSize(pictureSize.getWidth(), pictureSize.getHeight());
 			params.setPictureFormat(imageFormat);
 			params.set("camera-id", 2); // using front-cam (2) instead of back-cam (1)
