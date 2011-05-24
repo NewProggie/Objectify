@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.Toast;
 import de.hsrm.objectify.camera.CameraActivity;
 import de.hsrm.objectify.gallery.GalleryActivity;
+import de.hsrm.objectify.howto.HowToActivity;
 import de.hsrm.objectify.ui.BaseActivity;
 
 /**
@@ -57,7 +58,8 @@ public class MainActivity extends BaseActivity {
     		startActivity(gallery);
     		break;
     	case R.id.dashboard_howto_button:
-    		Toast.makeText(context, "howto", Toast.LENGTH_SHORT).show();
+    		Intent howto = new Intent(context, HowToActivity.class);
+    		startActivity(howto);
     		break;
     	case R.id.dashboard_export_button:
     		Toast.makeText(context, "export", Toast.LENGTH_SHORT).show();

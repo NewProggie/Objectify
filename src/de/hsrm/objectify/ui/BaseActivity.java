@@ -68,6 +68,12 @@ public abstract class BaseActivity extends Activity {
 	}
 	
 	@Override
+	public void setContentView(View view) {
+		content.removeAllViews();
+		content.addView(view);
+	}
+	
+	@Override
 	public View findViewById(int id) {
 		return content.findViewById(id);
 	}
