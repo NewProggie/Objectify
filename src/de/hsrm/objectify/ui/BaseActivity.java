@@ -184,18 +184,6 @@ public abstract class BaseActivity extends Activity {
 		return actionButton;
 	}
 	
-//	private View addActionButtonHome(int iconResId, int textResId, View.OnClickListener clickListener) {
-//		ImageButton actionButton = new ImageButton(this);
-//		actionButton.setLayoutParams(new ViewGroup.LayoutParams((int) this.getResources().getDimension(
-//				R.dimen.actionbar_height), ViewGroup.LayoutParams.FILL_PARENT));
-//		actionButton.setImageResource(iconResId);
-//		actionButton.setScaleType(ImageView.ScaleType.CENTER);
-//		actionButton.setContentDescription(this.getResources().getString(textResId));
-//		actionButton.setOnClickListener(clickListener);
-//		
-//		return actionButton;
-//	}
-	
 	/**
 	 * Starting home activity, returning to
 	 * {@link MainActivity }.

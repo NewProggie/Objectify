@@ -8,18 +8,20 @@ import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
+import android.util.Log;
 
 public class BitmapUtils {
-	
+
 	private static final String TAG = "BitmapUtils";
-	
+
 	public static Bitmap createBitmap(byte[] data, Size pictureSize, int imageFormat) {
 		switch (imageFormat) {
 		case ImageFormat.JPEG:
 			return BitmapFactory.decodeByteArray(data, 0, data.length);
 		case ImageFormat.NV21:
 			// convert yuv to jpg
-			YuvImage yuvImage = new YuvImage(data, ImageFormat.NV21, pictureSize.getWidth(), pictureSize.getHeight(), null);
+			YuvImage yuvImage = new YuvImage(data, ImageFormat.NV21, pictureSize.getWidth(), pictureSize.getHeight(),
+					null);
 			Rect rect = new Rect(0, 0, pictureSize.getWidth(), pictureSize.getHeight());
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			yuvImage.compressToJpeg(rect, 100, baos);
@@ -32,14 +34,14 @@ public class BitmapUtils {
 			return null;
 		}
 	}
-	
+
 	private static int[] convertByteArray(byte[] byteArray) {
-		int[] intArray = new int[byteArray.length/2];
+		int[] intArray = new int[byteArray.length / 2];
 		int idx = 0;
-		for (int i=0; i<byteArray.length; i+=2) {
+		for (int i = 0; i < byteArray.length; i += 2) {
 			// assuming a-r-g-b order
 			int lo = ((int) byteArray[i] & 0x00FF);
-			int hi = ((int) byteArray[i+1] & 0x00FF);
+			int hi = ((int) byteArray[i + 1] & 0x00FF);
 			int rgb = (hi << 8) | lo;
 			int r = (rgb & 0xF800) >> 11;
 			int g = (rgb & 0x07E00) >> 5;

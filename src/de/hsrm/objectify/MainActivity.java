@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.Toast;
 import de.hsrm.objectify.camera.CameraActivity;
@@ -30,17 +31,18 @@ public class MainActivity extends BaseActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dashboard);
-        setupActionBar(null, 0);
-//        addNewActionButton(R.drawable.ic_title_camera, R.string.camera, new OnClickListener() {
-//			
-//			@Override
-//			public void onClick(View v) {
-//				Intent camera = new Intent(v.getContext(), CameraActivity.class);
-//				startActivity(camera);
-//			}
-//		});
-        context = this;
         
+        setupActionBar(null, 0);
+        addNewActionButton(R.drawable.ic_title_camera, R.string.camera, new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent camera = new Intent(v.getContext(), CameraActivity.class);
+				startActivity(camera);
+			}
+		});
+
+        context = this;        
         galleryButton = (Button) findViewById(R.id.dashboard_gallery_button);
         howtoButton = (Button) findViewById(R.id.dashboard_howto_button);
         exportButton = (Button) findViewById(R.id.dashboard_export_button);

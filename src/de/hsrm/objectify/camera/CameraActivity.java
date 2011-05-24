@@ -72,6 +72,7 @@ public class CameraActivity extends BaseActivity {
 			public void onClick(View v) {
 				shadow.setVisibility(View.VISIBLE);
 				image_suffix = String.valueOf(System.currentTimeMillis());
+				setLights();
 				takePictures();
 			}
 		});	
@@ -80,6 +81,7 @@ public class CameraActivity extends BaseActivity {
 		if (camera == null) {
 			showToastAndFinish(getString(R.string.no_ffc_was_found));
 		}
+		
 	}
 	
 	/**

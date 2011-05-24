@@ -58,11 +58,11 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
 		if (CameraActivity.camera != null) {
-			Camera.Parameters params = CameraActivity.camera.getParameters();
-			List<Size> sizes = params.getSupportedPreviewSizes();
-			Size optimalSize = getOptimalPreviewSize(sizes, width, height);
-			params.setPreviewSize(optimalSize.width, optimalSize.height);
-			CameraActivity.camera.setParameters(params);
+//			Camera.Parameters params = CameraActivity.camera.getParameters();
+//			List<Size> sizes = params.getSupportedPreviewSizes();
+//			Size optimalSize = getOptimalPreviewSize(sizes, width, height);
+//			params.setPreviewSize(optimalSize.width, optimalSize.height);
+//			CameraActivity.camera.setParameters(params);
 			CameraActivity.camera.startPreview();
 		}
 	}
