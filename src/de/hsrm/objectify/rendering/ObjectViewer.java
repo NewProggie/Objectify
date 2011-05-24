@@ -32,8 +32,8 @@ public class ObjectViewer extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Display display = getWindowManager().getDefaultDisplay();
-		String path = getIntent().getStringExtra("image_path");
-		glSurfaceView = new TouchSurfaceView(this, path, display.getWidth(), display.getHeight());
+		ObjectModel objectModel = getIntent().getParcelableExtra("objectModel");
+		glSurfaceView = new TouchSurfaceView(this, objectModel, display.getWidth(), display.getHeight());
 		setContentView(glSurfaceView);
 	}
 	

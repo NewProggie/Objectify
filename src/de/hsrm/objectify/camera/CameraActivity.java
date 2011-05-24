@@ -27,6 +27,7 @@ import android.widget.Toast;
 import de.hsrm.objectify.R;
 import de.hsrm.objectify.database.DatabaseAdapter;
 import de.hsrm.objectify.database.DatabaseProvider;
+import de.hsrm.objectify.rendering.ObjectModel;
 import de.hsrm.objectify.rendering.ObjectViewer;
 import de.hsrm.objectify.ui.BaseActivity;
 import de.hsrm.objectify.utils.BitmapUtils;
@@ -151,9 +152,9 @@ public class CameraActivity extends BaseActivity {
 					new CalculateModel().execute(image_suffix);
 				} else {
 					try {
-						counter += 1;
 						
-						String path = ExternalDirectory.getExternalImageDirectory() + "/" + image_suffix + ".png";
+						
+						String path = ExternalDirectory.getExternalImageDirectory() + "/" + image_suffix + "_" + String.valueOf(counter) +  ".png";
 						FileOutputStream fos = new FileOutputStream(path);
 						BufferedOutputStream bos = new BufferedOutputStream(fos);
 						
@@ -162,7 +163,10 @@ public class CameraActivity extends BaseActivity {
 						bos.flush();
 						bos.close();
 						long length = new File(path).length();
-						writeToDatabase(path, length, 0, 0, CameraFinder.pictureSize.toString());
+						if (counter == 1)
+							writeToDatabase(path, length, 0, 0, CameraFinder.pictureSize.toString());
+						
+						counter += 1;
 						takePictures();
 					} catch (IOException e) {
 						Log.e(TAG, e.getMessage());
@@ -204,6 +208,7 @@ public class CameraActivity extends BaseActivity {
 		
 		private final String TAG = "CalculateModel";
 		private String image_suffix;
+		private ObjectModel objectModel;
 		
 		@Override
 		protected void onPreExecute() {
@@ -212,6 +217,12 @@ public class CameraActivity extends BaseActivity {
 		
 		@Override
 		protected Boolean doInBackground(String... params) {
+			String path = ExternalDirectory.getExternalImageDirectory() + "/" + params[0] + "_1.png";
+			objectModel = new ObjectModel(path);
+			float[] vertices = new float[] { -1.0f, -1.0f, 0.0f,
+											1.0f, -1.0f, 0.0f,
+											0.0f, 1.0f, 0.0f };
+			objectModel.putVertices(vertices);
 			return true;
 		}
 		
@@ -219,6 +230,7 @@ public class CameraActivity extends BaseActivity {
 		protected void onPostExecute(Boolean result) {
 			progress.setVisibility(View.GONE);
 			Intent viewObject = new Intent(context, ObjectViewer.class);
+			viewObject.putExtra("objectModel", objectModel);
 			startActivity(viewObject);
 			((Activity) context).finish();
 		}

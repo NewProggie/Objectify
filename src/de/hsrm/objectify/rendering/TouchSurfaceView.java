@@ -37,14 +37,14 @@ public class TouchSurfaceView extends GLSurfaceView {
 	private ScaleGestureDetector scaleDetector;
 	private float skalierung = 1;
 	
-	public TouchSurfaceView(Context context, String path, int width, int height) {
+	public TouchSurfaceView(Context context, ObjectModel objectModel, int width, int height) {
 		super(context);
 		this.width = width;
 		this.height = height;
 		
 		glu = new GLU();
 		arcBall.setBounds((float) width, (float) height);
-		renderer = new ObjectModelRenderer(context, path);
+		renderer = new ObjectModelRenderer(context, objectModel);
 		setRenderer(renderer);
 		setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 		scaleDetector = new ScaleGestureDetector(context, new SimpleScaleListener());
@@ -111,15 +111,10 @@ public class TouchSurfaceView extends GLSurfaceView {
 		private Context context;
 		public float angleX, angleY;
 		
-		public ObjectModelRenderer(Context context, String path) {
+		public ObjectModelRenderer(Context context, ObjectModel objectModel) {
 			this.context = context;
-			objectModel = new ObjectModel(path);
-			float[] vertices = new float[] 
-			                             { -1.0f, -1.0f, 0.0f,
-											1.0f, -1.0f, 0.0f, 
-											-1.0f, 1.0f, 0.0f, 	
-											1.0f, 1.0f, 0.0f };
-			objectModel.putVertices(vertices);
+			this.objectModel = objectModel;
+
 			lastRot.setIdentity();
 			thisRot.setIdentity();
 			thisRot.map(matrix);
@@ -128,7 +123,7 @@ public class TouchSurfaceView extends GLSurfaceView {
 		@Override
 		public void onSurfaceCreated(GL10 gl, EGLConfig config) {
 			gl.glDisable(GL10.GL_DITHER);
-			objectModel.loadGLTexture(gl, this.context);
+//			objectModel.loadGLTexture(gl, this.context);
 			gl.glEnable(GL10.GL_TEXTURE_2D);
 			gl.glShadeModel(GL10.GL_SMOOTH);
 			gl.glClearColor(0.0f, 0.0f, 0.3f, 0.5f); // Black, blue Background

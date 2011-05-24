@@ -11,6 +11,9 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 /**
  * A representation of an actual object. Vertices, normals and texture can be
@@ -19,7 +22,7 @@ import android.graphics.Matrix;
  * @author kwolf001
  * 
  */
-public class ObjectModel {
+public class ObjectModel implements Parcelable {
 	
 	private static final String TAG = "ObjectModel";
 	private FloatBuffer vertexBuffer;
@@ -43,6 +46,17 @@ public class ObjectModel {
 		setFacesBuffer(faces);
 	}
 	
+	private ObjectModel(Parcel source) {
+		Bundle b = source.readBundle();
+		textures = new int[1];
+		putVertices(b.getFloatArray("vertices"));
+		n_vertices = new float[1];
+		faces = new short[1];
+		setVertexBuffer(vertices);
+		setNormalBuffer(n_vertices);
+		setFacesBuffer(faces);
+	}
+
 	public void putVertices(float[] verts) {
 		this.vertices = new float[verts.length];
 		System.arraycopy(verts, 0, this.vertices, 0, verts.length);
@@ -92,7 +106,7 @@ public class ObjectModel {
 	}
 	
 	public void draw(GL10 gl) {
-		gl.glBindTexture(GL10.GL_TEXTURE_2D, textures[0]);
+//		gl.glBindTexture(GL10.GL_TEXTURE_2D, textures[0]);
 		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
 		gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 		gl.glEnableClientState(GL10.GL_NORMAL_ARRAY);
@@ -157,5 +171,30 @@ public class ObjectModel {
 		matrix.postScale(scaleWidth, scaleHeight);
 		return Bitmap.createBitmap(image, 0, 0, width, height, matrix, true);
 	}
+
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel out, int flags) {
+		Bundle b = new Bundle();
+		b.putFloatArray("vertices", vertices);
+		out.writeBundle(b);
+	}
+	
+	public static final Parcelable.Creator<ObjectModel> CREATOR = new Creator<ObjectModel>() {
+		
+		@Override
+		public ObjectModel[] newArray(int size) {
+			return new ObjectModel[size];
+		}
+		
+		@Override
+		public ObjectModel createFromParcel(Parcel source) {
+			return new ObjectModel(source);
+		}
+	};
 
 }

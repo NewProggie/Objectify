@@ -24,6 +24,10 @@ public class ClassicFinder extends CameraFinder {
 			Camera camera = Camera.open();
 			Camera.Parameters params = camera.getParameters();
 			pictureSize = new de.hsrm.objectify.utils.Size(800, 600);
+			// dirty hack! Even though this device promises to deliver a jpeg
+			// image, BitmapFactory.decodeByteArray(..) fails to create one. So
+			// we're setting PreviewFormat instead of PictureFormat and take
+			// care of it by ourself.
 			imageFormat = params.getSupportedPreviewFormats().get(0);
 			params.setPictureSize(pictureSize.getWidth(), pictureSize.getHeight());
 			params.setPictureFormat(imageFormat);
