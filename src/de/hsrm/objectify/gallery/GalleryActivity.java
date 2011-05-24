@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Gallery;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import de.hsrm.objectify.R;
@@ -46,16 +48,18 @@ public class GalleryActivity extends BaseActivity {
 			
 			@Override
 			public void onClick(View v) {
-				Toast.makeText(v.getContext(), "share", Toast.LENGTH_SHORT).show();
+				Intent share = new Intent(Intent.ACTION_SEND);
+				share.setType("image/jpeg");
+				long id = gallery.getSelectedItemId();
+				Cursor c = getContentResolver().query(galleryUri, null, DatabaseAdapter.GALLERY_ID_KEY+"=?", new String[] { String.valueOf(id) }, null);
+				c.moveToFirst();
+				String imagePath = c.getString(DatabaseAdapter.GALLERY_IMAGE_PATH_COLUMN);
+				share.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + imagePath));
+				startActivity(Intent.createChooser(share, getString(R.string.share)));
+				c.close();
 			}
 		});
-		addNewActionButton(R.drawable.ic_title_search, R.string.search, new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				Toast.makeText(v.getContext(), "suche", Toast.LENGTH_SHORT).show();
-			}
-		});
+				
 		context = this;
 		
 		gallery = (Gallery) findViewById(R.id.object_gallery);

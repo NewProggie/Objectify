@@ -40,7 +40,7 @@ public class GalleryAdapter extends CursorAdapter {
 	@Override
 	public View newView(Context context, Cursor cursor, ViewGroup parent) {
 		ImageView imageView = new ImageView(context);
-		imageView.setLayoutParams(new Gallery.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
+		imageView.setLayoutParams(new Gallery.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 		imageView.setScaleType(ImageView.ScaleType.FIT_XY);
 		imageView.setBackgroundResource(galleryItemBackground);
 		

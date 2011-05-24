@@ -3,6 +3,7 @@
 	android:layout_width="fill_parent" android:layout_height="fill_parent"
 	android:background="@drawable/background_noise" android:orientation="vertical">
 	<Gallery android:id="@+id/object_gallery" android:layout_width="fill_parent"
+		android:layout_margin="7dip"
 		android:layout_height="fill_parent" android:layout_weight="1" />
 	<LinearLayout android:layout_width="fill_parent"
 		android:layout_height="wrap_content" android:background="@drawable/shadowed_edges"
