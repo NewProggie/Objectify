@@ -19,31 +19,21 @@ public class ClassicFinder extends CameraFinder {
 	 */
 	Camera open() {
 		if (android.os.Build.PRODUCT.equals("GT-P1000")) {
-			// running on samsun galaxy tab, using only working size and picture format on this device
+			// running on samsung galaxy tab, using only working size and picture
+			// format on this device
 			Camera camera = Camera.open();
 			Camera.Parameters params = camera.getParameters();
 			pictureSize = new de.hsrm.objectify.utils.Size(800, 600);
 			imageFormat = params.getSupportedPictureFormats().get(0);
 			params.setPictureSize(pictureSize.getWidth(), pictureSize.getHeight());
 			params.setPictureFormat(imageFormat);
-			params.set("camera-id", 2); 
-//			camera.setParameters(params);
+			params.set("camera-id", 2); // using front-cam (2) instead of back-cam (1)
+			params.setRotation(270);
+			camera.setParameters(params);
 			return camera;
 		}
+		
 		return null;
-//		camera = Camera.open();		
-//		Camera.Parameters params = camera.getParameters();
-//		if (android.os.Build.PRODUCT.equals("GT-P1000")) {
-//			// we're running on samsung galaxy tab
-//			// only working size and picture format for samsung galaxy tab
-//			previewSize = new Size(800,600);
-//			pictureSize = new Size(800, 600);
-//			imageFormat = params.getSupportedPictureFormats().get(0);
-//			params.setPictureSize(pictureSize.getWidth(), pictureSize.getHeight());
-//			params.setPreviewSize(previewSize.getWidth(), previewSize.getHeight());
-//			params.setPictureFormat(imageFormat);
-//			params.set("camera-id", 2); // using front-cam (2) instead
-//										// of back-cam (1)
 	}
 
 }
