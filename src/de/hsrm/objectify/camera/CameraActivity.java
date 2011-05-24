@@ -105,6 +105,7 @@ public class CameraActivity extends BaseActivity {
 	 */
 	private void showToastAndFinish(String message) {
 		Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+		finish();
 	}
 	
 	/**
