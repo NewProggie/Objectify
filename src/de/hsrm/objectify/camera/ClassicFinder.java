@@ -28,7 +28,7 @@ public class ClassicFinder extends CameraFinder {
 			params.setPictureSize(pictureSize.getWidth(), pictureSize.getHeight());
 			params.setPictureFormat(imageFormat);
 			params.set("camera-id", 2); // using front-cam (2) instead of back-cam (1)
-			params.setRotation(270);
+			params.set("orientation", "portrait");
 			camera.setParameters(params);
 			return camera;
 		}

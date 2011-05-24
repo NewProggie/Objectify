@@ -30,6 +30,7 @@ public class FrontCameraFinder extends CameraFinder {
 				params.setPictureSize(pictureSize.getWidth(), pictureSize.getHeight());
 				params.setPictureFormat(imageFormat);
 				camera.setParameters(params);
+				camera.setDisplayOrientation(90);
 				// TODO setting Camera.Parameters properly, also for nexus s problem
 				return camera;
 			}

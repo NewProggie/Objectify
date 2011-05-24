@@ -7,6 +7,7 @@ import java.io.IOException;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.hardware.Camera;

@@ -22,7 +22,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".SettingsActivity" />
-        <activity android:name=".camera.CameraActivity" android:screenOrientation="landscape"/>
+        <activity android:name=".camera.CameraActivity" android:screenOrientation="portrait"/>
 		<activity android:name=".gallery.GalleryActivity" />
 		<activity android:name=".rendering.ObjectViewer" />
 		<activity android:name=".howto.HowToActivity" />
