@@ -20,6 +20,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 	
 	private final String TAG = "CameraPreview";
 	private SurfaceHolder holder;
+	private Camera camera;
 
 	public CameraPreview(Context context) {
 		super(context);
@@ -42,37 +43,45 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 		holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 	}
 	
+	public Camera getCamera() {
+		return camera;
+	}
+
+	public void setCamera(Camera camera) {
+		this.camera = camera;
+	}
+
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
-		if (CameraActivity.camera != null) {
+		if (camera != null) {
 			try {
-				CameraActivity.camera.setPreviewDisplay(holder);
+				camera.setPreviewDisplay(holder);
 			} catch (IOException e) {
 				Log.e(TAG, e.getMessage());
-				CameraActivity.camera.release();
-				CameraActivity.camera = null;
+				camera.release();
+				camera = null;
 			}
 		}
 	}
 
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-		if (CameraActivity.camera != null) {
-			Camera.Parameters params = CameraActivity.camera.getParameters();
+		if (camera != null) {
+			Camera.Parameters params = camera.getParameters();
 			List<Size> sizes = params.getSupportedPreviewSizes();
 			Size optimalSize = getOptimalPreviewSize(sizes, width, height);
 			params.setPreviewSize(optimalSize.width, optimalSize.height);
-			CameraActivity.camera.setParameters(params);
-			CameraActivity.camera.startPreview();
+			camera.setParameters(params);
+			camera.startPreview();
 		}
 	}
 
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
-		if (CameraActivity.camera != null) {
-			CameraActivity.camera.stopPreview();
-			CameraActivity.camera.release();
-			CameraActivity.camera = null;
+		if (camera != null) {
+			camera.stopPreview();
+			camera.release();
+			camera = null;
 		}
 	}
 

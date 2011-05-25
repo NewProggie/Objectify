@@ -1,7 +1,10 @@
 package de.hsrm.objectify.gallery;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.Date;
 
 import android.app.Activity;
@@ -11,9 +14,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Bitmap.CompressFormat;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -57,9 +63,20 @@ public class GalleryActivity extends BaseActivity {
 				long id = gallery.getSelectedItemId();
 				Cursor c = getContentResolver().query(galleryUri, null, DatabaseAdapter.GALLERY_ID_KEY+"=?", new String[] { String.valueOf(id) }, null);
 				c.moveToFirst();
-				String imagePath = c.getString(DatabaseAdapter.GALLERY_IMAGE_PATH_COLUMN);
-				share.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + imagePath));
-				startActivity(Intent.createChooser(share, getString(R.string.share)));
+				try {
+					byte[] bb = c.getBlob(DatabaseAdapter.GALLERY_IMAGE_COLUMN);
+					Bitmap screenshot = BitmapFactory.decodeByteArray(bb, 0, bb.length);
+					String path = ExternalDirectory.getExternalImageDirectory() + "/screenshot.png";
+					FileOutputStream fos = new FileOutputStream(path);
+					BufferedOutputStream bos = new BufferedOutputStream(fos);
+					screenshot.compress(CompressFormat.PNG, 100, bos);
+					bos.flush();
+					bos.close();
+					share.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + path));
+					startActivity(Intent.createChooser(share, getString(R.string.share)));
+				} catch (IOException e) {
+					Log.e(TAG, e.getMessage());
+				}
 				c.close();
 			}
 		});
@@ -160,7 +177,7 @@ public class GalleryActivity extends BaseActivity {
 			}
 		});
 		for (File img : images) {
-			boolean deleted = img.delete();
+			img.delete();
 		}
 		
 		cr.delete(galleryUri, DatabaseAdapter.GALLERY_ID_KEY+"=?", new String[] { String.valueOf(id) } );
@@ -171,6 +188,7 @@ public class GalleryActivity extends BaseActivity {
 			finish();
 		}
 	}
+	
 	/**
 	 * Shows specific Dialog to user and finishes current Activity
 	 * 

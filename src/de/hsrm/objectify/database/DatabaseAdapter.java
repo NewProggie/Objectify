@@ -20,8 +20,8 @@ public class DatabaseAdapter {
 	static final String DATABASE_TABLE_GALLERY = "gallery";
 	public static final String GALLERY_ID_KEY = "_id";
 	public static final int GALLERY_ID_COLUMN = 0;
-	public static final String GALLERY_IMAGE_PATH_KEY = "image_path";
-	public static final int GALLERY_IMAGE_PATH_COLUMN = 1;
+	public static final String GALLERY_IMAGE_KEY = "image_path";
+	public static final int GALLERY_IMAGE_COLUMN = 1;
 	public static final String GALLERY_SIZE_KEY = "size";
 	public static final int GALLERY_SIZE_COLUMN = 2;
 	public static final String GALLERY_FACES_KEY = "faces";
@@ -36,7 +36,7 @@ public class DatabaseAdapter {
 	public static final int GALLERY_SUFFIX_COLUMN = 7;
 	
 	private static final String DATABASE_TABLE_GALLERY_CREATE = "CREATE TABLE " + DATABASE_TABLE_GALLERY + " (" +
-		GALLERY_ID_KEY + " INTEGER PRIMARY KEY AUTOINCREMENT" + ", " + GALLERY_IMAGE_PATH_KEY + " TEXT NOT NULL" + ", " +
+		GALLERY_ID_KEY + " INTEGER PRIMARY KEY AUTOINCREMENT" + ", " + GALLERY_IMAGE_KEY + " BLOB" + ", " +
 		GALLERY_SIZE_KEY + " TEXT NOT NULL" + ", " + GALLERY_FACES_KEY + " TEXT NOT NULL" + ", " +
 		GALLERY_VERTICES_KEY + " TEXT NOT NULL" + ", " + GALLERY_DIMENSIONS_KEY + " TEXT NOT NULL" + ", " + 
 		GALLERY_DATE_KEY + " TEXT NOT NULL" + "," + GALLERY_SUFFIX_KEY + " TEXT NOT NULL" + ")";

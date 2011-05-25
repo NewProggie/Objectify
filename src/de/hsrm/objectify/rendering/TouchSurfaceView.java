@@ -1,17 +1,30 @@
 package de.hsrm.objectify.rendering;
 
+import java.io.BufferedOutputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.IntBuffer;
+
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
+import android.graphics.Bitmap.Config;
 import android.graphics.Point;
+import android.net.Uri;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
-import android.os.SystemClock;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
+import de.hsrm.objectify.database.DatabaseProvider;
 import de.hsrm.objectify.math.Matrix4f;
 import de.hsrm.objectify.math.Quat4f;
+import de.hsrm.objectify.utils.ExternalDirectory;
 
 /**
  * Creates a touchable surface view to move, scale and spin a rendered object on
@@ -31,16 +44,26 @@ public class TouchSurfaceView extends GLSurfaceView {
 	private final Object matrixLock = new Object();
 	private ArcBall arcBall = new ArcBall(getWidth(), getHeight());
 	private GLU glu;
-	private int width, height;
+	private Context context;
+	private int displayWidth, displayHeight;
 	private final float TRACKBALL_SCALE_FACTOR = 36.0f;
 	private ObjectModelRenderer renderer;
 	private ScaleGestureDetector scaleDetector;
 	private float skalierung = 1;
+	private boolean first = true;
 	
+	/**
+	 * Creates a touchable surface view and ...
+	 * @param context
+	 * @param objectModel
+	 * @param width display width
+	 * @param height display height
+	 */
 	public TouchSurfaceView(Context context, ObjectModel objectModel, int width, int height) {
 		super(context);
-		this.width = width;
-		this.height = height;
+		this.context = context;
+		this.displayWidth = width;
+		this.displayHeight = height;
 		
 		glu = new GLU();
 		arcBall.setBounds((float) width, (float) height);
@@ -60,7 +83,7 @@ public class TouchSurfaceView extends GLSurfaceView {
 	
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		int x = width - (Float.valueOf(event.getX()).intValue());
+		int x = displayWidth - (Float.valueOf(event.getX()).intValue());
 		int y = Float.valueOf(event.getY()).intValue();
 		scaleDetector.onTouchEvent(event);
 		switch (event.getAction()) {
@@ -134,6 +157,42 @@ public class TouchSurfaceView extends GLSurfaceView {
 			gl.glEnable(GL10.GL_NORMALIZE);
 			gl.glEnable(GL10.GL_LIGHTING);
 			gl.glEnable(GL10.GL_LIGHT0);
+			
+		}
+
+		private void createScreenshot(GL10 gl) {
+//			Uri uri = DatabaseProvider.CONTENT_URI.buildUpon().appendPath("gallery").build();
+//			Cursor c = context.getContentResolver().query(uri, null, selection, selectionArgs, sortOrder)
+			int b[] = new int[displayWidth * displayHeight];
+			int bt[] = new int[displayWidth * displayHeight];
+			IntBuffer ib = IntBuffer.wrap(b);
+			ib.position(0);
+			gl.glReadPixels(0, 0, displayWidth, displayHeight, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, ib);
+//			for (int i=0; i<displayHeight; i++) {
+//				for (int j=0; j<displayWidth; j++) {
+//					// correction of R and B
+//					int pix = b[i*displayWidth+j];
+//					int pb = (pix >> 16) & 0xFF;
+//					int pr = (pix >> 16) & 0x00FF0000;
+//					int pixl = (pix & 0xFF00FF00) | pr | pb;
+//					// correction of rows
+//					bt[(displayHeight-i-1)*displayWidth+j] = pixl;
+//				}
+//			}
+			Bitmap sb = Bitmap.createBitmap(ib.array(), displayWidth, displayHeight, Config.ARGB_8888);
+			String path = ExternalDirectory.getExternalImageDirectory() + "/screenshot.png";
+			try {
+				FileOutputStream fos;
+				fos = new FileOutputStream(path);
+				BufferedOutputStream bos = new BufferedOutputStream(fos);
+				sb.compress(CompressFormat.PNG, 80, bos);
+				bos.flush();
+				bos.close();
+			} catch (FileNotFoundException e) {
+				Log.e("TouchSurfaceView", e.getMessage());
+			} catch (IOException e) {
+				Log.e("TouchSurfaceView", e.getMessage());
+			}
 		}
 		
 		@Override
@@ -149,6 +208,11 @@ public class TouchSurfaceView extends GLSurfaceView {
 			gl.glMultMatrixf(matrix, 0);
 			gl.glScalef(skalierung, skalierung, skalierung);
 			objectModel.draw(gl);
+			if (first) {
+				first = false;
+//				createScreenshot(gl);
+			}
+				
 			gl.glPopMatrix();
 		}
 		
@@ -161,6 +225,7 @@ public class TouchSurfaceView extends GLSurfaceView {
 			gl.glLoadIdentity();
 			gl.glFrustumf(-ratio, ratio, -1, 1, 1, 10);
 		}
+		
 	}
 
 }

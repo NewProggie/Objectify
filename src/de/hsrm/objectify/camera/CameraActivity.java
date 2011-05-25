@@ -1,6 +1,7 @@
 package de.hsrm.objectify.camera;
 
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -12,6 +13,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
+import android.graphics.BitmapFactory;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.os.AsyncTask;
@@ -48,7 +50,7 @@ public class CameraActivity extends BaseActivity {
 	private String image_suffix;
 	private int counter = 1;
 	private Context context;
-	public static Camera camera;
+	private Camera camera;
 	private final int NUMBER_OF_PICTURES = 4;
 	
 	@Override
@@ -81,6 +83,8 @@ public class CameraActivity extends BaseActivity {
 		camera = CameraFinder.INSTANCE.open();
 		if (camera == null) {
 			showToastAndFinish(getString(R.string.no_ffc_was_found));
+		} else {
+			cameraPreview.setCamera(camera);
 		}
 		
 	}
@@ -144,7 +148,7 @@ public class CameraActivity extends BaseActivity {
 	
 	private PictureCallback jpegCallback() {
 		PictureCallback callback = new PictureCallback() {
-			
+
 			@Override
 			public void onPictureTaken(byte[] data, Camera camera) {
 				if (counter >= NUMBER_OF_PICTURES) {
@@ -152,20 +156,20 @@ public class CameraActivity extends BaseActivity {
 					new CalculateModel().execute(image_suffix);
 				} else {
 					try {
-						
-						
-						String path = ExternalDirectory.getExternalImageDirectory() + "/" + image_suffix + "_" + String.valueOf(counter) +  ".png";
+						String path = ExternalDirectory.getExternalImageDirectory() + "/" + image_suffix + "_"
+								+ String.valueOf(counter) + ".png";
 						FileOutputStream fos = new FileOutputStream(path);
 						BufferedOutputStream bos = new BufferedOutputStream(fos);
-						
-						Bitmap image = BitmapUtils.createBitmap(data, CameraFinder.pictureSize, CameraFinder.imageFormat);
+
+						Bitmap image = BitmapUtils.createBitmap(data, CameraFinder.pictureSize,
+								CameraFinder.imageFormat);
 						image.compress(CompressFormat.PNG, 100, bos);
 						bos.flush();
 						bos.close();
 						long length = new File(path).length();
 						if (counter == 1)
 							writeToDatabase(path, length, 0, 0, CameraFinder.pictureSize.toString());
-						
+
 						counter += 1;
 						takePictures();
 					} catch (IOException e) {
@@ -174,13 +178,16 @@ public class CameraActivity extends BaseActivity {
 				}
 			}
 		};
-		
+
 		return callback;
 	}
 	
 	private void writeToDatabase(String imagePath, long size, int faces, int vertices, String dimensions) {
 		ContentValues values = new ContentValues();
-		values.put(DatabaseAdapter.GALLERY_IMAGE_PATH_KEY, imagePath);
+		Bitmap image = BitmapFactory.decodeFile(imagePath);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		image.compress(CompressFormat.PNG, 100, baos);
+		values.put(DatabaseAdapter.GALLERY_IMAGE_KEY, baos.toByteArray());
 		values.put(DatabaseAdapter.GALLERY_SIZE_KEY, String.valueOf(size));
 		values.put(DatabaseAdapter.GALLERY_FACES_KEY, String.valueOf(faces));
 		values.put(DatabaseAdapter.GALLERY_VERTICES_KEY, String.valueOf(vertices));

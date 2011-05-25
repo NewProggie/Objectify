@@ -33,8 +33,8 @@ public class GalleryAdapter extends CursorAdapter {
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
 		ImageView image = (ImageView) view;
-		String imagePath = cursor.getString(DatabaseAdapter.GALLERY_IMAGE_PATH_COLUMN);
-		image.setImageBitmap(BitmapFactory.decodeFile(imagePath));
+		byte[] bb = cursor.getBlob(DatabaseAdapter.GALLERY_IMAGE_COLUMN);
+		image.setImageBitmap(BitmapFactory.decodeByteArray(bb, 0, bb.length));
 	}
 	
 	@Override
