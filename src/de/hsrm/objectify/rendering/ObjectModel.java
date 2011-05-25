@@ -42,9 +42,6 @@ public class ObjectModel implements Parcelable {
 		setFaces(faces);
 		this.image_suffix = image_suffix;
 		this.image = Bitmap.createBitmap(image);
-		setVertexBuffer(vertices);
-		setNormalBuffer(n_vertices);
-		setFacesBuffer(faces);
 	}
 	
 	private ObjectModel(Parcel source) {
