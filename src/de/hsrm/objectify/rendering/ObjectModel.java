@@ -34,13 +34,14 @@ public class ObjectModel implements Parcelable {
 	private short faces[];
 	private byte[] bb;
 	private Bitmap image;
+	private String image_suffix;
 	
-	public ObjectModel(String path) {
-		textures = new int[1];
-		vertices = new float[1];
-		n_vertices = new float[1];
-		faces = new short[1];
-		image = BitmapFactory.decodeFile(path);
+	public ObjectModel(float[] vertices, float[] n_vertices, short[] faces, Bitmap image, String image_suffix) {
+		setVertices(vertices);
+		setNormalVertices(n_vertices);
+		setFaces(faces);
+		this.image_suffix = image_suffix;
+		this.image = Bitmap.createBitmap(image);
 		setVertexBuffer(vertices);
 		setNormalBuffer(n_vertices);
 		setFacesBuffer(faces);
@@ -49,30 +50,47 @@ public class ObjectModel implements Parcelable {
 	private ObjectModel(Parcel source) {
 		Bundle b = source.readBundle();
 		textures = new int[1];
-		putVertices(b.getFloatArray("vertices"));
+		setVertices(b.getFloatArray("vertices"));
 		n_vertices = new float[1];
 		faces = new short[1];
+		this.image_suffix = b.getString("image_suffix");
 		setVertexBuffer(vertices);
 		setNormalBuffer(n_vertices);
 		setFacesBuffer(faces);
 	}
 
-	public void putVertices(float[] verts) {
+	public void setVertices(float[] verts) {
 		this.vertices = new float[verts.length];
 		System.arraycopy(verts, 0, this.vertices, 0, verts.length);
 		setVertexBuffer(this.vertices);
 	}
 	
-	public void putNVertices(float[] nverts) {
+	public float[] getVertices() {
+		return this.vertices;
+	}
+	
+	public void setNormalVertices(float[] nverts) {
 		this.n_vertices = new float[nverts.length];
 		System.arraycopy(nverts, 0, this.n_vertices, 0, nverts.length);
 		setNormalBuffer(this.n_vertices);
 	}
 	
-	public void putFaces(short[] face) {
+	public float[] getNormalVertices() {
+		return this.n_vertices;
+	}
+	
+	public void setFaces(short[] face) {
 		this.faces = new short[face.length];
 		System.arraycopy(face, 0, faces, 0, face.length);
 		setFacesBuffer(this.faces);
+	}
+	
+	public short[] getFaces() {
+		return this.faces;
+	}
+	
+	public String getImageSuffix() {
+		return image_suffix;
 	}
 	
 	private void setVertexBuffer(float[] vertices) {
@@ -181,6 +199,7 @@ public class ObjectModel implements Parcelable {
 	public void writeToParcel(Parcel out, int flags) {
 		Bundle b = new Bundle();
 		b.putFloatArray("vertices", vertices);
+		b.putString("image_suffix", image_suffix);
 		out.writeBundle(b);
 	}
 	

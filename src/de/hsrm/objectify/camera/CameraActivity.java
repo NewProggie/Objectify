@@ -167,9 +167,6 @@ public class CameraActivity extends BaseActivity {
 						bos.flush();
 						bos.close();
 						long length = new File(path).length();
-						if (counter == 1)
-							writeToDatabase(path, length, 0, 0, CameraFinder.pictureSize.toString());
-
 						counter += 1;
 						takePictures();
 					} catch (IOException e) {
@@ -180,21 +177,6 @@ public class CameraActivity extends BaseActivity {
 		};
 
 		return callback;
-	}
-	
-	private void writeToDatabase(String imagePath, long size, int faces, int vertices, String dimensions) {
-		ContentValues values = new ContentValues();
-		Bitmap image = BitmapFactory.decodeFile(imagePath);
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		image.compress(CompressFormat.PNG, 100, baos);
-		values.put(DatabaseAdapter.GALLERY_IMAGE_KEY, baos.toByteArray());
-		values.put(DatabaseAdapter.GALLERY_SIZE_KEY, String.valueOf(size));
-		values.put(DatabaseAdapter.GALLERY_FACES_KEY, String.valueOf(faces));
-		values.put(DatabaseAdapter.GALLERY_VERTICES_KEY, String.valueOf(vertices));
-		values.put(DatabaseAdapter.GALLERY_DIMENSIONS_KEY, dimensions);
-		values.put(DatabaseAdapter.GALLERY_DATE_KEY, String.valueOf(Calendar.getInstance().getTimeInMillis()));
-		values.put(DatabaseAdapter.GALLERY_SUFFIX_KEY, image_suffix);
-		getContentResolver().insert(DatabaseProvider.CONTENT_URI.buildUpon().appendPath("gallery").build(), values);
 	}
 	
 	/**
@@ -225,11 +207,14 @@ public class CameraActivity extends BaseActivity {
 		@Override
 		protected Boolean doInBackground(String... params) {
 			String path = ExternalDirectory.getExternalImageDirectory() + "/" + params[0] + "_1.png";
-			objectModel = new ObjectModel(path);
+			Bitmap image = BitmapFactory.decodeFile(path);
 			float[] vertices = new float[] { -1.0f, -1.0f, 0.0f,
 											1.0f, -1.0f, 0.0f,
 											0.0f, 1.0f, 0.0f };
-			objectModel.putVertices(vertices);
+			float[] n_vertices = new float[0];
+			short[] faces = new short[0];
+
+			objectModel = new ObjectModel(vertices, n_vertices, faces, image, image_suffix);
 			return true;
 		}
 		

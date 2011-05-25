@@ -1,16 +1,19 @@
 package de.hsrm.objectify.rendering;
 
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.IntBuffer;
+import java.util.Calendar;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.Bitmap.Config;
@@ -18,9 +21,11 @@ import android.graphics.Point;
 import android.net.Uri;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
+import android.os.AsyncTask;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
+import de.hsrm.objectify.database.DatabaseAdapter;
 import de.hsrm.objectify.database.DatabaseProvider;
 import de.hsrm.objectify.math.Matrix4f;
 import de.hsrm.objectify.math.Quat4f;
@@ -50,7 +55,6 @@ public class TouchSurfaceView extends GLSurfaceView {
 	private ObjectModelRenderer renderer;
 	private ScaleGestureDetector scaleDetector;
 	private float skalierung = 1;
-	private boolean first = true;
 	
 	/**
 	 * Creates a touchable surface view and ...
@@ -133,6 +137,7 @@ public class TouchSurfaceView extends GLSurfaceView {
 		private ObjectModel objectModel;
 		private Context context;
 		public float angleX, angleY;
+		private boolean onStart = true;
 		
 		public ObjectModelRenderer(Context context, ObjectModel objectModel) {
 			this.context = context;
@@ -160,39 +165,44 @@ public class TouchSurfaceView extends GLSurfaceView {
 			
 		}
 
-		private void createScreenshot(GL10 gl) {
-//			Uri uri = DatabaseProvider.CONTENT_URI.buildUpon().appendPath("gallery").build();
-//			Cursor c = context.getContentResolver().query(uri, null, selection, selectionArgs, sortOrder)
-			int b[] = new int[displayWidth * displayHeight];
-			int bt[] = new int[displayWidth * displayHeight];
-			IntBuffer ib = IntBuffer.wrap(b);
-			ib.position(0);
-			gl.glReadPixels(0, 0, displayWidth, displayHeight, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, ib);
-//			for (int i=0; i<displayHeight; i++) {
-//				for (int j=0; j<displayWidth; j++) {
-//					// correction of R and B
-//					int pix = b[i*displayWidth+j];
-//					int pb = (pix >> 16) & 0xFF;
-//					int pr = (pix >> 16) & 0x00FF0000;
-//					int pixl = (pix & 0xFF00FF00) | pr | pb;
-//					// correction of rows
-//					bt[(displayHeight-i-1)*displayWidth+j] = pixl;
-//				}
-//			}
-			Bitmap sb = Bitmap.createBitmap(ib.array(), displayWidth, displayHeight, Config.ARGB_8888);
-			String path = ExternalDirectory.getExternalImageDirectory() + "/screenshot.png";
-			try {
-				FileOutputStream fos;
-				fos = new FileOutputStream(path);
-				BufferedOutputStream bos = new BufferedOutputStream(fos);
-				sb.compress(CompressFormat.PNG, 80, bos);
-				bos.flush();
-				bos.close();
-			} catch (FileNotFoundException e) {
-				Log.e("TouchSurfaceView", e.getMessage());
-			} catch (IOException e) {
-				Log.e("TouchSurfaceView", e.getMessage());
-			}
+		/**
+		 * Writes the created object in an {@link AsyncTask} into the database.
+		 * Happens only once after the first frame was successfully drawn on the
+		 * display, so that we have a proper screenshot of the calculated
+		 * object.
+		 * 
+		 * @param gl
+		 *            the GL interface
+		 */
+		private void persist(GL10 gl) {
+			new AsyncTask<GL10, Void, Void>() {
+
+				@Override
+				protected Void doInBackground(GL10... params) {
+					GL10 gl = params[0];
+					Uri uri = DatabaseProvider.CONTENT_URI.buildUpon().appendPath("gallery").build();
+					ContentResolver cr = context.getContentResolver();
+					ContentValues values = new ContentValues();
+					int[] b = new int[displayWidth * displayHeight];
+					IntBuffer intBuffer = IntBuffer.wrap(b);
+					intBuffer.position(0);
+					gl.glReadPixels(0, 0, displayWidth, displayHeight, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, intBuffer);
+					Bitmap screenshot = Bitmap.createBitmap(intBuffer.array(), displayWidth, displayHeight, Config.ARGB_8888);
+					ByteArrayOutputStream baos = new ByteArrayOutputStream();
+					screenshot.compress(CompressFormat.PNG, 100, baos);
+					values.put(DatabaseAdapter.GALLERY_IMAGE_KEY, baos.toByteArray());
+					values.put(DatabaseAdapter.GALLERY_SIZE_KEY, "0");
+					values.put(DatabaseAdapter.GALLERY_FACES_KEY, String.valueOf(objectModel.getFaces()).length());
+					values.put(DatabaseAdapter.GALLERY_VERTICES_KEY, String.valueOf(objectModel.getVertices()).length());
+					values.put(DatabaseAdapter.GALLERY_DIMENSIONS_KEY, String.valueOf(displayWidth)+"x"+String.valueOf(displayHeight));
+					values.put(DatabaseAdapter.GALLERY_DATE_KEY, String.valueOf(Calendar.getInstance().getTimeInMillis()));
+					values.put(DatabaseAdapter.GALLERY_SUFFIX_KEY, objectModel.getImageSuffix());
+					cr.insert(uri, values);
+					return null;
+				}
+
+
+			}.execute(gl);
 		}
 		
 		@Override
@@ -208,11 +218,11 @@ public class TouchSurfaceView extends GLSurfaceView {
 			gl.glMultMatrixf(matrix, 0);
 			gl.glScalef(skalierung, skalierung, skalierung);
 			objectModel.draw(gl);
-			if (first) {
-				first = false;
-//				createScreenshot(gl);
+			if (onStart) {
+				onStart = false;
+				persist(gl);
 			}
-				
+
 			gl.glPopMatrix();
 		}
 		
