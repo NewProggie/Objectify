@@ -93,16 +93,12 @@ public class DatabaseProvider extends ContentProvider {
 		}
 	}
 	
-	/** {@inheritDoc} **/
 	@Override
 	public int delete(Uri uri, String selection, String[] selectionArgs) {
 		switch (uriMatcher.match(uri)) {
 		case GALLERY:
-			Cursor c = db.query(DatabaseAdapter.DATABASE_TABLE_GALLERY, null, selection, selectionArgs, null, null, null);
-			c.moveToFirst();
-			String table = c.getString(DatabaseAdapter.GALLERY_ID_COLUMN);
-			c.close();
-			return db.delete(table, selection, selectionArgs);
+			int erg = db.delete(DatabaseAdapter.DATABASE_TABLE_GALLERY, selection, selectionArgs);
+			return erg;
 		}
 		return 0;
 	}

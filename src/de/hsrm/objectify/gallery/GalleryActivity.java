@@ -1,27 +1,31 @@
 package de.hsrm.objectify.gallery;
 
+import java.io.File;
+import java.io.FilenameFilter;
 import java.util.Date;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Gallery;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import de.hsrm.objectify.R;
 import de.hsrm.objectify.database.DatabaseAdapter;
 import de.hsrm.objectify.database.DatabaseProvider;
 import de.hsrm.objectify.ui.BaseActivity;
+import de.hsrm.objectify.utils.ExternalDirectory;
 
 /**
  * An activity with a gallery included, showing all images made within this app
@@ -63,7 +67,30 @@ public class GalleryActivity extends BaseActivity {
 			
 			@Override
 			public void onClick(View v) {
-				Toast.makeText(context, getString(R.string.delete), Toast.LENGTH_SHORT).show();
+				AlertDialog.Builder builder = new AlertDialog.Builder(context);
+				builder.setMessage(getString(R.string.chosen_object_really_delete))
+					.setCancelable(false)
+					.setPositiveButton(getString(R.string.submit), new DialogInterface.OnClickListener() {
+						
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							long id = gallery.getSelectedItemId();
+							deleteFromDatabase(id);
+							Toast.makeText(context, getString(R.string.deleted_successfully), Toast.LENGTH_SHORT).show();
+							dialog.cancel();
+						}
+					})
+					.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+						
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							dialog.cancel();
+						}
+					});
+				AlertDialog alert = builder.create();
+				alert.show();
+				
+				
 			}
 		});
 				
@@ -111,7 +138,39 @@ public class GalleryActivity extends BaseActivity {
 		
 		return listener;
 	}
-	
+
+	/**
+	 * Deletes all images with the given id from the storage and database and
+	 * calls adapter to refresh itself.
+	 * 
+	 * @param id
+	 *            gallery id in database
+	 */
+	private void deleteFromDatabase(long id) {
+		ContentResolver cr = getContentResolver();
+		Cursor c = cr.query(galleryUri, null, DatabaseAdapter.GALLERY_ID_KEY+"=?", new String[] { String.valueOf(id) }, null);
+		c.moveToFirst();
+		final String image_suffix = c.getString(DatabaseAdapter.GALLERY_SUFFIX_COLUMN);
+		File imageDir = new File(ExternalDirectory.getExternalImageDirectory());
+		File[] images = imageDir.listFiles(new FilenameFilter() {
+			
+			@Override
+			public boolean accept(File dir, String filename) {
+				return (filename.contains(image_suffix));
+			}
+		});
+		for (File img : images) {
+			boolean deleted = img.delete();
+		}
+		
+		cr.delete(galleryUri, DatabaseAdapter.GALLERY_ID_KEY+"=?", new String[] { String.valueOf(id) } );
+		c.close();
+		adapter.cursor.requery();
+		adapter.notifyDataSetChanged();
+		if (adapter.getCount() == 0) {
+			finish();
+		}
+	}
 	/**
 	 * Shows specific Dialog to user and finishes current Activity
 	 * 

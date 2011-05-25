@@ -186,6 +186,7 @@ public class CameraActivity extends BaseActivity {
 		values.put(DatabaseAdapter.GALLERY_VERTICES_KEY, String.valueOf(vertices));
 		values.put(DatabaseAdapter.GALLERY_DIMENSIONS_KEY, dimensions);
 		values.put(DatabaseAdapter.GALLERY_DATE_KEY, String.valueOf(Calendar.getInstance().getTimeInMillis()));
+		values.put(DatabaseAdapter.GALLERY_SUFFIX_KEY, image_suffix);
 		getContentResolver().insert(DatabaseProvider.CONTENT_URI.buildUpon().appendPath("gallery").build(), values);
 	}
 	
@@ -207,7 +208,6 @@ public class CameraActivity extends BaseActivity {
 	private class CalculateModel extends AsyncTask<String, Void, Boolean> {
 		
 		private final String TAG = "CalculateModel";
-		private String image_suffix;
 		private ObjectModel objectModel;
 		
 		@Override

@@ -32,12 +32,14 @@ public class DatabaseAdapter {
 	public static final int GALLERY_DIMENSIONS_COLUMN = 5;
 	public static final String GALLERY_DATE_KEY = "date";
 	public static final int GALLERY_DATE_COLUMN = 6;
+	public static final String GALLERY_SUFFIX_KEY = "suffix";
+	public static final int GALLERY_SUFFIX_COLUMN = 7;
 	
 	private static final String DATABASE_TABLE_GALLERY_CREATE = "CREATE TABLE " + DATABASE_TABLE_GALLERY + " (" +
 		GALLERY_ID_KEY + " INTEGER PRIMARY KEY AUTOINCREMENT" + ", " + GALLERY_IMAGE_PATH_KEY + " TEXT NOT NULL" + ", " +
 		GALLERY_SIZE_KEY + " TEXT NOT NULL" + ", " + GALLERY_FACES_KEY + " TEXT NOT NULL" + ", " +
 		GALLERY_VERTICES_KEY + " TEXT NOT NULL" + ", " + GALLERY_DIMENSIONS_KEY + " TEXT NOT NULL" + ", " + 
-		GALLERY_DATE_KEY + " TEXT NOT NULL" + ")";
+		GALLERY_DATE_KEY + " TEXT NOT NULL" + "," + GALLERY_SUFFIX_KEY + " TEXT NOT NULL" + ")";
 	
 	private static SQLiteDatabase db;
 	private DatabaseHelper databaseHelper;

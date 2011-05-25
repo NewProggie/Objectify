@@ -18,7 +18,7 @@ public class GalleryAdapter extends CursorAdapter {
 	
 	private static final String TAG  = "GalleryAdapter";
 	private Context context;
-	private Cursor cursor;
+	public Cursor cursor;
 	private int galleryItemBackground;
 	
 	public GalleryAdapter(Context context, Cursor c) {
