@@ -154,7 +154,7 @@ public class TouchSurfaceView extends GLSurfaceView {
 //			objectModel.loadGLTexture(gl, this.context);
 			gl.glEnable(GL10.GL_TEXTURE_2D);
 			gl.glShadeModel(GL10.GL_SMOOTH);
-			gl.glClearColor(0.0f, 0.0f, 0.3f, 0.5f); // Black, blue Background
+			gl.glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // Black, blue Background
 			gl.glClearDepthf(1.0f);
 			gl.glEnable(GL10.GL_DEPTH_TEST);
 			gl.glDepthFunc(GL10.GL_LEQUAL);
@@ -175,18 +175,19 @@ public class TouchSurfaceView extends GLSurfaceView {
 		 *            the GL interface
 		 */
 		private void persist(GL10 gl) {
-			new AsyncTask<GL10, Void, Void>() {
+			// need to copy pixels from gl, before writing into database inside an AsyncTask
+			IntBuffer intBuffer = IntBuffer.wrap(new int[displayWidth * displayHeight]);
+			intBuffer.position(0);
+			gl.glReadPixels(0, 0, displayWidth, displayHeight, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, intBuffer);
+			new AsyncTask<IntBuffer, Void, Void>() {
 
 				@Override
-				protected Void doInBackground(GL10... params) {
-					GL10 gl = params[0];
+				protected Void doInBackground(IntBuffer... params) {
+					IntBuffer intBuffer = params[0];
 					Uri uri = DatabaseProvider.CONTENT_URI.buildUpon().appendPath("gallery").build();
 					ContentResolver cr = context.getContentResolver();
 					ContentValues values = new ContentValues();
-					int[] b = new int[displayWidth * displayHeight];
-					IntBuffer intBuffer = IntBuffer.wrap(b);
-					intBuffer.position(0);
-					gl.glReadPixels(0, 0, displayWidth, displayHeight, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, intBuffer);
+					
 					Bitmap screenshot = Bitmap.createBitmap(intBuffer.array(), displayWidth, displayHeight, Config.ARGB_8888);
 					ByteArrayOutputStream baos = new ByteArrayOutputStream();
 					screenshot.compress(CompressFormat.PNG, 100, baos);
@@ -202,7 +203,7 @@ public class TouchSurfaceView extends GLSurfaceView {
 				}
 
 
-			}.execute(gl);
+			}.execute(intBuffer);
 		}
 		
 		@Override
