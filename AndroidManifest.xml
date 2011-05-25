@@ -23,6 +23,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".SettingsActivity" />
+        <activity android:name=".AboutActivity" />
         <activity android:name=".camera.CameraActivity" android:screenOrientation="portrait"/>
 		<activity android:name=".gallery.GalleryActivity" />
 		<activity android:name=".rendering.ObjectViewer" />

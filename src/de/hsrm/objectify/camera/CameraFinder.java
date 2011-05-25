@@ -16,10 +16,10 @@ import android.os.Build;
  */
 public abstract class CameraFinder {
 
-	abstract Camera open();
+	public abstract Camera open();
 	static int imageFormat;
 	static Size pictureSize;
-	static CameraFinder INSTANCE = buildFinder();
+	public static CameraFinder INSTANCE = buildFinder();
 	
 	private static CameraFinder buildFinder() {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {

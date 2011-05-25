@@ -49,7 +49,6 @@ public class TouchSurfaceView extends GLSurfaceView {
 	private final Object matrixLock = new Object();
 	private ArcBall arcBall = new ArcBall(getWidth(), getHeight());
 	private GLU glu;
-	private Context context;
 	private int displayWidth, displayHeight;
 	private final float TRACKBALL_SCALE_FACTOR = 36.0f;
 	private ObjectModelRenderer renderer;
@@ -65,7 +64,6 @@ public class TouchSurfaceView extends GLSurfaceView {
 	 */
 	public TouchSurfaceView(Context context, ObjectModel objectModel, int width, int height) {
 		super(context);
-		this.context = context;
 		this.displayWidth = width;
 		this.displayHeight = height;
 		
@@ -137,7 +135,11 @@ public class TouchSurfaceView extends GLSurfaceView {
 		private ObjectModel objectModel;
 		private Context context;
 		public float angleX, angleY;
-		private boolean onStart = true;
+		/**
+		 * used for indicating whether it's a newly created object and therefore
+		 * needs to be written to database.
+		 */
+		private boolean onFirstStart = true;
 		
 		public ObjectModelRenderer(Context context, ObjectModel objectModel) {
 			this.context = context;
@@ -219,8 +221,8 @@ public class TouchSurfaceView extends GLSurfaceView {
 			gl.glMultMatrixf(matrix, 0);
 			gl.glScalef(skalierung, skalierung, skalierung);
 			objectModel.draw(gl);
-			if (onStart) {
-				onStart = false;
+			if (onFirstStart) {
+				onFirstStart = false;
 				persist(gl);
 			}
 

@@ -20,6 +20,15 @@
     <string name="please_wait">Bitte warten...</string>
     <string name="search">Suche</string>
     <string name="no_ffc_was_found">Es konnte keine Frontkamera gefunden werden.</string>
+    <string name="about">Info</string>
+    
+    <!-- Settings -->
+    <string name="settings">Einstellungen</string>
+    <string name="settings_camera_resolutions">Kamera-Auflösungen</string>
+    <string name="settings_camera_resolutions_hint">Legt die Auflösung der Frontkamera fest.</string>
+    <string name="settings_saving_directory_title">Externer Speicher</string>
+    <string name="settings_saving_directory">Speicherort</string>
+    <string name="settings_saving_directory_hint">Ändert den Speicherort für Bilder und erstellte 3D-Objekte</string>
     
     <!-- Gallery -->
     <string name="size">Größe:</string>

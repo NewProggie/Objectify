@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -71,6 +73,28 @@ public class MainActivity extends BaseActivity {
     		Intent camera = new Intent(context, CameraActivity.class);
     		startActivity(camera);
     		break;
+    	}
+    }
+    
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+    	getMenuInflater().inflate(R.menu.option, menu);
+    	return super.onCreateOptionsMenu(menu);
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+    	switch (item.getItemId()) {
+    	case R.id.opt_settings:
+    		Intent settings = new Intent(this, SettingsActivity.class);
+    		startActivity(settings);
+    		return true;
+    	case R.id.opt_about:
+    		Intent about = new Intent(this, AboutActivity.class);
+    		startActivity(about);
+    		return true;
+    	default:
+    		return super.onOptionsItemSelected(item);
     	}
     }
    

@@ -17,7 +17,7 @@ public class ClassicFinder extends CameraFinder {
 	/**
 	 * Return a new instance from front facing camera or null if none was found.
 	 */
-	Camera open() {
+	public Camera open() {
 		if (android.os.Build.PRODUCT.equals("GT-P1000")) {
 			// running on samsung galaxy tab, using only working size and picture
 			// format on this device

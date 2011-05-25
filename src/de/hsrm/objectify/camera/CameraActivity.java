@@ -166,7 +166,6 @@ public class CameraActivity extends BaseActivity {
 						image.compress(CompressFormat.PNG, 100, bos);
 						bos.flush();
 						bos.close();
-						long length = new File(path).length();
 						counter += 1;
 						takePictures();
 					} catch (IOException e) {
