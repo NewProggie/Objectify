@@ -23,7 +23,16 @@
         <activity android:name=".AboutActivity" />
         <activity android:name=".camera.CameraActivity" android:screenOrientation="portrait"/>
 		<activity android:name=".gallery.GalleryActivity" />
-		<activity android:name=".rendering.ObjectViewer" />
+		<activity android:name=".rendering.ObjectViewer">
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<data android:scheme="file" />
+				<data android:mimeType="application/x-tgif" />
+				<data android:pathPattern=".*\\.obj" />
+				<data android:host="*" />
+			</intent-filter>
+		</activity>
 		<activity android:name=".howto.HowToActivity" />
 		<provider android:name=".database.DatabaseProvider" android:authorities="de.hsrm.objectify.databaseprovider.content" />
     </application>
