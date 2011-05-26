@@ -1,6 +1,7 @@
 package de.hsrm.objectify;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import android.content.ContextWrapper;
 import android.content.SharedPreferences;
@@ -16,33 +17,21 @@ import de.hsrm.objectify.camera.CameraFinder;
 
 public class SettingsActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener {
 
+	ListPreference cameraResolutions;
+	EditTextPreference savingDirectory;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		addPreferencesFromResource(R.xml.settings);
 		
-		ListPreference cameraResolutions = (ListPreference) findPreference(getString(R.string.settings_camera_resolutions));
-		EditTextPreference savingDir = (EditTextPreference) findPreference(getString(R.string.settings_saving_directory));
+		cameraResolutions = (ListPreference) findPreference(getString(R.string.settings_camera_resolutions));
+		savingDirectory = (EditTextPreference) findPreference(getString(R.string.settings_saving_directory));
 		
-		CharSequence[] cs;
-		CharSequence[] cs2;
-		ArrayList<Size> sizes = new ArrayList<Camera.Size>();
-		Camera camera = CameraFinder.INSTANCE.open();
-		Camera.Parameters params = camera.getParameters();
-		for (Size size : params.getSupportedPictureSizes()) {
-			sizes.add(size);
-		}
-		cs = new CharSequence[sizes.size()];
-		for (int i=0; i< sizes.size(); i++) {
-			Size s = sizes.get(i);
-			CharSequence c = String.valueOf(s.width) + "x" + String.valueOf(s.height);
-			cs[i] = c;
-		}
+		cameraResolutions.setEntries(getAvailableResolutions());
+		cameraResolutions.setEntryValues(getAvailableResolutions());
+		savingDirectory.setText(getString(R.string.const_sd_path));
 
-		camera.release();
-
-		cameraResolutions.setEntries(cs);
-		cameraResolutions.setEntryValues(cs);
 	}
 	
 	public static final SharedPreferences getSettings(final ContextWrapper context) {
@@ -56,4 +45,23 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		Log.d("SETTING", key);
 	}
 
+	/**
+	 * Reads available resolutions from the camera and returns an
+	 * {@link CharSequence} array with the combined resolutions, e.g. 800x600
+	 * 
+	 * @return array with available resolutions stored as [width]x[height]
+	 */
+	private CharSequence[] getAvailableResolutions() {
+		ArrayList<String> tempResolutions = new ArrayList<String>();
+		Camera camera = CameraFinder.INSTANCE.open();
+		Camera.Parameters params = camera.getParameters();
+		for (Size size : params.getSupportedPictureSizes()) {
+			tempResolutions.add(String.valueOf(size.width) + "x" + String.valueOf(size.height));
+		}
+		camera.release();
+		CharSequence[] resolutions = new CharSequence[tempResolutions.size()];
+		tempResolutions.toArray(resolutions);
+		return resolutions;
+	}
+	
 }

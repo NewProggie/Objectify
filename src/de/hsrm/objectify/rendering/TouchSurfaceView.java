@@ -203,6 +203,7 @@ public class TouchSurfaceView extends GLSurfaceView {
 					values.put(DatabaseAdapter.GALLERY_SUFFIX_KEY, objectModel.getImageSuffix());
 					cr.insert(uri, values);
 					
+					OBJFormat.writeFile(ExternalDirectory.getExternalImageDirectory()+"/test.obj", objectModel);
 					return null;
 				}
 

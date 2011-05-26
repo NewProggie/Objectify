@@ -8,6 +8,7 @@ import java.io.IOException;
 import de.hsrm.objectify.utils.ExternalDirectory;
 
 import android.app.Activity;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.os.Bundle;
@@ -36,6 +37,8 @@ public class ObjectViewer extends Activity {
 		glSurfaceView = new TouchSurfaceView(this, objectModel, display.getWidth(), display.getHeight());
 		setContentView(glSurfaceView);
 	}
+	
+
 	
 	@Override
 	protected void onPause() {

@@ -42,16 +42,17 @@ public class OBJFormat {
 				if (i%3 == 0) 
 					out.write("\nv " + String.valueOf(vertices[i]));
 				else
-					out.write(String.valueOf(vertices[i]));
+					out.write(" " + String.valueOf(vertices[i]));
 			}
 			
 			for (int i=0; i<n_vertices.length; i++) {
 				if (i%3 == 0)
-					out.write("\nvn" + String.valueOf(n_vertices[i]));
+					out.write("\nvn " + String.valueOf(n_vertices[i]));
 				else
 					out.write(String.valueOf(n_vertices[i]));
 			}
-			
+			out.flush();
+			out.close();
 			// TODO faces einlesen
 		} catch (IOException e) {
 			Log.e(TAG, e.getMessage());
