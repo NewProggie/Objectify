@@ -86,6 +86,15 @@ public class ObjectModel implements Parcelable {
 		return this.faces;
 	}
 	
+	public void setTextures(int[] textures) {
+		this.textures = new int[textures.length];
+		System.arraycopy(textures, 0, this.textures, 0, textures.length);
+	}
+	
+	public int[] getTextures() {
+		return this.textures;
+	}
+	
 	public String getImageSuffix() {
 		return image_suffix;
 	}

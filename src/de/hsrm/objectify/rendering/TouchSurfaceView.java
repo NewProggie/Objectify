@@ -30,6 +30,7 @@ import de.hsrm.objectify.database.DatabaseProvider;
 import de.hsrm.objectify.math.Matrix4f;
 import de.hsrm.objectify.math.Quat4f;
 import de.hsrm.objectify.utils.ExternalDirectory;
+import de.hsrm.objectify.utils.OBJFormat;
 
 /**
  * Creates a touchable surface view to move, scale and spin a rendered object on
@@ -201,6 +202,7 @@ public class TouchSurfaceView extends GLSurfaceView {
 					values.put(DatabaseAdapter.GALLERY_DATE_KEY, String.valueOf(Calendar.getInstance().getTimeInMillis()));
 					values.put(DatabaseAdapter.GALLERY_SUFFIX_KEY, objectModel.getImageSuffix());
 					cr.insert(uri, values);
+					
 					return null;
 				}
 
