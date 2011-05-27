@@ -25,6 +25,7 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Gallery;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import de.hsrm.objectify.R;
@@ -44,6 +45,7 @@ public class GalleryActivity extends BaseActivity {
 
 	private static final String TAG = "GalleryActivity";
 	private Gallery gallery;
+	private ImageView currentImage;
 	private GalleryAdapter adapter;
 	private Context context;
 	private TextView size, faces, vertices, dimension, date;
@@ -114,6 +116,7 @@ public class GalleryActivity extends BaseActivity {
 		context = this;
 		
 		gallery = (Gallery) findViewById(R.id.object_gallery);
+		currentImage = (ImageView) findViewById(R.id.current_object_image);
 		size = (TextView) findViewById(R.id.gallery_size_textview);
 		faces = (TextView) findViewById(R.id.gallery_faces_textview);
 		vertices = (TextView) findViewById(R.id.gallery_vertices_textview);
@@ -146,6 +149,10 @@ public class GalleryActivity extends BaseActivity {
 				dimension.setText(c.getString(DatabaseAdapter.GALLERY_DIMENSIONS_COLUMN));
 				Date d = new Date(Long.parseLong(c.getString(DatabaseAdapter.GALLERY_DATE_COLUMN)));
 				date.setText(d.toLocaleString());
+				byte[] bb = c.getBlob(DatabaseAdapter.GALLERY_IMAGE_COLUMN);
+				currentImage.setImageBitmap(BitmapFactory.decodeByteArray(bb, 0, bb.length));
+				currentImage.setScaleType(ImageView.ScaleType.CENTER);
+//				imageView.setScaleType(ImageView.ScaleType.FIT_XY);
 				c.close();
 			}
 

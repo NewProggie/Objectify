@@ -6,6 +6,7 @@
 		android:id="@+id/current_object_image"
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent"
+		android:layout_margin="7dip"
 		android:layout_weight="1" />
 	<Gallery 
 		android:id="@+id/object_gallery" 

@@ -16,6 +16,7 @@ import android.widget.Gallery.LayoutParams;
 import android.widget.ImageView;
 import de.hsrm.objectify.R;
 import de.hsrm.objectify.database.DatabaseAdapter;
+import de.hsrm.objectify.utils.ImageHelper;
 
 public class GalleryAdapter extends CursorAdapter {
 	
@@ -40,7 +41,8 @@ public class GalleryAdapter extends CursorAdapter {
 	@Override
 	public View newView(Context context, Cursor cursor, ViewGroup parent) {		
 		ImageView imageView = new ImageView(context);
-		imageView.setLayoutParams(new Gallery.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
+		int size = ImageHelper.dipToPx(100, context);
+		imageView.setLayoutParams(new Gallery.LayoutParams(size, size));
 		imageView.setScaleType(ImageView.ScaleType.FIT_XY);
 		imageView.setBackgroundResource(galleryItemBackground);
 		

@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.IntBuffer;
 import java.util.Calendar;
+import java.util.Random;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -157,7 +158,8 @@ public class TouchSurfaceView extends GLSurfaceView {
 //			objectModel.loadGLTexture(gl, this.context);
 			gl.glEnable(GL10.GL_TEXTURE_2D);
 			gl.glShadeModel(GL10.GL_SMOOTH);
-			gl.glClearColor(0.5f, 0.3f, 0.5f, 0.7f); // Black, blue Background
+			Random r = new Random();
+			gl.glClearColor(r.nextFloat(), r.nextFloat(), r.nextFloat(), r.nextFloat()); // Black, blue Background
 			gl.glClearDepthf(1.0f);
 			gl.glEnable(GL10.GL_DEPTH_TEST);
 			gl.glDepthFunc(GL10.GL_LEQUAL);
