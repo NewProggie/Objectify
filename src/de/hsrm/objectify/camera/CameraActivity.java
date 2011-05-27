@@ -207,13 +207,9 @@ public class CameraActivity extends BaseActivity {
 		protected Boolean doInBackground(String... params) {
 			String path = ExternalDirectory.getExternalImageDirectory() + "/" + params[0] + "_1.png";
 			Bitmap image = BitmapFactory.decodeFile(path);
-			float[] vertices = new float[] { 0.0f, 0.0f, 0.0f,
-											1.0f, 0.0f, 0.0f,
-											0.0f, 1.0f, 0.0f };
-			float[] n_vertices = new float[] { 0.0f, 0.0f, 1.0f,
-											  0.0f, 0.0f, 1.0f,
-											  0.0f, 0.0f, 1.0f };
-			short[] faces = new short[] { 1,1,2,2,3,3};
+			float[] vertices = new float[] { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f};
+			float[] n_vertices = new float[] { 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f };
+			short[] faces = new short[] { 1,7,5,1,3,7,1,4,3,1,2,4,3,8,7,3,4,8,5,7,8,5,8,6,1,5,6,1,6,2,2,6,8,2,8,4};
 
 			objectModel = new ObjectModel(vertices, n_vertices, faces, image, image_suffix);
 			return true;

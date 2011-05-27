@@ -15,7 +15,14 @@ import android.preference.PreferenceActivity;
 import android.util.Log;
 import de.hsrm.objectify.camera.CameraFinder;
 
-public class SettingsActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener {
+/**
+ * This class takes care of the user preferences such as setting front camera
+ * resolutions and changing the default saving directory.
+ * 
+ * @author kwolf001
+ * 
+ */
+public class SettingsActivity extends PreferenceActivity {
 
 	ListPreference cameraResolutions;
 	EditTextPreference savingDirectory;
@@ -39,12 +46,6 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		return context.getSharedPreferences(name, MODE_PRIVATE);
 	}
 	
-	@Override
-	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-		// TODO wird bisher nicht aufgerufen
-		Log.d("SETTING", key);
-	}
-
 	/**
 	 * Reads available resolutions from the camera and returns an
 	 * {@link CharSequence} array with the combined resolutions, e.g. 800x600

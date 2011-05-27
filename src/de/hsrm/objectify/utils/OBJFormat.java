@@ -37,7 +37,12 @@ public class OBJFormat {
 			float[] vertices = objectModel.getVertices();
 			float[] n_vertices = objectModel.getNormalVertices();
 			short[] faces = objectModel.getFaces();
+			int[] textures = objectModel.getTextures();
 			
+			// writing header
+			out.write("# OBJ Export\n#Objectify for Android\n\n");
+			
+			// writing vertices
 			for (int i=0; i<vertices.length; i++) {
 				if (i%3 == 0) 
 					out.write("\nv " + String.valueOf(vertices[i]));
@@ -45,11 +50,18 @@ public class OBJFormat {
 					out.write(" " + String.valueOf(vertices[i]));
 			}
 			
+			// writing normals
 			for (int i=0; i<n_vertices.length; i++) {
 				if (i%3 == 0)
 					out.write("\nvn " + String.valueOf(n_vertices[i]));
 				else
-					out.write(String.valueOf(n_vertices[i]));
+					out.write(" " + String.valueOf(n_vertices[i]));
+			}
+			
+			// writing faces
+			for (int i=0; i<faces.length; i++) {
+				if (i%3 == 0) 
+					out.write("\nf ");
 			}
 			out.flush();
 			out.close();
