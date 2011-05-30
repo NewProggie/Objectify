@@ -12,20 +12,24 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.LightingColorFilter;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.GradientDrawable.Orientation;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+import android.widget.RemoteViews.ActionException;
 import de.hsrm.objectify.R;
 import de.hsrm.objectify.database.DatabaseAdapter;
 import de.hsrm.objectify.database.DatabaseProvider;
@@ -46,7 +50,7 @@ public class CameraActivity extends BaseActivity {
 	private String TAG = "CameraActivity";
 	private CameraPreview cameraPreview;
 	private Button triggerPictures;
-	private LinearLayout left, right, up, down, shadow, progress;
+	private LinearLayout lightContainer, lightOne, lightTwo, shadow, progress;
 	private String image_suffix;
 	private int counter = 1;
 	private Context context;
@@ -62,10 +66,10 @@ public class CameraActivity extends BaseActivity {
 		setScreenBrightness(1);
 		
 		cameraPreview = (CameraPreview) findViewById(R.id.camera_surface);
-		left = (LinearLayout) findViewById(R.id.light_left);
-		right = (LinearLayout) findViewById(R.id.light_right);
-		up = (LinearLayout) findViewById(R.id.light_up);
-		down = (LinearLayout) findViewById(R.id.light_down);
+		lightContainer = (LinearLayout) findViewById(R.id.light_container);
+		lightOne = (LinearLayout) findViewById(R.id.light_one);
+		lightTwo = (LinearLayout) findViewById(R.id.light_two);
+
 		shadow = (LinearLayout) findViewById(R.id.shadow);
 		progress = (LinearLayout) findViewById(R.id.progress);
 		triggerPictures = (Button) findViewById(R.id.trigger_picture_button);
@@ -74,6 +78,7 @@ public class CameraActivity extends BaseActivity {
 			@Override
 			public void onClick(View v) {
 				shadow.setVisibility(View.VISIBLE);
+				triggerPictures.setVisibility(View.GONE);
 				image_suffix = String.valueOf(System.currentTimeMillis());
 				setLights();
 				takePictures();
@@ -87,6 +92,15 @@ public class CameraActivity extends BaseActivity {
 			cameraPreview.setCamera(camera);
 		}
 		
+	}
+	
+	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+		if (event.getAction() == MotionEvent.ACTION_DOWN) {
+			Log.d(TAG, "ACTION_DOWN");
+			setLights();
+		}
+		return super.onTouchEvent(event);
 	}
 	
 	/**
@@ -129,20 +143,18 @@ public class CameraActivity extends BaseActivity {
 	 * in front
 	 */
 	private void setLights() {
-		if (left.getVisibility() == View.VISIBLE) {
-			left.setVisibility(View.INVISIBLE);
-			right.setVisibility(View.VISIBLE);
-		} else if (right.getVisibility() == View.VISIBLE) {
-			right.setVisibility(View.INVISIBLE);
-			up.setVisibility(View.VISIBLE);
-		} else if (up.getVisibility() == View.VISIBLE) {
-			up.setVisibility(View.INVISIBLE);
-			down.setVisibility(View.VISIBLE);
-		} else if (down.getVisibility() == View.VISIBLE) {
-			down.setVisibility(View.INVISIBLE);
-			left.setVisibility(View.VISIBLE);
+		 if (lightOne.getVisibility() == View.VISIBLE && lightContainer.getOrientation() == LinearLayout.VERTICAL) {
+			lightOne.setVisibility(View.INVISIBLE);
+			lightTwo.setVisibility(View.VISIBLE);
+		} else if (lightTwo.getVisibility() == View.VISIBLE && lightContainer.getOrientation() == LinearLayout.VERTICAL) {
+			lightContainer.setOrientation(LinearLayout.HORIZONTAL);
+		} else if (lightTwo.getVisibility() == View.VISIBLE
+				&& lightContainer.getOrientation() == LinearLayout.HORIZONTAL) {
+			lightTwo.setVisibility(View.INVISIBLE);
+			lightOne.setVisibility(View.VISIBLE);
 		} else {
-			left.setVisibility(View.VISIBLE);
+			lightOne.setVisibility(View.VISIBLE);
+			lightContainer.setOrientation(LinearLayout.VERTICAL);
 		}
 	}
 	
