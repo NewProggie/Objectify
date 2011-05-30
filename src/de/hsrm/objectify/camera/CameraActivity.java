@@ -1,21 +1,15 @@
 package de.hsrm.objectify.camera;
 
 import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Calendar;
 
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.LightingColorFilter;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.GradientDrawable.Orientation;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.os.AsyncTask;
@@ -29,10 +23,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-import android.widget.RemoteViews.ActionException;
 import de.hsrm.objectify.R;
-import de.hsrm.objectify.database.DatabaseAdapter;
-import de.hsrm.objectify.database.DatabaseProvider;
 import de.hsrm.objectify.rendering.ObjectModel;
 import de.hsrm.objectify.rendering.ObjectViewer;
 import de.hsrm.objectify.ui.BaseActivity;
@@ -92,15 +83,6 @@ public class CameraActivity extends BaseActivity {
 			cameraPreview.setCamera(camera);
 		}
 		
-	}
-	
-	@Override
-	public boolean onTouchEvent(MotionEvent event) {
-		if (event.getAction() == MotionEvent.ACTION_DOWN) {
-			Log.d(TAG, "ACTION_DOWN");
-			setLights();
-		}
-		return super.onTouchEvent(event);
 	}
 	
 	/**

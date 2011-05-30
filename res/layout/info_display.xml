@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent" 
+	android:layout_height="fill_parent"
+	android:background="@drawable/shadowed_edges" 
+	android:padding="10dip"
+	android:layout_weight="1" 
+	android:stretchColumns="2">
+	<TableRow>
+		<TextView 
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content" 
+			android:layout_marginRight="10dip"
+			style="@style/ShadowedBlackText" 
+			android:text="@string/size" />
+		<TextView 
+			android:id="@+id/gallery_size_textview" 
+			style="@style/ShadowedBlackText"
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content" />
+	</TableRow>
+	<TableRow>
+		<TextView 
+			android:layout_width="wrap_content" 
+			style="@style/ShadowedBlackText"
+			android:layout_height="wrap_content" 
+			android:layout_marginRight="10dip"
+			android:text="@string/faces" />
+		<TextView 
+			android:id="@+id/gallery_faces_textview" 
+			style="@style/ShadowedBlackText"
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content" />
+	</TableRow>
+	<TableRow>
+		<TextView 
+			android:layout_width="wrap_content" 
+			style="@style/ShadowedBlackText"
+			android:layout_height="wrap_content" 
+			android:layout_marginRight="10dip"
+			android:text="@string/vertices" />
+		<TextView 
+			android:id="@+id/gallery_vertices_textview" 
+			style="@style/ShadowedBlackText"
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content" />
+	</TableRow>
+	<TableRow>
+		<TextView 
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content" 
+			android:layout_marginRight="10dip"
+			style="@style/ShadowedBlackText" 
+			android:text="@string/dimension" />
+		<TextView 
+			android:id="@+id/gallery_dimension_textview" 
+			style="@style/ShadowedBlackText"
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content" />
+	</TableRow>
+	<TableRow>
+		<TextView 
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content" 
+			android:layout_marginRight="10dip"
+			style="@style/ShadowedBlackText" 
+			android:text="@string/date" />
+		<TextView 
+			android:id="@+id/gallery_date_textview" 
+			style="@style/ShadowedBlackText"
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content" />
+	</TableRow>
+</TableLayout>

@@ -70,4 +70,9 @@
     	<item name="android:shadowRadius">1</item>
 		<item name="android:background">@null</item>
 	</style>
+	<style name="Animations" />
+	<style name="Animations.PopupWindow">
+		<item name="@android:windowEnterAnimation">@anim/grow_from_topright_to_bottomleft</item>
+		<item name="@android:windowExitAnimation">@anim/shrink_from_bottomleft_to_topright</item>
+	</style>
 </resources>

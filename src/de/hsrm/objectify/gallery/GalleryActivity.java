@@ -25,6 +25,7 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Gallery;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,6 +33,7 @@ import de.hsrm.objectify.R;
 import de.hsrm.objectify.database.DatabaseAdapter;
 import de.hsrm.objectify.database.DatabaseProvider;
 import de.hsrm.objectify.ui.BaseActivity;
+import de.hsrm.objectify.ui.InfoPopupWindow;
 import de.hsrm.objectify.utils.ExternalDirectory;
 
 /**
@@ -48,7 +50,7 @@ public class GalleryActivity extends BaseActivity {
 	private ImageView currentImage;
 	private GalleryAdapter adapter;
 	private Context context;
-	private TextView size, faces, vertices, dimension, date;
+	private ImageButton currentImageInfo;
 	private Uri galleryUri;
 	
 	@Override
@@ -117,11 +119,20 @@ public class GalleryActivity extends BaseActivity {
 		
 		gallery = (Gallery) findViewById(R.id.object_gallery);
 		currentImage = (ImageView) findViewById(R.id.current_object_image);
-		size = (TextView) findViewById(R.id.gallery_size_textview);
-		faces = (TextView) findViewById(R.id.gallery_faces_textview);
-		vertices = (TextView) findViewById(R.id.gallery_vertices_textview);
-		dimension = (TextView) findViewById(R.id.gallery_dimension_textview);
-		date = (TextView) findViewById(R.id.gallery_date_textview);
+		currentImageInfo = (ImageButton) findViewById(R.id.current_object_info);
+		currentImageInfo.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				InfoPopupWindow info = new InfoPopupWindow(v);
+				info.showInfoPopupWindow();
+			}
+		});
+//		size = (TextView) findViewById(R.id.gallery_size_textview);
+//		faces = (TextView) findViewById(R.id.gallery_faces_textview);
+//		vertices = (TextView) findViewById(R.id.gallery_vertices_textview);
+//		dimension = (TextView) findViewById(R.id.gallery_dimension_textview);
+//		date = (TextView) findViewById(R.id.gallery_date_textview);
 		
 		galleryUri = DatabaseProvider.CONTENT_URI.buildUpon().appendPath("gallery").build();
 		Cursor cursor = this.managedQuery(galleryUri, null, null, null, null);
@@ -143,12 +154,12 @@ public class GalleryActivity extends BaseActivity {
 				Cursor c = getContentResolver().query(galleryUri, null, DatabaseAdapter.GALLERY_ID_KEY+"=?", args, null);
 				c.moveToFirst();
 				float s = Integer.valueOf(c.getString(DatabaseAdapter.GALLERY_SIZE_COLUMN))/1024;
-				size.setText(String.valueOf(s) + " KB");
-				faces.setText(c.getString(DatabaseAdapter.GALLERY_FACES_COLUMN));
-				vertices.setText(c.getString(DatabaseAdapter.GALLERY_VERTICES_COLUMN));
-				dimension.setText(c.getString(DatabaseAdapter.GALLERY_DIMENSIONS_COLUMN));
-				Date d = new Date(Long.parseLong(c.getString(DatabaseAdapter.GALLERY_DATE_COLUMN)));
-				date.setText(d.toLocaleString());
+//				size.setText(String.valueOf(s) + " KB");
+//				faces.setText(c.getString(DatabaseAdapter.GALLERY_FACES_COLUMN));
+//				vertices.setText(c.getString(DatabaseAdapter.GALLERY_VERTICES_COLUMN));
+//				dimension.setText(c.getString(DatabaseAdapter.GALLERY_DIMENSIONS_COLUMN));
+//				Date d = new Date(Long.parseLong(c.getString(DatabaseAdapter.GALLERY_DATE_COLUMN)));
+//				date.setText(d.toLocaleString());
 				byte[] bb = c.getBlob(DatabaseAdapter.GALLERY_IMAGE_COLUMN);
 				currentImage.setImageBitmap(BitmapFactory.decodeByteArray(bb, 0, bb.length));
 				currentImage.setScaleType(ImageView.ScaleType.CENTER);
