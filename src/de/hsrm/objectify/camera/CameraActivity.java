@@ -213,7 +213,9 @@ public class CameraActivity extends BaseActivity {
 		protected void onPostExecute(Boolean result) {
 			progress.setVisibility(View.GONE);
 			Intent viewObject = new Intent(context, ObjectViewer.class);
-			viewObject.putExtra("objectModel", objectModel);
+			Bundle b = new Bundle();
+			b.putParcelable("objectModel", objectModel);
+			viewObject.putExtra("bundle", b);
 			startActivity(viewObject);
 			((Activity) context).finish();
 		}

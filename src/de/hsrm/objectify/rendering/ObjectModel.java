@@ -1,5 +1,6 @@
 package de.hsrm.objectify.rendering;
 
+import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -9,7 +10,6 @@ import javax.microedition.khronos.opengles.GL10;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.os.Bundle;
 import android.os.Parcel;
@@ -17,13 +17,16 @@ import android.os.Parcelable;
 
 /**
  * A representation of an actual object. Vertices, normals and texture can be
- * added after an instance of this class has been made.
+ * added after an instance of this class has been made. This class implements
+ * both {@link Parcelable} for sending between different Activities and
+ * {@link Serializable} for storing onto the external storage.
  * 
  * @author kwolf001
  * 
  */
-public class ObjectModel implements Parcelable {
-	
+public class ObjectModel implements Parcelable, Serializable {
+
+	private static final long serialVersionUID = 1L;
 	private static final String TAG = "ObjectModel";
 	private FloatBuffer vertexBuffer;
 	private FloatBuffer normalBuffer;
