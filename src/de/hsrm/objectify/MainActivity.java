@@ -26,8 +26,6 @@ import de.hsrm.objectify.ui.DashboardLayout;
  */
 public class MainActivity extends BaseActivity {
 
-	// TODO: Feedback senden in About einbauen
-
 	private Context context;
 
 	@SuppressWarnings("unused")

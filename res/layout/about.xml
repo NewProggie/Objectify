@@ -8,6 +8,12 @@
 	<TextView
 		android:id="@+id/about_text"
 		android:layout_width="fill_parent"
-		android:layout_height="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_weight="1"
 		style="@style/ShadowedText" />
+	<Button
+		android:id="@+id/feedback_button"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content" 
+		android:text="@string/send_feedback" />
 </LinearLayout>

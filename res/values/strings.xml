@@ -22,6 +22,7 @@
     <string name="external_not_mounted">Das externe Speicherverzeichnis wurde nicht gefunden</string>
     <string name="error">Fehler</string>
     <string name="please_wait">Bitte warten...</string>
+    <string name="send_feedback">Feedback senden</string>
     <string name="search">Suche</string>
     <string name="no_ffc_was_found">Es konnte keine Frontkamera gefunden werden.</string>
     <string name="about">Info</string>
@@ -43,4 +44,9 @@
     
     <string name="const_sd_path">/.objectify/</string>
     <string name="const_sd_img_path">/.objectify/img/</string>
+    
+    <!-- About -->
+    <string name="developer_mail_address">kai.wolf@gmail.com</string>
+    <string name="no_mailclient_found">Kein Programm zum Versenden einer Mail gefunden.</string>
+    
 </resources>
