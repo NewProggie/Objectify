@@ -4,11 +4,11 @@ import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 
 import javax.microedition.khronos.opengles.GL10;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.os.Bundle;
@@ -24,9 +24,8 @@ import android.os.Parcelable;
  * @author kwolf001
  * 
  */
-public class ObjectModel implements Parcelable, Serializable {
+public class ObjectModel implements Parcelable {
 
-	private static final long serialVersionUID = 1L;
 	private static final String TAG = "ObjectModel";
 	private FloatBuffer vertexBuffer;
 	private FloatBuffer normalBuffer;
@@ -137,7 +136,7 @@ public class ObjectModel implements Parcelable, Serializable {
 		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
 //		gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 		gl.glEnableClientState(GL10.GL_NORMAL_ARRAY);
-//		gl.glFrontFace(GL10.GL_CCW);
+		gl.glFrontFace(GL10.GL_CCW);
 		gl.glVertexPointer(3, GL10.GL_FLOAT, 0, vertexBuffer);
 		gl.glNormalPointer(GL10.GL_FLOAT, 0, normalBuffer);
 //		gl.glDrawElements(GL10.GL_TRIANGLES, faces.length, GL10.GL_UNSIGNED_SHORT, indexBuffer);
@@ -150,33 +149,33 @@ public class ObjectModel implements Parcelable, Serializable {
 //		gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 	}
 
-	public void loadGLTexture(GL10 gl, Context context) {
-//		Bitmap texture = scaleTexture(image, 256);
+	public void loadGLTexture(GL10 gl, Bitmap image) {
+		Bitmap texture = scaleTexture(image, 256);
 //		
-//		gl.glGenTextures(1, textures, 0);
-//		gl.glBindTexture(GL10.GL_TEXTURE_2D, textures[0]);
-//		gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_NEAREST);
-//		gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_LINEAR);
-//		gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_S, GL10.GL_REPEAT);
-//		gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T, GL10.GL_REPEAT);
+		gl.glGenTextures(1, textures, 0);
+		gl.glBindTexture(GL10.GL_TEXTURE_2D, textures[0]);
+		gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_NEAREST);
+		gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_LINEAR);
+		gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_S, GL10.GL_REPEAT);
+		gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T, GL10.GL_REPEAT);
 		
-//		if (texture != null) {
+		if (texture != null) {
 //			GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, texture, 0);
 //			// Alternative
-//			ByteBuffer bytebuf = ByteBuffer.allocateDirect(texture.getHeight() * texture.getWidth() * 4);
-//			bytebuf.order(ByteOrder.nativeOrder());
-//			IntBuffer pixelbuf = bytebuf.asIntBuffer();
+			ByteBuffer bytebuf = ByteBuffer.allocateDirect(texture.getHeight() * texture.getWidth() * 4);
+			bytebuf.order(ByteOrder.nativeOrder());
+			IntBuffer pixelbuf = bytebuf.asIntBuffer();
 //			
-//			for (int y = 0; y < texture.getHeight(); y++) {
-//				for (int x = 0; x < texture.getWidth(); x++) {
-//					pixelbuf.put(texture.getPixel(x, y));
-//				}
-//			}
-//			pixelbuf.position(0);
-//			bytebuf.position(0);
+			for (int y = 0; y < texture.getHeight(); y++) {
+				for (int x = 0; x < texture.getWidth(); x++) {
+					pixelbuf.put(texture.getPixel(x, y));
+				}
+			}
+			pixelbuf.position(0);
+			bytebuf.position(0);
 //			
-//			gl.glTexImage2D(GL10.GL_TEXTURE_2D, 0, GL10.GL_RGBA, texture.getWidth(), texture.getHeight(), 0, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, pixelbuf);
-//		}
+			gl.glTexImage2D(GL10.GL_TEXTURE_2D, 0, GL10.GL_RGBA, texture.getWidth(), texture.getHeight(), 0, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, pixelbuf);
+		}
 		
 	}
 	
