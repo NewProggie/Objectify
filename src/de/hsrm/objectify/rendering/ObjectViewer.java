@@ -42,11 +42,11 @@ public class ObjectViewer extends BaseActivity {
 			public void onClick(View v) {
 				Intent share = new Intent(Intent.ACTION_SEND);
 				share.setType("image/jpeg");
-				Bitmap screenshot = glSurfaceView.getScreenshot();
 				String path = ExternalDirectory.getExternalImageDirectory() + "/screenshot.png";
 				try {
 					FileOutputStream fos = new FileOutputStream(path);
 					BufferedOutputStream bos = new BufferedOutputStream(fos);
+					Bitmap screenshot = glSurfaceView.getSurfaceBitmap();
 					screenshot.compress(CompressFormat.PNG, 100, bos);
 					bos.flush();
 					bos.close();
@@ -60,7 +60,7 @@ public class ObjectViewer extends BaseActivity {
 				
 			}
 		});
-		addNewActionButton(R.drawable.ic_title_info, R.string.info, new OnClickListener() {
+		addNewActionButton(R.drawable.ic_title_export, R.string.export, new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {

@@ -12,23 +12,17 @@
 		android:onClick="buttonClick"
 		style="@style/DashboardButton" />
 	<Button
-		android:id="@+id/dashboard_howto_button"
-		android:drawableTop="@drawable/howto_button_selector"
-		android:text="@string/howto"
-		android:onClick="buttonClick"
-		style="@style/DashboardButton" />
-	<Button
-		android:id="@+id/dashboard_export_button"
-		android:drawableTop="@drawable/export_button_selector"
-		android:text="@string/export"
-		android:onClick="buttonClick"
-		style="@style/DashboardButton" />
-	<Button
 		android:id="@+id/dashboard_share_button"
 		android:drawableTop="@drawable/share_button_selector"
 		android:text="@string/share"
 		android:onClick="buttonClick"
 		style="@style/DashboardButton"/>
+	<Button
+		android:id="@+id/dashboard_howto_button"
+		android:drawableTop="@drawable/howto_button_selector"
+		android:text="@string/howto"
+		android:onClick="buttonClick"
+		style="@style/DashboardButton" />
 	<Button
 		android:id="@+id/dashboard_camera_button"
 		android:drawableTop="@drawable/camera_button_selector"

@@ -23,6 +23,7 @@ import android.net.Uri;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
 import android.os.AsyncTask;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -110,8 +111,11 @@ public class TouchSurfaceView extends GLSurfaceView {
 		return true;
 	}
 	
-	public Bitmap getScreenshot() {
-		return renderer.getScreenshot();
+	public Bitmap getSurfaceBitmap() {
+		renderer.shouldCopySurface = true;
+		requestRender();
+		SystemClock.sleep(200);
+		return renderer.getSurfaceBitmap();
 	}
 	
 	/**
@@ -140,7 +144,8 @@ public class TouchSurfaceView extends GLSurfaceView {
 		
 		private ObjectModel objectModel;
 		private Context context;
-		private GL10 gl;
+		private boolean shouldCopySurface = false;
+		private Bitmap surfaceBitmap;
 		public float angleX, angleY;
 		/**
 		 * used for indicating whether it's a newly created object and therefore
@@ -157,6 +162,10 @@ public class TouchSurfaceView extends GLSurfaceView {
 			thisRot.map(matrix);
 		}
 		
+		public Bitmap getSurfaceBitmap() {
+			return surfaceBitmap;
+		}
+
 		@Override
 		public void onSurfaceCreated(GL10 gl, EGLConfig config) {
 			gl.glDisable(GL10.GL_DITHER);
@@ -172,7 +181,6 @@ public class TouchSurfaceView extends GLSurfaceView {
 			gl.glEnable(GL10.GL_NORMALIZE);
 			gl.glEnable(GL10.GL_LIGHTING);
 			gl.glEnable(GL10.GL_LIGHT0);
-			this.gl = gl;
 			
 		}
 
@@ -219,15 +227,9 @@ public class TouchSurfaceView extends GLSurfaceView {
 			}.execute(intBuffer);
 		}
 		
-		private Bitmap getScreenshot() {
-			IntBuffer intBuffer = IntBuffer.wrap(new int[displayWidth * displayHeight]);
-			intBuffer.position(0);
-			gl.glReadPixels(0, 0, displayWidth, displayHeight, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, intBuffer);
-			return Bitmap.createBitmap(intBuffer.array(), displayWidth, displayHeight, Config.ARGB_8888);
-		}
-		
 		@Override
 		public void onDrawFrame(GL10 gl) {
+			Log.d(TAG, "drawing frame and: " + String.valueOf(shouldCopySurface));
 			thisRot.map(matrix);
 			gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 			
@@ -239,6 +241,13 @@ public class TouchSurfaceView extends GLSurfaceView {
 			gl.glMultMatrixf(matrix, 0);
 			gl.glScalef(skalierung, skalierung, skalierung);
 			objectModel.draw(gl);
+			if (shouldCopySurface) {
+				shouldCopySurface = false;
+				IntBuffer intBuffer = IntBuffer.wrap(new int[displayWidth * displayHeight]);
+				intBuffer.position(0);
+				gl.glReadPixels(0, 0, displayWidth, displayHeight, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, intBuffer);
+				surfaceBitmap = Bitmap.createBitmap(intBuffer.array(), displayWidth, displayHeight, Config.ARGB_8888);
+			}
 			if (onFirstStart) {
 				onFirstStart = false;
 				persist(gl);
@@ -255,7 +264,6 @@ public class TouchSurfaceView extends GLSurfaceView {
 			gl.glMatrixMode(GL10.GL_PROJECTION);
 			gl.glLoadIdentity();
 			gl.glFrustumf(-ratio, ratio, -1, 1, 1, 10);
-			this.gl = gl;
 		}
 		
 	}

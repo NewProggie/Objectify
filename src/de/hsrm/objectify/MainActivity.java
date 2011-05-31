@@ -29,7 +29,7 @@ public class MainActivity extends BaseActivity {
 	private Context context;
 
 	@SuppressWarnings("unused")
-	private Button galleryButton, howtoButton, exportButton, shareButton, cameraButton;
+	private Button galleryButton, howtoButton, shareButton, cameraButton;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -49,7 +49,6 @@ public class MainActivity extends BaseActivity {
 
 		galleryButton = (Button) findViewById(R.id.dashboard_gallery_button);
 		howtoButton = (Button) findViewById(R.id.dashboard_howto_button);
-		exportButton = (Button) findViewById(R.id.dashboard_export_button);
 		shareButton = (Button) findViewById(R.id.dashboard_share_button);
 		cameraButton = (Button) findViewById(R.id.dashboard_camera_button);
 	}
@@ -63,9 +62,6 @@ public class MainActivity extends BaseActivity {
 		case R.id.dashboard_howto_button:
 			Intent howto = new Intent(context, HowToActivity.class);
 			startActivity(howto);
-			break;
-		case R.id.dashboard_export_button:
-			Toast.makeText(context, "export", Toast.LENGTH_SHORT).show();
 			break;
 		case R.id.dashboard_share_button:
 			Toast.makeText(context, "share", Toast.LENGTH_SHORT).show();
