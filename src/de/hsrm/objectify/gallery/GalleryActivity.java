@@ -1,39 +1,28 @@
 package de.hsrm.objectify.gallery;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FilenameFilter;
-import java.io.IOException;
-import java.util.Date;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Bitmap.CompressFormat;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Gallery;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 import de.hsrm.objectify.R;
 import de.hsrm.objectify.database.DatabaseAdapter;
 import de.hsrm.objectify.database.DatabaseProvider;
 import de.hsrm.objectify.ui.BaseActivity;
-import de.hsrm.objectify.ui.InfoPopupWindow;
 import de.hsrm.objectify.utils.ExternalDirectory;
 
 /**
@@ -50,7 +39,6 @@ public class GalleryActivity extends BaseActivity {
 	private ImageView currentImage;
 	private GalleryAdapter adapter;
 	private Context context;
-	private ImageButton currentImageInfo;
 	private Uri galleryUri;
 	
 	@Override
@@ -58,30 +46,12 @@ public class GalleryActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.gallery);
 		setupActionBar(getString(R.string.gallery), 0);
-		addNewActionButton(R.drawable.ic_title_share, R.string.share, new OnClickListener() {
+		addNewActionButton(R.drawable.ic_title_show, R.string.show, new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
-				Intent share = new Intent(Intent.ACTION_SEND);
-				share.setType("image/jpeg");
-				long id = gallery.getSelectedItemId();
-				Cursor c = getContentResolver().query(galleryUri, null, DatabaseAdapter.GALLERY_ID_KEY+"=?", new String[] { String.valueOf(id) }, null);
-				c.moveToFirst();
-				try {
-					byte[] bb = c.getBlob(DatabaseAdapter.GALLERY_IMAGE_COLUMN);
-					Bitmap screenshot = BitmapFactory.decodeByteArray(bb, 0, bb.length);
-					String path = ExternalDirectory.getExternalImageDirectory() + "/screenshot.png";
-					FileOutputStream fos = new FileOutputStream(path);
-					BufferedOutputStream bos = new BufferedOutputStream(fos);
-					screenshot.compress(CompressFormat.PNG, 100, bos);
-					bos.flush();
-					bos.close();
-					share.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + path));
-					startActivity(Intent.createChooser(share, getString(R.string.share)));
-				} catch (IOException e) {
-					Log.e(TAG, e.getMessage());
-				}
-				c.close();
+				// TODO Auto-generated method stub
+				
 			}
 		});
 		addNewActionButton(R.drawable.ic_title_delete, R.string.delete, new OnClickListener() {
@@ -96,7 +66,7 @@ public class GalleryActivity extends BaseActivity {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							long id = gallery.getSelectedItemId();
-							deleteFromDatabase(id);
+							deleteFromDatabaseAndSD(id);
 							Toast.makeText(context, getString(R.string.deleted_successfully), Toast.LENGTH_SHORT).show();
 							dialog.cancel();
 						}
@@ -119,21 +89,6 @@ public class GalleryActivity extends BaseActivity {
 		
 		gallery = (Gallery) findViewById(R.id.object_gallery);
 		currentImage = (ImageView) findViewById(R.id.current_object_image);
-		currentImageInfo = (ImageButton) findViewById(R.id.current_object_info);
-		currentImageInfo.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				InfoPopupWindow info = new InfoPopupWindow(v);
-				info.showInfoPopupWindow();
-			}
-		});
-//		size = (TextView) findViewById(R.id.gallery_size_textview);
-//		faces = (TextView) findViewById(R.id.gallery_faces_textview);
-//		vertices = (TextView) findViewById(R.id.gallery_vertices_textview);
-//		dimension = (TextView) findViewById(R.id.gallery_dimension_textview);
-//		date = (TextView) findViewById(R.id.gallery_date_textview);
-		
 		galleryUri = DatabaseProvider.CONTENT_URI.buildUpon().appendPath("gallery").build();
 		Cursor cursor = this.managedQuery(galleryUri, null, null, null, null);
 		adapter = new GalleryAdapter(this, cursor);
@@ -153,17 +108,9 @@ public class GalleryActivity extends BaseActivity {
 				String[] args = { String.valueOf(id) };
 				Cursor c = getContentResolver().query(galleryUri, null, DatabaseAdapter.GALLERY_ID_KEY+"=?", args, null);
 				c.moveToFirst();
-				float s = Integer.valueOf(c.getString(DatabaseAdapter.GALLERY_SIZE_COLUMN))/1024;
-//				size.setText(String.valueOf(s) + " KB");
-//				faces.setText(c.getString(DatabaseAdapter.GALLERY_FACES_COLUMN));
-//				vertices.setText(c.getString(DatabaseAdapter.GALLERY_VERTICES_COLUMN));
-//				dimension.setText(c.getString(DatabaseAdapter.GALLERY_DIMENSIONS_COLUMN));
-//				Date d = new Date(Long.parseLong(c.getString(DatabaseAdapter.GALLERY_DATE_COLUMN)));
-//				date.setText(d.toLocaleString());
 				byte[] bb = c.getBlob(DatabaseAdapter.GALLERY_IMAGE_COLUMN);
 				currentImage.setImageBitmap(BitmapFactory.decodeByteArray(bb, 0, bb.length));
 				currentImage.setScaleType(ImageView.ScaleType.CENTER);
-//				imageView.setScaleType(ImageView.ScaleType.FIT_XY);
 				c.close();
 			}
 
@@ -181,7 +128,7 @@ public class GalleryActivity extends BaseActivity {
 	 * @param id
 	 *            gallery id in database
 	 */
-	private void deleteFromDatabase(long id) {
+	private void deleteFromDatabaseAndSD(long id) {
 		ContentResolver cr = getContentResolver();
 		Cursor c = cr.query(galleryUri, null, DatabaseAdapter.GALLERY_ID_KEY+"=?", new String[] { String.valueOf(id) }, null);
 		c.moveToFirst();

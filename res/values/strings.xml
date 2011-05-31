@@ -8,9 +8,12 @@
     <string name="delete">Löschen</string>
     <string name="camera">Kamera</string>
     <string name="trigger">Auslöser</string>
+    <string name="info">Info</string>
     <string name="show">Zeigen</string>
     <string name="home">Home</string>
+    <string name="object_viewer">Modelviewer</string>
     <string name="submit">Ok</string>
+    <string name="more">Mehr</string>
     <string name="cancel">Abbrechen</string>
     <string name="chosen_object_really_delete">Soll dieses Objekt gelöscht werden?</string>
     <string name="deleted_successfully">Erfolgreich gelöscht</string>

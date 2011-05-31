@@ -110,6 +110,10 @@ public class TouchSurfaceView extends GLSurfaceView {
 		return true;
 	}
 	
+	public Bitmap getScreenshot() {
+		return renderer.getScreenshot();
+	}
+	
 	/**
 	 * Pinch-and-Zoom implementation. New since Android 2.2 Froyo
 	 * 
@@ -136,6 +140,7 @@ public class TouchSurfaceView extends GLSurfaceView {
 		
 		private ObjectModel objectModel;
 		private Context context;
+		private GL10 gl;
 		public float angleX, angleY;
 		/**
 		 * used for indicating whether it's a newly created object and therefore
@@ -167,6 +172,7 @@ public class TouchSurfaceView extends GLSurfaceView {
 			gl.glEnable(GL10.GL_NORMALIZE);
 			gl.glEnable(GL10.GL_LIGHTING);
 			gl.glEnable(GL10.GL_LIGHT0);
+			this.gl = gl;
 			
 		}
 
@@ -213,6 +219,13 @@ public class TouchSurfaceView extends GLSurfaceView {
 			}.execute(intBuffer);
 		}
 		
+		private Bitmap getScreenshot() {
+			IntBuffer intBuffer = IntBuffer.wrap(new int[displayWidth * displayHeight]);
+			intBuffer.position(0);
+			gl.glReadPixels(0, 0, displayWidth, displayHeight, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, intBuffer);
+			return Bitmap.createBitmap(intBuffer.array(), displayWidth, displayHeight, Config.ARGB_8888);
+		}
+		
 		@Override
 		public void onDrawFrame(GL10 gl) {
 			thisRot.map(matrix);
@@ -242,6 +255,7 @@ public class TouchSurfaceView extends GLSurfaceView {
 			gl.glMatrixMode(GL10.GL_PROJECTION);
 			gl.glLoadIdentity();
 			gl.glFrustumf(-ratio, ratio, -1, 1, 1, 10);
+			this.gl = gl;
 		}
 		
 	}
