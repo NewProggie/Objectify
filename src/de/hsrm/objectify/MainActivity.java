@@ -29,7 +29,7 @@ public class MainActivity extends BaseActivity {
 	private Context context;
 
 	@SuppressWarnings("unused")
-	private Button galleryButton, howtoButton, shareButton, cameraButton;
+	private Button galleryButton, howtoButton, shareButton, cameraButton, settingsButton;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -51,6 +51,7 @@ public class MainActivity extends BaseActivity {
 		howtoButton = (Button) findViewById(R.id.dashboard_howto_button);
 		shareButton = (Button) findViewById(R.id.dashboard_share_button);
 		cameraButton = (Button) findViewById(R.id.dashboard_camera_button);
+		settingsButton = (Button) findViewById(R.id.dashboard_settings_button);
 	}
 
 	public void buttonClick(View target) {
@@ -69,6 +70,10 @@ public class MainActivity extends BaseActivity {
 		case R.id.dashboard_camera_button:
 			Intent camera = new Intent(context, CameraActivity.class);
 			startActivity(camera);
+			break;
+		case R.id.dashboard_settings_button:
+			Intent settings = new Intent(context, SettingsActivity.class);
+			startActivity(settings);
 			break;
 		}
 	}
