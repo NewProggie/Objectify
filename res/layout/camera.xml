@@ -40,6 +40,12 @@
 				style="@style/ShadowedText"
 				android:textSize="20dip" />
 		</LinearLayout>
+		<ImageView 
+			android:id="@+id/lighting_mask"
+			android:layout_width="fill_parent"	
+			android:layout_height="fill_parent"
+			android:scaleType="fitXY"
+			android:src="@drawable/lighting_mask"/>
 		<include layout="@layout/lights" />
 	</FrameLayout>
 </LinearLayout>
