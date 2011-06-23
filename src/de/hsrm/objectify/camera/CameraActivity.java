@@ -181,6 +181,8 @@ public class CameraActivity extends BaseActivity {
 		@Override
 		protected void onPreExecute() {
 			progress.setVisibility(View.VISIBLE);
+			cameraLighting.setVisibility(View.GONE);
+			cameraLighting.setZOrderOnTop(false);
 		}
 		
 		@Override
@@ -192,6 +194,7 @@ public class CameraActivity extends BaseActivity {
 			short[] faces = new short[] { 1,2,3,4,5,6 };
 
 			objectModel = new ObjectModel(vertices, n_vertices, faces, image, image_suffix);
+			SystemClock.sleep(2000);
 			return true;
 		}
 		
