@@ -16,7 +16,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
@@ -25,7 +24,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 import de.hsrm.objectify.R;
 import de.hsrm.objectify.rendering.ObjectModel;
-import de.hsrm.objectify.rendering.ObjectViewer;
+import de.hsrm.objectify.rendering.ObjectViewerActivity;
 import de.hsrm.objectify.ui.BaseActivity;
 import de.hsrm.objectify.utils.BitmapUtils;
 import de.hsrm.objectify.utils.ExternalDirectory;
@@ -41,7 +40,8 @@ public class CameraActivity extends BaseActivity {
 	private String TAG = "CameraActivity";
 	private CameraPreview cameraPreview;
 	private Button triggerPictures;
-	private LinearLayout lightContainer, lightOne, lightTwo, shadow, progress;
+	private LinearLayout shadow, progress;
+	private CameraLighting cameraLighting;
 	private String image_suffix;
 	private int counter = 1;
 	private Context context;
@@ -57,10 +57,7 @@ public class CameraActivity extends BaseActivity {
 		setScreenBrightness(1);
 		
 		cameraPreview = (CameraPreview) findViewById(R.id.camera_surface);
-		lightContainer = (LinearLayout) findViewById(R.id.light_container);
-		lightOne = (LinearLayout) findViewById(R.id.light_one);
-		lightTwo = (LinearLayout) findViewById(R.id.light_two);
-
+		cameraLighting = (CameraLighting) findViewById(R.id.camera_lighting);		
 		shadow = (LinearLayout) findViewById(R.id.shadow);
 		progress = (LinearLayout) findViewById(R.id.progress);
 		triggerPictures = (Button) findViewById(R.id.trigger_picture_button);
@@ -125,19 +122,8 @@ public class CameraActivity extends BaseActivity {
 	 * in front
 	 */
 	private void setLights() {
-		 if (lightOne.getVisibility() == View.VISIBLE && lightContainer.getOrientation() == LinearLayout.VERTICAL) {
-			lightOne.setVisibility(View.INVISIBLE);
-			lightTwo.setVisibility(View.VISIBLE);
-		} else if (lightTwo.getVisibility() == View.VISIBLE && lightContainer.getOrientation() == LinearLayout.VERTICAL) {
-			lightContainer.setOrientation(LinearLayout.HORIZONTAL);
-		} else if (lightTwo.getVisibility() == View.VISIBLE
-				&& lightContainer.getOrientation() == LinearLayout.HORIZONTAL) {
-			lightTwo.setVisibility(View.INVISIBLE);
-			lightOne.setVisibility(View.VISIBLE);
-		} else {
-			lightOne.setVisibility(View.VISIBLE);
-			lightContainer.setOrientation(LinearLayout.VERTICAL);
-		}
+		cameraLighting.setVisibility(View.VISIBLE);
+		cameraLighting.setZOrderOnTop(true);
 	}
 	
 	private PictureCallback jpegCallback() {
@@ -212,7 +198,7 @@ public class CameraActivity extends BaseActivity {
 		@Override
 		protected void onPostExecute(Boolean result) {
 			progress.setVisibility(View.GONE);
-			Intent viewObject = new Intent(context, ObjectViewer.class);
+			Intent viewObject = new Intent(context, ObjectViewerActivity.class);
 			Bundle b = new Bundle();
 			b.putParcelable("objectModel", objectModel);
 			viewObject.putExtra("bundle", b);
