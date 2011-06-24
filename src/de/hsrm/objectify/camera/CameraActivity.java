@@ -6,7 +6,9 @@ import java.io.IOException;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
@@ -16,6 +18,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
@@ -23,6 +26,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 import de.hsrm.objectify.R;
+import de.hsrm.objectify.SettingsActivity;
 import de.hsrm.objectify.rendering.ObjectModel;
 import de.hsrm.objectify.rendering.ObjectViewerActivity;
 import de.hsrm.objectify.ui.BaseActivity;
@@ -43,10 +47,10 @@ public class CameraActivity extends BaseActivity {
 	private LinearLayout progress;
 	private CameraLighting cameraLighting;
 	private String image_suffix;
+	private int numberOfPictures;
 	private int counter = 1;
 	private Context context;
 	private Camera camera;
-	private final int NUMBER_OF_PICTURES = 4;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +68,9 @@ public class CameraActivity extends BaseActivity {
 			
 			@Override
 			public void onClick(View v) {
+				ContextWrapper contextWrapper = new ContextWrapper(context);
+				SharedPreferences prefs = SettingsActivity.getSettings(contextWrapper);
+				numberOfPictures = prefs.getInt(getString(R.string.settings_amount_pictures), 4);
 				triggerPictures.setVisibility(View.GONE);
 				image_suffix = String.valueOf(System.currentTimeMillis());
 				setLights();
@@ -122,6 +129,9 @@ public class CameraActivity extends BaseActivity {
 	private void setLights() {
 		cameraLighting.setVisibility(View.VISIBLE);
 		cameraLighting.setZOrderOnTop(true);
+		Double x = Math.random()*2;
+		Double y = Math.random()*2;
+		cameraLighting.putLightSource(x.floatValue(), y.floatValue());
 	}
 	
 	private PictureCallback jpegCallback() {
@@ -129,7 +139,7 @@ public class CameraActivity extends BaseActivity {
 
 			@Override
 			public void onPictureTaken(byte[] data, Camera camera) {
-				if (counter >= NUMBER_OF_PICTURES) {
+				if (counter >= numberOfPictures) {
 					Log.d(TAG, "Photos taken, calculating object");
 					new CalculateModel().execute(image_suffix);
 				} else {

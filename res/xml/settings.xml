@@ -9,10 +9,8 @@
 		<de.hsrm.objectify.ui.SliderInputPreference
 			android:key="@string/settings_amount_pictures"
 			android:title="@string/settings_amount_pictures"
-			android:dialogMessage="Anzahl Fotos"
-			android:text=" Fotos"
-			android:defaultValue="4"
-			android:max="9"
+			android:dialogMessage="@string/settings_amount_pictures"
+			android:text="@string/settings_suffix_pictures"
 			android:summary="@string/settings_amount_pictures_hint" />
 	</PreferenceCategory>
 	<PreferenceCategory

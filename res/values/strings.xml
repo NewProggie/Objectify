@@ -35,6 +35,7 @@
     <string name="settings_saving_directory">Speicherort</string>
     <string name="settings_saving_directory_hint">Ändert den Speicherort für Bilder und erstellte 3D-Objekte</string>
     <string name="settings_amount_pictures">Anzahl Fotos</string>
+    <string name="settings_suffix_pictures">Fotos</string>
     <string name="settings_amount_pictures_hint">Ändert die Anzahl an Fotos, die pro 3D-Rekonstruktion benutzt werden</string>
     
     <!-- Gallery -->

@@ -1,34 +1,41 @@
 package de.hsrm.objectify.camera;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
-
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import android.content.Context;
 import android.opengl.GLSurfaceView;
-import android.opengl.GLU;
 import android.util.AttributeSet;
+import android.util.Log;
+import de.hsrm.objectify.rendering.Circle;
 
+/**
+ * This class implements an opengl es based lighting mode, where an illuminated {@link Circle} can be placed onto the screen.
+ * @author kwolf001
+ *
+ */
 public class CameraLighting extends GLSurfaceView {
 
-	private GLU glu;
 	private CameraLightingRenderer renderer;
 	
 	public CameraLighting(Context context) {
 		super(context);
-		glu = new GLU();
 		renderer = new CameraLightingRenderer(context);
 		setRenderer(renderer);
+		setRenderMode(RENDERMODE_WHEN_DIRTY);
 	}
 	
 	public CameraLighting(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		glu = new GLU();
 		renderer = new CameraLightingRenderer(context);
 		setRenderer(renderer);
+		setRenderMode(RENDERMODE_WHEN_DIRTY);
+	}
+	
+	public void putLightSource(float xcoord, float ycoord) {
+		renderer.xcoord = xcoord;
+		renderer.ycoord = ycoord;
+		requestRender();
 	}
 
 	private class CameraLightingRenderer implements GLSurfaceView.Renderer {
@@ -37,21 +44,11 @@ public class CameraLighting extends GLSurfaceView {
 		private float xcoord = 0;
 		private float ycoord = 0;
 		private float phi = 0;
-		public double radius;
-		private FloatBuffer vertices;
+		private Circle lightSource;
 		
 		public CameraLightingRenderer(Context context) {
 			this.context = context;
-			ByteBuffer vbb = ByteBuffer.allocateDirect(720 * 4);
-			vbb.order(ByteOrder.nativeOrder());
-			vertices = vbb.asFloatBuffer();
-			for (int i=0; i<720;i+=2) {
-				Double x = Math.cos(Math.PI * i / 180);
-				Double y = Math.sin(Math.PI * i / 180);
-				vertices.put(i, x.floatValue());
-				vertices.put(i+1, y.floatValue());
-			}
-			vertices.rewind();
+			lightSource = new Circle(2);
 		}
 		
 		@Override
@@ -91,8 +88,7 @@ public class CameraLighting extends GLSurfaceView {
 			gl.glMatrixMode(GL10.GL_MODELVIEW);
 			gl.glLoadIdentity();
 			gl.glTranslatef(xcoord, ycoord, -3.0f);
-			gl.glVertexPointer(2, gl.GL_FLOAT, 0, vertices);
-			gl.glDrawArrays(gl.GL_TRIANGLE_FAN, 0, 360);
+			lightSource.draw(gl);
 			gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
             gl.glDisableClientState(GL10.GL_COLOR_ARRAY);
 		}

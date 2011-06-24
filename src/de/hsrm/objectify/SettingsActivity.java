@@ -44,6 +44,11 @@ public class SettingsActivity extends PreferenceActivity {
 
 	}
 	
+	/**
+	 * Returns the persisted shared preferences
+	 * @param context context wrapper
+	 * @return shared preferences
+	 */
 	public static final SharedPreferences getSettings(final ContextWrapper context) {
 		String name = context.getPackageName() + "_preferences";
 		return context.getSharedPreferences(name, MODE_PRIVATE);
