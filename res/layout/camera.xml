@@ -23,16 +23,11 @@
 			android:id="@+id/trigger_picture_button" 
 			android:layout_gravity="bottom" />
 		<LinearLayout
-			android:id="@+id/shadow"
-			android:layout_width="fill_parent"
-			android:layout_height="fill_parent"
-			android:visibility="invisible"
-			android:background="#FF000000" />
-		<LinearLayout
 			android:id="@+id/progress"
 			android:layout_width="fill_parent"
 			android:layout_height="fill_parent"
 			android:visibility="invisible"
+			android:background="#FF000000"
 			android:gravity="center"
 			android:orientation="vertical">
 			<ProgressBar

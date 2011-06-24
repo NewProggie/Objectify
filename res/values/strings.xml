@@ -30,10 +30,12 @@
     <!-- Settings -->
     <string name="settings">Einstellungen</string>
     <string name="settings_camera_resolutions">Kamera-Auflösungen</string>
-    <string name="settings_camera_resolutions_hint">Legt die Auflösung der Frontkamera fest.</string>
+    <string name="settings_camera_resolutions_hint">Legt die Auflösung der Frontkamera fest</string>
     <string name="settings_saving_directory_title">Externer Speicher</string>
     <string name="settings_saving_directory">Speicherort</string>
     <string name="settings_saving_directory_hint">Ändert den Speicherort für Bilder und erstellte 3D-Objekte</string>
+    <string name="settings_amount_pictures">Anzahl Fotos</string>
+    <string name="settings_amount_pictures_hint">Ändert die Anzahl an Fotos, die pro 3D-Rekonstruktion benutzt werden</string>
     
     <!-- Gallery -->
     <string name="size">Größe:</string>
@@ -41,9 +43,6 @@
     <string name="vertices">Vertices:</string>
     <string name="dimension">Maße:</string>
     <string name="date">Datum:</string>
-    
-    <string name="const_sd_path">/.objectify/</string>
-    <string name="const_sd_img_path">/.objectify/img/</string>
     
     <!-- About -->
     <string name="developer_mail_address">kai.wolf@gmail.com</string>

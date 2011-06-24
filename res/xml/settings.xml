@@ -6,12 +6,21 @@
 			android:key="@string/settings_camera_resolutions"
 			android:title="@string/settings_camera_resolutions"
 			android:summary="@string/settings_camera_resolutions_hint" />	
+		<de.hsrm.objectify.ui.SliderInputPreference
+			android:key="@string/settings_amount_pictures"
+			android:title="@string/settings_amount_pictures"
+			android:dialogMessage="Anzahl Fotos"
+			android:text=" Fotos"
+			android:defaultValue="4"
+			android:max="9"
+			android:summary="@string/settings_amount_pictures_hint" />
 	</PreferenceCategory>
 	<PreferenceCategory
 		android:title="@string/settings_saving_directory_title">
 		<EditTextPreference
 			android:key="@string/settings_saving_directory"
 			android:title="@string/settings_saving_directory"
+			android:defaultValue="/.objectify/"
 			android:summary="@string/settings_saving_directory_hint" />	
 	</PreferenceCategory>
 </PreferenceScreen>

@@ -40,7 +40,7 @@ public class CameraActivity extends BaseActivity {
 	private String TAG = "CameraActivity";
 	private CameraPreview cameraPreview;
 	private Button triggerPictures;
-	private LinearLayout shadow, progress;
+	private LinearLayout progress;
 	private CameraLighting cameraLighting;
 	private String image_suffix;
 	private int counter = 1;
@@ -58,14 +58,12 @@ public class CameraActivity extends BaseActivity {
 		
 		cameraPreview = (CameraPreview) findViewById(R.id.camera_surface);
 		cameraLighting = (CameraLighting) findViewById(R.id.camera_lighting);		
-		shadow = (LinearLayout) findViewById(R.id.shadow);
 		progress = (LinearLayout) findViewById(R.id.progress);
 		triggerPictures = (Button) findViewById(R.id.trigger_picture_button);
 		triggerPictures.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
-				shadow.setVisibility(View.VISIBLE);
 				triggerPictures.setVisibility(View.GONE);
 				image_suffix = String.valueOf(System.currentTimeMillis());
 				setLights();

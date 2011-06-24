@@ -9,11 +9,13 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.hardware.Camera;
 import android.hardware.Camera.Size;
 import android.os.Bundle;
+import android.preference.DialogPreference;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.PreferenceActivity;
 import android.util.Log;
 import de.hsrm.objectify.camera.CameraFinder;
+import de.hsrm.objectify.ui.SliderInputPreference;
 
 /**
  * This class takes care of the user preferences such as setting front camera
@@ -26,6 +28,7 @@ public class SettingsActivity extends PreferenceActivity {
 
 	ListPreference cameraResolutions;
 	EditTextPreference savingDirectory;
+	SliderInputPreference amountPictures;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -34,10 +37,10 @@ public class SettingsActivity extends PreferenceActivity {
 		
 		cameraResolutions = (ListPreference) findPreference(getString(R.string.settings_camera_resolutions));
 		savingDirectory = (EditTextPreference) findPreference(getString(R.string.settings_saving_directory));
+		amountPictures = (SliderInputPreference) findPreference(getString(R.string.settings_amount_pictures));
 		
 		cameraResolutions.setEntries(getAvailableResolutions());
 		cameraResolutions.setEntryValues(getAvailableResolutions());
-		savingDirectory.setText(getString(R.string.const_sd_path));
 
 	}
 	
