@@ -5,6 +5,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 import android.content.Context;
 import android.opengl.GLSurfaceView;
+import android.opengl.GLU;
 import android.util.AttributeSet;
 import android.util.Log;
 import de.hsrm.objectify.rendering.Circle;
@@ -43,12 +44,13 @@ public class CameraLighting extends GLSurfaceView {
 		private Context context;
 		private float xcoord = 0;
 		private float ycoord = 0;
-		private float phi = 0;
 		private Circle lightSource;
+		private GLU glu;
 		
 		public CameraLightingRenderer(Context context) {
 			this.context = context;
 			lightSource = new Circle(2);
+			glu = new GLU();
 		}
 		
 		@Override
@@ -76,12 +78,6 @@ public class CameraLighting extends GLSurfaceView {
 		@Override
 		public void onDrawFrame(GL10 gl) {
 			gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
-			
-			Double x = 1 + Math.cos(phi);
-			Double y = 1 + Math.sin(phi);
-			xcoord = x.floatValue();
-			ycoord = y.floatValue();
-			phi += 0.1;
 			
 			gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
             gl.glEnableClientState(GL10.GL_COLOR_ARRAY);

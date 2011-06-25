@@ -62,14 +62,20 @@ public class SettingsActivity extends PreferenceActivity {
 	 */
 	private CharSequence[] getAvailableResolutions() {
 		ArrayList<String> tempResolutions = new ArrayList<String>();
+		CharSequence[] resolutions;
 		Camera camera = CameraFinder.INSTANCE.open();
-		Camera.Parameters params = camera.getParameters();
-		for (Size size : params.getSupportedPictureSizes()) {
-			tempResolutions.add(String.valueOf(size.width) + "x" + String.valueOf(size.height));
+		if (camera != null) {
+			Camera.Parameters params = camera.getParameters();
+			for (Size size : params.getSupportedPictureSizes()) {
+				tempResolutions.add(String.valueOf(size.width) + "x"
+						+ String.valueOf(size.height));
+			}
+			camera.release();
+			resolutions = new CharSequence[tempResolutions.size()];
+			tempResolutions.toArray(resolutions);
+		} else {
+			resolutions = new CharSequence[0];
 		}
-		camera.release();
-		CharSequence[] resolutions = new CharSequence[tempResolutions.size()];
-		tempResolutions.toArray(resolutions);
 		return resolutions;
 	}
 	

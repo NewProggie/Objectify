@@ -101,7 +101,7 @@ public class CameraActivity extends BaseActivity {
 	}
 	
 	/**
-	 * Takes {@code NUMBER_OF_PICTURES} pictures in sequence.
+	 * Takes {@code numberOfPictures} pictures in sequence.
 	 */
 	private void takePictures() {
 		camera.startPreview();
@@ -129,9 +129,20 @@ public class CameraActivity extends BaseActivity {
 	private void setLights() {
 		cameraLighting.setVisibility(View.VISIBLE);
 		cameraLighting.setZOrderOnTop(true);
-		Double x = Math.random()*2;
-		Double y = Math.random()*2;
-		cameraLighting.putLightSource(x.floatValue(), y.floatValue());
+		switch (counter) {
+		case 1:
+			cameraLighting.putLightSource(-2, -2);
+			break;
+		case 2:
+			cameraLighting.putLightSource(2, -2);
+			break;
+		case 3:
+			cameraLighting.putLightSource(2, 2);
+			break;
+		case 4:
+			cameraLighting.putLightSource(-2, 2);
+			break;
+		}		
 	}
 	
 	private PictureCallback jpegCallback() {
