@@ -1,19 +1,15 @@
 package de.hsrm.objectify;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import android.content.ContextWrapper;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.hardware.Camera;
 import android.hardware.Camera.Size;
 import android.os.Bundle;
-import android.preference.DialogPreference;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.PreferenceActivity;
-import android.util.Log;
 import de.hsrm.objectify.camera.CameraFinder;
 import de.hsrm.objectify.ui.SliderInputPreference;
 
