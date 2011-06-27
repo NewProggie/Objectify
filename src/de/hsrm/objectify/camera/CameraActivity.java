@@ -18,7 +18,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
@@ -228,4 +227,5 @@ public class CameraActivity extends BaseActivity {
 			((Activity) context).finish();
 		}
 	}
+	
 }

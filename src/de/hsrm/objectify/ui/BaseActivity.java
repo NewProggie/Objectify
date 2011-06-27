@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -12,8 +14,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
+import de.hsrm.objectify.AboutActivity;
 import de.hsrm.objectify.MainActivity;
 import de.hsrm.objectify.R;
+import de.hsrm.objectify.SettingsActivity;
 import de.hsrm.objectify.utils.ImageHelper;
 
 /**
@@ -198,5 +202,27 @@ public abstract class BaseActivity extends Activity {
 		Intent intent = new Intent(this, MainActivity.class);
 		intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		startActivity(intent);
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.option, menu);
+		return super.onCreateOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.opt_settings:
+			Intent settings = new Intent(this, SettingsActivity.class);
+			startActivity(settings);
+			return true;
+		case R.id.opt_about:
+			Intent about = new Intent(this, AboutActivity.class);
+			startActivity(about);
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
 	}
 }
