@@ -169,7 +169,7 @@ public class TouchSurfaceView extends GLSurfaceView {
 		@Override
 		public void onSurfaceCreated(GL10 gl, EGLConfig config) {
 			gl.glDisable(GL10.GL_DITHER);
-//			objectModel.loadGLTexture(gl, this.context);
+			objectModel.loadGLTexture(gl, this.context);
 			gl.glEnable(GL10.GL_TEXTURE_2D);
 			gl.glShadeModel(GL10.GL_SMOOTH);
 			gl.glClearColor(0, 0, 0.2f, 1); // black, blue background
@@ -228,11 +228,14 @@ public class TouchSurfaceView extends GLSurfaceView {
 		
 		@Override
 		public void onDrawFrame(GL10 gl) {
-			thisRot.map(matrix);
+			gl.glColor4f(0, 0, 0, 0);
 			gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+			
+			thisRot.map(matrix);
 			
 			gl.glMatrixMode(GL10.GL_MODELVIEW);
 			gl.glLoadIdentity();
+			// wichtig für die Arcball-Rotation
 			glu.gluLookAt(gl, 0, 0, -3, 0, 0, 0, 0, 1, 0);
 			
 			gl.glPushMatrix();

@@ -3,6 +3,8 @@ package de.hsrm.objectify.camera;
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.FloatBuffer;
+import java.nio.ShortBuffer;
 
 import android.app.Activity;
 import android.content.Context;
@@ -140,8 +142,10 @@ public class CameraActivity extends BaseActivity {
 	}
 
 	/**
-	 * Set up the white spaces on the display to light up different parts whats
-	 * in front
+	 * Displays a white {@link Circle} on the display for lighting up different
+	 * parts of the object. As a standard behavior this function looks up the
+	 * number of pictures which will be taken and moves the lighting source in a
+	 * circle around the display.
 	 */
 	private void setLights() {
 		cameraLighting.setVisibility(View.VISIBLE);
@@ -201,9 +205,8 @@ public class CameraActivity extends BaseActivity {
 	}
 
 	/**
-	 * Calculates <a
-	 * href="http://en.wikipedia.org/wiki/Normal_mapping">normalmap</a> and <a
-	 * href="http://en.wikipedia.org/wiki/Heightmap">heightmap</a> from shot
+	 * Calculates <a href="http://en.wikipedia.org/wiki/Normal_mapping">normalmap</a>  
+	 * and <a href="http://en.wikipedia.org/wiki/Heightmap">heightmap</a> from shot
 	 * photos. The parameters for the AsyncTask are:
 	 * <ul>
 	 * <li>String: image_suffix for identifying the shot photos stored at the sd
@@ -232,21 +235,50 @@ public class CameraActivity extends BaseActivity {
 			String path = ExternalDirectory.getExternalImageDirectory() + "/"
 					+ params[0] + "_1.png";
 			Bitmap image = BitmapFactory.decodeFile(path);
-			float[] vertices = new float[] { -1.0f, -1.0f, 0.0f, -1.0f, 1.0f,
-					0.0f, 1.0f, 1.0f, 0.0f, 1.0f, -1.0f, 0.0f };
-			float[] n_vertices = new float[] { 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-					1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f };
-			short[] faces = new short[] { 1, 2, 3, 4, 5, 6 };
+			// Drei Vertices pro Bildpunkt (x,y,z)
+//			int imageWidth = 12;
+//			int imageHeight = 12;
+//			FloatBuffer vertBuffer = FloatBuffer.allocate(imageHeight*imageWidth*3);
+//			FloatBuffer normBuffer = FloatBuffer.allocate(imageHeight*imageWidth*3);
+//			ShortBuffer indexBuffer = ShortBuffer.allocate(imageHeight*imageWidth*2);
+//			vertBuffer.rewind();
+//			normBuffer.rewind();
+//			indexBuffer.rewind();
+			// Vertices und Normale
+//			for (int x=0;x<imageHeight;x++) {
+//				for (int y=0;y<imageWidth;y++) {
+//					float[] imgPoint = new float[] { Float.valueOf(x), Float.valueOf(y), 0.0f };
+//					float[] normVec = new float[] { 0.0f, 0.0f, 1.0f };
+//					vertBuffer.put(imgPoint);
+//					normBuffer.put(normVec);
+//				}
+//			}
+			// Faces
+//			for (int i=0;i<indexBuffer.limit();i++) {
+//				indexBuffer.put((short) i);
+//			}
+//			float[] vertices = new float[vertBuffer.limit()];
+//			float[] normals = new float[normBuffer.limit()];
+//			short[] faces = new short[indexBuffer.limit()];
+//			vertices = vertBuffer.array();
+//			normals = normBuffer.array();
+//			faces = indexBuffer.array();
+			// DEBUGGING
+			float[] vertices = new float[] { -1.0f,  1.0f, -0.0f, 1.0f,  1.0f, -0.0f, -1.0f, -1.0f, -0.0f, 1.0f, -1.0f, -0.0f };
+			float[] normals = new float[12];
+			for (int i=0;i<12;i++) {
+				Double r = Math.random();
+				normals[i] = r.floatValue();
+			}
+//			float[] normals = new float[] { 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, -1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f, 1.0f };
+			short[] faces = new short[] {0, 1, 1, 1, 0, 0, 1, 0 };
 
-			objectModel = new ObjectModel(vertices, n_vertices, faces, image,
-					image_suffix);
-			SystemClock.sleep(2000);
+			objectModel = new ObjectModel(vertices, normals, faces, image, image_suffix);
 			return true;
 		}
 
 		@Override
 		protected void onPostExecute(Boolean result) {
-			progress.setVisibility(View.GONE);
 			Intent viewObject = new Intent(context, ObjectViewerActivity.class);
 			Bundle b = new Bundle();
 			b.putParcelable("objectModel", objectModel);

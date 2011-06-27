@@ -1,19 +1,28 @@
 package de.hsrm.objectify.rendering;
 
+import java.io.BufferedOutputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 
 import javax.microedition.khronos.opengles.GL10;
 
+import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
+import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.opengl.GLUtils;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
+import de.hsrm.objectify.utils.ExternalDirectory;
 
 /**
  * A representation of an actual object. Vertices, normals and texture can be
@@ -30,7 +39,7 @@ public class ObjectModel implements Parcelable {
 	private FloatBuffer vertexBuffer;
 	private FloatBuffer normalBuffer;
 	private ShortBuffer indexBuffer;
-	private int[] textures;
+	private int[] textures = new int[1];
 	private float vertices[];
 	private float n_vertices[];
 	private short faces[];
@@ -53,6 +62,8 @@ public class ObjectModel implements Parcelable {
 		n_vertices = new float[1];
 		faces = new short[1];
 		this.image_suffix = b.getString("image_suffix");
+		String path = ExternalDirectory.getExternalImageDirectory()+"/"+this.image_suffix+"_1.png";
+		this.image = BitmapFactory.decodeFile(path);
 		setVertexBuffer(vertices);
 		setNormalBuffer(n_vertices);
 		setFacesBuffer(faces);
@@ -132,51 +143,36 @@ public class ObjectModel implements Parcelable {
 	}
 	
 	public void draw(GL10 gl) {
-//		gl.glBindTexture(GL10.GL_TEXTURE_2D, textures[0]);
 		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
-//		gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 		gl.glEnableClientState(GL10.GL_NORMAL_ARRAY);
-		gl.glFrontFace(GL10.GL_CCW);
+		gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+		
+		gl.glBindTexture(GL10.GL_TEXTURE_2D, textures[0]);
 		gl.glVertexPointer(3, GL10.GL_FLOAT, 0, vertexBuffer);
 		gl.glNormalPointer(GL10.GL_FLOAT, 0, normalBuffer);
-//		gl.glDrawElements(GL10.GL_TRIANGLES, faces.length, GL10.GL_UNSIGNED_SHORT, indexBuffer);
-		// Wireframe
-		gl.glDrawArrays(GL10.GL_TRIANGLES, 0, vertices.length/3);
-		// normal
-//		gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, 0, vertices.length/3);
+		gl.glTexCoordPointer(2, GL10.GL_SHORT, 0, indexBuffer);
+		gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, 0, 4);
+		
 		gl.glDisableClientState(GL10.GL_NORMAL_ARRAY);
 		gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
-//		gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+		gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 	}
 
-	public void loadGLTexture(GL10 gl, Bitmap image) {
+	public void loadGLTexture(GL10 gl, Context context) {
 		Bitmap texture = scaleTexture(image, 256);
-//		
+		
 		gl.glGenTextures(1, textures, 0);
 		gl.glBindTexture(GL10.GL_TEXTURE_2D, textures[0]);
+
 		gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_NEAREST);
 		gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_LINEAR);
+
 		gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_S, GL10.GL_REPEAT);
 		gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T, GL10.GL_REPEAT);
 		
-		if (texture != null) {
-//			GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, texture, 0);
-//			// Alternative
-			ByteBuffer bytebuf = ByteBuffer.allocateDirect(texture.getHeight() * texture.getWidth() * 4);
-			bytebuf.order(ByteOrder.nativeOrder());
-			IntBuffer pixelbuf = bytebuf.asIntBuffer();
-//			
-			for (int y = 0; y < texture.getHeight(); y++) {
-				for (int x = 0; x < texture.getWidth(); x++) {
-					pixelbuf.put(texture.getPixel(x, y));
-				}
-			}
-			pixelbuf.position(0);
-			bytebuf.position(0);
-//			
-			gl.glTexImage2D(GL10.GL_TEXTURE_2D, 0, GL10.GL_RGBA, texture.getWidth(), texture.getHeight(), 0, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, pixelbuf);
-		}
+		GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, texture, 0);
 		
+		texture.recycle();
 	}
 	
 	/**
