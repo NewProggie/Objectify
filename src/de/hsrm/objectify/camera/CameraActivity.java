@@ -33,7 +33,9 @@ import de.hsrm.objectify.utils.BitmapUtils;
 import de.hsrm.objectify.utils.ExternalDirectory;
 
 /**
- * This activity opens up the camera and processes the shot photos.
+ * This {@link Activity} shoots photos with the front facing camera, manages
+ * light settings with {@link CameraLighting} and calculates the normal- and
+ * height map from the given photos.
  * 
  * @author kwolf001
  * 
@@ -50,7 +52,7 @@ public class CameraActivity extends BaseActivity {
 	private int counter = 1;
 	private Context context;
 	private Camera camera;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -58,37 +60,53 @@ public class CameraActivity extends BaseActivity {
 		context = this;
 		disableActionBar();
 		setScreenBrightness(1);
-		
+
 		cameraPreview = (CameraPreview) findViewById(R.id.camera_surface);
-		cameraLighting = (CameraLighting) findViewById(R.id.camera_lighting);		
+		cameraLighting = (CameraLighting) findViewById(R.id.camera_lighting);
 		progress = (LinearLayout) findViewById(R.id.progress);
 		triggerPictures = (Button) findViewById(R.id.trigger_picture_button);
 		triggerPictures.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
+				/* Fetching number of pictures to shoot from the settings */
 				ContextWrapper contextWrapper = new ContextWrapper(context);
 				SharedPreferences prefs = SettingsActivity.getSettings(contextWrapper);
 				numberOfPictures = prefs.getInt(getString(R.string.settings_amount_pictures), 4);
+				/* Setting the trigger button to invisible */
 				triggerPictures.setVisibility(View.GONE);
+				/* Creating a suffix for the image file names, so we can find them again later */
 				image_suffix = String.valueOf(System.currentTimeMillis());
 				setLights();
 				takePictures();
 			}
-		});	
-		
+		});
+
 		camera = CameraFinder.INSTANCE.open();
 		if (camera == null) {
 			showToastAndFinish(getString(R.string.no_ffc_was_found));
 		} else {
 			cameraPreview.setCamera(camera);
 		}
-		
+
 	}
 	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		setScreenBrightness(-1);
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		setScreenBrightness(1);
+	}
+
 	/**
 	 * Set screen brightness. A value of less than 0, the default, means to use
-	 * the preferred screen brightness
+	 * the preferred screen brightness. 0 to 1 adjusts the brightness from dark
+	 * to full bright.
 	 * 
 	 * @param intensity
 	 *            value between 0 and 1
@@ -98,7 +116,7 @@ public class CameraActivity extends BaseActivity {
 		lp.screenBrightness = intensity;
 		getWindow().setAttributes(lp);
 	}
-	
+
 	/**
 	 * Takes {@code numberOfPictures} pictures in sequence.
 	 */
@@ -109,7 +127,7 @@ public class CameraActivity extends BaseActivity {
 		SystemClock.sleep(100);
 		camera.takePicture(null, null, jpegCallback());
 	}
-	
+
 	/**
 	 * Will be called when no front facing camera was found.
 	 * 
@@ -120,7 +138,7 @@ public class CameraActivity extends BaseActivity {
 		Toast.makeText(this, message, Toast.LENGTH_LONG).show();
 		finish();
 	}
-	
+
 	/**
 	 * Set up the white spaces on the display to light up different parts whats
 	 * in front
@@ -141,9 +159,9 @@ public class CameraActivity extends BaseActivity {
 		case 4:
 			cameraLighting.putLightSource(-2, 2);
 			break;
-		}		
+		}
 	}
-	
+
 	private PictureCallback jpegCallback() {
 		PictureCallback callback = new PictureCallback() {
 
@@ -154,12 +172,18 @@ public class CameraActivity extends BaseActivity {
 					new CalculateModel().execute(image_suffix);
 				} else {
 					try {
-						String path = ExternalDirectory.getExternalImageDirectory() + "/" + image_suffix + "_"
-								+ String.valueOf(counter) + ".png";
+						String path = ExternalDirectory
+								.getExternalImageDirectory()
+								+ "/"
+								+ image_suffix
+								+ "_"
+								+ String.valueOf(counter)
+								+ ".png";
 						FileOutputStream fos = new FileOutputStream(path);
 						BufferedOutputStream bos = new BufferedOutputStream(fos);
 
-						Bitmap image = BitmapUtils.createBitmap(data, CameraFinder.pictureSize,
+						Bitmap image = BitmapUtils.createBitmap(data,
+								CameraFinder.pictureSize,
 								CameraFinder.imageFormat);
 						image.compress(CompressFormat.PNG, 100, bos);
 						bos.flush();
@@ -175,7 +199,7 @@ public class CameraActivity extends BaseActivity {
 
 		return callback;
 	}
-	
+
 	/**
 	 * Calculates <a
 	 * href="http://en.wikipedia.org/wiki/Normal_mapping">normalmap</a> and <a
@@ -192,30 +216,34 @@ public class CameraActivity extends BaseActivity {
 	 * 
 	 */
 	private class CalculateModel extends AsyncTask<String, Void, Boolean> {
-		
+
 		private final String TAG = "CalculateModel";
 		private ObjectModel objectModel;
-		
+
 		@Override
 		protected void onPreExecute() {
 			progress.setVisibility(View.VISIBLE);
 			cameraLighting.setVisibility(View.GONE);
 			cameraLighting.setZOrderOnTop(false);
 		}
-		
+
 		@Override
 		protected Boolean doInBackground(String... params) {
-			String path = ExternalDirectory.getExternalImageDirectory() + "/" + params[0] + "_1.png";
+			String path = ExternalDirectory.getExternalImageDirectory() + "/"
+					+ params[0] + "_1.png";
 			Bitmap image = BitmapFactory.decodeFile(path);
-			float[] vertices = new float[] { -1.0f, -1.0f, 0.0f, -1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, -1.0f, 0.0f };
-			float[] n_vertices = new float[] { 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f };
-			short[] faces = new short[] { 1,2,3,4,5,6 };
+			float[] vertices = new float[] { -1.0f, -1.0f, 0.0f, -1.0f, 1.0f,
+					0.0f, 1.0f, 1.0f, 0.0f, 1.0f, -1.0f, 0.0f };
+			float[] n_vertices = new float[] { 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+					1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f };
+			short[] faces = new short[] { 1, 2, 3, 4, 5, 6 };
 
-			objectModel = new ObjectModel(vertices, n_vertices, faces, image, image_suffix);
+			objectModel = new ObjectModel(vertices, n_vertices, faces, image,
+					image_suffix);
 			SystemClock.sleep(2000);
 			return true;
 		}
-		
+
 		@Override
 		protected void onPostExecute(Boolean result) {
 			progress.setVisibility(View.GONE);
@@ -227,5 +255,5 @@ public class CameraActivity extends BaseActivity {
 			((Activity) context).finish();
 		}
 	}
-	
+
 }
