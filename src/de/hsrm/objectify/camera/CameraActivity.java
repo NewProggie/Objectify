@@ -265,12 +265,7 @@ public class CameraActivity extends BaseActivity {
 //			faces = indexBuffer.array();
 			// DEBUGGING
 			float[] vertices = new float[] { -1.0f,  1.0f, -0.0f, 1.0f,  1.0f, -0.0f, -1.0f, -1.0f, -0.0f, 1.0f, -1.0f, -0.0f };
-			float[] normals = new float[12];
-			for (int i=0;i<12;i++) {
-				Double r = Math.random();
-				normals[i] = r.floatValue();
-			}
-//			float[] normals = new float[] { 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, -1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f, 1.0f };
+			float[] normals = new float[] { 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f };
 			short[] faces = new short[] {0, 1, 1, 1, 0, 0, 1, 0 };
 
 			objectModel = new ObjectModel(vertices, normals, faces, image, image_suffix);

@@ -51,7 +51,6 @@ public class TouchSurfaceView extends GLSurfaceView {
 	private float[] matrix = new float[16];
 	private final Object matrixLock = new Object();
 	private ArcBall arcBall = new ArcBall(getWidth(), getHeight());
-	private GLU glu;
 	private int displayWidth, displayHeight;
 	private final float TRACKBALL_SCALE_FACTOR = 36.0f;
 	private ObjectModelRenderer renderer;
@@ -70,7 +69,6 @@ public class TouchSurfaceView extends GLSurfaceView {
 		this.displayWidth = width;
 		this.displayHeight = height;
 		
-		glu = new GLU();
 		arcBall.setBounds((float) width, (float) height);
 		renderer = new ObjectModelRenderer(context, objectModel);
 		setRenderer(renderer);
@@ -143,6 +141,7 @@ public class TouchSurfaceView extends GLSurfaceView {
 	private class ObjectModelRenderer implements GLSurfaceView.Renderer {
 		
 		private ObjectModel objectModel;
+		private Cube cube;
 		private Context context;
 		private boolean shouldCopySurface = false;
 		private Bitmap surfaceBitmap;
@@ -156,6 +155,7 @@ public class TouchSurfaceView extends GLSurfaceView {
 		public ObjectModelRenderer(Context context, ObjectModel objectModel) {
 			this.context = context;
 			this.objectModel = objectModel;
+			cube = new Cube(objectModel.getImageSuffix());
 
 			lastRot.setIdentity();
 			thisRot.setIdentity();
@@ -168,19 +168,18 @@ public class TouchSurfaceView extends GLSurfaceView {
 
 		@Override
 		public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-			gl.glDisable(GL10.GL_DITHER);
-			objectModel.loadGLTexture(gl, this.context);
+			objectModel.loadGLTexture(gl, context);
+			cube.loadGLTexture(gl, context);
 			gl.glEnable(GL10.GL_TEXTURE_2D);
 			gl.glShadeModel(GL10.GL_SMOOTH);
-			gl.glClearColor(0, 0, 0.2f, 1); // black, blue background
+			gl.glClearColor(0.6f, 0.6f, 0.6f, 0.5f); 
 			gl.glClearDepthf(1.0f);
 			gl.glEnable(GL10.GL_DEPTH_TEST);
 			gl.glDepthFunc(GL10.GL_LEQUAL);
-			gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
 			gl.glEnable(GL10.GL_NORMALIZE);
 			gl.glEnable(GL10.GL_LIGHTING);
 			gl.glEnable(GL10.GL_LIGHT0);
-			
+			gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
 		}
 
 		/**
@@ -236,12 +235,13 @@ public class TouchSurfaceView extends GLSurfaceView {
 			gl.glMatrixMode(GL10.GL_MODELVIEW);
 			gl.glLoadIdentity();
 			// wichtig für die Arcball-Rotation
-			glu.gluLookAt(gl, 0, 0, -3, 0, 0, 0, 0, 1, 0);
+			GLU.gluLookAt(gl, 0, 0, -3, 0, 0, 0, 0, 1, 0);
 			
 			gl.glPushMatrix();
 			gl.glMultMatrixf(matrix, 0);
 			gl.glScalef(skalierung, skalierung, skalierung);
-			objectModel.draw(gl);
+//			objectModel.draw(gl);
+			cube.draw(gl);
 			if (shouldCopySurface) {
 				shouldCopySurface = false;
 				IntBuffer intBuffer = IntBuffer.wrap(new int[displayWidth * displayHeight]);
