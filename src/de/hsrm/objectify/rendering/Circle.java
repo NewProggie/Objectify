@@ -22,7 +22,7 @@ public class Circle {
 	 * @param radius
 	 *            radius of circle in centimeter (not implemented yet)
 	 */
-	public Circle(int radius) {
+	public Circle(float radius) {
 		ByteBuffer vbb = ByteBuffer.allocateDirect(720 * 4);
 		vbb.order(ByteOrder.nativeOrder());
 		vertexBuffer = vbb.asFloatBuffer();

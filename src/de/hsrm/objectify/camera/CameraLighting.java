@@ -45,12 +45,10 @@ public class CameraLighting extends GLSurfaceView {
 		private float xcoord = 0;
 		private float ycoord = 0;
 		private Circle lightSource;
-		private GLU glu;
 		
 		public CameraLightingRenderer(Context context) {
 			this.context = context;
-			lightSource = new Circle(2);
-			glu = new GLU();
+			lightSource = new Circle(2.0f);
 		}
 		
 		@Override
