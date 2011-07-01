@@ -2,6 +2,8 @@ package de.hsrm.objectify.utils;
 
 import java.io.ByteArrayOutputStream;
 
+import de.hsrm.objectify.camera.CameraFinder;
+
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
@@ -44,6 +46,52 @@ public class BitmapUtils {
 		case ImageFormat.RGB_565:
 			int[] pixels = convertByteArray(data);
 			return Bitmap.createBitmap(pixels, pictureSize.getWidth(), pictureSize.getHeight(), Config.RGB_565);
+		default:
+			return null;
+		}
+	}
+	
+	/**
+	 * Creates a downscaled bitmap depending on the specific image format and the scaling factor. Can return null.
+	 * @param data image data provided by the jpeg callback from the camera.
+	 * @param pictureSize picture size set in {@link CameraFinder}.
+	 * @param imageFormat image format set in {@link CameraFinder}.
+	 * @param factor factor for downscaled image. Should be an exponent of two.
+	 * @return new downscaled bitmap or null
+	 */
+	public static Bitmap createScaledBitmap(byte[] data, Size pictureSize, int imageFormat, float factor) {
+		int scaledWidth = (int) (pictureSize.getWidth() * 1/factor);
+		int scaledHeight = (int) (pictureSize.getHeight() * 1/factor);
+		switch (imageFormat) {
+		case ImageFormat.JPEG:
+			Bitmap tmp = BitmapFactory.decodeByteArray(data, 0, data.length);
+			if (tmp != null) {
+				return Bitmap.createScaledBitmap(tmp, scaledWidth,
+						scaledHeight, true);
+			} else {
+				return null;
+			}
+		case ImageFormat.NV21:
+			// convert yuv to jpg
+			YuvImage yuvImage = new YuvImage(data, ImageFormat.NV21,
+					pictureSize.getWidth(), pictureSize.getHeight(), null);
+			Rect rect = new Rect(0, 0, pictureSize.getWidth(),
+					pictureSize.getHeight());
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			yuvImage.compressToJpeg(rect, 100, baos);
+			// convert jpg to bmp
+			Bitmap tmp2 = BitmapFactory.decodeByteArray(baos.toByteArray(), 0,
+					baos.size());
+			if (tmp2 != null) {
+				return Bitmap.createScaledBitmap(tmp2, scaledWidth, scaledHeight, true);
+			} else {
+				return null;
+			}
+		case ImageFormat.RGB_565:
+			int[] pixels = convertByteArray(data);
+			Bitmap tmp3 =  Bitmap.createBitmap(pixels, pictureSize.getWidth(),
+					pictureSize.getHeight(), Config.RGB_565);
+			return Bitmap.createScaledBitmap(tmp3, scaledWidth, scaledHeight, true);
 		default:
 			return null;
 		}

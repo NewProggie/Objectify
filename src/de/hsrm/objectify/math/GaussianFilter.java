@@ -66,7 +66,6 @@ public class GaussianFilter {
 		float[] matrix = kernel.getKernelData(null);
 		int cols = kernel.getWidth();
 		int cols2 = cols/2;
-		
 		for (int y = 0; y < height; y++) {
 			int index = y;
 			int ioffset = y*width;

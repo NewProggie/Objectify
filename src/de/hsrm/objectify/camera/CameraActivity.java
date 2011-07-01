@@ -28,6 +28,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 import de.hsrm.objectify.R;
 import de.hsrm.objectify.SettingsActivity;
+import de.hsrm.objectify.math.GaussianFilter;
 import de.hsrm.objectify.rendering.ObjectModel;
 import de.hsrm.objectify.rendering.ObjectViewerActivity;
 import de.hsrm.objectify.ui.BaseActivity;
@@ -168,7 +169,7 @@ public class CameraActivity extends BaseActivity {
 
 	private PictureCallback jpegCallback() {
 		PictureCallback callback = new PictureCallback() {
-
+			// TODO: Bug gefunden, letztes Bild wird nicht gespeichert.
 			@Override
 			public void onPictureTaken(byte[] data, Camera camera) {
 				if (counter >= numberOfPictures) {
@@ -186,9 +187,7 @@ public class CameraActivity extends BaseActivity {
 						FileOutputStream fos = new FileOutputStream(path);
 						BufferedOutputStream bos = new BufferedOutputStream(fos);
 
-						Bitmap image = BitmapUtils.createBitmap(data,
-								CameraFinder.pictureSize,
-								CameraFinder.imageFormat);
+						Bitmap image = BitmapUtils.createScaledBitmap(data, CameraFinder.pictureSize, CameraFinder.imageFormat, 8.0f);
 						image.compress(CompressFormat.PNG, 100, bos);
 						bos.flush();
 						bos.close();
