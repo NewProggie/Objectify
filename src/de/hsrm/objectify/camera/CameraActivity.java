@@ -3,8 +3,6 @@ package de.hsrm.objectify.camera;
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.FloatBuffer;
-import java.nio.ShortBuffer;
 
 import android.app.Activity;
 import android.content.Context;
@@ -28,7 +26,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 import de.hsrm.objectify.R;
 import de.hsrm.objectify.SettingsActivity;
-import de.hsrm.objectify.math.GaussianFilter;
+import de.hsrm.objectify.rendering.Circle;
 import de.hsrm.objectify.rendering.ObjectModel;
 import de.hsrm.objectify.rendering.ObjectViewerActivity;
 import de.hsrm.objectify.ui.BaseActivity;
