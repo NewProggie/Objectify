@@ -256,8 +256,8 @@ public class CameraActivity extends BaseActivity {
 			Matrix sInverse = MathHelper.pinv(sMatrix);
 
 			// Drei Vertices pro Bildpunkt (x,y,z)
-			int imageWidth = 12;
-			int imageHeight = 12;
+			int imageWidth = 80;
+			int imageHeight = 60;
 			FloatBuffer vertBuffer = FloatBuffer.allocate(imageHeight*imageWidth*3);
 			FloatBuffer normBuffer = FloatBuffer.allocate(imageHeight*imageWidth*3);
 			ArrayList<Short> indexes = new ArrayList<Short>();
@@ -266,7 +266,8 @@ public class CameraActivity extends BaseActivity {
 			// Vertices und Normale
 			for (int x=0;x<imageHeight;x++) {
 				for (int y=0;y<imageWidth;y++) {
-					float[] imgPoint = new float[] { Float.valueOf(y), Float.valueOf(x), 0.0f };
+					Double d = Math.random()*10;
+					float[] imgPoint = new float[] { Float.valueOf(y), Float.valueOf(x), d.floatValue() };
 					float[] normVec = new float[] { 0.0f, 0.0f, 1.0f };
 					vertBuffer.put(imgPoint);
 					normBuffer.put(normVec);

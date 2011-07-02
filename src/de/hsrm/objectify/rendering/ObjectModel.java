@@ -10,6 +10,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
+import java.util.ArrayList;
 
 import javax.microedition.khronos.opengles.GL10;
 
@@ -29,8 +30,7 @@ import de.hsrm.objectify.utils.ExternalDirectory;
 /**
  * A representation of an actual object. Vertices, normals and texture can be
  * added after an instance of this class has been made. This class implements
- * both {@link Parcelable} for sending between different Activities and
- * {@link Serializable} for storing onto the external storage.
+ * {@link Parcelable} for sending between different Activities.
  * 
  * @author kwolf001
  * 
@@ -41,20 +41,48 @@ public class ObjectModel implements Parcelable {
 	private FloatBuffer vertexBuffer;
 	private FloatBuffer textureBuffer;
 	private FloatBuffer normalBuffer;
-	private ShortBuffer indexBuffer;
-	private float[] texture;
+	private ShortBuffer facesBuffer;
+	
 	private int[] textures = new int[1];
+	
+	private float[] texture;
 	private float vertices[];
-	private float n_vertices[];
-	private short indices[];
-	private byte[] bb;
+	private float normals[];
+	private short faces[];
 	private Bitmap image;
 	private String image_suffix;
 	
-	public ObjectModel(float[] vertices, float[] n_vertices, short[] indices, Bitmap image, String image_suffix) {
+	public ObjectModel(float[] vertices, float[] normals, short[] faces,
+			Bitmap image, String image_suffix) {
+		
 		setVertices(vertices);
-		setNormalVertices(n_vertices);
-		setFaces(indices);
+		setNormalVertices(normals);
+		setFaces(faces);
+		ByteBuffer byteBuf = ByteBuffer.allocateDirect(vertices.length * 4);
+		byteBuf.order(ByteOrder.nativeOrder());
+		vertexBuffer = byteBuf.asFloatBuffer();
+		vertexBuffer.put(vertices);
+		vertexBuffer.rewind();
+		
+		byteBuf = ByteBuffer.allocateDirect(normals.length * 4);
+		byteBuf.order(ByteOrder.nativeOrder());
+		normalBuffer = byteBuf.asFloatBuffer();
+		normalBuffer.put(normals);
+		normalBuffer.rewind();
+		
+		byteBuf = ByteBuffer.allocateDirect(faces.length * 4);
+		byteBuf.order(ByteOrder.nativeOrder());
+		facesBuffer = byteBuf.asShortBuffer();
+		facesBuffer.put(faces);
+		facesBuffer.rewind();
+		
+		calcTextureCoords(image);
+		byteBuf = ByteBuffer.allocateDirect(texture.length * 4);
+		byteBuf.order(ByteOrder.nativeOrder());
+		textureBuffer = byteBuf.asFloatBuffer();
+		textureBuffer.put(texture);
+		textureBuffer.rewind();
+		
 		this.image_suffix = image_suffix;
 		this.image = Bitmap.createBitmap(image);
 	}
@@ -63,14 +91,54 @@ public class ObjectModel implements Parcelable {
 		Bundle b = source.readBundle();
 		textures = new int[1];
 		setVertices(b.getFloatArray("vertices"));
-		n_vertices = new float[1];
-		indices = new short[1];
+		setNormalVertices(b.getFloatArray("normals"));
+		setFaces(b.getShortArray("faces"));
 		this.image_suffix = b.getString("image_suffix");
 		String path = ExternalDirectory.getExternalImageDirectory()+"/"+this.image_suffix+"_1.png";
 		this.image = BitmapFactory.decodeFile(path);
-		setVertexBuffer(vertices);
-		setNormalBuffer(n_vertices);
-		setFacesBuffer(indices);
+		
+		ByteBuffer byteBuf = ByteBuffer.allocateDirect(vertices.length * 4);
+		byteBuf.order(ByteOrder.nativeOrder());
+		vertexBuffer = byteBuf.asFloatBuffer();
+		vertexBuffer.put(vertices);
+		vertexBuffer.rewind();
+		
+		byteBuf = ByteBuffer.allocateDirect(normals.length * 4);
+		byteBuf.order(ByteOrder.nativeOrder());
+		normalBuffer = byteBuf.asFloatBuffer();
+		normalBuffer.put(normals);
+		normalBuffer.rewind();
+		
+		byteBuf = ByteBuffer.allocateDirect(faces.length * 4);
+		byteBuf.order(ByteOrder.nativeOrder());
+		facesBuffer = byteBuf.asShortBuffer();
+		facesBuffer.put(faces);
+		facesBuffer.rewind();
+		
+		calcTextureCoords(this.image);
+		byteBuf = ByteBuffer.allocateDirect(texture.length * 4);
+		byteBuf.order(ByteOrder.nativeOrder());
+		textureBuffer = byteBuf.asFloatBuffer();
+		textureBuffer.put(texture);
+		textureBuffer.rewind();
+	}
+	
+	private void calcTextureCoords(Bitmap image) {
+		int width = image.getWidth();
+		int height = image.getHeight();
+		ArrayList<Float> textcoords = new ArrayList<Float>();
+		for (int x=0; x<height; x++) {
+			for (int y=0; y<width; y++) {
+				float idx = (1.0f / (width-1)) * y;
+				float idy = (1.0f / (height-1)) * x;
+				textcoords.add(idx);
+				textcoords.add(idy);
+			}
+		}
+		this.texture = new float[textcoords.size()];
+		for (int i=0; i<textcoords.size(); i++) {
+			texture[i] = textcoords.get(i);
+		}
 	}
 
 	public void setVertices(float[] verts) {
@@ -84,23 +152,23 @@ public class ObjectModel implements Parcelable {
 	}
 	
 	public void setNormalVertices(float[] nverts) {
-		this.n_vertices = new float[nverts.length];
-		System.arraycopy(nverts, 0, this.n_vertices, 0, nverts.length);
-		setNormalBuffer(this.n_vertices);
+		this.normals = new float[nverts.length];
+		System.arraycopy(nverts, 0, this.normals, 0, nverts.length);
+		setNormalBuffer(this.normals);
 	}
 	
 	public float[] getNormalVertices() {
-		return this.n_vertices;
+		return this.normals;
 	}
 	
 	public void setFaces(short[] face) {
-		this.indices = new short[face.length];
-		System.arraycopy(face, 0, indices, 0, face.length);
-		setFacesBuffer(this.indices);
+		this.faces = new short[face.length];
+		System.arraycopy(face, 0, faces, 0, face.length);
+		setFacesBuffer(this.faces);
 	}
 	
 	public short[] getFaces() {
-		return this.indices;
+		return this.faces;
 	}
 	
 	public void setTextures(int[] textures) {
@@ -126,11 +194,11 @@ public class ObjectModel implements Parcelable {
 		vertexBuffer.rewind();
 	}
 	
-	private void setNormalBuffer(float[] normals) {
-		ByteBuffer nbb = ByteBuffer.allocateDirect(normals.length * 4);
+	private void setNormalBuffer(float[] normal) {
+		ByteBuffer nbb = ByteBuffer.allocateDirect(normal.length * 4);
 		nbb.order(ByteOrder.nativeOrder());
 		this.normalBuffer = nbb.asFloatBuffer();
-		for (float f : n_vertices) {
+		for (float f : normals) {
 			normalBuffer.put(f);
 		}
 		normalBuffer.rewind();
@@ -139,11 +207,11 @@ public class ObjectModel implements Parcelable {
 	private void setFacesBuffer(short[] faces) {
 		ByteBuffer fbb = ByteBuffer.allocateDirect(faces.length * 2);
 		fbb.order(ByteOrder.nativeOrder());
-		indexBuffer = fbb.asShortBuffer();
+		facesBuffer = fbb.asShortBuffer();
 		for (short s : faces) {
-			indexBuffer.put(s);
+			facesBuffer.put(s);
 		}
-		indexBuffer.rewind();
+		facesBuffer.rewind();
 	}
 	
 	public void draw(GL10 gl) {
@@ -153,12 +221,11 @@ public class ObjectModel implements Parcelable {
 		gl.glEnableClientState(GL10.GL_NORMAL_ARRAY);
 		gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 		
-		
 		gl.glVertexPointer(3, GL10.GL_FLOAT, 0, vertexBuffer);
 		gl.glNormalPointer(GL10.GL_FLOAT, 0, normalBuffer);
-		gl.glTexCoordPointer(2, GL10.GL_SHORT, 0, indexBuffer);
-//		gl.glTranslatef(-6, -6, 1);
-		gl.glDrawArrays(GL10.GL_POINTS, 0, vertices.length);
+		gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, textureBuffer);
+		
+		gl.glDrawElements(GL10.GL_TRIANGLES, faces.length, GL10.GL_UNSIGNED_SHORT, facesBuffer);
 		
 		gl.glDisableClientState(GL10.GL_NORMAL_ARRAY);
 		gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
@@ -216,6 +283,8 @@ public class ObjectModel implements Parcelable {
 	public void writeToParcel(Parcel out, int flags) {
 		Bundle b = new Bundle();
 		b.putFloatArray("vertices", vertices);
+		b.putFloatArray("normals", normals);
+		b.putShortArray("faces", faces);
 		b.putString("image_suffix", image_suffix);
 		out.writeBundle(b);
 	}
