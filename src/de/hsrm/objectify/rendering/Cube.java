@@ -175,8 +175,8 @@ public class Cube {
 		ArrayList<Float> texts = new ArrayList<Float>();
 		for (int x=0; x<4; x++) {
 			for (int y=0; y<4; y++) {
-				float idx = 1.0f/3*Float.valueOf(y);
-				float idy = 1.0f/3*Float.valueOf(x);
+				float idx = 1.0f/3*y;
+				float idy = 1.0f/3*x;
 				texts.add(idx);
 				texts.add(idy);
 			}
