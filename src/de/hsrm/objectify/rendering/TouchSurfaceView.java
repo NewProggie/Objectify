@@ -1,13 +1,8 @@
 package de.hsrm.objectify.rendering;
 
-import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.nio.IntBuffer;
 import java.util.Calendar;
-import java.util.Random;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -126,6 +121,11 @@ public class TouchSurfaceView extends GLSurfaceView {
 		
 		public boolean onScale(ScaleGestureDetector detector) {
 			skalierung *= detector.getScaleFactor();
+			// Maximale Skalierung festlegen, damit das Objekt nicht komplett verschwinden kann
+			if (skalierung < 0.5f)
+				skalierung = 0.5f;
+			else if (skalierung > 1.5f)
+				skalierung = 1.5f;
 			invalidate();
 			return true;
 		}
@@ -235,7 +235,8 @@ public class TouchSurfaceView extends GLSurfaceView {
 			gl.glMatrixMode(GL10.GL_MODELVIEW);
 			gl.glLoadIdentity();
 			// wichtig für die Arcball-Rotation
-			GLU.gluLookAt(gl, 0, 0, -3, 0, 0, 0, 0, 1, 0);
+			                  // eye  | center | up  
+			GLU.gluLookAt(gl, 0, 0, -2, 0, 0, 0, 0, 1, 0);
 			
 			gl.glPushMatrix();
 			gl.glMultMatrixf(matrix, 0);
@@ -259,12 +260,12 @@ public class TouchSurfaceView extends GLSurfaceView {
 		
 		@Override
 		public void onSurfaceChanged(GL10 gl, int width, int height) {
-			gl.glViewport(0, 0, width, height);
-			
 			float ratio = (float) width / height;
 			gl.glMatrixMode(GL10.GL_PROJECTION);
 			gl.glLoadIdentity();
-			gl.glFrustumf(-ratio, ratio, -1, 1, 1, 10);
+			gl.glFrustumf(-ratio*5, ratio*5, -5, 5, 1, 10);
+			
+			gl.glViewport(0, 0, width, height);
 		}
 		
 	}

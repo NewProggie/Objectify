@@ -39,20 +39,22 @@ public class ObjectModel implements Parcelable {
 
 	private static final String TAG = "ObjectModel";
 	private FloatBuffer vertexBuffer;
+	private FloatBuffer textureBuffer;
 	private FloatBuffer normalBuffer;
 	private ShortBuffer indexBuffer;
+	private float[] texture;
 	private int[] textures = new int[1];
 	private float vertices[];
 	private float n_vertices[];
-	private short faces[];
+	private short indices[];
 	private byte[] bb;
 	private Bitmap image;
 	private String image_suffix;
 	
-	public ObjectModel(float[] vertices, float[] n_vertices, short[] faces, Bitmap image, String image_suffix) {
+	public ObjectModel(float[] vertices, float[] n_vertices, short[] indices, Bitmap image, String image_suffix) {
 		setVertices(vertices);
 		setNormalVertices(n_vertices);
-		setFaces(faces);
+		setFaces(indices);
 		this.image_suffix = image_suffix;
 		this.image = Bitmap.createBitmap(image);
 	}
@@ -62,13 +64,13 @@ public class ObjectModel implements Parcelable {
 		textures = new int[1];
 		setVertices(b.getFloatArray("vertices"));
 		n_vertices = new float[1];
-		faces = new short[1];
+		indices = new short[1];
 		this.image_suffix = b.getString("image_suffix");
 		String path = ExternalDirectory.getExternalImageDirectory()+"/"+this.image_suffix+"_1.png";
 		this.image = BitmapFactory.decodeFile(path);
 		setVertexBuffer(vertices);
 		setNormalBuffer(n_vertices);
-		setFacesBuffer(faces);
+		setFacesBuffer(indices);
 	}
 
 	public void setVertices(float[] verts) {
@@ -92,13 +94,13 @@ public class ObjectModel implements Parcelable {
 	}
 	
 	public void setFaces(short[] face) {
-		this.faces = new short[face.length];
-		System.arraycopy(face, 0, faces, 0, face.length);
-		setFacesBuffer(this.faces);
+		this.indices = new short[face.length];
+		System.arraycopy(face, 0, indices, 0, face.length);
+		setFacesBuffer(this.indices);
 	}
 	
 	public short[] getFaces() {
-		return this.faces;
+		return this.indices;
 	}
 	
 	public void setTextures(int[] textures) {
@@ -155,7 +157,8 @@ public class ObjectModel implements Parcelable {
 		gl.glVertexPointer(3, GL10.GL_FLOAT, 0, vertexBuffer);
 		gl.glNormalPointer(GL10.GL_FLOAT, 0, normalBuffer);
 		gl.glTexCoordPointer(2, GL10.GL_SHORT, 0, indexBuffer);
-		gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, 0, 4);
+//		gl.glTranslatef(-6, -6, 1);
+		gl.glDrawArrays(GL10.GL_POINTS, 0, vertices.length);
 		
 		gl.glDisableClientState(GL10.GL_NORMAL_ARRAY);
 		gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);

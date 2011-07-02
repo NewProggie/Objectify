@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+import java.util.ArrayList;
 
 import javax.microedition.khronos.opengles.GL10;
 
@@ -46,82 +47,105 @@ public class Cube {
 	 * of the texturing we want to achieve 
 	 */	
     private float vertices[] = {
+    					0.0f, 0.0f, 0.0f,
+    					1.0f, 0.0f, 0.0f,
+    					2.0f, 0.0f, 0.0f,
+    					
+    					0.0f, 1.0f, 0.0f,
+    					1.0f, 1.0f, 0.0f,
+    					2.0f, 1.0f, 0.0f,
+    					
+    					0.0f, 2.0f, 0.0f,
+    					1.0f, 2.0f, 0.0f,
+    					2.0f, 2.0f, 0.0f
     					//Vertices according to faces
-			    		-1.0f, -1.0f, 1.0f, //Vertex 0
-			    		1.0f, -1.0f, 1.0f,  //v1
-			    		-1.0f, 1.0f, 1.0f,  //v2
-			    		1.0f, 1.0f, 1.0f,   //v3
-			    		
-			    		1.0f, -1.0f, 1.0f,	//...
-			    		1.0f, -1.0f, -1.0f,    		
-			    		1.0f, 1.0f, 1.0f,
-			    		1.0f, 1.0f, -1.0f,
-			    		
-			    		1.0f, -1.0f, -1.0f,
-			    		-1.0f, -1.0f, -1.0f,    		
-			    		1.0f, 1.0f, -1.0f,
-			    		-1.0f, 1.0f, -1.0f,
-			    		
-			    		-1.0f, -1.0f, -1.0f,
-			    		-1.0f, -1.0f, 1.0f,    		
-			    		-1.0f, 1.0f, -1.0f,
-			    		-1.0f, 1.0f, 1.0f,
-			    		
-			    		-1.0f, -1.0f, -1.0f,
-			    		1.0f, -1.0f, -1.0f,    		
-			    		-1.0f, -1.0f, 1.0f,
-			    		1.0f, -1.0f, 1.0f,
-			    		
-			    		-1.0f, 1.0f, 1.0f,
-			    		1.0f, 1.0f, 1.0f,    		
-			    		-1.0f, 1.0f, -1.0f,
-			    		1.0f, 1.0f, -1.0f,
+//			    		-1.0f, -1.0f, 1.0f, //Vertex 0
+//			    		1.0f, -1.0f, 1.0f,  //v1
+//			    		-1.0f, 1.0f, 1.0f,  //v2
+//			    		1.0f, 1.0f, 1.0f,   //v3
+//			    		
+//			    		1.0f, -1.0f, 1.0f,	//v4
+//			    		1.0f, -1.0f, -1.0f, //v5	
+//			    		1.0f, 1.0f, 1.0f, //v6
+//			    		1.0f, 1.0f, -1.0f, //v7
+//			    		
+//			    		1.0f, -1.0f, -1.0f, //v8
+//			    		-1.0f, -1.0f, -1.0f,//v9		
+//			    		1.0f, 1.0f, -1.0f, //v10
+//			    		-1.0f, 1.0f, -1.0f,//v11
+//			    		
+//			    		-1.0f, -1.0f, -1.0f,//v12
+//			    		-1.0f, -1.0f, 1.0f, //v13	
+//			    		-1.0f, 1.0f, -1.0f,//v14
+//			    		-1.0f, 1.0f, 1.0f,//v15
+//			    		
+//			    		-1.0f, -1.0f, -1.0f,//v16
+//			    		1.0f, -1.0f, -1.0f,//v17    		
+//			    		-1.0f, -1.0f, 1.0f,//v18
+//			    		1.0f, -1.0f, 1.0f,//v19
+//			    		
+//			    		-1.0f, 1.0f, 1.0f,//v20
+//			    		1.0f, 1.0f, 1.0f,//v21	
+//			    		-1.0f, 1.0f, -1.0f,//v22
+//			    		1.0f, 1.0f, -1.0f,//v23
 											};
     
     /** The initial texture coordinates (u, v) */	
     private float texture[] = {    		
 			    		//Mapping coordinates for the vertices
 			    		0.0f, 0.0f,
-			    		0.0f, 1.0f,
+			    		0.5f, 0.0f,
 			    		1.0f, 0.0f,
-			    		1.0f, 1.0f, 
 			    		
-			    		0.0f, 0.0f,
-			    		0.0f, 1.0f,
-			    		1.0f, 0.0f,
-			    		1.0f, 1.0f,
+			    		0.0f, 0.5f,
+			    		0.5f, 0.5f,
+			    		1.0f, 0.5f,
 			    		
-			    		0.0f, 0.0f,
 			    		0.0f, 1.0f,
-			    		1.0f, 0.0f,
-			    		1.0f, 1.0f,
+			    		0.5f, 1.0f,
+			    		1.0f, 1.0f
 			    		
-			    		0.0f, 0.0f,
-			    		0.0f, 1.0f,
-			    		1.0f, 0.0f,
-			    		1.0f, 1.0f,
-			    		
-			    		0.0f, 0.0f,
-			    		0.0f, 1.0f,
-			    		1.0f, 0.0f,
-			    		1.0f, 1.0f,
-			    		
-			    		0.0f, 0.0f,
-			    		0.0f, 1.0f,
-			    		1.0f, 0.0f,
-			    		1.0f, 1.0f,
+//			    		0.0f, 0.0f,
+//			    		0.0f, 1.0f,
+//			    		1.0f, 0.0f,
+//			    		1.0f, 1.0f,
+//			    		
+//			    		0.0f, 0.0f,
+//			    		0.0f, 1.0f,
+//			    		1.0f, 0.0f,
+//			    		1.0f, 1.0f,
+//			    		
+//			    		0.0f, 0.0f,
+//			    		0.0f, 1.0f,
+//			    		1.0f, 0.0f,
+//			    		1.0f, 1.0f,
+//			    		
+//			    		0.0f, 0.0f,
+//			    		0.0f, 1.0f,
+//			    		1.0f, 0.0f,
+//			    		1.0f, 1.0f,
+//			    		
+//			    		0.0f, 0.0f,
+//			    		0.0f, 1.0f,
+//			    		1.0f, 0.0f,
+//			    		1.0f, 1.0f,
 
 			    							};
         
     /** The initial indices definition */	
     private byte indices[] = {
-    					//Faces definition
-			    		0,1,3, 0,3,2, 			//Face front
-			    		4,5,7, 4,7,6, 			//Face right
-			    		8,9,11, 8,11,10, 		//... 
-			    		12,13,15, 12,15,14, 	
-			    		16,17,19, 16,19,18, 	
-			    		20,21,23, 20,23,22, 	
+    					0,4,3, 0,1,4,
+    					1,5,4, 1,2,5,
+    					3,7,6, 3,4,7,
+    					4,8,7, 4,5,8
+    					
+//    					//Faces definition
+//			    		0,1,3, 0,3,2, 			//Face front
+//			    		4,5,7, 4,7,6, 			//Face right
+//			    		8,9,11, 8,11,10, 		//... 
+//			    		12,13,15, 12,15,14, 	
+//			    		16,17,19, 16,19,18, 	
+//			    		20,21,23, 20,23,22, 	
     										};
     
     private String image_suffix;
@@ -134,6 +158,53 @@ public class Cube {
 	public Cube(String image_suffix) {
 		
 		this.image_suffix = image_suffix;
+		// DEBUGGING START
+		ArrayList<Float> verts = new ArrayList<Float>();
+		for (int x=0;x<4;x++) {
+			for (int y=0; y<4; y++) {
+				verts.add(Float.valueOf(y));
+				verts.add(Float.valueOf(x));
+				verts.add(Float.valueOf(0));
+			}
+		}
+		vertices = new float[verts.size()];
+		for (int i=0; i< verts.size(); i++) {
+			vertices[i] = verts.get(i);
+		}
+		
+		ArrayList<Float> texts = new ArrayList<Float>();
+		for (int x=0; x<4; x++) {
+			for (int y=0; y<4; y++) {
+				float idx = 1.0f/3*Float.valueOf(y);
+				float idy = 1.0f/3*Float.valueOf(x);
+				texts.add(idx);
+				texts.add(idy);
+			}
+		}
+		texture = new float[texts.size()];
+		for (int i=0; i<texts.size(); i++) {
+			float f = texts.get(i);
+			texture[i] = f;
+		}
+		
+		ArrayList<Byte> inds = new ArrayList<Byte>();
+		for (int i=0; i<3; i++) {
+			for (int j=0; j<3; j++) {
+				short index = (byte) (j + (i*4));
+				inds.add((byte) (index));
+				inds.add((byte) (index+4));
+				inds.add((byte) (index+1));
+				
+				inds.add((byte) (index+1));
+				inds.add((byte) (index+4));
+				inds.add((byte) (index+4+1));
+			}
+		}
+		indices = new byte[inds.size()];
+		for (int i=0; i<inds.size(); i++) {
+			indices[i] = inds.get(i);
+		}
+		// DEBUGGING END
 		//
 		ByteBuffer byteBuf = ByteBuffer.allocateDirect(vertices.length * 4);
 		byteBuf.order(ByteOrder.nativeOrder());

@@ -3,7 +3,13 @@ package de.hsrm.objectify.camera;
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.FloatBuffer;
+import java.nio.ShortBuffer;
+import java.util.ArrayList;
 
+import Jama.Matrix;
+import Jama.SingularValueDecomposition;
+import android.R.integer;
 import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
@@ -32,6 +38,7 @@ import de.hsrm.objectify.rendering.ObjectViewerActivity;
 import de.hsrm.objectify.ui.BaseActivity;
 import de.hsrm.objectify.utils.BitmapUtils;
 import de.hsrm.objectify.utils.ExternalDirectory;
+import de.hsrm.objectify.utils.MathHelper;
 
 /**
  * This {@link Activity} shoots photos with the front facing camera, manages
@@ -232,42 +239,69 @@ public class CameraActivity extends BaseActivity {
 			String path = ExternalDirectory.getExternalImageDirectory() + "/"
 					+ params[0] + "_1.png";
 			Bitmap image = BitmapFactory.decodeFile(path);
-			// Drei Vertices pro Bildpunkt (x,y,z)
-//			int imageWidth = 12;
-//			int imageHeight = 12;
-//			FloatBuffer vertBuffer = FloatBuffer.allocate(imageHeight*imageWidth*3);
-//			FloatBuffer normBuffer = FloatBuffer.allocate(imageHeight*imageWidth*3);
-//			ShortBuffer indexBuffer = ShortBuffer.allocate(imageHeight*imageWidth*2);
-//			vertBuffer.rewind();
-//			normBuffer.rewind();
-//			indexBuffer.rewind();
-			// Vertices und Normale
-//			for (int x=0;x<imageHeight;x++) {
-//				for (int y=0;y<imageWidth;y++) {
-//					float[] imgPoint = new float[] { Float.valueOf(x), Float.valueOf(y), 0.0f };
-//					float[] normVec = new float[] { 0.0f, 0.0f, 1.0f };
-//					vertBuffer.put(imgPoint);
-//					normBuffer.put(normVec);
-//				}
-//			}
-			// Faces
-//			for (int i=0;i<indexBuffer.limit();i++) {
-//				indexBuffer.put((short) i);
-//			}
-//			float[] vertices = new float[vertBuffer.limit()];
-//			float[] normals = new float[normBuffer.limit()];
-//			short[] faces = new short[indexBuffer.limit()];
-//			vertices = vertBuffer.array();
-//			normals = normBuffer.array();
-//			faces = indexBuffer.array();
-			// DEBUGGING
-			float[] vertices = new float[] { -1.0f,  1.0f, -0.0f, 1.0f,  1.0f, -0.0f, -1.0f, -1.0f, -0.0f, 1.0f, -1.0f, -0.0f };
-			float[] normals = new float[] { 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f };
-			short[] faces = new short[] {0, 1, 1, 1, 0, 0, 1, 0 };
+			double[][] sValues = new double[4][3];
+			sValues[0][0] = 1; 
+			sValues[0][1] = 2;
+			sValues[0][2] = 3;
+			sValues[1][0] = 4;
+			sValues[1][1] = 5;
+			sValues[1][2] = 6;
+			sValues[2][0] = 1;
+			sValues[2][1] = 2;
+			sValues[2][2] = 3;
+			sValues[3][0] = 4;
+			sValues[3][1] = 5;
+			sValues[3][2] = 6;
+			Matrix sMatrix = new Matrix(sValues);
+			Matrix sInverse = MathHelper.pinv(sMatrix);
 
+			// Drei Vertices pro Bildpunkt (x,y,z)
+			int imageWidth = 12;
+			int imageHeight = 12;
+			FloatBuffer vertBuffer = FloatBuffer.allocate(imageHeight*imageWidth*3);
+			FloatBuffer normBuffer = FloatBuffer.allocate(imageHeight*imageWidth*3);
+			ArrayList<Short> indexes = new ArrayList<Short>();
+			vertBuffer.rewind();
+			normBuffer.rewind();
+			// Vertices und Normale
+			for (int x=0;x<imageHeight;x++) {
+				for (int y=0;y<imageWidth;y++) {
+					float[] imgPoint = new float[] { Float.valueOf(y), Float.valueOf(x), 0.0f };
+					float[] normVec = new float[] { 0.0f, 0.0f, 1.0f };
+					vertBuffer.put(imgPoint);
+					normBuffer.put(normVec);
+				}
+			}
+			// Faces
+			for (int i=0; i<imageHeight-1;i++) {
+				for (int j=0; j<imageWidth-1;j++) {
+					short index = (short) (j + (i*imageWidth));
+					indexes.add((short) (index));
+					indexes.add((short) (index+imageWidth));
+					indexes.add((short) (index+1));
+					
+					indexes.add((short) (index+1));
+					indexes.add((short) (index+imageWidth));
+					indexes.add((short) (index+imageWidth+1));
+				}
+			}
+			ShortBuffer indexBuffer = ShortBuffer.allocate(indexes.size());
+			indexBuffer.rewind();
+			for (int i=0; i<indexes.size(); i++) {
+				indexBuffer.put(indexes.get(i));
+			}
+			
+			float[] vertices = new float[vertBuffer.limit()];
+			float[] normals = new float[normBuffer.limit()];
+			short[] faces = new short[indexBuffer.limit()];
+			vertices = vertBuffer.array();
+			normals = normBuffer.array();
+			faces = indexBuffer.array();
 			objectModel = new ObjectModel(vertices, normals, faces, image, image_suffix);
 			return true;
 		}
+		
+		
 
 		@Override
 		protected void onPostExecute(Boolean result) {
