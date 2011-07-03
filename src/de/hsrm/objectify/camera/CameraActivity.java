@@ -8,8 +8,6 @@ import java.nio.ShortBuffer;
 import java.util.ArrayList;
 
 import Jama.Matrix;
-import Jama.SingularValueDecomposition;
-import android.R.integer;
 import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
@@ -18,6 +16,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.os.AsyncTask;
@@ -32,6 +31,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 import de.hsrm.objectify.R;
 import de.hsrm.objectify.SettingsActivity;
+import de.hsrm.objectify.math.Vector3f;
 import de.hsrm.objectify.rendering.Circle;
 import de.hsrm.objectify.rendering.ObjectModel;
 import de.hsrm.objectify.rendering.ObjectViewerActivity;
@@ -236,28 +236,83 @@ public class CameraActivity extends BaseActivity {
 
 		@Override
 		protected Boolean doInBackground(String... params) {
-			String path = ExternalDirectory.getExternalImageDirectory() + "/"
+			String path1 = ExternalDirectory.getExternalImageDirectory() + "/"
 					+ params[0] + "_1.png";
-			Bitmap image = BitmapFactory.decodeFile(path);
-			double[][] sValues = new double[4][3];
-			sValues[0][0] = 1; 
+			Bitmap image1 = BitmapFactory.decodeFile(path1);
+			String path2 = ExternalDirectory.getExternalImageDirectory() + "/"
+			+ params[0] + "_2.png";
+			Bitmap image2 = BitmapFactory.decodeFile(path2);
+			String path3 = ExternalDirectory.getExternalImageDirectory() + "/"
+			+ params[0] + "_3.png";
+			Bitmap image3 = BitmapFactory.decodeFile(path3);
+			
+			double[][] sValues = new double[3][3];
+			sValues[0][0] = 2; 
 			sValues[0][1] = 2;
-			sValues[0][2] = 3;
-			sValues[1][0] = 4;
-			sValues[1][1] = 5;
-			sValues[1][2] = 6;
-			sValues[2][0] = 1;
-			sValues[2][1] = 2;
-			sValues[2][2] = 3;
-			sValues[3][0] = 4;
-			sValues[3][1] = 5;
-			sValues[3][2] = 6;
+			sValues[0][2] = 0;
+			sValues[1][0] = 0;
+			sValues[1][1] = 2;
+			sValues[1][2] = 0;
+			sValues[2][0] = 0;
+			sValues[2][1] = 0;
+			sValues[2][2] = 0;
 			Matrix sMatrix = new Matrix(sValues);
 			Matrix sInverse = MathHelper.pinv(sMatrix);
 
+			int imageWidth = image1.getWidth();
+			int imageHeight = image1.getHeight();
+			
+			// Normalenfeld berechnen
+			ArrayList<Vector3f> normalField = new ArrayList<Vector3f>();
+			Matrix pGradients = new Matrix(imageHeight, imageWidth);
+			Matrix qGradients = new Matrix(imageHeight, imageWidth);
+			
+			for (int h=0; h<imageHeight; h++) {
+				for (int w=0; w<imageWidth; w++) {
+					Vector3f normal = new Vector3f();
+					
+					Vector3f intensity = new Vector3f();
+					int color1 = image1.getPixel(w, h);
+					int red1 = (color1 >> 16) & 0xFF;
+					int green1 = (color1 >> 8) & 0xFF;
+					int blue1 = (color1 >> 0) & 0xFF;
+					intensity.x = ((red1 + green1 + blue1) / 3.0f) / 255.0f;
+					//
+					int color2 = image2.getPixel(w, h);
+					int red2 = (color2 >> 16) & 0xFF;
+					int green2 = (color2 >> 8) & 0xFF;
+					int blue2 = (color2 >> 0) & 0xFF;
+					intensity.y = ((red2 + green2 + blue2) / 3.0f) / 255.0f;
+					//
+					int color3 = image3.getPixel(w, h);
+					int red3 = (color3 >> 16) & 0xFF;
+					int green3 = (color3 >> 8) & 0xFF;
+					int blue3 = (color3 >> 0) & 0xFF;
+					intensity.z = ((red3 + green3 + blue3) / 3.0f) / 255.0f;
+					
+					Vector3f albedo = new Vector3f();
+					albedo.x = (float) (sInverse.get(0, 0) * intensity.x + sInverse.get(0, 1) * intensity.y + sInverse.get(0, 2) * intensity.z);
+					albedo.y = (float) (sInverse.get(1, 0) * intensity.x + sInverse.get(1, 1) * intensity.y + sInverse.get(1, 2) * intensity.z);
+					albedo.z = (float) (sInverse.get(2, 0) * intensity.x + sInverse.get(2, 1) * intensity.y + sInverse.get(2, 2) * intensity.z);
+					
+					float reg = (float) Math.sqrt(Math.pow(albedo.x, 2) + Math.pow(albedo.y, 2) + Math.pow(albedo.z, 2));
+					normal.x = albedo.x / reg;
+					normal.y = albedo.y / reg;
+					// TODO: DEbugging, rausnehmen
+					Double r = Math.random();
+					normal.z = r.floatValue();
+//					normal.z = albedo.z / reg;
+
+					normalField.add(normal);
+					pGradients.set(h, w, normal.x / normal.z);
+					qGradients.set(h, w, normal.y / normal.z);
+				}
+			}
+			
+			double[][] heightField = MathHelper.twoDimIntegration(pGradients, qGradients, imageHeight, imageWidth);
+			
 			// Drei Vertices pro Bildpunkt (x,y,z)
-			int imageWidth = 80;
-			int imageHeight = 60;
+			
 			FloatBuffer vertBuffer = FloatBuffer.allocate(imageHeight*imageWidth*3);
 			FloatBuffer normBuffer = FloatBuffer.allocate(imageHeight*imageWidth*3);
 			ArrayList<Short> indexes = new ArrayList<Short>();
@@ -266,7 +321,8 @@ public class CameraActivity extends BaseActivity {
 			// Vertices und Normale
 			for (int x=0;x<imageHeight;x++) {
 				for (int y=0;y<imageWidth;y++) {
-					Double d = Math.random()*10;
+					Double d = heightField[x][y];
+					Log.d("heightField[x][y]", String.valueOf(d));
 					float[] imgPoint = new float[] { Float.valueOf(y), Float.valueOf(x), d.floatValue() };
 					float[] normVec = new float[] { 0.0f, 0.0f, 1.0f };
 					vertBuffer.put(imgPoint);
@@ -298,7 +354,7 @@ public class CameraActivity extends BaseActivity {
 			vertices = vertBuffer.array();
 			normals = normBuffer.array();
 			faces = indexBuffer.array();
-			objectModel = new ObjectModel(vertices, normals, faces, image, image_suffix);
+			objectModel = new ObjectModel(vertices, normals, faces, image1, image_suffix);
 			return true;
 		}
 		
