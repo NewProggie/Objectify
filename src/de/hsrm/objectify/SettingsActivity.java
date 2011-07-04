@@ -2,6 +2,7 @@ package de.hsrm.objectify;
 
 import java.util.ArrayList;
 
+import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.SharedPreferences;
 import android.hardware.Camera;
@@ -10,6 +11,8 @@ import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.PreferenceActivity;
+import android.view.MotionEvent;
+import android.widget.Toast;
 import de.hsrm.objectify.camera.CameraFinder;
 import de.hsrm.objectify.ui.SliderInputPreference;
 

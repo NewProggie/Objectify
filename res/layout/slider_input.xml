@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/layout_root"
+	android:orientation="vertical" 
+	android:padding="6dip"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent">
+	<TextView 
+		android:id="@+id/curr_amount_photos"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:gravity="center_horizontal"
+		android:textSize="@dimen/text_size_medium" />
+	<SeekBar 
+		android:id="@+id/slider_photos"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content" />
+</LinearLayout>
