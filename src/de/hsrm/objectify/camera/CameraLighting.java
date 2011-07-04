@@ -33,10 +33,61 @@ public class CameraLighting extends GLSurfaceView {
 		setRenderMode(RENDERMODE_WHEN_DIRTY);
 	}
 	
-	public void putLightSource(float xcoord, float ycoord) {
-		renderer.xcoord = xcoord;
-		renderer.ycoord = ycoord;
+	/**
+	 * Set up the light source depending on the total number of pictures used
+	 * and the current picture taken.
+	 * 
+	 * @param numberOfPictures
+	 *            total number of pictures used for 3d reconstruction.
+	 * @param currentPictureCount
+	 *            determining the current picture for placing the light source.
+	 */
+	public void putLightSource(int numberOfPictures, int currentPictureCount) {
+		switch (numberOfPictures) {
+		case 4:
+			if (currentPictureCount == 0) {
+				renderer.xcoord = 0.5f;
+				renderer.ycoord = 0.0f;
+			} else if (currentPictureCount == 1) {
+				renderer.xcoord = 1.0f;
+				renderer.ycoord = 0.5f;
+			} else if (currentPictureCount == 2) {
+				renderer.xcoord = 0.5f;
+				renderer.ycoord = 1.0f;
+			} else if (currentPictureCount == 3) {
+				renderer.xcoord = 0.0f;
+				renderer.ycoord = 1.0f;
+			}
+		}
 		requestRender();
+	}
+	
+	/**
+	 * Returns the light matrix (S matrix) depending on the total number of
+	 * pictures used for 3d reconstruction
+	 * 
+	 * @param numberOfPictures
+	 *            total number of pictures used for 3d reconstruction
+	 * @return the light matrix as a 2d double array
+	 */
+	public double[][] getLightMatrixS(int numberOfPictures) {
+		double[][] lightMatrix = new double[numberOfPictures][3];
+		switch (numberOfPictures) {
+		case 4:
+			lightMatrix[0][0] = 0.5; 
+			lightMatrix[0][1] = 0.0;
+			lightMatrix[0][2] = 0.0;
+			lightMatrix[1][0] = 1.0; 
+			lightMatrix[1][1] = 0.5;
+			lightMatrix[1][2] = 0.0;
+			lightMatrix[2][0] = 0.5; 
+			lightMatrix[2][1] = 1.0;
+			lightMatrix[2][2] = 0.0;
+			lightMatrix[3][0] = 0.0; 
+			lightMatrix[3][1] = 1.0;
+			lightMatrix[3][2] = 0.0;
+		}
+		return lightMatrix;
 	}
 
 	private class CameraLightingRenderer implements GLSurfaceView.Renderer {

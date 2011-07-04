@@ -155,20 +155,7 @@ public class CameraActivity extends BaseActivity {
 	private void setLights() {
 		cameraLighting.setVisibility(View.VISIBLE);
 		cameraLighting.setZOrderOnTop(true);
-		switch (counter) {
-		case 0:
-			cameraLighting.putLightSource(-2, -2);
-			break;
-		case 1:
-			cameraLighting.putLightSource(2, -2);
-			break;
-		case 2:
-			cameraLighting.putLightSource(2, 2);
-			break;
-		case 3:
-			cameraLighting.putLightSource(-2, 2);
-			break;
-		}
+		cameraLighting.putLightSource(numberOfPictures, counter);
 	}
 
 	private PictureCallback jpegCallback() {
@@ -179,21 +166,10 @@ public class CameraActivity extends BaseActivity {
 					Log.d(TAG, "Photos taken, calculating object");
 					new CalculateModel().execute();
 				} else {
-//					try {
-//						String path = ExternalDirectory.getExternalImageDirectory() + "/" + image_suffix + "_" + String.valueOf(counter) + ".png";
-//						FileOutputStream fos = new FileOutputStream(path);
-//						BufferedOutputStream bos = new BufferedOutputStream(fos);
-
 						Bitmap image = BitmapUtils.createScaledBitmap(data, CameraFinder.pictureSize, CameraFinder.imageFormat, 8.0f);
 						pictureList.add(image);
-//						image.compress(CompressFormat.PNG, 100, bos);
-//						bos.flush();
-//						bos.close();
 						counter += 1;
 						takePictures();
-//					} catch (IOException e) {
-//						Log.e(TAG, e.getMessage());
-//					}
 				}
 			}
 		};
@@ -229,34 +205,8 @@ public class CameraActivity extends BaseActivity {
 
 		@Override
 		protected Boolean doInBackground(Void... params) {
-			
-//			String path1 = ExternalDirectory.getExternalImageDirectory() + "/"
-//					+ params[0] + "_0.png";
-//			Bitmap image1 = BitmapFactory.decodeFile(path1);
-//			String path2 = ExternalDirectory.getExternalImageDirectory() + "/"
-//			+ params[0] + "_1.png";
-//			Bitmap image2 = BitmapFactory.decodeFile(path2);
-//			String path3 = ExternalDirectory.getExternalImageDirectory() + "/"
-//			+ params[0] + "_2.png";
-//			Bitmap image3 = BitmapFactory.decodeFile(path3);
-//			String path4 = ExternalDirectory.getExternalImageDirectory() + "/"
-//			+ params[0] + "_3.png";
-//			Bitmap image4 = BitmapFactory.decodeFile(path3);
-			
-			double[][] sValues = new double[4][3];
-			sValues[0][0] = 2; 
-			sValues[0][1] = 2;
-			sValues[0][2] = 0;
-			sValues[1][0] = 0;
-			sValues[1][1] = 2;
-			sValues[1][2] = 0;
-			sValues[2][0] = 0;
-			sValues[2][1] = 0;
-			sValues[2][2] = 0;
-			sValues[3][0] = 2;
-			sValues[3][1] = 0;
-			sValues[3][2] = 0;
-			Matrix sMatrix = new Matrix(sValues);
+			double[][] lightMatrixS = cameraLighting.getLightMatrixS(numberOfPictures);
+			Matrix sMatrix = new Matrix(lightMatrixS);
 			Matrix sInverse = MathHelper.pinv(sMatrix);
 
 			int imageWidth = pictureList.get(0).getWidth();
@@ -322,7 +272,7 @@ public class CameraActivity extends BaseActivity {
 			for (int x=0;x<imageHeight;x++) {
 				for (int y=0;y<imageWidth;y++) {
 					Double d = heightField[x][y];
-					Log.d("heightField[x][y]", String.valueOf(d));
+//					Log.d("heightField[x][y]", String.valueOf(d));
 					float[] imgPoint = new float[] { Float.valueOf(y), Float.valueOf(x), d.floatValue() };
 					float[] normVec = new float[] { 0.0f, 0.0f, 1.0f };
 					vertBuffer.put(imgPoint);
