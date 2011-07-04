@@ -16,7 +16,6 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.os.AsyncTask;
@@ -55,9 +54,9 @@ public class CameraActivity extends BaseActivity {
 	private Button triggerPictures;
 	private LinearLayout progress;
 	private CameraLighting cameraLighting;
-	private String image_suffix;
+	private ArrayList<Bitmap> pictureList;
 	private int numberOfPictures;
-	private int counter = 1;
+	private int counter = 0;
 	private Context context;
 	private Camera camera;
 
@@ -83,8 +82,8 @@ public class CameraActivity extends BaseActivity {
 				numberOfPictures = prefs.getInt(getString(R.string.settings_amount_pictures), 4);
 				/* Setting the trigger button to invisible */
 				triggerPictures.setVisibility(View.GONE);
-				/* Creating a suffix for the image file names, so we can find them again later */
-				image_suffix = String.valueOf(System.currentTimeMillis());
+				/* New ArrayList for storing the pictures temporarily */
+				pictureList = new ArrayList<Bitmap>();
 				setLights();
 				takePictures();
 			}
@@ -132,7 +131,7 @@ public class CameraActivity extends BaseActivity {
 		camera.startPreview();
 		setLights();
 		// a bit of delay, so the display has a chance to illuminate properly
-		SystemClock.sleep(100);
+		SystemClock.sleep(200);
 		camera.takePicture(null, null, jpegCallback());
 	}
 
@@ -157,16 +156,16 @@ public class CameraActivity extends BaseActivity {
 		cameraLighting.setVisibility(View.VISIBLE);
 		cameraLighting.setZOrderOnTop(true);
 		switch (counter) {
-		case 1:
+		case 0:
 			cameraLighting.putLightSource(-2, -2);
 			break;
-		case 2:
+		case 1:
 			cameraLighting.putLightSource(2, -2);
 			break;
-		case 3:
+		case 2:
 			cameraLighting.putLightSource(2, 2);
 			break;
-		case 4:
+		case 3:
 			cameraLighting.putLightSource(-2, 2);
 			break;
 		}
@@ -174,33 +173,27 @@ public class CameraActivity extends BaseActivity {
 
 	private PictureCallback jpegCallback() {
 		PictureCallback callback = new PictureCallback() {
-			// TODO: Bug gefunden, letztes Bild wird nicht gespeichert.
 			@Override
 			public void onPictureTaken(byte[] data, Camera camera) {
-				if (counter >= numberOfPictures) {
+				if (counter == (numberOfPictures-1)) {
 					Log.d(TAG, "Photos taken, calculating object");
-					new CalculateModel().execute(image_suffix);
+					new CalculateModel().execute();
 				} else {
-					try {
-						String path = ExternalDirectory
-								.getExternalImageDirectory()
-								+ "/"
-								+ image_suffix
-								+ "_"
-								+ String.valueOf(counter)
-								+ ".png";
-						FileOutputStream fos = new FileOutputStream(path);
-						BufferedOutputStream bos = new BufferedOutputStream(fos);
+//					try {
+//						String path = ExternalDirectory.getExternalImageDirectory() + "/" + image_suffix + "_" + String.valueOf(counter) + ".png";
+//						FileOutputStream fos = new FileOutputStream(path);
+//						BufferedOutputStream bos = new BufferedOutputStream(fos);
 
 						Bitmap image = BitmapUtils.createScaledBitmap(data, CameraFinder.pictureSize, CameraFinder.imageFormat, 8.0f);
-						image.compress(CompressFormat.PNG, 100, bos);
-						bos.flush();
-						bos.close();
+						pictureList.add(image);
+//						image.compress(CompressFormat.PNG, 100, bos);
+//						bos.flush();
+//						bos.close();
 						counter += 1;
 						takePictures();
-					} catch (IOException e) {
-						Log.e(TAG, e.getMessage());
-					}
+//					} catch (IOException e) {
+//						Log.e(TAG, e.getMessage());
+//					}
 				}
 			}
 		};
@@ -222,7 +215,7 @@ public class CameraActivity extends BaseActivity {
 	 * @author kwolf001
 	 * 
 	 */
-	private class CalculateModel extends AsyncTask<String, Void, Boolean> {
+	private class CalculateModel extends AsyncTask<Void, Void, Boolean> {
 
 		private final String TAG = "CalculateModel";
 		private ObjectModel objectModel;
@@ -235,18 +228,22 @@ public class CameraActivity extends BaseActivity {
 		}
 
 		@Override
-		protected Boolean doInBackground(String... params) {
-			String path1 = ExternalDirectory.getExternalImageDirectory() + "/"
-					+ params[0] + "_1.png";
-			Bitmap image1 = BitmapFactory.decodeFile(path1);
-			String path2 = ExternalDirectory.getExternalImageDirectory() + "/"
-			+ params[0] + "_2.png";
-			Bitmap image2 = BitmapFactory.decodeFile(path2);
-			String path3 = ExternalDirectory.getExternalImageDirectory() + "/"
-			+ params[0] + "_3.png";
-			Bitmap image3 = BitmapFactory.decodeFile(path3);
+		protected Boolean doInBackground(Void... params) {
 			
-			double[][] sValues = new double[3][3];
+//			String path1 = ExternalDirectory.getExternalImageDirectory() + "/"
+//					+ params[0] + "_0.png";
+//			Bitmap image1 = BitmapFactory.decodeFile(path1);
+//			String path2 = ExternalDirectory.getExternalImageDirectory() + "/"
+//			+ params[0] + "_1.png";
+//			Bitmap image2 = BitmapFactory.decodeFile(path2);
+//			String path3 = ExternalDirectory.getExternalImageDirectory() + "/"
+//			+ params[0] + "_2.png";
+//			Bitmap image3 = BitmapFactory.decodeFile(path3);
+//			String path4 = ExternalDirectory.getExternalImageDirectory() + "/"
+//			+ params[0] + "_3.png";
+//			Bitmap image4 = BitmapFactory.decodeFile(path3);
+			
+			double[][] sValues = new double[4][3];
 			sValues[0][0] = 2; 
 			sValues[0][1] = 2;
 			sValues[0][2] = 0;
@@ -256,11 +253,14 @@ public class CameraActivity extends BaseActivity {
 			sValues[2][0] = 0;
 			sValues[2][1] = 0;
 			sValues[2][2] = 0;
+			sValues[3][0] = 2;
+			sValues[3][1] = 0;
+			sValues[3][2] = 0;
 			Matrix sMatrix = new Matrix(sValues);
 			Matrix sInverse = MathHelper.pinv(sMatrix);
 
-			int imageWidth = image1.getWidth();
-			int imageHeight = image1.getHeight();
+			int imageWidth = pictureList.get(0).getWidth();
+			int imageHeight = pictureList.get(0).getHeight();
 			
 			// Normalenfeld berechnen
 			ArrayList<Vector3f> normalField = new ArrayList<Vector3f>();
@@ -272,19 +272,19 @@ public class CameraActivity extends BaseActivity {
 					Vector3f normal = new Vector3f();
 					
 					Vector3f intensity = new Vector3f();
-					int color1 = image1.getPixel(w, h);
+					int color1 = pictureList.get(0).getPixel(w, h);
 					int red1 = (color1 >> 16) & 0xFF;
 					int green1 = (color1 >> 8) & 0xFF;
 					int blue1 = (color1 >> 0) & 0xFF;
 					intensity.x = ((red1 + green1 + blue1) / 3.0f) / 255.0f;
 					//
-					int color2 = image2.getPixel(w, h);
+					int color2 = pictureList.get(1).getPixel(w, h);
 					int red2 = (color2 >> 16) & 0xFF;
 					int green2 = (color2 >> 8) & 0xFF;
 					int blue2 = (color2 >> 0) & 0xFF;
 					intensity.y = ((red2 + green2 + blue2) / 3.0f) / 255.0f;
 					//
-					int color3 = image3.getPixel(w, h);
+					int color3 = pictureList.get(2).getPixel(w, h);
 					int red3 = (color3 >> 16) & 0xFF;
 					int green3 = (color3 >> 8) & 0xFF;
 					int blue3 = (color3 >> 0) & 0xFF;
@@ -354,7 +354,7 @@ public class CameraActivity extends BaseActivity {
 			vertices = vertBuffer.array();
 			normals = normBuffer.array();
 			faces = indexBuffer.array();
-			objectModel = new ObjectModel(vertices, normals, faces, image1, image_suffix);
+			objectModel = new ObjectModel(vertices, normals, faces, pictureList.get(0));
 			return true;
 		}
 		

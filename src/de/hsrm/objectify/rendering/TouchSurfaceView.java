@@ -141,7 +141,6 @@ public class TouchSurfaceView extends GLSurfaceView {
 	private class ObjectModelRenderer implements GLSurfaceView.Renderer {
 		
 		private ObjectModel objectModel;
-		private Cube cube;
 		private Context context;
 		private boolean shouldCopySurface = false;
 		private Bitmap surfaceBitmap;
@@ -155,7 +154,6 @@ public class TouchSurfaceView extends GLSurfaceView {
 		public ObjectModelRenderer(Context context, ObjectModel objectModel) {
 			this.context = context;
 			this.objectModel = objectModel;
-			cube = new Cube(objectModel.getImageSuffix());
 
 			lastRot.setIdentity();
 			thisRot.setIdentity();
@@ -169,7 +167,6 @@ public class TouchSurfaceView extends GLSurfaceView {
 		@Override
 		public void onSurfaceCreated(GL10 gl, EGLConfig config) {
 			objectModel.loadGLTexture(gl, context);
-			cube.loadGLTexture(gl, context);
 			gl.glEnable(GL10.GL_TEXTURE_2D);
 			gl.glShadeModel(GL10.GL_SMOOTH);
 			gl.glClearColor(0.6f, 0.6f, 0.6f, 0.5f); 
@@ -214,7 +211,6 @@ public class TouchSurfaceView extends GLSurfaceView {
 					values.put(DatabaseAdapter.GALLERY_VERTICES_KEY, String.valueOf(objectModel.getVertices()).length());
 					values.put(DatabaseAdapter.GALLERY_DIMENSIONS_KEY, String.valueOf(displayWidth)+"x"+String.valueOf(displayHeight));
 					values.put(DatabaseAdapter.GALLERY_DATE_KEY, String.valueOf(Calendar.getInstance().getTimeInMillis()));
-					values.put(DatabaseAdapter.GALLERY_SUFFIX_KEY, objectModel.getImageSuffix());
 					cr.insert(uri, values);
 					
 					OBJFormat.writeFile(ExternalDirectory.getExternalImageDirectory()+"/test.obj", objectModel);

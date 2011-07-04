@@ -1,11 +1,6 @@
 package de.hsrm.objectify.rendering;
 
-import java.io.BufferedOutputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Serializable;
+import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -16,16 +11,12 @@ import javax.microedition.khronos.opengles.GL10;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.opengl.GLUtils;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
-import de.hsrm.objectify.R;
-import de.hsrm.objectify.utils.ExternalDirectory;
 
 /**
  * A representation of an actual object. Vertices, normals and texture can be
@@ -50,10 +41,9 @@ public class ObjectModel implements Parcelable {
 	private float normals[];
 	private short faces[];
 	private Bitmap image;
-	private String image_suffix;
 	
 	public ObjectModel(float[] vertices, float[] normals, short[] faces,
-			Bitmap image, String image_suffix) {
+			Bitmap image) {
 		
 		setVertices(vertices);
 		setNormalVertices(normals);
@@ -83,7 +73,6 @@ public class ObjectModel implements Parcelable {
 		textureBuffer.put(texture);
 		textureBuffer.rewind();
 		
-		this.image_suffix = image_suffix;
 		this.image = Bitmap.createBitmap(image);
 	}
 	
@@ -93,9 +82,8 @@ public class ObjectModel implements Parcelable {
 		setVertices(b.getFloatArray("vertices"));
 		setNormalVertices(b.getFloatArray("normals"));
 		setFaces(b.getShortArray("faces"));
-		this.image_suffix = b.getString("image_suffix");
-		String path = ExternalDirectory.getExternalImageDirectory()+"/"+this.image_suffix+"_1.png";
-		this.image = BitmapFactory.decodeFile(path);
+		byte[] bb = b.getByteArray("image");
+		this.image = BitmapFactory.decodeByteArray(bb, 0, bb.length);
 		
 		ByteBuffer byteBuf = ByteBuffer.allocateDirect(vertices.length * 4);
 		byteBuf.order(ByteOrder.nativeOrder());
@@ -178,10 +166,6 @@ public class ObjectModel implements Parcelable {
 	
 	public int[] getTextures() {
 		return this.textures;
-	}
-	
-	public String getImageSuffix() {
-		return image_suffix;
 	}
 	
 	private void setVertexBuffer(float[] vertices) {
@@ -285,7 +269,9 @@ public class ObjectModel implements Parcelable {
 		b.putFloatArray("vertices", vertices);
 		b.putFloatArray("normals", normals);
 		b.putShortArray("faces", faces);
-		b.putString("image_suffix", image_suffix);
+		ByteArrayOutputStream baos  = new ByteArrayOutputStream();
+		this.image.compress(Bitmap.CompressFormat.PNG, 100, baos);
+		b.putByteArray("image", baos.toByteArray());
 		out.writeBundle(b);
 	}
 	

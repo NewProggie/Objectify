@@ -28,8 +28,17 @@ public class SliderInputPreference extends DialogPreference implements
 	private int currentNumberOfPictures;
 	private SeekBar slider;
 	private TextView numberOfPicturesText;
+	/**
+	 * Setting the constant value for minimum amount of pictures taken for a 3d reconstruction.
+	 */
 	private final int MIN_PICTURES = 4;
+	/**
+	 * Setting the constant value for maximum amount of pictures taken for a 3d reconstruction.
+	 */
 	private final int MAX_PIXTURES = 9;
+	/**
+	 * Setting the constant value for default amount of pictures taken for a 3d reconstruction.
+	 */
 	private final int DEFAULT_PICTURES = 4;
 
 	public SliderInputPreference(Context context, AttributeSet attrs) {
