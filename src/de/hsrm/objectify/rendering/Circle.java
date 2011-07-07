@@ -15,6 +15,7 @@ import javax.microedition.khronos.opengles.GL10;
 public class Circle {
 
 	private FloatBuffer vertexBuffer;
+	private float radius;
 
 	/**
 	 * Creates a new circle from given radius
@@ -23,6 +24,7 @@ public class Circle {
 	 *            radius of circle in centimeter (not implemented yet)
 	 */
 	public Circle(float radius) {
+		this.radius = radius;
 		ByteBuffer vbb = ByteBuffer.allocateDirect(720 * 4);
 		vbb.order(ByteOrder.nativeOrder());
 		vertexBuffer = vbb.asFloatBuffer();
@@ -34,9 +36,21 @@ public class Circle {
 		}
 		vertexBuffer.rewind();
 	}
+	
+	public float getWidth() {
+		return 2*radius;
+	}
+	
+	public float getHeight() {
+		return 2*radius;
+	}
+	
+	public float getRadius() {
+		return radius;
+	}
 
 	public void draw(GL10 gl) {
-		gl.glVertexPointer(2, gl.GL_FLOAT, 0, vertexBuffer);
-		gl.glDrawArrays(gl.GL_TRIANGLE_FAN, 0, 360);
+		gl.glVertexPointer(2, GL10.GL_FLOAT, 0, vertexBuffer);
+		gl.glDrawArrays(GL10.GL_TRIANGLE_FAN, 0, 360);
 	}
 }

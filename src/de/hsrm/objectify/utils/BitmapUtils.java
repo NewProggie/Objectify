@@ -2,15 +2,13 @@ package de.hsrm.objectify.utils;
 
 import java.io.ByteArrayOutputStream;
 
-import de.hsrm.objectify.camera.CameraFinder;
-
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
-import android.util.Log;
+import de.hsrm.objectify.camera.CameraFinder;
 
 /**
  * Helper class for creating bitmaps, considering different picture sizes and

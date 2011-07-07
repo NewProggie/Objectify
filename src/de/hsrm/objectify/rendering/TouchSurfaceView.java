@@ -19,7 +19,6 @@ import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
 import android.os.AsyncTask;
 import android.os.SystemClock;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import de.hsrm.objectify.database.DatabaseAdapter;

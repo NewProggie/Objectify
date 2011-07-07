@@ -1,8 +1,8 @@
 package de.hsrm.objectify.utils;
 
 import android.content.Context;
-import android.graphics.ImageFormat;
 import android.graphics.Bitmap.Config;
+import android.graphics.ImageFormat;
 import android.util.Log;
 import android.util.TypedValue;
 

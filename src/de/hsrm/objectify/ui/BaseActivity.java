@@ -2,9 +2,7 @@ package de.hsrm.objectify.ui;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,13 +10,11 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 import de.hsrm.objectify.AboutActivity;
 import de.hsrm.objectify.MainActivity;
 import de.hsrm.objectify.R;
 import de.hsrm.objectify.SettingsActivity;
-import de.hsrm.objectify.utils.ImageHelper;
 
 /**
  * A base activity that implements common functionality across app activities

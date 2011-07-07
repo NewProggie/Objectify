@@ -1,18 +1,16 @@
 package de.hsrm.objectify.ui;
 
-import de.hsrm.objectify.R;
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.View.OnCreateContextMenuListener;
 import android.view.View.OnTouchListener;
-import android.view.ViewGroup.OnHierarchyChangeListener;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.PopupWindow;
+import de.hsrm.objectify.R;
 
 /**
  * This class displays wraps most of the work of {@link PopupWindow} and

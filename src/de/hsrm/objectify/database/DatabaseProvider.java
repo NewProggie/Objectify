@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.util.Log;
+import de.hsrm.objectify.camera.CameraActivity;
 import de.hsrm.objectify.gallery.GalleryActivity;
 
 /**

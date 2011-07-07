@@ -5,9 +5,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 import android.content.Context;
 import android.opengl.GLSurfaceView;
-import android.opengl.GLU;
 import android.util.AttributeSet;
-import android.util.Log;
 import de.hsrm.objectify.rendering.Circle;
 
 /**
@@ -39,27 +37,9 @@ public class CameraLighting extends GLSurfaceView {
 	 * 
 	 * @param numberOfPictures
 	 *            total number of pictures used for 3d reconstruction.
-	 * @param currentPictureCount
-	 *            determining the current picture for placing the light source.
 	 */
-	public void putLightSource(int numberOfPictures, int currentPictureCount) {
-		switch (numberOfPictures) {
-		case 4:
-			if (currentPictureCount == 0) {
-				renderer.xcoord = 0.5f;
-				renderer.ycoord = 0.0f;
-			} else if (currentPictureCount == 1) {
-				renderer.xcoord = 1.0f;
-				renderer.ycoord = 0.5f;
-			} else if (currentPictureCount == 2) {
-				renderer.xcoord = 0.5f;
-				renderer.ycoord = 1.0f;
-			} else if (currentPictureCount == 3) {
-				renderer.xcoord = 0.0f;
-				renderer.ycoord = 1.0f;
-			}
-		}
-		requestRender();
+	public void putLightSource(int currentPictureCount) {
+		renderer.putLightSource(currentPictureCount);
 	}
 	
 	/**
@@ -93,13 +73,15 @@ public class CameraLighting extends GLSurfaceView {
 	private class CameraLightingRenderer implements GLSurfaceView.Renderer {
 
 		private Context context;
-		private float xcoord = 0;
-		private float ycoord = 0;
+		private float xcoord = 0.0f;
+		private float ycoord = 0.0f;
+		private int width, height;
+		private float ratio;
 		private Circle lightSource;
 		
 		public CameraLightingRenderer(Context context) {
 			this.context = context;
-			lightSource = new Circle(2.0f);
+			this.lightSource = new Circle(2.0f);
 		}
 		
 		@Override
@@ -109,19 +91,19 @@ public class CameraLighting extends GLSurfaceView {
 			gl.glEnable(GL10.GL_DEPTH_TEST);
 			gl.glDepthFunc(GL10.GL_LEQUAL);
 			gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
-			gl.glEnable(GL10.GL_NORMALIZE);
 			gl.glEnable(GL10.GL_LIGHTING);
 			gl.glEnable(GL10.GL_LIGHT0);
 		}
 		
 		@Override
 		public void onSurfaceChanged(GL10 gl, int width, int height) {
-			gl.glViewport(0, 0, width, height);
-			
-			float ratio = (float) width / height;
+			this.width = width;
+			this.height = height;
+			ratio = (float) width / height;
 			gl.glMatrixMode(GL10.GL_PROJECTION);
 			gl.glLoadIdentity();
 			gl.glFrustumf(-ratio, ratio, -1, 1, 1, 10);
+			gl.glViewport(0, 0, width, height);
 		}
 		
 		@Override
@@ -136,6 +118,39 @@ public class CameraLighting extends GLSurfaceView {
 			lightSource.draw(gl);
 			gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
             gl.glDisableClientState(GL10.GL_COLOR_ARRAY);
+		}
+		
+		public void putLightSource(int currentPictureCount) {
+			xcoord = (float) (2 * (Math.cos(getAngle(currentPictureCount))));
+			ycoord = (float) (2 * (Math.sin(getAngle(currentPictureCount))));
+			requestRender();
+		}
+		
+		/**
+		 * Determines the angle depending on the current picture
+		 * @param currentPictureCount current picture
+		 */
+		private double getAngle(int currentPictureCount) {
+			switch (currentPictureCount) {
+			case 0:
+				return Math.PI/2;
+			case 1:
+				return 0;
+			case 2:
+				return 3*Math.PI/2;
+			case 3:
+				return Math.PI;
+			case 4:
+				return Math.PI/4;
+			case 5:
+				return 7*Math.PI/4;
+			case 6:
+				return 5*Math.PI/4;
+			case 7:
+				return 3*Math.PI/4;
+			default:
+				return -1;
+			}
 		}
 
 	}

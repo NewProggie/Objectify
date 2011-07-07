@@ -1,8 +1,5 @@
 package de.hsrm.objectify.camera;
 
-import java.io.BufferedOutputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 import java.util.ArrayList;
@@ -14,8 +11,6 @@ import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.Bitmap.CompressFormat;
-import android.graphics.BitmapFactory;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.os.AsyncTask;
@@ -36,7 +31,6 @@ import de.hsrm.objectify.rendering.ObjectModel;
 import de.hsrm.objectify.rendering.ObjectViewerActivity;
 import de.hsrm.objectify.ui.BaseActivity;
 import de.hsrm.objectify.utils.BitmapUtils;
-import de.hsrm.objectify.utils.ExternalDirectory;
 import de.hsrm.objectify.utils.MathHelper;
 
 /**
@@ -155,7 +149,7 @@ public class CameraActivity extends BaseActivity {
 	private void setLights() {
 		cameraLighting.setVisibility(View.VISIBLE);
 		cameraLighting.setZOrderOnTop(true);
-		cameraLighting.putLightSource(numberOfPictures, counter);
+		cameraLighting.putLightSource(counter);
 	}
 
 	private PictureCallback jpegCallback() {

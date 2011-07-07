@@ -7,7 +7,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import android.util.Log;
-
 import de.hsrm.objectify.rendering.ObjectModel;
 
 /**

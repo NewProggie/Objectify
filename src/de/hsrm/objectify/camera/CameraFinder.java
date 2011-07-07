@@ -1,8 +1,8 @@
 package de.hsrm.objectify.camera;
 
-import de.hsrm.objectify.utils.Size;
 import android.hardware.Camera;
 import android.os.Build;
+import de.hsrm.objectify.utils.Size;
 
 /**
  * This (abstract) class is implemented by {@link ClassicFinder} and

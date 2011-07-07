@@ -1,7 +1,6 @@
 package de.hsrm.objectify.camera;
 
 import android.hardware.Camera;
-import android.util.Log;
 
 /**
  * Returns a front facing camera from current device guessing from device
