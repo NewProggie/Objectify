@@ -38,8 +38,8 @@ public class CameraLighting extends GLSurfaceView {
 	 * @param numberOfPictures
 	 *            total number of pictures used for 3d reconstruction.
 	 */
-	public void putLightSource(int currentPictureCount) {
-		renderer.putLightSource(currentPictureCount);
+	public void putLightSource(int numerOfTotalPictures, int currentPictureCount) {
+		renderer.putLightSource(numerOfTotalPictures, currentPictureCount);
 	}
 	
 	/**
@@ -120,37 +120,15 @@ public class CameraLighting extends GLSurfaceView {
             gl.glDisableClientState(GL10.GL_COLOR_ARRAY);
 		}
 		
-		public void putLightSource(int currentPictureCount) {
-			xcoord = (float) (2 * (Math.cos(getAngle(currentPictureCount))));
-			ycoord = (float) (2 * (Math.sin(getAngle(currentPictureCount))));
+		public void putLightSource(int numberOfTotalPictures, int currentPictureCount) {
+			float currentDegree = (360/numberOfTotalPictures)*currentPictureCount;
+			xcoord = (float) (2 * (Math.cos(getAngle(currentDegree))));
+			ycoord = (float) (2 * (Math.sin(getAngle(currentDegree))));
 			requestRender();
 		}
 		
-		/**
-		 * Determines the angle depending on the current picture
-		 * @param currentPictureCount current picture
-		 */
-		private double getAngle(int currentPictureCount) {
-			switch (currentPictureCount) {
-			case 0:
-				return Math.PI/2;
-			case 1:
-				return 0;
-			case 2:
-				return 3*Math.PI/2;
-			case 3:
-				return Math.PI;
-			case 4:
-				return Math.PI/4;
-			case 5:
-				return 7*Math.PI/4;
-			case 6:
-				return 5*Math.PI/4;
-			case 7:
-				return 3*Math.PI/4;
-			default:
-				return -1;
-			}
+		private double getAngle(float angle) {
+			return (angle*Math.PI)/180;
 		}
 
 	}

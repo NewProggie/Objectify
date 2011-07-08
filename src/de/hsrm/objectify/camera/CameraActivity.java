@@ -149,7 +149,7 @@ public class CameraActivity extends BaseActivity {
 	private void setLights() {
 		cameraLighting.setVisibility(View.VISIBLE);
 		cameraLighting.setZOrderOnTop(true);
-		cameraLighting.putLightSource(counter);
+		cameraLighting.putLightSource(numberOfPictures, counter);
 	}
 
 	private PictureCallback jpegCallback() {
@@ -176,8 +176,7 @@ public class CameraActivity extends BaseActivity {
 	 * and <a href="http://en.wikipedia.org/wiki/Heightmap">heightmap</a> from shot
 	 * photos. The parameters for the AsyncTask are:
 	 * <ul>
-	 * <li>String: image_suffix for identifying the shot photos stored at the sd
-	 * card</li>
+	 * <li>Void: all pictures will be held by the {@link CameraActivity}.</li>
 	 * <li>Void: We don't need to update any progress by now</li>
 	 * <li>Boolean: Indicating whether we were successful calculating an object</li>
 	 * </ul>

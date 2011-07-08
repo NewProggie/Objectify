@@ -172,10 +172,10 @@ public class TouchSurfaceView extends GLSurfaceView {
 			gl.glClearDepthf(1.0f);
 			gl.glEnable(GL10.GL_DEPTH_TEST);
 			gl.glDepthFunc(GL10.GL_LEQUAL);
+			gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
 			gl.glEnable(GL10.GL_NORMALIZE);
 			gl.glEnable(GL10.GL_LIGHTING);
 			gl.glEnable(GL10.GL_LIGHT0);
-			gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
 		}
 
 		/**
@@ -230,14 +230,12 @@ public class TouchSurfaceView extends GLSurfaceView {
 			gl.glMatrixMode(GL10.GL_MODELVIEW);
 			gl.glLoadIdentity();
 			// wichtig für die Arcball-Rotation
-			                  // eye  | center | up  
-			GLU.gluLookAt(gl, 0, 0, -2, 0, 0, 0, 0, 1, 0);
+			               // eye    |   center |   up  
+			GLU.gluLookAt(gl, 0, 0,-3,   0, 0, 0,   0, 1, 0);
 			
-			gl.glPushMatrix();
 			gl.glMultMatrixf(matrix, 0);
 			gl.glScalef(skalierung, skalierung, skalierung);
 			objectModel.draw(gl);
-//			cube.draw(gl);
 			if (shouldCopySurface) {
 				shouldCopySurface = false;
 				IntBuffer intBuffer = IntBuffer.wrap(new int[displayWidth * displayHeight]);
@@ -250,7 +248,6 @@ public class TouchSurfaceView extends GLSurfaceView {
 				persist(gl);
 			}
 
-			gl.glPopMatrix();
 		}
 		
 		@Override
@@ -258,9 +255,7 @@ public class TouchSurfaceView extends GLSurfaceView {
 			float ratio = (float) width / height;
 			gl.glMatrixMode(GL10.GL_PROJECTION);
 			gl.glLoadIdentity();
-			gl.glOrthof(-1, 1, -1, 1, 1, 10);
-//			gl.glFrustumf(-ratio*5, ratio*5, -5, 5, 1, 10);
-			
+			gl.glFrustumf(-ratio, ratio, -1, 1, 1, 10);
 			gl.glViewport(0, 0, width, height);
 		}
 		
