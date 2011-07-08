@@ -26,6 +26,7 @@ import android.widget.Toast;
 import de.hsrm.objectify.R;
 import de.hsrm.objectify.SettingsActivity;
 import de.hsrm.objectify.math.Vector3f;
+import de.hsrm.objectify.math.VectorNf;
 import de.hsrm.objectify.rendering.Circle;
 import de.hsrm.objectify.rendering.ObjectModel;
 import de.hsrm.objectify.rendering.ObjectViewerActivity;
@@ -156,14 +157,14 @@ public class CameraActivity extends BaseActivity {
 		PictureCallback callback = new PictureCallback() {
 			@Override
 			public void onPictureTaken(byte[] data, Camera camera) {
-				if (counter == (numberOfPictures-1)) {
+				Bitmap image = BitmapUtils.createScaledBitmap(data, CameraFinder.pictureSize, CameraFinder.imageFormat, 8.0f);
+				pictureList.add(image);
+				counter += 1;
+				if (counter == numberOfPictures) {
 					Log.d(TAG, "Photos taken, calculating object");
-					new CalculateModel().execute();
+					new CalculateModel().execute(); 
 				} else {
-						Bitmap image = BitmapUtils.createScaledBitmap(data, CameraFinder.pictureSize, CameraFinder.imageFormat, 8.0f);
-						pictureList.add(image);
-						counter += 1;
-						takePictures();
+					takePictures();
 				}
 			}
 		};
@@ -213,38 +214,32 @@ public class CameraActivity extends BaseActivity {
 			for (int h=0; h<imageHeight; h++) {
 				for (int w=0; w<imageWidth; w++) {
 					Vector3f normal = new Vector3f();
-					
-					Vector3f intensity = new Vector3f();
-					int color1 = pictureList.get(0).getPixel(w, h);
-					int red1 = (color1 >> 16) & 0xFF;
-					int green1 = (color1 >> 8) & 0xFF;
-					int blue1 = (color1 >> 0) & 0xFF;
-					intensity.x = ((red1 + green1 + blue1) / 3.0f) / 255.0f;
-					//
-					int color2 = pictureList.get(1).getPixel(w, h);
-					int red2 = (color2 >> 16) & 0xFF;
-					int green2 = (color2 >> 8) & 0xFF;
-					int blue2 = (color2 >> 0) & 0xFF;
-					intensity.y = ((red2 + green2 + blue2) / 3.0f) / 255.0f;
-					//
-					int color3 = pictureList.get(2).getPixel(w, h);
-					int red3 = (color3 >> 16) & 0xFF;
-					int green3 = (color3 >> 8) & 0xFF;
-					int blue3 = (color3 >> 0) & 0xFF;
-					intensity.z = ((red3 + green3 + blue3) / 3.0f) / 255.0f;
-					
+					VectorNf intensity = new VectorNf(numberOfPictures);
 					Vector3f albedo = new Vector3f();
-					albedo.x = (float) (sInverse.get(0, 0) * intensity.x + sInverse.get(0, 1) * intensity.y + sInverse.get(0, 2) * intensity.z);
-					albedo.y = (float) (sInverse.get(1, 0) * intensity.x + sInverse.get(1, 1) * intensity.y + sInverse.get(1, 2) * intensity.z);
-					albedo.z = (float) (sInverse.get(2, 0) * intensity.x + sInverse.get(2, 1) * intensity.y + sInverse.get(2, 2) * intensity.z);
+					// Intensität berechnen
+					for (int i=0; i<numberOfPictures; i++) {
+						Bitmap currentImage = pictureList.get(i);
+						float greyscaleValue = getGreyscale(currentImage.getPixel(w, h));
+						intensity.set(i, greyscaleValue);
+					}
+					
+					// albedo berechnen
+					float[] tmp = new float[3];
+					for (int i=0; i<tmp.length; i++) {
+						float value = 0;
+						for (int j=0; j<numberOfPictures; j++) {
+							value += sInverse.get(i, j) * intensity.get(j);
+						}
+						tmp[i] = value;
+					}
+					albedo.x = tmp[0];
+					albedo.y = tmp[1];
+					albedo.z = tmp[2];
 					
 					float reg = (float) Math.sqrt(Math.pow(albedo.x, 2) + Math.pow(albedo.y, 2) + Math.pow(albedo.z, 2));
 					normal.x = albedo.x / reg;
 					normal.y = albedo.y / reg;
-					// TODO: DEbugging, rausnehmen
-					Double r = Math.random();
-					normal.z = r.floatValue();
-//					normal.z = albedo.z / reg;
+					normal.z = albedo.z / reg;
 
 					normalField.add(normal);
 					pGradients.set(h, w, normal.x / normal.z);
@@ -301,8 +296,6 @@ public class CameraActivity extends BaseActivity {
 			return true;
 		}
 		
-		
-
 		@Override
 		protected void onPostExecute(Boolean result) {
 			Intent viewObject = new Intent(context, ObjectViewerActivity.class);
@@ -311,6 +304,13 @@ public class CameraActivity extends BaseActivity {
 			viewObject.putExtra("bundle", b);
 			startActivity(viewObject);
 			((Activity) context).finish();
+		}
+		
+		private float getGreyscale(int pixelColor) {
+			int red = (pixelColor >> 16) & 0xFF;
+			int green = (pixelColor >> 8) & 0xFF;
+			int blue = (pixelColor >> 0) & 0xFF;
+			return ((red + green + blue) / 3.0f) / 255.0f;
 		}
 	}
 
