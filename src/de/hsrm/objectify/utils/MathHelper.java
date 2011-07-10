@@ -93,16 +93,6 @@ public class MathHelper {
 					double v = Math.sin(j*2*Math.PI / imageWidth);
 					double uv = u*u + v*v;
 					double d = uv;
-//					Log.d("imageWidth", String.valueOf(imageWidth));
-//					Log.d("j", String.valueOf(j));
-//					Log.d("idx", String.valueOf(idx));
-//					Log.d("zComplex[0].length", String.valueOf(zComplex[0].length));
-//					Log.d("pComplex[0].length", String.valueOf(pComplex[0].length));
-//					Log.d("qComplex[0].length", String.valueOf(qComplex[0].length));
-//					Log.d("pComplex[i][idx+1]", String.valueOf(pComplex[i][idx+1]));
-//					Log.d("qComplex[i][idx+1]", String.valueOf(qComplex[i][idx+1]));
-//					Log.d("(u*pComplex[i][idx+1] + v*qComplex[i][idx+1]) / d;", String.valueOf((u*pComplex[i][idx+1] + v*qComplex[i][idx+1]) / d));
-//					Log.d("(-u*pComplex[i][idx] - v*qComplex[i][idx]) / d", String.valueOf((-u*pComplex[i][idx] - v*qComplex[i][idx]) / d));
 					zComplex[i][idx] = (u*pComplex[i][idx+1] + v*qComplex[i][idx+1]) / d;
 					zComplex[i][idx+1] = (-u*pComplex[i][idx] - v*qComplex[i][idx]) / d;
 				}
@@ -117,11 +107,6 @@ public class MathHelper {
 		idx = 0;
 		for (int i=0; i<imageHeight; i++) {
 			for (int j=0; j<imageWidth; j++) {
-//				Log.d("idx", String.valueOf(idx));
-//				Log.d("zComplex[0].length", String.valueOf(zComplex[0].length));
-//				Log.d("imageWidth", String.valueOf(imageWidth));
-//				Log.d("j", String.valueOf(j));
-//				Log.d("d value", String.valueOf(zComplex[i][idx]));
 				zRealPart[i][j] = zComplex[i][idx];
 				idx += 2;
 			}

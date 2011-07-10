@@ -23,7 +23,7 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import de.hsrm.objectify.database.DatabaseAdapter;
 import de.hsrm.objectify.database.DatabaseProvider;
-import de.hsrm.objectify.math.Matrix4f;
+import de.hsrm.objectify.math.Matrix;
 import de.hsrm.objectify.math.Quat4f;
 import de.hsrm.objectify.utils.ExternalDirectory;
 import de.hsrm.objectify.utils.OBJFormat;
@@ -40,8 +40,8 @@ import de.hsrm.objectify.utils.OBJFormat;
 public class TouchSurfaceView extends GLSurfaceView {
 	
 	private static final String TAG = "TouchSurfaceView";
-	private Matrix4f lastRot = new Matrix4f();
-	private Matrix4f thisRot = new Matrix4f();
+	private Matrix lastRot = new Matrix(4,4);
+	private Matrix thisRot = new Matrix(4,4);
 	private float[] matrix = new float[16];
 	private final Object matrixLock = new Object();
 	private ArcBall arcBall = new ArcBall(getWidth(), getHeight());
@@ -86,7 +86,7 @@ public class TouchSurfaceView extends GLSurfaceView {
 		switch (event.getAction()) {
 		case MotionEvent.ACTION_DOWN:
 			synchronized (matrixLock) {
-				lastRot.copy(thisRot);
+				lastRot.setMatrix(0, thisRot.getRowDimension()-1, 0, thisRot.getColumnDimension()-1, thisRot);
 			}
 			arcBall.click(new Point(x, y));
 			break;
@@ -95,7 +95,7 @@ public class TouchSurfaceView extends GLSurfaceView {
 			arcBall.drag(new Point(x, y), thisQuat);
 			synchronized (matrixLock) {
 				thisRot.setRotation(thisQuat);
-				thisRot = Matrix4f.mul(lastRot, thisRot);
+				thisRot.times(lastRot);
 			}
 			requestRender();
 			break;
@@ -154,6 +154,8 @@ public class TouchSurfaceView extends GLSurfaceView {
 			this.context = context;
 			this.objectModel = objectModel;
 
+//			lastRot = (Matrix) Matrix.identity(4, 4);
+//			thisRot = (Matrix) Matrix.identity(4, 4);
 			lastRot.setIdentity();
 			thisRot.setIdentity();
 			thisRot.map(matrix);

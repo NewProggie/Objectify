@@ -125,7 +125,7 @@ public class CameraActivity extends BaseActivity {
 	private void takePictures() {
 		camera.startPreview();
 		setLights();
-		// a bit of delay, so the display has a chance to illuminate properly
+		// little delay, so the display has a chance to illuminate properly
 		SystemClock.sleep(200);
 		camera.takePicture(null, null, jpegCallback());
 	}
@@ -187,7 +187,6 @@ public class CameraActivity extends BaseActivity {
 	 */
 	private class CalculateModel extends AsyncTask<Void, Void, Boolean> {
 
-		private final String TAG = "CalculateModel";
 		private ObjectModel objectModel;
 
 		@Override
