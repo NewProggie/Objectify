@@ -23,7 +23,7 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import de.hsrm.objectify.database.DatabaseAdapter;
 import de.hsrm.objectify.database.DatabaseProvider;
-import de.hsrm.objectify.math.Matrix;
+import de.hsrm.objectify.math.Matrix4f;
 import de.hsrm.objectify.math.Quat4f;
 import de.hsrm.objectify.utils.ExternalDirectory;
 import de.hsrm.objectify.utils.OBJFormat;
@@ -40,8 +40,8 @@ import de.hsrm.objectify.utils.OBJFormat;
 public class TouchSurfaceView extends GLSurfaceView {
 	
 	private static final String TAG = "TouchSurfaceView";
-	private Matrix lastRot = new Matrix(4,4);
-	private Matrix thisRot = new Matrix(4,4);
+	private Matrix4f lastRot = new Matrix4f();
+	private Matrix4f thisRot = new Matrix4f();
 	private float[] matrix = new float[16];
 	private final Object matrixLock = new Object();
 	private ArcBall arcBall = new ArcBall(getWidth(), getHeight());
@@ -86,7 +86,7 @@ public class TouchSurfaceView extends GLSurfaceView {
 		switch (event.getAction()) {
 		case MotionEvent.ACTION_DOWN:
 			synchronized (matrixLock) {
-				lastRot.setMatrix(0, thisRot.getRowDimension()-1, 0, thisRot.getColumnDimension()-1, thisRot);
+				lastRot.copy(thisRot);
 			}
 			arcBall.click(new Point(x, y));
 			break;
@@ -95,7 +95,7 @@ public class TouchSurfaceView extends GLSurfaceView {
 			arcBall.drag(new Point(x, y), thisQuat);
 			synchronized (matrixLock) {
 				thisRot.setRotation(thisQuat);
-				thisRot.times(lastRot);
+				thisRot = Matrix4f.mul(lastRot, thisRot);
 			}
 			requestRender();
 			break;
@@ -144,6 +144,7 @@ public class TouchSurfaceView extends GLSurfaceView {
 		private boolean shouldCopySurface = false;
 		private Bitmap surfaceBitmap;
 		public float angleX, angleY;
+		private float angle = 0.0f;
 		/**
 		 * used for indicating whether it's a newly created object and therefore
 		 * needs to be written to database.
@@ -154,8 +155,6 @@ public class TouchSurfaceView extends GLSurfaceView {
 			this.context = context;
 			this.objectModel = objectModel;
 
-//			lastRot = (Matrix) Matrix.identity(4, 4);
-//			thisRot = (Matrix) Matrix.identity(4, 4);
 			lastRot.setIdentity();
 			thisRot.setIdentity();
 			thisRot.map(matrix);
@@ -178,6 +177,7 @@ public class TouchSurfaceView extends GLSurfaceView {
 			gl.glEnable(GL10.GL_NORMALIZE);
 			gl.glEnable(GL10.GL_LIGHTING);
 			gl.glEnable(GL10.GL_LIGHT0);
+			gl.glMatrixMode(GL10.GL_MODELVIEW);
 		}
 
 		/**

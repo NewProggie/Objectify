@@ -1,10 +1,12 @@
 package de.hsrm.objectify.camera;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 import java.util.ArrayList;
 
-import Jama.Matrix;
 import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
@@ -25,6 +27,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 import de.hsrm.objectify.R;
 import de.hsrm.objectify.SettingsActivity;
+import de.hsrm.objectify.math.Matrix;
 import de.hsrm.objectify.math.Vector3f;
 import de.hsrm.objectify.math.VectorNf;
 import de.hsrm.objectify.rendering.Circle;
@@ -32,6 +35,8 @@ import de.hsrm.objectify.rendering.ObjectModel;
 import de.hsrm.objectify.rendering.ObjectViewerActivity;
 import de.hsrm.objectify.ui.BaseActivity;
 import de.hsrm.objectify.utils.BitmapUtils;
+import de.hsrm.objectify.utils.ExternalDirectory;
+import de.hsrm.objectify.utils.Image;
 import de.hsrm.objectify.utils.MathHelper;
 
 /**
@@ -49,7 +54,7 @@ public class CameraActivity extends BaseActivity {
 	private Button triggerPictures;
 	private LinearLayout progress;
 	private CameraLighting cameraLighting;
-	private ArrayList<Bitmap> pictureList;
+	private ArrayList<Image> pictureList;
 	private int numberOfPictures;
 	private int counter = 0;
 	private Context context;
@@ -78,7 +83,7 @@ public class CameraActivity extends BaseActivity {
 				/* Setting the trigger button to invisible */
 				triggerPictures.setVisibility(View.GONE);
 				/* New ArrayList for storing the pictures temporarily */
-				pictureList = new ArrayList<Bitmap>();
+				pictureList = new ArrayList<Image>();
 				setLights();
 				takePictures();
 			}
@@ -157,7 +162,7 @@ public class CameraActivity extends BaseActivity {
 		PictureCallback callback = new PictureCallback() {
 			@Override
 			public void onPictureTaken(byte[] data, Camera camera) {
-				Bitmap image = BitmapUtils.createScaledBitmap(data, CameraFinder.pictureSize, CameraFinder.imageFormat, 8.0f);
+				Image image = new Image(BitmapUtils.createScaledBitmap(data, CameraFinder.pictureSize, CameraFinder.imageFormat, 8.0f));
 				pictureList.add(image);
 				counter += 1;
 				if (counter == numberOfPictures) {
@@ -198,14 +203,12 @@ public class CameraActivity extends BaseActivity {
 
 		@Override
 		protected Boolean doInBackground(Void... params) {
-			double[][] lightMatrixS = cameraLighting.getLightMatrixS(numberOfPictures);
-			Matrix sMatrix = new Matrix(lightMatrixS);
-			Matrix sInverse = MathHelper.pinv(sMatrix);
-
+			Matrix sMatrix = cameraLighting.getLightMatrixS(numberOfPictures);
+			Matrix sInverse = sMatrix.pseudoInverse();
+			
 			int imageWidth = pictureList.get(0).getWidth();
 			int imageHeight = pictureList.get(0).getHeight();
 			
-			// Normalenfeld berechnen
 			ArrayList<Vector3f> normalField = new ArrayList<Vector3f>();
 			Matrix pGradients = new Matrix(imageHeight, imageWidth);
 			Matrix qGradients = new Matrix(imageHeight, imageWidth);
@@ -217,7 +220,7 @@ public class CameraActivity extends BaseActivity {
 					Vector3f albedo = new Vector3f();
 					// Intensität berechnen
 					for (int i=0; i<numberOfPictures; i++) {
-						Bitmap currentImage = pictureList.get(i);
+						Image currentImage = pictureList.get(i);
 						float greyscaleValue = getGreyscale(currentImage.getPixel(w, h));
 						intensity.set(i, greyscaleValue);
 					}
@@ -238,7 +241,9 @@ public class CameraActivity extends BaseActivity {
 					float reg = (float) Math.sqrt(Math.pow(albedo.x, 2) + Math.pow(albedo.y, 2) + Math.pow(albedo.z, 2));
 					normal.x = albedo.x / reg;
 					normal.y = albedo.y / reg;
-					normal.z = albedo.z / reg;
+					Double d = Math.random();
+					normal.z = d.floatValue();
+//					normal.z = albedo.z / reg;
 
 					normalField.add(normal);
 					pGradients.set(h, w, normal.x / normal.z);
@@ -247,6 +252,14 @@ public class CameraActivity extends BaseActivity {
 			}
 			
 			double[][] heightField = MathHelper.twoDimIntegration(pGradients, qGradients, imageHeight, imageWidth);
+			double highest = 0;
+			for (int i=0; i<heightField.length; i++) {
+				for (int j=0; j<heightField[0].length; j++) {
+					if (heightField[i][j] >= highest) {
+						highest = heightField[i][j];
+					}
+				}
+			}
 			
 			// Drei Vertices pro Bildpunkt (x,y,z)
 			
@@ -258,9 +271,7 @@ public class CameraActivity extends BaseActivity {
 			// Vertices und Normale
 			for (int x=0;x<imageHeight;x++) {
 				for (int y=0;y<imageWidth;y++) {
-					Double d = heightField[x][y];
-//					Log.d("heightField[x][y]", String.valueOf(d));
-					float[] imgPoint = new float[] { Float.valueOf(y), Float.valueOf(x), d.floatValue() };
+					float[] imgPoint = new float[] { Float.valueOf(y), Float.valueOf(x), (float) ((float) heightField[x][y]/highest) };
 					float[] normVec = new float[] { 0.0f, 0.0f, 1.0f };
 					vertBuffer.put(imgPoint);
 					normBuffer.put(normVec);
@@ -291,6 +302,24 @@ public class CameraActivity extends BaseActivity {
 			vertices = vertBuffer.array();
 			normals = normBuffer.array();
 			faces = indexBuffer.array();
+			// TODO: Debugging wieder rausnehmen. In Datei schreiben 
+			String filePath = ExternalDirectory.getExternalRootDirectory() + "/objekt.obj";
+			try {
+				FileWriter fstream = new FileWriter(filePath);
+				BufferedWriter out = new BufferedWriter(fstream);
+				for (int i=0; i<vertices.length; i+=3) {
+					String verts = "v " + vertices[i] + " " + vertices[i+1] + " " + vertices[i+2] + "\n";
+					out.write(verts);
+				}
+				for (int i=0; i<normals.length; i+=3) {
+					String norm = "vn " + normals[i] + " " + normals[i+1] + " " + normals[i+2] + "\n";
+					out.write(norm);
+				}
+				out.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			objectModel = new ObjectModel(vertices, normals, faces, pictureList.get(0));
 			return true;
 		}

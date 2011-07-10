@@ -1,9 +1,27 @@
 package de.hsrm.objectify.math;
 
+import Jama.SingularValueDecomposition;
+
+/**
+ * This class inherits from the matrix class of the Jama library and adds some
+ * functionality both for arcball rotation and calculating the 3d object.
+ * 
+ * @author kwolf001
+ * 
+ */
 public class Matrix extends Jama.Matrix {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public Matrix(int m, int n) {
 		super(m,n);
+	}
+	
+	public Matrix(double[][] values) {
+		super(values);
 	}
 	
 	public void setRotation(Quat4f q1) {
@@ -51,6 +69,44 @@ public class Matrix extends Jama.Matrix {
         set(3, 3, 1f);
 	}
 
+	/**
+	 * Calculates the pseudoinverse of this matrix
+	 * 
+	 * @return pseudo inverted matrix
+	 */
+	public Matrix pseudoInverse() {
+		if (rank() < 1) {
+			return null;
+		}
+		
+		if (getColumnDimension() > getRowDimension()) {
+			setMatrix(0, getRowDimension()-1, 0, getColumnDimension()-1, transpose().transpose());
+		}
+		
+		SingularValueDecomposition svdX = new SingularValueDecomposition(this);
+		double[] singularValues = svdX.getSingularValues();
+		double tol = Math.max(getColumnDimension(), getRowDimension()) * singularValues[0] * 2E-16;
+		double[] singularValueReciprocals = new double[singularValues.length];
+		for (int i = 0; i < singularValues.length; i++) {
+			singularValueReciprocals[i] = Math.abs(singularValues[i]) < tol ? 0
+					: (1.0 / singularValues[i]);
+
+		}
+		double[][] u = svdX.getU().getArray();
+		double[][] v = svdX.getV().getArray();
+		int min = Math.min(getColumnDimension(), u[0].length);
+		double[][] inverse = new double[getColumnDimension()][getRowDimension()];
+		for (int i = 0; i < getColumnDimension(); i++) {
+			for (int j = 0; j < u.length; j++) {
+				for (int k = 0; k < min; k++) {
+					inverse[i][j] += v[i][k] * singularValueReciprocals[k]
+							* u[j][k];
+				}
+			}
+		}
+		return new Matrix(inverse);
+	}
+	
 	public void map(float[] pdata) {
 		pdata[0] = (float) get(0, 0);
     	pdata[1] = (float) get(0, 1); 
@@ -73,14 +129,17 @@ public class Matrix extends Jama.Matrix {
     	pdata[15] = (float) get(3, 3); 
 	}
 
+	/**
+	 * Convenient method for setting the matrix identity
+	 */
 	public void setIdentity() {
-		if (getColumnDimension() < 4 || getRowDimension() < 4) {
-			throw new ArrayIndexOutOfBoundsException();
+		for (int i=0; i<getRowDimension(); i++) {
+			for (int j=0; j<getColumnDimension(); j++) {
+				if (i==j) {
+					set(i, j, 1.0);
+				}
+			}
 		}
-		set(0, 0, 1.0);
-		set(1, 1, 1.0);
-		set(2, 2, 1.0);
-		set(3, 3, 1.0);
 	}
 
 }

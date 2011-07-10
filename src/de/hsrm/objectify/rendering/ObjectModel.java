@@ -17,6 +17,7 @@ import android.opengl.GLUtils;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
+import de.hsrm.objectify.utils.Image;
 
 /**
  * A representation of an actual object. Vertices, normals and texture can be
@@ -40,10 +41,10 @@ public class ObjectModel implements Parcelable {
 	private float vertices[];
 	private float normals[];
 	private short faces[];
-	private Bitmap image;
+	private Image image;
 	
 	public ObjectModel(float[] vertices, float[] normals, short[] faces,
-			Bitmap image) {
+			Image image) {
 		
 		setVertices(vertices);
 		setNormalVertices(normals);
@@ -73,7 +74,7 @@ public class ObjectModel implements Parcelable {
 		textureBuffer.put(texture);
 		textureBuffer.rewind();
 		
-		this.image = Bitmap.createBitmap(image);
+		this.image = new Image(Bitmap.createBitmap(image.getPixels(), image.getWidth(), image.getHeight(), image.getConfig()));
 	}
 	
 	private ObjectModel(Parcel source) {
@@ -83,7 +84,7 @@ public class ObjectModel implements Parcelable {
 		setNormalVertices(b.getFloatArray("normals"));
 		setFaces(b.getShortArray("faces"));
 		byte[] bb = b.getByteArray("image");
-		this.image = BitmapFactory.decodeByteArray(bb, 0, bb.length);
+		this.image = new Image(BitmapFactory.decodeByteArray(bb, 0, bb.length));
 		
 		ByteBuffer byteBuf = ByteBuffer.allocateDirect(vertices.length * 4);
 		byteBuf.order(ByteOrder.nativeOrder());
@@ -111,7 +112,7 @@ public class ObjectModel implements Parcelable {
 		textureBuffer.rewind();
 	}
 	
-	private void calcTextureCoords(Bitmap image) {
+	private void calcTextureCoords(Image image) {
 		int width = image.getWidth();
 		int height = image.getHeight();
 		ArrayList<Float> textcoords = new ArrayList<Float>();
@@ -248,14 +249,15 @@ public class ObjectModel implements Parcelable {
 	 *            preferred width and height size
 	 * @return scaled image
 	 */
-	private Bitmap scaleTexture(Bitmap image, int size) {
-		int width = image.getWidth();
-		int height = image.getHeight();
+	private Bitmap scaleTexture(Image image, int size) {
+		Bitmap bmp = Bitmap.createBitmap(image.getPixels(), image.getWidth(), image.getHeight(), image.getConfig());
+		int width = bmp.getWidth();
+		int height = bmp.getHeight();
 		float scaleWidth = ((float) size) / width;
 		float scaleHeight = ((float) size) / height;
 		Matrix matrix = new Matrix();
 		matrix.postScale(scaleWidth, scaleHeight);
-		return Bitmap.createBitmap(image, 0, 0, width, height, matrix, true);
+		return Bitmap.createBitmap(bmp, 0, 0, width, height, matrix, true);
 	}
 
 	@Override

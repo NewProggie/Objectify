@@ -6,6 +6,7 @@ import javax.microedition.khronos.opengles.GL10;
 import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
+import de.hsrm.objectify.math.Matrix;
 import de.hsrm.objectify.rendering.Circle;
 
 /**
@@ -50,7 +51,7 @@ public class CameraLighting extends GLSurfaceView {
 	 *            total number of pictures used for 3d reconstruction
 	 * @return the light matrix as a 2d double array
 	 */
-	public double[][] getLightMatrixS(int numberOfPictures) {
+	public Matrix getLightMatrixS(int numberOfPictures) {
 		double[][] lightMatrix = new double[numberOfPictures][3];
 		float angleUnit = 360.0f/numberOfPictures;
 		for (int i=0; i<numberOfPictures; i++) {
@@ -59,7 +60,7 @@ public class CameraLighting extends GLSurfaceView {
 			lightMatrix[i][2] = 0;
 		}
 
-		return lightMatrix;
+		return new Matrix(lightMatrix);
 	}
 
 	private class CameraLightingRenderer implements GLSurfaceView.Renderer {
