@@ -2,11 +2,8 @@ package de.hsrm.objectify;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -54,20 +51,14 @@ public class MainActivity extends BaseActivity {
 		cameraButton = (Button) findViewById(R.id.dashboard_camera_button);
 		settingsButton = (Button) findViewById(R.id.dashboard_settings_button);
 	}
-	
-	// TODO: Debugging. Wieder rausnehmen
-	@Override
-	public boolean onTouchEvent(MotionEvent event) {
-		switch (event.getAction()) {
-		case MotionEvent.ACTION_UP:
-			SharedPreferences prefs = SettingsActivity.getSettings((ContextWrapper) context);
-			int n = prefs.getInt(getString(R.string.settings_amount_pictures), 4);
-			Toast.makeText(context, "Anzahl Fotos: " + n, Toast.LENGTH_SHORT).show();
-		default:
-			return super.onTouchEvent(event);
-		}
-	}
 
+	/**
+	 * Predefined method from the appropriate xml layout file. Will be called if
+	 * one of the dashboard buttons is clicked.
+	 * 
+	 * @param target
+	 *            clicked dashboard button
+	 */
 	public void buttonClick(View target) {
 		switch (target.getId()) {
 		case R.id.dashboard_gallery_button:

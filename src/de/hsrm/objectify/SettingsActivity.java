@@ -22,9 +22,9 @@ import de.hsrm.objectify.ui.SliderInputPreference;
  */
 public class SettingsActivity extends PreferenceActivity {
 
-	ListPreference cameraResolutions;
-	EditTextPreference savingDirectory;
-	SliderInputPreference amountPictures;
+	private ListPreference cameraResolutions;
+	private EditTextPreference savingDirectory;
+	private SliderInputPreference amountPictures;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
