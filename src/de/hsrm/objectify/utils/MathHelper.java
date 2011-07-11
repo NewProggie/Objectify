@@ -1,7 +1,6 @@
 package de.hsrm.objectify.utils;
 
 import Jama.Matrix;
-import Jama.SingularValueDecomposition;
 import android.util.Log;
 import edu.emory.mathcs.jtransforms.fft.DoubleFFT_2D;
 
@@ -36,6 +35,12 @@ public class MathHelper {
 		
 		dfft.realForwardFull(pComplex);
 		dfft.realForwardFull(qComplex);
+		// TODO: Debug wieder rausnehmen
+		for (int i=0; i<pComplex.length; i++) {
+			for (int j=0; j<pComplex[0].length; j++) {
+				Log.d("realForwardFull(pComplex)["+i+"]["+j+"]", String.valueOf(pComplex[i][j]));
+			}
+		}
 		
 		int idx = 0;
 		for (int i=0; i<imageHeight; i++) {
@@ -56,13 +61,17 @@ public class MathHelper {
 		zComplex[0][1] = 0;
 		
 		dfft.complexInverse(zComplex, true);
-		idx = 0;
+		//TODO: Debug wieder rausnehmen
+//		for (int i=0; i<zComplex.length; i++) {
+//			for (int j=0; j<zComplex[0].length; j++) {
+//				Log.d("zComplex["+i+"]["+j+"]", String.valueOf(zComplex[i][j]));
+//			}
+//		}
+		
 		for (int i=0; i<imageHeight; i++) {
 			for (int j=0; j<imageWidth; j++) {
-				zRealPart[i][j] = zComplex[i][idx];
-				idx += 2;
+				zRealPart[i][j] = zComplex[i][j*2];
 			}
-			idx = 0;
 		}
 		
 		return zRealPart;

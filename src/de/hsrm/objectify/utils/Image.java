@@ -96,7 +96,7 @@ public class Image {
 		int green = (pixelColor >> 8) & 0xFF;
 		int blue = (pixelColor >> 0) & 0xFF;
 		if (red==0 || green==0 || blue==0) {
-			return 0;
+			return 0.001f;
 		} else {
 			return ((red + green + blue) / 3.0f) / 255.0f;
 		}
