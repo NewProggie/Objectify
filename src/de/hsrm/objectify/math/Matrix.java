@@ -142,4 +142,21 @@ public class Matrix extends Jama.Matrix {
 		}
 	}
 
+	public Vector3f multiply(VectorNf intensity) {
+		if (intensity.getDimension() != getColumnDimension()) {
+			throw new AssertionError("Vector dimension must be equal to matrix column dimension");
+		}
+		Vector3f erg = new Vector3f();
+		float[] tmp = new float[] { 0, 0, 0};
+		for (int idx=0; idx<3; idx++) {
+			for (int i=0; i<intensity.getDimension();i++) {
+				tmp[idx] += get(idx, i) * intensity.get(i);
+			}
+		}
+		erg.x = tmp[0];
+		erg.y = tmp[1];
+		erg.z = tmp[2];
+		return erg;
+	}
+
 }

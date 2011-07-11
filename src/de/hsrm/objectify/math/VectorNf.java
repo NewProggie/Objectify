@@ -22,4 +22,8 @@ public class VectorNf {
 		}
 		return elements[index];
 	}
+	
+	public int getDimension() {
+		return elements.length;
+	}
 }

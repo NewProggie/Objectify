@@ -1,5 +1,6 @@
 package de.hsrm.objectify.utils;
 
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 
 import android.graphics.Bitmap;
@@ -51,6 +52,10 @@ public class Image {
 		return bitmap.getConfig();
 	}
 
+	public void compress(CompressFormat format, int quality, BufferedOutputStream bos) {
+		bitmap.compress(format, quality, bos);
+	}
+	
 	public void compress(CompressFormat format, int quality, ByteArrayOutputStream baos) {
 		bitmap.compress(format, quality, baos);
 	}
@@ -90,7 +95,11 @@ public class Image {
 		int red = (pixelColor >> 16) & 0xFF;
 		int green = (pixelColor >> 8) & 0xFF;
 		int blue = (pixelColor >> 0) & 0xFF;
-		return ((red + green + blue) / 3.0f) / 255.0f;
+		if (red==0 || green==0 || blue==0) {
+			return 0;
+		} else {
+			return ((red + green + blue) / 3.0f) / 255.0f;
+		}
 	}
 
 }

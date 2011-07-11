@@ -1,6 +1,10 @@
 package de.hsrm.objectify.camera;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.FloatBuffer;
@@ -13,6 +17,7 @@ import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.os.AsyncTask;
@@ -204,7 +209,35 @@ public class CameraActivity extends BaseActivity {
 		@Override
 		protected Boolean doInBackground(Void... params) {
 			Matrix sMatrix = cameraLighting.getLightMatrixS(numberOfPictures);
+			// TODO: Debugging wieder rausnehmen
+//			sMatrix.set(0, 0, -0.2);
+//			sMatrix.set(0, 1, 0.001);
+//			sMatrix.set(0, 2, 1.0);
+//			sMatrix.set(1, 0, 0.2);
+//			sMatrix.set(1, 1, 0.2);
+//			sMatrix.set(1, 2, 1.0);
+//			sMatrix.set(2, 0, 0.2);
+//			sMatrix.set(2, 1, -0.2);
+//			sMatrix.set(2, 2, 1.0);
+			
 			Matrix sInverse = sMatrix.pseudoInverse();
+			
+//			// TODO: Debugging wieder rausnehmen. In Datei schreiben 
+			String filePath = ExternalDirectory.getExternalRootDirectory() + "/lightMatrix.txt";
+			try {
+				FileWriter fstream = new FileWriter(filePath);
+				BufferedWriter out = new BufferedWriter(fstream);
+				for (int i=0; i<sMatrix.getRowDimension(); i++) {
+					for (int j=0; j<sMatrix.getColumnDimension(); j++) {
+						out.write("" + sMatrix.get(i, j) + " ");
+					}
+					out.write("\n");
+				}
+				out.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			
 			int imageWidth = pictureList.get(0).getWidth();
 			int imageHeight = pictureList.get(0).getHeight();
@@ -217,33 +250,15 @@ public class CameraActivity extends BaseActivity {
 				for (int w=0; w<imageWidth; w++) {
 					Vector3f normal = new Vector3f();
 					VectorNf intensity = new VectorNf(numberOfPictures);
-					Vector3f albedo = new Vector3f();
-					// IntensitŠt berechnen
 					for (int i=0; i<numberOfPictures; i++) {
-						Image currentImage = pictureList.get(i);
-						float greyscaleValue = getGreyscale(currentImage.getPixel(w, h));
-						intensity.set(i, greyscaleValue);
+						intensity.set(i, pictureList.get(i).getIntensity(w, h));
 					}
-					
-					// albedo berechnen
-					float[] tmp = new float[3];
-					for (int i=0; i<tmp.length; i++) {
-						float value = 0;
-						for (int j=0; j<numberOfPictures; j++) {
-							value += sInverse.get(i, j) * intensity.get(j);
-						}
-						tmp[i] = value;
-					}
-					albedo.x = tmp[0];
-					albedo.y = tmp[1];
-					albedo.z = tmp[2];
+					Vector3f albedo = sInverse.multiply(intensity);
 					
 					float reg = (float) Math.sqrt(Math.pow(albedo.x, 2) + Math.pow(albedo.y, 2) + Math.pow(albedo.z, 2));
 					normal.x = albedo.x / reg;
 					normal.y = albedo.y / reg;
-					Double d = Math.random();
-					normal.z = d.floatValue();
-//					normal.z = albedo.z / reg;
+					normal.z = albedo.z / reg;
 
 					normalField.add(normal);
 					pGradients.set(h, w, normal.x / normal.z);
@@ -252,14 +267,6 @@ public class CameraActivity extends BaseActivity {
 			}
 			
 			double[][] heightField = MathHelper.twoDimIntegration(pGradients, qGradients, imageHeight, imageWidth);
-			double highest = 0;
-			for (int i=0; i<heightField.length; i++) {
-				for (int j=0; j<heightField[0].length; j++) {
-					if (heightField[i][j] >= highest) {
-						highest = heightField[i][j];
-					}
-				}
-			}
 			
 			// Drei Vertices pro Bildpunkt (x,y,z)
 			
@@ -269,12 +276,14 @@ public class CameraActivity extends BaseActivity {
 			vertBuffer.rewind();
 			normBuffer.rewind();
 			// Vertices und Normale
+			int idx = 0;
 			for (int x=0;x<imageHeight;x++) {
 				for (int y=0;y<imageWidth;y++) {
-					float[] imgPoint = new float[] { Float.valueOf(y), Float.valueOf(x), (float) ((float) heightField[x][y]/highest) };
-					float[] normVec = new float[] { 0.0f, 0.0f, 1.0f };
+					float[] imgPoint = new float[] { Float.valueOf(y), Float.valueOf(x), (float) heightField[x][y] };
+					float[] normVec = new float[] { normalField.get(idx).x, normalField.get(idx).y, normalField.get(idx).z };
 					vertBuffer.put(imgPoint);
 					normBuffer.put(normVec);
+					idx += 1;
 				}
 			}
 			// Faces
@@ -302,24 +311,45 @@ public class CameraActivity extends BaseActivity {
 			vertices = vertBuffer.array();
 			normals = normBuffer.array();
 			faces = indexBuffer.array();
-			// TODO: Debugging wieder rausnehmen. In Datei schreiben 
-			String filePath = ExternalDirectory.getExternalRootDirectory() + "/objekt.obj";
-			try {
-				FileWriter fstream = new FileWriter(filePath);
-				BufferedWriter out = new BufferedWriter(fstream);
-				for (int i=0; i<vertices.length; i+=3) {
-					String verts = "v " + vertices[i] + " " + vertices[i+1] + " " + vertices[i+2] + "\n";
-					out.write(verts);
+			int id = 1;
+			for(Image img : pictureList) {
+				try {
+					FileOutputStream fos = new FileOutputStream(ExternalDirectory.getExternalRootDirectory() + "/pic"+id+".png");
+					BufferedOutputStream bos = new BufferedOutputStream(fos);
+					img.compress(CompressFormat.PNG, 100, bos);
+					bos.flush();
+					bos.close();
+					id++;
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-				for (int i=0; i<normals.length; i+=3) {
-					String norm = "vn " + normals[i] + " " + normals[i+1] + " " + normals[i+2] + "\n";
-					out.write(norm);
-				}
-				out.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
+//			// TODO: Debugging wieder rausnehmen. In Datei schreiben 
+//			String filePath = ExternalDirectory.getExternalRootDirectory() + "/objekt.obj";
+//			try {
+//				FileWriter fstream = new FileWriter(filePath);
+//				BufferedWriter out = new BufferedWriter(fstream);
+//				for (int i=0; i<vertices.length; i+=3) {
+//					String verts = "v " + vertices[i] + " " + vertices[i+1] + " " + vertices[i+2] + "\n";
+//					out.write(verts);
+//				}
+//				for (int i=0; i<normals.length; i+=3) {
+//					String norm = "vn " + normals[i] + " " + normals[i+1] + " " + normals[i+2] + "\n";
+//					out.write(norm);
+//				}
+//				for (int i=0; i<faces.length; i+=6) {
+//					String surface = "f " + faces[i] + "//" + faces[i+1] + " " + faces[i+2] + "//" + faces[i+3] + " " + faces[i+4] + "//" + faces[i+5] + "\n";
+//					out.write(surface);
+//				}
+//				out.close();
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 			objectModel = new ObjectModel(vertices, normals, faces, pictureList.get(0));
 			return true;
 		}

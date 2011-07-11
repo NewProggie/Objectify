@@ -57,7 +57,7 @@ public class CameraLighting extends GLSurfaceView {
 		for (int i=0; i<numberOfPictures; i++) {
 			lightMatrix[i][0] = 2 * Math.cos( ((angleUnit*(i+1))*Math.PI)/180 );
 			lightMatrix[i][1] = 2 * Math.sin( ((angleUnit*(i+1))*Math.PI)/180 );
-			lightMatrix[i][2] = 0;
+			lightMatrix[i][2] = 1.0;
 		}
 
 		return new Matrix(lightMatrix);
