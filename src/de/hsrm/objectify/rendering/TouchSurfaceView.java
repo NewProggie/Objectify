@@ -121,10 +121,10 @@ public class TouchSurfaceView extends GLSurfaceView {
 		public boolean onScale(ScaleGestureDetector detector) {
 			skalierung *= detector.getScaleFactor();
 			// Maximale Skalierung festlegen, damit das Objekt nicht komplett verschwinden kann
-//			if (skalierung < 0.5f)
-//				skalierung = 0.5f;
-//			else if (skalierung > 1.5f)
-//				skalierung = 1.5f;
+			if (skalierung < 0.5f)
+				skalierung = 0.5f;
+			else if (skalierung > 1.5f)
+				skalierung = 1.5f;
 			invalidate();
 			return true;
 		}
@@ -227,15 +227,16 @@ public class TouchSurfaceView extends GLSurfaceView {
 			gl.glColor4f(0, 0, 0, 0);
 			gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 			
-			thisRot.map(matrix);
-			
 			gl.glMatrixMode(GL10.GL_MODELVIEW);
 			gl.glLoadIdentity();
 			// wichtig für die Arcball-Rotation
 			               // eye    |   center |   up  
-			GLU.gluLookAt(gl, 0, 0,-3,   0, 0, 0,   0, 1, 0);
-			
+			GLU.gluLookAt(gl, 0, 0,-2,   0, 0, 0,   0, 1, 0);
+			thisRot.map(matrix);
 			gl.glMultMatrixf(matrix, 0);
+			gl.glRotatef(180, 1, 0, 0);
+			gl.glScalef(objectModel.getLength(), objectModel.getLength(), objectModel.getLength());
+			gl.glTranslatef(-objectModel.getMiddlePoint()[0], -objectModel.getMiddlePoint()[1], -objectModel.getMiddlePoint()[2]);
 			gl.glScalef(skalierung, skalierung, skalierung);
 			objectModel.draw(gl);
 			if (shouldCopySurface) {

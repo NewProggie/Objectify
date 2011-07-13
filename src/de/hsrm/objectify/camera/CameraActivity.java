@@ -64,6 +64,8 @@ public class CameraActivity extends BaseActivity {
 	private Context context;
 	private Camera camera;
 
+	
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -283,19 +285,16 @@ public class CameraActivity extends BaseActivity {
 					normal.x = albedo.x / reg;
 					normal.y = albedo.y / reg;
 					normal.z = albedo.z / reg;
-					Log.d("normal.x", String.valueOf(normal.x));
-					Log.d("normal.y", String.valueOf(normal.y));
-					Log.d("normal.z", String.valueOf(normal.z));
 
 					normalField.add(normal);
-					Log.d("pGradients", String.valueOf(normal.x / normal.z));
-					Log.d("qGradients", String.valueOf(normal.y / normal.z));
 					pGradients.set(h, w, normal.x / normal.z);
 					qGradients.set(h, w, normal.y / normal.z);
 				}
 			}
 			
 			double[][] heightField = MathHelper.twoDimIntegration(pGradients, qGradients, imageHeight, imageWidth);
+			
+			
 			
 			// Drei Vertices pro Bildpunkt (x,y,z)
 			
@@ -360,27 +359,27 @@ public class CameraActivity extends BaseActivity {
 				}
 			}
 //			// TODO: Debugging wieder rausnehmen. In Datei schreiben 
-			String filePath2 = ExternalDirectory.getExternalRootDirectory() + "/objekt.obj";
-			try {
-				FileWriter fstream = new FileWriter(filePath2);
-				BufferedWriter out = new BufferedWriter(fstream);
-				for (int i=0; i<vertices.length; i+=3) {
-					String verts = "v " + vertices[i] + " " + vertices[i+1] + " " + vertices[i+2] + "\n";
-					out.write(verts);
-				}
-				for (int i=0; i<normals.length; i+=3) {
-					String norm = "vn " + normals[i] + " " + normals[i+1] + " " + normals[i+2] + "\n";
-					out.write(norm);
-				}
-				for (int i=0; i<faces.length; i+=6) {
-					String surface = "f " + faces[i] + " " + faces[i+1] + " " + faces[i+2] + "\nf " + faces[i+3] + " " + faces[i+4] + " " + faces[i+5] + "\n";
-					out.write(surface);
-				}
-				out.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+//			String filePath2 = ExternalDirectory.getExternalRootDirectory() + "/object.obj";
+//			try {
+//				FileWriter fstream = new FileWriter(filePath2);
+//				BufferedWriter out = new BufferedWriter(fstream);
+//				for (int i=0; i<vertices.length; i+=3) {
+//					String verts = "v " + vertices[i] + " " + vertices[i+1] + " " + vertices[i+2] + "\n";
+//					out.write(verts);
+//				}
+//				for (int i=0; i<normals.length; i+=3) {
+//					String norm = "vn " + normals[i] + " " + normals[i+1] + " " + normals[i+2] + "\n";
+//					out.write(norm);
+//				}
+//				for (int i=0; i<faces.length; i+=6) {
+//					String surface = "f " + faces[i] + " " + faces[i+1] + " " + faces[i+2] + "\nf " + faces[i+3] + " " + faces[i+4] + " " + faces[i+5] + "\n";
+//					out.write(surface);
+//				}
+//				out.close();
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 			objectModel = new ObjectModel(vertices, normals, faces, pictureList.get(0));
 			return true;
 		}

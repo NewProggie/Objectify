@@ -42,6 +42,9 @@ public class ObjectModel implements Parcelable {
 	private float normals[];
 	private short faces[];
 	private Image image;
+	private float[] boundingbox;
+	private float[] middlepoint;
+	private float length;
 	
 	public ObjectModel(float[] vertices, float[] normals, short[] faces,
 			Image image) {
@@ -197,6 +200,89 @@ public class ObjectModel implements Parcelable {
 			facesBuffer.put(s);
 		}
 		facesBuffer.rewind();
+	}
+	
+	private static float max(float[] values, int offset) {
+		float maximum = values[offset];
+		for (int i=offset; i<values.length; i+=3) {
+			if (values[i] > maximum) {
+				maximum = values[i];
+			}
+		}
+		return maximum;
+	}
+	
+	private static float max(float[] values) {
+		float maximum = values[0];
+		for (int i=1; i<values.length; i+=3) {
+			if (values[i] > maximum) {
+				maximum = values[i];
+			}
+		}
+		return maximum;
+	}
+	
+	private static float min(float[] values, int offset) {
+		float minimum = values[offset];
+		for (int i=offset; i<values.length; i+=3) {
+			if (values[i] < minimum) {
+				minimum = values[i];
+			}
+		}
+		return minimum;
+	}
+	
+	/**
+	 * Returns the bounding box for this object.
+	 * 
+	 * @return array with coordinates for lower left point and upper right point
+	 *         in the order x1, x2, y1, y2, z1, z2.
+	 */
+	public float[] getBoundingBox() {
+		if (boundingbox == null) {
+			setupBoundingBox();
+		} 
+		return boundingbox;
+	}
+	
+	private void setupBoundingBox() {
+		float x1 = 0, x2 = 0, y1 = 0, y2 = 0, z1 = 0, z2 = 0;
+		x1 = min(vertices, 0);
+		x2 = max(vertices, 0);
+		y1 = min(vertices, 1);
+		y2 = max(vertices, 1);
+		z1 = min(vertices, 2);
+		z2 = max(vertices, 2);
+		boundingbox = new float[] { x1, x2, y1, y2, z1, z2 };
+	}
+	
+	/**
+	 * Returns the middle point of this objects' boundingbox
+	 * @return the middle point of this object.
+	 */
+	public float[] getMiddlePoint() {
+		if (boundingbox == null) {
+			setupBoundingBox();
+		}
+		float xmiddle = (boundingbox[0]+boundingbox[1])/2.0f;
+		float ymiddle = (boundingbox[2]+boundingbox[3])/2.0f;
+		float zmiddle = (boundingbox[4]+boundingbox[5])/2.0f;
+		float[] middlepoint = new float[] { xmiddle, ymiddle, zmiddle };
+		return middlepoint;
+	}
+	
+	/**
+	 * Returns the length of this object.
+	 * @return the length of this object.
+	 */
+	public float getLength() {
+		if (boundingbox == null) {
+			setupBoundingBox();
+		}
+		float[] tmp = new float[] { (boundingbox[1]-boundingbox[0]), 
+									(boundingbox[3]-boundingbox[2]), 
+									(boundingbox[5]-boundingbox[4]) };
+		return 2.0f/max(tmp);
 	}
 	
 	public void draw(GL10 gl) {
