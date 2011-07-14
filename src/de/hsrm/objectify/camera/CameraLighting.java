@@ -74,7 +74,7 @@ public class CameraLighting extends GLSurfaceView {
 		
 		public CameraLightingRenderer(Context context) {
 			this.context = context;
-			this.lightSource = new Circle(2.0f);
+			this.lightSource = new Circle(2.5f);
 		}
 		
 		@Override

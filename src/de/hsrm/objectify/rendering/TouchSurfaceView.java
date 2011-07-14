@@ -234,7 +234,8 @@ public class TouchSurfaceView extends GLSurfaceView {
 			GLU.gluLookAt(gl, 0, 0,-2,   0, 0, 0,   0, 1, 0);
 			thisRot.map(matrix);
 			gl.glMultMatrixf(matrix, 0);
-			gl.glRotatef(180, 1, 0, 0);
+			gl.glRotatef(180, 0, 1, 0);
+			gl.glRotatef(90, 0, 0, 1);
 			gl.glScalef(objectModel.getLength(), objectModel.getLength(), objectModel.getLength());
 			gl.glTranslatef(-objectModel.getMiddlePoint()[0], -objectModel.getMiddlePoint()[1], -objectModel.getMiddlePoint()[2]);
 			gl.glScalef(skalierung, skalierung, skalierung);

@@ -211,42 +211,28 @@ public class CameraActivity extends BaseActivity {
 		protected Boolean doInBackground(Void... params) {
 			Matrix sMatrix = cameraLighting.getLightMatrixS(numberOfPictures);
 			// TODO: Debugging wieder rausnehmen
+			// Lichtmatrix von den vorgefertigten Bildern
 //			sMatrix.set(0, 0, -0.2);
-//			sMatrix.set(0, 1, 0.001);
+//			sMatrix.set(0, 1, 0.0);
 //			sMatrix.set(0, 2, 1.0);
 //			sMatrix.set(1, 0, 0.2);
 //			sMatrix.set(1, 1, 0.2);
 //			sMatrix.set(1, 2, 1.0);
 //			sMatrix.set(2, 0, 0.2);
-//			sMatrix.set(2, 1, -0.2);
-//			sMatrix.set(2, 2, 1.0);
-//			sMatrix.set(3, 0, 0.21);
-//			sMatrix.set(3, 1, -0.21);
-//			sMatrix.set(3, 2, 1.01);
-			pictureList = new ArrayList<Image>();
-			String pic1 = ExternalDirectory.getExternalRootDirectory()+"/ellipsoid_1.png";
-			String pic2 = ExternalDirectory.getExternalRootDirectory()+"/ellipsoid_2.png";
-			String pic3 = ExternalDirectory.getExternalRootDirectory()+"/ellipsoid_3.png";
-//			String pic4 = ExternalDirectory.getExternalRootDirectory()+"/bunny_3.png";
-			Image img1 = new Image(BitmapFactory.decodeFile(pic1));
-			Image img2 = new Image(BitmapFactory.decodeFile(pic2));
-			Image img3 = new Image(BitmapFactory.decodeFile(pic3));
-//			Image img4 = new Image(BitmapFactory.decodeFile(pic3));
-			pictureList.add(img1);
-			pictureList.add(img2);
-			pictureList.add(img3);
-//			pictureList.add(img4);
+////			sMatrix.set(2, 1, -0.2);
+////			sMatrix.set(2, 2, 1.0);
+//			pictureList = new ArrayList<Image>();
+//			String pic1 = ExternalDirectory.getExternalRootDirectory()+"/ellipsoid_1.png";
+//			String pic2 = ExternalDirectory.getExternalRootDirectory()+"/ellipsoid_2.png";
+//			String pic3 = ExternalDirectory.getExternalRootDirectory()+"/ellipsoid_3.png";
+//			Image img1 = new Image(BitmapFactory.decodeFile(pic1));
+//			Image img2 = new Image(BitmapFactory.decodeFile(pic2));
+//			Image img3 = new Image(BitmapFactory.decodeFile(pic3));
+//			pictureList.add(img1);
+//			pictureList.add(img2);
+//			pictureList.add(img3);
 			
 			Matrix sInverse = sMatrix.pseudoInverse();
-			sInverse.set(0, 0, -2.5);
-			sInverse.set(0, 1, 1.25);
-			sInverse.set(0, 2, 1.25);
-			sInverse.set(1, 0, 0);
-			sInverse.set(1, 1, 2.5);
-			sInverse.set(1, 2, -2.5);
-			sInverse.set(2, 0, 0.5);
-			sInverse.set(2, 1, 0.25);
-			sInverse.set(2, 2, 0.25);
 			
 //			// TODO: Debugging wieder rausnehmen. In Datei schreiben 
 //			String filePath = ExternalDirectory.getExternalRootDirectory() + "/lightMatrix.txt";
@@ -359,27 +345,27 @@ public class CameraActivity extends BaseActivity {
 				}
 			}
 //			// TODO: Debugging wieder rausnehmen. In Datei schreiben 
-//			String filePath2 = ExternalDirectory.getExternalRootDirectory() + "/object.obj";
-//			try {
-//				FileWriter fstream = new FileWriter(filePath2);
-//				BufferedWriter out = new BufferedWriter(fstream);
-//				for (int i=0; i<vertices.length; i+=3) {
-//					String verts = "v " + vertices[i] + " " + vertices[i+1] + " " + vertices[i+2] + "\n";
-//					out.write(verts);
-//				}
-//				for (int i=0; i<normals.length; i+=3) {
-//					String norm = "vn " + normals[i] + " " + normals[i+1] + " " + normals[i+2] + "\n";
-//					out.write(norm);
-//				}
+			String filePath2 = ExternalDirectory.getExternalRootDirectory() + "/object.obj";
+			try {
+				FileWriter fstream = new FileWriter(filePath2);
+				BufferedWriter out = new BufferedWriter(fstream);
+				for (int i=0; i<vertices.length; i+=3) {
+					String verts = "v " + vertices[i] + " " + vertices[i+1] + " " + vertices[i+2] + "\n";
+					out.write(verts);
+				}
+				for (int i=0; i<normals.length; i+=3) {
+					String norm = "vn " + normals[i] + " " + normals[i+1] + " " + normals[i+2] + "\n";
+					out.write(norm);
+				}
 //				for (int i=0; i<faces.length; i+=6) {
 //					String surface = "f " + faces[i] + " " + faces[i+1] + " " + faces[i+2] + "\nf " + faces[i+3] + " " + faces[i+4] + " " + faces[i+5] + "\n";
 //					out.write(surface);
 //				}
-//				out.close();
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
+				out.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			objectModel = new ObjectModel(vertices, normals, faces, pictureList.get(0));
 			return true;
 		}
