@@ -1,7 +1,6 @@
 package de.hsrm.objectify.utils;
 
 import Jama.Matrix;
-import android.util.Log;
 import edu.emory.mathcs.jtransforms.fft.DoubleFFT_2D;
 
 public class MathHelper {

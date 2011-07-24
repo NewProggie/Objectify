@@ -53,10 +53,25 @@ public class CameraLighting extends GLSurfaceView {
 	 */
 	public Matrix getLightMatrixS(int numberOfPictures) {
 		double[][] lightMatrix = new double[numberOfPictures][3];
+		if (numberOfPictures == 4) {
+			lightMatrix[0][0] = 0.4;
+			lightMatrix[0][1] = 0;
+			lightMatrix[0][2] = 1.0;
+			lightMatrix[1][0] = 0;
+			lightMatrix[1][1] = 0.4;
+			lightMatrix[1][2] = 1.0;
+			lightMatrix[2][0] = -0.4;
+			lightMatrix[2][1] = 0;
+			lightMatrix[2][2] = 1.0;
+			lightMatrix[3][0] = 0;
+			lightMatrix[3][1] = -0.4;
+			lightMatrix[3][2] = 1.0;
+			return new Matrix(lightMatrix);
+		}
 		float angleUnit = 360.0f/numberOfPictures;
 		for (int i=0; i<numberOfPictures; i++) {
-			lightMatrix[i][0] = 2 * Math.cos( ((angleUnit*(i+1))*Math.PI)/180 );
-			lightMatrix[i][1] = 2 * Math.sin( ((angleUnit*(i+1))*Math.PI)/180 );
+			lightMatrix[i][0] = Math.cos( ((angleUnit*(i+1))*Math.PI)/180 );
+			lightMatrix[i][1] = Math.sin( ((angleUnit*(i+1))*Math.PI)/180 );
 			lightMatrix[i][2] = 1.0;
 		}
 
@@ -68,13 +83,14 @@ public class CameraLighting extends GLSurfaceView {
 		private Context context;
 		private float xcoord = 0.0f;
 		private float ycoord = 0.0f;
+		private float radius = 2.3f;
 		private int width, height;
 		private float ratio;
 		private Circle lightSource;
 		
 		public CameraLightingRenderer(Context context) {
 			this.context = context;
-			this.lightSource = new Circle(2.5f);
+			this.lightSource = new Circle(radius);
 		}
 		
 		@Override
@@ -115,8 +131,8 @@ public class CameraLighting extends GLSurfaceView {
 		
 		public void putLightSource(int numberOfTotalPictures, int currentPictureCount) {
 			float currentDegree = (360/numberOfTotalPictures)*currentPictureCount;
-			xcoord = (float) (2 * (Math.cos(getAngle(currentDegree))));
-			ycoord = (float) (2 * (Math.sin(getAngle(currentDegree))));
+			xcoord = (float) (3.0f * (Math.cos(getAngle(currentDegree))));
+			ycoord = (float) (3.0f * (Math.sin(getAngle(currentDegree))));
 			requestRender();
 		}
 		

@@ -214,7 +214,8 @@ public class TouchSurfaceView extends GLSurfaceView {
 					values.put(DatabaseAdapter.GALLERY_DATE_KEY, String.valueOf(Calendar.getInstance().getTimeInMillis()));
 					cr.insert(uri, values);
 					
-					OBJFormat.writeFile(ExternalDirectory.getExternalImageDirectory()+"/test.obj", objectModel);
+					// TODO: Debug: Cleanup here
+//					OBJFormat.writeFile(ExternalDirectory.getExternalImageDirectory()+"/test.obj", objectModel);
 					return null;
 				}
 
@@ -229,7 +230,7 @@ public class TouchSurfaceView extends GLSurfaceView {
 			
 			gl.glMatrixMode(GL10.GL_MODELVIEW);
 			gl.glLoadIdentity();
-			// wichtig fŸr die Arcball-Rotation
+			// wichtig fï¿½r die Arcball-Rotation
 			               // eye    |   center |   up  
 			GLU.gluLookAt(gl, 0, 0,-2,   0, 0, 0,   0, 1, 0);
 			thisRot.map(matrix);

@@ -60,7 +60,7 @@ public class AboutActivity extends BaseActivity {
 					startActivity(writeFeedback);
 					((Activity) context).finish();
 				} else {
-					// Kein Mailclient gefunden, also Toast schmei§en
+					// Kein Mailclient gefunden, also Toast schmeissen
 					Toast.makeText(view.getContext(),
 							getString(R.string.no_mailclient_found),
 							Toast.LENGTH_LONG).show();

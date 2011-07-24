@@ -1,10 +1,8 @@
 package de.hsrm.objectify.camera;
 
 import java.io.BufferedOutputStream;
-import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
@@ -16,7 +14,6 @@ import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap.CompressFormat;
-import android.graphics.BitmapFactory;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.os.AsyncTask;
@@ -24,8 +21,8 @@ import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.WindowManager;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -90,7 +87,6 @@ public class CameraActivity extends BaseActivity {
 				triggerPictures.setVisibility(View.GONE);
 				/* New ArrayList for storing the pictures temporarily */
 				pictureList = new ArrayList<Image>();
-				setLights();
 				takePictures();
 			}
 		});
@@ -136,8 +132,6 @@ public class CameraActivity extends BaseActivity {
 	private void takePictures() {
 		camera.startPreview();
 		setLights();
-		// little delay, so the display has a chance to illuminate properly
-		SystemClock.sleep(200);
 		camera.takePicture(null, null, jpegCallback());
 	}
 
@@ -212,6 +206,12 @@ public class CameraActivity extends BaseActivity {
 			Matrix sMatrix = cameraLighting.getLightMatrixS(numberOfPictures);
 			// TODO: Debugging wieder rausnehmen
 			// Lichtmatrix von den vorgefertigten Bildern
+			for (int i=0; i<sMatrix.getRowDimension();i++) {
+				for (int j=0;j<sMatrix.getColumnDimension();j++) {
+					Log.d("sMatrix["+i+"]["+j+"]", String.valueOf(sMatrix.get(i, j)));
+				}
+			}
+//			
 //			sMatrix.set(0, 0, -0.2);
 //			sMatrix.set(0, 1, 0.0);
 //			sMatrix.set(0, 2, 1.0);
@@ -219,37 +219,20 @@ public class CameraActivity extends BaseActivity {
 //			sMatrix.set(1, 1, 0.2);
 //			sMatrix.set(1, 2, 1.0);
 //			sMatrix.set(2, 0, 0.2);
-////			sMatrix.set(2, 1, -0.2);
-////			sMatrix.set(2, 2, 1.0);
+//			sMatrix.set(2, 1, -0.2);
+//			sMatrix.set(2, 2, 1.0);
 //			pictureList = new ArrayList<Image>();
-//			String pic1 = ExternalDirectory.getExternalRootDirectory()+"/ellipsoid_1.png";
-//			String pic2 = ExternalDirectory.getExternalRootDirectory()+"/ellipsoid_2.png";
-//			String pic3 = ExternalDirectory.getExternalRootDirectory()+"/ellipsoid_3.png";
+//			String pic1 = ExternalDirectory.getExternalRootDirectory()+"/v14_pic1.png";
+//			String pic2 = ExternalDirectory.getExternalRootDirectory()+"/v14_pic2.png";
+//			String pic3 = ExternalDirectory.getExternalRootDirectory()+"/v14_pic3.png";
 //			Image img1 = new Image(BitmapFactory.decodeFile(pic1));
 //			Image img2 = new Image(BitmapFactory.decodeFile(pic2));
 //			Image img3 = new Image(BitmapFactory.decodeFile(pic3));
 //			pictureList.add(img1);
 //			pictureList.add(img2);
 //			pictureList.add(img3);
-			
+//			
 			Matrix sInverse = sMatrix.pseudoInverse();
-			
-//			// TODO: Debugging wieder rausnehmen. In Datei schreiben 
-//			String filePath = ExternalDirectory.getExternalRootDirectory() + "/lightMatrix.txt";
-//			try {
-//				FileWriter fstream = new FileWriter(filePath);
-//				BufferedWriter out = new BufferedWriter(fstream);
-//				for (int i=0; i<sMatrix.getRowDimension(); i++) {
-//					for (int j=0; j<sMatrix.getColumnDimension(); j++) {
-//						out.write("" + sMatrix.get(i, j) + " ");
-//					}
-//					out.write("\n");
-//				}
-//				out.close();
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
 			
 			int imageWidth = pictureList.get(0).getWidth();
 			int imageHeight = pictureList.get(0).getHeight();
@@ -279,11 +262,7 @@ public class CameraActivity extends BaseActivity {
 			}
 			
 			double[][] heightField = MathHelper.twoDimIntegration(pGradients, qGradients, imageHeight, imageWidth);
-			
-			
-			
-			// Drei Vertices pro Bildpunkt (x,y,z)
-			
+						
 			FloatBuffer vertBuffer = FloatBuffer.allocate(imageHeight*imageWidth*3);
 			FloatBuffer normBuffer = FloatBuffer.allocate(imageHeight*imageWidth*3);
 			ArrayList<Short> indexes = new ArrayList<Short>();
@@ -294,9 +273,7 @@ public class CameraActivity extends BaseActivity {
 			for (int x=0;x<imageHeight;x++) {
 				for (int y=0;y<imageWidth;y++) {
 					float[] imgPoint = new float[] { Float.valueOf(y), Float.valueOf(x), (float) heightField[x][y] };
-					float[] normVec = new float[] { 0, 0, 1 };
-
-//					float[] normVec = new float[] { normalField.get(idx).x, normalField.get(idx).y, normalField.get(idx).z };
+					float[] normVec = new float[] { normalField.get(idx).x, normalField.get(idx).y, normalField.get(idx).z };
 					vertBuffer.put(imgPoint);
 					normBuffer.put(normVec);
 					idx += 1;
@@ -327,15 +304,16 @@ public class CameraActivity extends BaseActivity {
 			vertices = vertBuffer.array();
 			normals = normBuffer.array();
 			faces = indexBuffer.array();
-			int id = 1;
-			for(Image img : pictureList) {
+
+			/////// TODO: Debugging wieder rausnehmen
+			for (int id=0; id<pictureList.size(); id++) {
 				try {
-					FileOutputStream fos = new FileOutputStream(ExternalDirectory.getExternalRootDirectory() + "/pic"+id+".png");
-					BufferedOutputStream bos = new BufferedOutputStream(fos);
+					Image img = pictureList.get(id);
+					FileOutputStream out = new FileOutputStream(ExternalDirectory.getExternalImageDirectory()+"/picture_"+id+".png");
+					BufferedOutputStream bos = new BufferedOutputStream(out);
 					img.compress(CompressFormat.PNG, 100, bos);
 					bos.flush();
 					bos.close();
-					id++;
 				} catch (FileNotFoundException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -343,30 +321,11 @@ public class CameraActivity extends BaseActivity {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				
 			}
-//			// TODO: Debugging wieder rausnehmen. In Datei schreiben 
-			String filePath2 = ExternalDirectory.getExternalRootDirectory() + "/object.obj";
-			try {
-				FileWriter fstream = new FileWriter(filePath2);
-				BufferedWriter out = new BufferedWriter(fstream);
-				for (int i=0; i<vertices.length; i+=3) {
-					String verts = "v " + vertices[i] + " " + vertices[i+1] + " " + vertices[i+2] + "\n";
-					out.write(verts);
-				}
-				for (int i=0; i<normals.length; i+=3) {
-					String norm = "vn " + normals[i] + " " + normals[i+1] + " " + normals[i+2] + "\n";
-					out.write(norm);
-				}
-//				for (int i=0; i<faces.length; i+=6) {
-//					String surface = "f " + faces[i] + " " + faces[i+1] + " " + faces[i+2] + "\nf " + faces[i+3] + " " + faces[i+4] + " " + faces[i+5] + "\n";
-//					out.write(surface);
-//				}
-				out.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			objectModel = new ObjectModel(vertices, normals, faces, pictureList.get(0));
+			///////
+			
+			objectModel = new ObjectModel(vertices, normals, faces, pictureList.get(1));
 			return true;
 		}
 		
@@ -380,12 +339,6 @@ public class CameraActivity extends BaseActivity {
 			((Activity) context).finish();
 		}
 		
-		private float getGreyscale(int pixelColor) {
-			int red = (pixelColor >> 16) & 0xFF;
-			int green = (pixelColor >> 8) & 0xFF;
-			int blue = (pixelColor >> 0) & 0xFF;
-			return ((red + green + blue) / 3.0f) / 255.0f;
-		}
 	}
 
 }

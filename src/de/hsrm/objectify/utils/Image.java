@@ -4,6 +4,7 @@ import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.Bitmap.Config;
 
@@ -23,7 +24,17 @@ public class Image {
 	}
 	
 	public Image(Bitmap bitmap) {
-		this.bitmap = Bitmap.createBitmap(bitmap);
+		// TODO: Wieder rausnehmen, sobald der Fehler bei der 3D-Rekonstruktion gefixt ist.
+		
+		////// Dreht das Bild um 90Â° nach rechts und spiegelt es vertikal
+		Matrix rotMatrix = new Matrix();
+		rotMatrix.postRotate(90);
+		Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), rotMatrix, true);
+		Matrix flipMatrix = new Matrix();
+		flipMatrix.preScale(1.0f, -1.0f);
+		this.bitmap = Bitmap.createBitmap(rotatedBitmap, 0, 0, rotatedBitmap.getWidth(), rotatedBitmap.getHeight(), flipMatrix, true);
+		////// Ende 
+//		 this.bitmap = Bitmap.createBitmap(bitmap);
 	}
 	
 	public void setPixel(int x, int y, int color) {
@@ -79,7 +90,7 @@ public class Image {
 		return getGreyscale(pixel);
 	}
 	
-	// TODO: Debugging. Wieder rausnehmen und Uli zeigen wg. KuriositŠt
+	// TODO: Debugging. Wieder rausnehmen und Uli zeigen wg. Kuriositï¿½t
 	public float[][] getIntensity2() {
 		float[][] map = new float[getWidth()][getHeight()];
 		for (int x=0; x<getWidth(); x++) {

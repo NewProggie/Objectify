@@ -21,7 +21,7 @@ public class Circle {
 	 * Creates a new circle from given radius
 	 * 
 	 * @param radius
-	 *            radius of circle in centimeter (not implemented yet)
+	 *            radius of circle
 	 */
 	public Circle(float radius) {
 		this.radius = radius;

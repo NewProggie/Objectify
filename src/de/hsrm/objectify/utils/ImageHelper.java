@@ -50,16 +50,6 @@ public class ImageHelper {
 	 */
 	private static int[] convertFromRGB_565(byte[] byteArray) {
 		int[] intArray = new int[(byteArray.length/2)+1];
-		Log.d("byteArray", String.valueOf(byteArray.length));
-		Log.d("intArray", String.valueOf(intArray.length));
-		Log.d("bitsPerPixel", String.valueOf(ImageFormat.getBitsPerPixel(imageFormat)));
-		Log.d("ImageFormat JPEG", String.valueOf(ImageFormat.getBitsPerPixel(ImageFormat.JPEG)));
-		Log.d("ImageFormat NV16", String.valueOf(ImageFormat.getBitsPerPixel(ImageFormat.NV16)));
-		Log.d("ImageFormat NV21", String.valueOf(ImageFormat.getBitsPerPixel(ImageFormat.NV21)));
-		Log.d("ImageFormat RGB_565", String.valueOf(ImageFormat.getBitsPerPixel(ImageFormat.RGB_565)));
-		Log.d("ImageFormat UNKNOWN", String.valueOf(ImageFormat.getBitsPerPixel(ImageFormat.UNKNOWN)));
-		Log.d("ImageFormat YUY2", String.valueOf(ImageFormat.getBitsPerPixel(ImageFormat.YUY2)));
-		Log.d("ImageFormat YV12", String.valueOf(ImageFormat.getBitsPerPixel(ImageFormat.YV12)));
 		
 		int idx = 0;
 		for (int i=0;i<byteArray.length;i+=2) {
