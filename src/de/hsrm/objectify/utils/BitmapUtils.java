@@ -1,6 +1,7 @@
 package de.hsrm.objectify.utils;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Arrays;
 
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
@@ -93,6 +94,22 @@ public class BitmapUtils {
 		default:
 			return null;
 		}
+	}
+	
+	/**
+	 * Takes the image and calculates grey level splay. The resulting image will
+	 * usually be lighter.
+	 * 
+	 * @param image
+	 *            the image for calculating grey level splay
+	 */
+	public static void doGreylevelSplaying(Image image) {
+		float gmin = 0;
+		float gmax = 0;
+		float[] pixels = image.getIntensity();
+		Arrays.sort(pixels);
+		gmin = pixels[0];
+		gmax = pixels[pixels.length-1];
 	}
 
 	/**

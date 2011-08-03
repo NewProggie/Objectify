@@ -313,6 +313,7 @@ public class ObjectModel implements Parcelable {
 		Bitmap texture = scaleTexture(image, 256);
 
 		gl.glGenTextures(1, textures, 0);
+		// TODO: Mach Licht zur Textur dassu
 		gl.glBindTexture(GL10.GL_TEXTURE_2D, textures[0]);
 
 		gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER,GL10.GL_NEAREST);

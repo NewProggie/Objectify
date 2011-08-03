@@ -31,14 +31,25 @@ public class Image {
 		rotMatrix.postRotate(90);
 		Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), rotMatrix, true);
 		Matrix flipMatrix = new Matrix();
-		flipMatrix.preScale(1.0f, -1.0f);
+//		flipMatrix.preScale(1.0f, -1.0f);
 		this.bitmap = Bitmap.createBitmap(rotatedBitmap, 0, 0, rotatedBitmap.getWidth(), rotatedBitmap.getHeight(), flipMatrix, true);
 		////// Ende 
 //		 this.bitmap = Bitmap.createBitmap(bitmap);
 	}
 	
+	public Image(Bitmap bitmap, boolean shouldTurn) {
+		this.bitmap = bitmap;
+	}
+	
 	public void setPixel(int x, int y, int color) {
 		bitmap.setPixel(x, y, color);
+	}
+	
+	public Image getAsTexture() {
+		Matrix flipMatrix = new Matrix();
+		flipMatrix.preScale(1.0f, -1.0f);
+		Bitmap tmp = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), flipMatrix, true);
+		return new Image(tmp, false);
 	}
 	
 	public int[] getPixels() {
@@ -71,17 +82,9 @@ public class Image {
 		bitmap.compress(format, quality, baos);
 	}
 	
-	public float[][] getIntensity() {
-		float[][] map = new float[getWidth()][getHeight()];
+	public float[] getIntensity() {
+		float[] map = new float[getPixels().length];
 		int[] pixels = getPixels();
-		int idx = 0;
-		for (int x=0; x<getWidth(); x++) {
-			for (int y=0; y<getHeight(); y++) {
-				float intensity = getGreyscale(pixels[idx]);
-				map[x][y] = intensity;
-				idx += 1;
-			}
-		}
 		return map;
 	}
 	

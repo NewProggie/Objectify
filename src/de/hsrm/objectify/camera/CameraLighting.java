@@ -53,28 +53,54 @@ public class CameraLighting extends GLSurfaceView {
 	 */
 	public Matrix getLightMatrixS(int numberOfPictures) {
 		double[][] lightMatrix = new double[numberOfPictures][3];
-		if (numberOfPictures == 4) {
-			lightMatrix[0][0] = 0.4;
-			lightMatrix[0][1] = 0;
-			lightMatrix[0][2] = 1.0;
-			lightMatrix[1][0] = 0;
-			lightMatrix[1][1] = 0.4;
+		if (numberOfPictures == 3) {
+			lightMatrix[0][0] = -0.086956;
+			lightMatrix[0][1] = -0.086956;
+			lightMatrix[0][2] = 1.007533;
+			lightMatrix[1][0] = -0.086956;
+			lightMatrix[1][1] = 0.086956;
 			lightMatrix[1][2] = 1.0;
-			lightMatrix[2][0] = -0.4;
-			lightMatrix[2][1] = 0;
+			lightMatrix[2][0] = -0.043478;
+			lightMatrix[2][1] = 0.043478;
+			lightMatrix[2][2] = 0.999999;
+		} else if (numberOfPictures == 4) {
+			lightMatrix[0][0] = 0;
+			lightMatrix[0][1] = -0.115385;
+			lightMatrix[0][2] = 1.006635;
+			lightMatrix[1][0] = -0.115385;
+			lightMatrix[1][1] = -0.038461;
+			lightMatrix[1][2] = 1.007369;
+			lightMatrix[2][0] = -0.076923;
+			lightMatrix[2][1] = 0.076923;
 			lightMatrix[2][2] = 1.0;
-			lightMatrix[3][0] = 0;
-			lightMatrix[3][1] = -0.4;
-			lightMatrix[3][2] = 1.0;
-			return new Matrix(lightMatrix);
+			lightMatrix[3][0] = -0.076923;
+			lightMatrix[3][1] = 0.038461;
+			lightMatrix[3][2] = 1.002216;
+		} else if (numberOfPictures == 5) {
+			lightMatrix[0][0] = 0.04;
+			lightMatrix[0][1] = -0.16;
+			lightMatrix[0][2] = 1.011929;
+			lightMatrix[1][0] = -0.08;
+			lightMatrix[1][1] = -0.12;
+			lightMatrix[1][2] = 1.010346;
+			lightMatrix[2][0] = -0.08;
+			lightMatrix[2][1] = -0.08;
+			lightMatrix[2][2] = 1.006379;
+			lightMatrix[3][0] = 0.04;
+			lightMatrix[3][1] = -0.08;
+			lightMatrix[3][2] = 1.002397;
+			lightMatrix[4][0] = 0.08;
+			lightMatrix[4][1] = -0.12;
+			lightMatrix[4][2] = 1.003992;
+		} else {
+			// TODO: obsolet, für alle Fotos Matrizen mit Styropor errechnen
+			float angleUnit = 360.0f/numberOfPictures;
+			for (int i=0; i<numberOfPictures; i++) {
+				lightMatrix[i][0] = Math.cos( ((angleUnit*(i+1))*Math.PI)/180 );
+				lightMatrix[i][1] = Math.sin( ((angleUnit*(i+1))*Math.PI)/180 );
+				lightMatrix[i][2] = 1.0;
+			}
 		}
-		float angleUnit = 360.0f/numberOfPictures;
-		for (int i=0; i<numberOfPictures; i++) {
-			lightMatrix[i][0] = Math.cos( ((angleUnit*(i+1))*Math.PI)/180 );
-			lightMatrix[i][1] = Math.sin( ((angleUnit*(i+1))*Math.PI)/180 );
-			lightMatrix[i][2] = 1.0;
-		}
-
 		return new Matrix(lightMatrix);
 	}
 
@@ -83,14 +109,14 @@ public class CameraLighting extends GLSurfaceView {
 		private Context context;
 		private float xcoord = 0.0f;
 		private float ycoord = 0.0f;
-		private float radius = 2.3f;
+		private float RADIUS = 2.7f;
 		private int width, height;
 		private float ratio;
 		private Circle lightSource;
 		
 		public CameraLightingRenderer(Context context) {
 			this.context = context;
-			this.lightSource = new Circle(radius);
+			this.lightSource = new Circle(RADIUS);
 		}
 		
 		@Override

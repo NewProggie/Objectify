@@ -237,9 +237,9 @@ public class TouchSurfaceView extends GLSurfaceView {
 			gl.glMultMatrixf(matrix, 0);
 			gl.glRotatef(180, 0, 1, 0);
 			gl.glRotatef(90, 0, 0, 1);
+			gl.glScalef(skalierung, skalierung, skalierung);
 			gl.glScalef(objectModel.getLength(), objectModel.getLength(), objectModel.getLength());
 			gl.glTranslatef(-objectModel.getMiddlePoint()[0], -objectModel.getMiddlePoint()[1], -objectModel.getMiddlePoint()[2]);
-			gl.glScalef(skalierung, skalierung, skalierung);
 			objectModel.draw(gl);
 			if (shouldCopySurface) {
 				shouldCopySurface = false;
