@@ -15,6 +15,7 @@ import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Bitmap.CompressFormat;
 import android.hardware.Camera;
@@ -165,7 +166,7 @@ public class CameraActivity extends BaseActivity {
 		PictureCallback callback = new PictureCallback() {
 			@Override
 			public void onPictureTaken(byte[] data, Camera camera) {
-				Image image = new Image(BitmapUtils.createScaledBitmap(data, CameraFinder.pictureSize, CameraFinder.imageFormat, 8.0f));
+				Image image = new Image(BitmapUtils.createScaledBitmap(data, CameraFinder.pictureSize, CameraFinder.imageFormat, 8.0f), true);
 				/////// TODO: Debugging wieder rausnehmen
 //				Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
 //				try {
@@ -241,7 +242,11 @@ public class CameraActivity extends BaseActivity {
 			
 			int imageWidth = pictureList.get(0).getWidth();
 			int imageHeight = pictureList.get(0).getHeight();
-			
+			texture = pictureList.get(0).copy();
+			for(int i=0; i<pictureList.size(); i++) {
+				pictureList.get(i).toGrayscale();
+			}
+
 			ArrayList<Vector3f> normalField = new ArrayList<Vector3f>();
 			Matrix pGradients = new Matrix(imageHeight, imageWidth);
 			Matrix qGradients = new Matrix(imageHeight, imageWidth);
@@ -312,26 +317,26 @@ public class CameraActivity extends BaseActivity {
 			faces = indexBuffer.array();
 
 			/////// TODO: Debugging wieder rausnehmen
-			Image img = pictureList.get(0);
-			try {
-				FileOutputStream out = new FileOutputStream(ExternalDirectory.getExternalImageDirectory()+"/originalPic.png");
-				BufferedOutputStream bos = new BufferedOutputStream(out);
-				img.compress(CompressFormat.PNG, 100, bos);
-				bos.flush();
-				bos.close();
-				img.toGrayscale();
-				FileOutputStream out2 = new FileOutputStream(ExternalDirectory.getExternalImageDirectory()+"/grayscalePic.png");
-				BufferedOutputStream bos2 = new BufferedOutputStream(out2);
-				img.compress(CompressFormat.PNG, 100, bos2);
-				bos2.flush();
-				bos2.close();
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+//			Image img = pictureList.get(0);
+//			try {
+//				FileOutputStream out = new FileOutputStream(ExternalDirectory.getExternalImageDirectory()+"/originalPic.png");
+//				BufferedOutputStream bos = new BufferedOutputStream(out);
+//				img.compress(CompressFormat.PNG, 100, bos);
+//				bos.flush();
+//				bos.close();
+//				img.toGrayscale();
+//				FileOutputStream out2 = new FileOutputStream(ExternalDirectory.getExternalImageDirectory()+"/grayscalePic.png");
+//				BufferedOutputStream bos2 = new BufferedOutputStream(out2);
+//				img.compress(CompressFormat.PNG, 100, bos2);
+//				bos2.flush();
+//				bos2.close();
+//			} catch (FileNotFoundException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 //			for (int id=0; id<pictureList.size(); id++) {
 //				try {
 //					Image img = pictureList.get(id);
@@ -377,7 +382,7 @@ public class CameraActivity extends BaseActivity {
 //				// TODO Auto-generated catch block
 //				e.printStackTrace();
 //	                        }
-			objectModel = new ObjectModel(vertices, normals, faces, pictureList.get(0));
+			objectModel = new ObjectModel(vertices, normals, faces, texture);
 			return true;
 		}
 		

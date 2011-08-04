@@ -24,19 +24,25 @@ public class Image {
 		bitmap = Bitmap.createBitmap(width, height, config);
 	}
 	
-	public Image(Bitmap bitmap) {
-		// TODO: Wieder rausnehmen, sobald der Fehler bei der 3D-Rekonstruktion gefixt ist.
-		////// Dreht das Bild um 90° nach rechts und spiegelt es vertikal
-		Matrix rotMatrix = new Matrix();
-		rotMatrix.postRotate(90);
-		Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), rotMatrix, true);
-		Matrix flipMatrix = new Matrix();
-		flipMatrix.preScale(1.0f, -1.0f);
-		this.bitmap = Bitmap.createBitmap(rotatedBitmap, 0, 0, rotatedBitmap.getWidth(), rotatedBitmap.getHeight(), flipMatrix, true);
-		////// Ende 
-//		 this.bitmap = Bitmap.createBitmap(bitmap);
+	public Image(Bitmap bitmap, boolean shouldRotateAndFlip) {
+		if (shouldRotateAndFlip) {
+			// TODO: Wieder rausnehmen, sobald der Fehler bei der 3D-Rekonstruktion gefixt ist.
+			////// Dreht das Bild um 90° nach rechts und spiegelt es vertikal
+			Matrix rotMatrix = new Matrix();
+			rotMatrix.postRotate(90);
+			Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), rotMatrix, true);
+			Matrix flipMatrix = new Matrix();
+			flipMatrix.preScale(1.0f, -1.0f);
+			this.bitmap = Bitmap.createBitmap(rotatedBitmap, 0, 0, rotatedBitmap.getWidth(), rotatedBitmap.getHeight(), flipMatrix, true);
+		} else {
+			this.bitmap = Bitmap.createBitmap(bitmap);
+		}
 	}
 	
+	/**
+	 * Converts picture into a grayscaled picture and calculates a grayscale
+	 * splay
+	 */
 	public void toGrayscale() {
 		short[] grayPixels = getIntensity(true);
 		int[] newPixels = new int[getWidth()*getHeight()];
@@ -49,7 +55,7 @@ public class Image {
 	public void setPixel(int x, int y, int color) {
 		bitmap.setPixel(x, y, color);
 	}
-	
+
 	public int[] getPixels() {
 		int[] pixels = new int[bitmap.getWidth()*bitmap.getHeight()];
 		bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, getWidth(), getHeight());
@@ -70,6 +76,11 @@ public class Image {
 
 	public Config getConfig() {
 		return bitmap.getConfig();
+	}
+	
+	public Image copy() {
+		Image img = new Image(bitmap, false);
+		return img;
 	}
 
 	public void compress(CompressFormat format, int quality, BufferedOutputStream bos) {

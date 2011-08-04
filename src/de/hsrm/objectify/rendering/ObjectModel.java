@@ -77,7 +77,7 @@ public class ObjectModel implements Parcelable {
 		textureBuffer.put(texture);
 		textureBuffer.rewind();
 		
-		this.image = new Image(Bitmap.createBitmap(image.getPixels(), image.getWidth(), image.getHeight(), image.getConfig()));
+		this.image = new Image(Bitmap.createBitmap(image.getPixels(), image.getWidth(), image.getHeight(), image.getConfig()), true);
 	}
 	
 	private ObjectModel(Parcel source) {
@@ -87,7 +87,7 @@ public class ObjectModel implements Parcelable {
 		setNormalVertices(b.getFloatArray("normals"));
 		setFaces(b.getShortArray("faces"));
 		byte[] bb = b.getByteArray("image");
-		this.image = new Image(BitmapFactory.decodeByteArray(bb, 0, bb.length));
+		this.image = new Image(BitmapFactory.decodeByteArray(bb, 0, bb.length), true);
 		
 		ByteBuffer byteBuf = ByteBuffer.allocateDirect(vertices.length * 4);
 		byteBuf.order(ByteOrder.nativeOrder());
