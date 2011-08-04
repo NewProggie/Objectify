@@ -166,17 +166,32 @@ public class CameraActivity extends BaseActivity {
 		PictureCallback callback = new PictureCallback() {
 			@Override
 			public void onPictureTaken(byte[] data, Camera camera) {
-				Image image = new Image(BitmapUtils.createScaledBitmap(data, CameraFinder.pictureSize, CameraFinder.imageFormat, 8.0f), true);
+				Bitmap original = BitmapUtils.createScaledBitmap(data, CameraFinder.pictureSize, CameraFinder.imageFormat, 8.0f);
+				
+				android.graphics.Matrix rotMatrix = new android.graphics.Matrix();
+				rotMatrix.postRotate(-90);
+				Bitmap rotatedBitmap = Bitmap.createBitmap(original, 0, 0, original.getWidth(), original.getHeight(), rotMatrix, true);
+				
+				// WTF
+				android.graphics.Matrix rotMatrix2 = new android.graphics.Matrix();
+				rotMatrix2.postRotate(90);
+				Bitmap rotatedBitmap2 = Bitmap.createBitmap(rotatedBitmap, 0, 0, rotatedBitmap.getWidth(), rotatedBitmap.getHeight(), rotMatrix, true);
+				android.graphics.Matrix flipMatrix = new android.graphics.Matrix();
+				flipMatrix.preScale(1.0f, -1.0f);
+				Bitmap last = Bitmap.createBitmap(rotatedBitmap2, 0, 0, rotatedBitmap2.getWidth(), rotatedBitmap2.getHeight(), flipMatrix, true);
+				//
+				
+				Image image = new Image(last, true);
 				/////// TODO: Debugging wieder rausnehmen
 //				Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
-//				try {
-//					FileOutputStream out = new FileOutputStream(ExternalDirectory.getExternalImageDirectory()+"/picture"+numberOfPictures+"_"+counter+".png");
-//					BufferedOutputStream bos = new BufferedOutputStream(out);
-//					bmp.compress(CompressFormat.PNG, 100, bos);
-//					bos.flush();
-//					bos.close();
-//				} catch (FileNotFoundException e) {} 
-//				catch (IOException e) {}
+				try {
+					FileOutputStream out = new FileOutputStream(ExternalDirectory.getExternalImageDirectory()+"/rotatedBitmap_"+counter+".png");
+					BufferedOutputStream bos = new BufferedOutputStream(out);
+					rotatedBitmap.compress(CompressFormat.PNG, 100, bos);
+					bos.flush();
+					bos.close();
+				} catch (FileNotFoundException e) {} 
+				catch (IOException e) {}
 				/////// End Debugging
 				pictureList.add(image);
 				counter += 1;
@@ -242,10 +257,11 @@ public class CameraActivity extends BaseActivity {
 			
 			int imageWidth = pictureList.get(0).getWidth();
 			int imageHeight = pictureList.get(0).getHeight();
-			texture = pictureList.get(0).copy();
-			for(int i=0; i<pictureList.size(); i++) {
-				pictureList.get(i).toGrayscale();
-			}
+			texture = pictureList.get(1).copy();
+//			texture.toGrayscale();
+//			for(int i=0; i<pictureList.size(); i++) {
+//				pictureList.get(i).toGrayscale();
+//			}
 
 			ArrayList<Vector3f> normalField = new ArrayList<Vector3f>();
 			Matrix pGradients = new Matrix(imageHeight, imageWidth);
@@ -284,7 +300,7 @@ public class CameraActivity extends BaseActivity {
 			for (int x=0;x<imageHeight;x++) {
 				for (int y=0;y<imageWidth;y++) {
 					float[] imgPoint = new float[] { Float.valueOf(y), Float.valueOf(x), (float) heightField[x][y] };
-					float[] normVec = new float[] { normalField.get(idx).x, normalField.get(idx).y, -normalField.get(idx).z };
+					float[] normVec = new float[] { normalField.get(idx).x, normalField.get(idx).y, normalField.get(idx).z };
 					vertBuffer.put(imgPoint);
 					normBuffer.put(normVec);
 					idx += 1;
