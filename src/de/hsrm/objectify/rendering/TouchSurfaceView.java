@@ -1,6 +1,9 @@
 package de.hsrm.objectify.rendering;
 
 import java.io.ByteArrayOutputStream;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.Calendar;
 
@@ -175,8 +178,36 @@ public class TouchSurfaceView extends GLSurfaceView {
 			gl.glDepthFunc(GL10.GL_LEQUAL);
 			gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
 			gl.glEnable(GL10.GL_NORMALIZE);
+			
 			gl.glEnable(GL10.GL_LIGHTING);
 			gl.glEnable(GL10.GL_LIGHT0);
+			// define ambient component of first light
+			float[] light0Ambient = new float[] { 0.7f, 0.7f, 0.7f, 1.0f };
+			ByteBuffer byteBuf = ByteBuffer.allocateDirect(light0Ambient.length * 4);
+			byteBuf.order(ByteOrder.nativeOrder());
+			FloatBuffer ambientBuffer = byteBuf.asFloatBuffer();
+			ambientBuffer.put(light0Ambient);
+			ambientBuffer.rewind();
+			gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_AMBIENT, ambientBuffer);
+			// define diffuse component of first light
+			float[] light0Diffuse = new float[] { 0.7f, 0.7f, 0.7f, 1.0f };
+			FloatBuffer diffuseBuffer = byteBuf.asFloatBuffer();
+			diffuseBuffer.put(light0Diffuse);
+			diffuseBuffer.rewind();
+			gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_DIFFUSE, diffuseBuffer);
+			// define specular component of first light
+			float[] light0Specular = new float[] { 0.7f, 0.7f, 0.7f, 1.0f };
+			FloatBuffer specularBuffer = byteBuf.asFloatBuffer();
+			specularBuffer.put(light0Specular);
+			specularBuffer.rewind();
+			gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_SPECULAR, specularBuffer);
+			float[] light0Position = new float[] { 0.0f, 5.0f, 5.0f, 0.0f };
+			FloatBuffer lightPosBuffer = byteBuf.asFloatBuffer();
+			lightPosBuffer.put(light0Position);
+			lightPosBuffer.rewind();
+			gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_POSITION, lightPosBuffer);
+			gl.glLightf(GL10.GL_LIGHT0, GL10.GL_SPOT_CUTOFF, 60.0f);
+
 			gl.glMatrixMode(GL10.GL_MODELVIEW);
 		}
 
@@ -235,8 +266,8 @@ public class TouchSurfaceView extends GLSurfaceView {
 			GLU.gluLookAt(gl, 0, 0,-2,   0, 0, 0,   0, 1, 0);
 			thisRot.map(matrix);
 			gl.glMultMatrixf(matrix, 0);
+			gl.glRotatef(180, 1, 0, 0);
 			gl.glRotatef(180, 0, 1, 0);
-			gl.glRotatef(90, 0, 0, 1);
 			gl.glScalef(skalierung, skalierung, skalierung);
 			gl.glScalef(objectModel.getLength(), objectModel.getLength(), objectModel.getLength());
 			gl.glTranslatef(-objectModel.getMiddlePoint()[0], -objectModel.getMiddlePoint()[1], -objectModel.getMiddlePoint()[2]);

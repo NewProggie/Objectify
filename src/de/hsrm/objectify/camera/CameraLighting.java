@@ -53,6 +53,7 @@ public class CameraLighting extends GLSurfaceView {
 	 */
 	public Matrix getLightMatrixS(int numberOfPictures) {
 		double[][] lightMatrix = new double[numberOfPictures][3];
+		// TODO: Debugging für Bunnys im Assetfolder. Wieder rausnehmen
 		if (numberOfPictures == 3) {
 			lightMatrix[0][0] = -0.2;
 			lightMatrix[0][1] = 0;
@@ -63,36 +64,21 @@ public class CameraLighting extends GLSurfaceView {
 			lightMatrix[2][0] = 0.2;
 			lightMatrix[2][1] = -0.2;
 			lightMatrix[2][2] = 1;
+			////
 		} else if (numberOfPictures == 4) {
 			lightMatrix[0][0] = -0.176;
 			lightMatrix[0][1] = -0.052;
-			lightMatrix[0][2] =  1.0;
+			lightMatrix[0][2] = 1.0167;
 			lightMatrix[1][0] = -0.071;
 			lightMatrix[1][1] = -0.024;
-			lightMatrix[1][2] = 1.0;
+			lightMatrix[1][2] = 1.0028;
 			lightMatrix[2][0] = -0.157;
 			lightMatrix[2][1] = -0.090;
-			lightMatrix[2][2] = 1.0;
+			lightMatrix[2][2] = 1.0162;
 			lightMatrix[3][0] = -0.233;
 			lightMatrix[3][1] = -0.076;
-			lightMatrix[3][2] = 1.0;
+			lightMatrix[3][2] = 1.0296;
 			
-		} else if (numberOfPictures == 5) {
-			lightMatrix[0][0] = 0.04;
-			lightMatrix[0][1] = -0.16;
-			lightMatrix[0][2] = 1.011929;
-			lightMatrix[1][0] = -0.08;
-			lightMatrix[1][1] = -0.12;
-			lightMatrix[1][2] = 1.010346;
-			lightMatrix[2][0] = -0.08;
-			lightMatrix[2][1] = -0.08;
-			lightMatrix[2][2] = 1.006379;
-			lightMatrix[3][0] = 0.04;
-			lightMatrix[3][1] = -0.08;
-			lightMatrix[3][2] = 1.002397;
-			lightMatrix[4][0] = 0.08;
-			lightMatrix[4][1] = -0.12;
-			lightMatrix[4][2] = 1.003992;
 		} else {
 			// TODO: obsolet, für alle Fotos Matrizen mit Styropor errechnen
 			float angleUnit = 360.0f/numberOfPictures;

@@ -55,6 +55,7 @@ public class CameraActivity extends BaseActivity {
 	private LinearLayout progress;
 	private CameraLighting cameraLighting;
 	private ArrayList<Image> pictureList;
+	private Image texture;
 	private int numberOfPictures;
 	private int counter = 0;
 	private Context context;
@@ -217,19 +218,21 @@ public class CameraActivity extends BaseActivity {
 			
 			// TODO: Debugging wieder rausnehmen
 			// TODO: Bunnys aus dem Assetsordner
-			pictureList = new ArrayList<Image>();
-			AssetManager assetManager = getAssets();
-			try {
-				InputStream is1 = assetManager.open("bunny_1.png");
-				InputStream is2 = assetManager.open("bunny_2.png");
-				InputStream is3 = assetManager.open("bunny_3.png");
-				Image img1 = new Image(BitmapFactory.decodeStream(is1));
-				Image img2 = new Image(BitmapFactory.decodeStream(is2));
-				Image img3 = new Image(BitmapFactory.decodeStream(is3));
-				pictureList.add(img1);
-				pictureList.add(img2);
-				pictureList.add(img3);
-			} catch (IOException e) {}
+//			pictureList = new ArrayList<Image>();
+//			AssetManager assetManager = getAssets();
+//			try {
+//				InputStream is1 = assetManager.open("bunny_1.png");
+//				InputStream is2 = assetManager.open("bunny_2.png");
+//				InputStream is3 = assetManager.open("bunny_3.png");
+//				InputStream tex = assetManager.open("bunny_texture.png");
+//				Image img1 = new Image(BitmapFactory.decodeStream(is1));
+//				Image img2 = new Image(BitmapFactory.decodeStream(is2));
+//				Image img3 = new Image(BitmapFactory.decodeStream(is3));
+//				texture = new Image(BitmapFactory.decodeStream(tex));
+//				pictureList.add(img1);
+//				pictureList.add(img2);
+//				pictureList.add(img3);
+//			} catch (IOException e) {}
 			////////
 			
 			int imageWidth = pictureList.get(0).getWidth();
@@ -272,7 +275,7 @@ public class CameraActivity extends BaseActivity {
 			for (int x=0;x<imageHeight;x++) {
 				for (int y=0;y<imageWidth;y++) {
 					float[] imgPoint = new float[] { Float.valueOf(y), Float.valueOf(x), (float) heightField[x][y] };
-					float[] normVec = new float[] { normalField.get(idx).x, normalField.get(idx).y, normalField.get(idx).z };
+					float[] normVec = new float[] { normalField.get(idx).x, normalField.get(idx).y, -normalField.get(idx).z };
 					vertBuffer.put(imgPoint);
 					normBuffer.put(normVec);
 					idx += 1;
@@ -350,7 +353,7 @@ public class CameraActivity extends BaseActivity {
 //				// TODO Auto-generated catch block
 //				e.printStackTrace();
 //	                        }
-			objectModel = new ObjectModel(vertices, normals, faces, pictureList.get(1));
+			objectModel = new ObjectModel(vertices, normals, faces, pictureList.get(0));
 			return true;
 		}
 		
