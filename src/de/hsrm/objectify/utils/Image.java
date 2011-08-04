@@ -4,6 +4,7 @@ import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.Bitmap.Config;
@@ -34,6 +35,15 @@ public class Image {
 		this.bitmap = Bitmap.createBitmap(rotatedBitmap, 0, 0, rotatedBitmap.getWidth(), rotatedBitmap.getHeight(), flipMatrix, true);
 		////// Ende 
 //		 this.bitmap = Bitmap.createBitmap(bitmap);
+	}
+	
+	public void toGrayscale() {
+		short[] grayPixels = getIntensity(true);
+		int[] newPixels = new int[getWidth()*getHeight()];
+		for(int i=0; i<grayPixels.length; i++) {
+			newPixels[i] = Color.rgb(grayPixels[i], grayPixels[i], grayPixels[i]);
+		}
+		bitmap = Bitmap.createBitmap(newPixels, getWidth(), getHeight(), getConfig());
 	}
 	
 	public void setPixel(int x, int y, int color) {
@@ -70,9 +80,30 @@ public class Image {
 		bitmap.compress(format, quality, baos);
 	}
 	
-	public float[] getIntensity() {
-		float[] map = new float[getPixels().length];
+	/**
+	 * Returns the intensity of this image as a float array
+	 * 
+	 * @param doGreyscaleCorrection
+	 *            calculates a grayscale splay if true, else returns current
+	 *            intensity
+	 * @return intensity per pixel as float array
+	 */
+	private short[] getIntensity(boolean doGreyscaleCorrection) {
 		int[] pixels = getPixels();
+		short[] map = new short[getPixels().length];
+		for (int i=0; i<map.length;i++) {
+			map[i] = getGreyscale(pixels[i]);
+		}
+		if (doGreyscaleCorrection) {
+			short gmin = 255, gmax = 0;
+			for (int i=0; i<map.length; i++) {
+				if (map[i] < gmin) { gmin = map[i]; }	
+				if (map[i] > gmax) { gmax = map[i]; }
+			}
+			for (int i=0; i<map.length; i++) {
+				map[i] = (short) ((1 - ((gmax-map[i])/(gmax-gmin*1.0f))) * 255);
+			}
+		}
 		return map;
 	}
 	
@@ -81,15 +112,16 @@ public class Image {
 		return getGreyscale(pixel);
 	}
 	
-	private float getGreyscale(int pixelColor) {
+	private short getGreyscale(int pixelColor) {
 		int red = (pixelColor >> 16) & 0xFF;
 		int green = (pixelColor >> 8) & 0xFF;
 		int blue = (pixelColor >> 0) & 0xFF;
 		if (red==0 || green==0 || blue==0) {
-			return 0.001f;
+			return 0;
 		} else {
-			return ((red + green + blue) / 3.0f) / 255.0f;
+			return (short) ((red + green + blue) / 3.0f);
 		}
 	}
+
 
 }

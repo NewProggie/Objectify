@@ -1,5 +1,8 @@
 package de.hsrm.objectify.camera;
 
+import java.io.BufferedOutputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.FloatBuffer;
@@ -13,6 +16,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.graphics.BitmapFactory;
+import android.graphics.Bitmap.CompressFormat;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.os.AsyncTask;
@@ -308,6 +312,26 @@ public class CameraActivity extends BaseActivity {
 			faces = indexBuffer.array();
 
 			/////// TODO: Debugging wieder rausnehmen
+			Image img = pictureList.get(0);
+			try {
+				FileOutputStream out = new FileOutputStream(ExternalDirectory.getExternalImageDirectory()+"/originalPic.png");
+				BufferedOutputStream bos = new BufferedOutputStream(out);
+				img.compress(CompressFormat.PNG, 100, bos);
+				bos.flush();
+				bos.close();
+				img.toGrayscale();
+				FileOutputStream out2 = new FileOutputStream(ExternalDirectory.getExternalImageDirectory()+"/grayscalePic.png");
+				BufferedOutputStream bos2 = new BufferedOutputStream(out2);
+				img.compress(CompressFormat.PNG, 100, bos2);
+				bos2.flush();
+				bos2.close();
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 //			for (int id=0; id<pictureList.size(); id++) {
 //				try {
 //					Image img = pictureList.get(id);
