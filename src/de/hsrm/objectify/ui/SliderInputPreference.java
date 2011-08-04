@@ -34,7 +34,7 @@ public class SliderInputPreference extends DialogPreference implements
 	/**
 	 * Setting the constant value for maximum amount of pictures taken for a 3d reconstruction.
 	 */
-	private final int MAX_PIXTURES = 16;
+	private final int MAX_PIXTURES = 9;
 	/**
 	 * Setting the constant value for default amount of pictures taken for a 3d reconstruction.
 	 */

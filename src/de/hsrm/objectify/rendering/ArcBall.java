@@ -29,7 +29,7 @@ public class ArcBall {
 	public ArcBall(float width, float height) {
 		StVec = new Vector3f();
 		EnVec = new Vector3f();
-		setBounds(width, height);
+		setBounds(height, width);
 	}
 
 	/**

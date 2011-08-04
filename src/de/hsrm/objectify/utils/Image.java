@@ -25,31 +25,19 @@ public class Image {
 	
 	public Image(Bitmap bitmap) {
 		// TODO: Wieder rausnehmen, sobald der Fehler bei der 3D-Rekonstruktion gefixt ist.
-		
 		////// Dreht das Bild um 90° nach rechts und spiegelt es vertikal
 		Matrix rotMatrix = new Matrix();
 		rotMatrix.postRotate(90);
 		Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), rotMatrix, true);
 		Matrix flipMatrix = new Matrix();
-//		flipMatrix.preScale(1.0f, -1.0f);
+		flipMatrix.preScale(1.0f, -1.0f);
 		this.bitmap = Bitmap.createBitmap(rotatedBitmap, 0, 0, rotatedBitmap.getWidth(), rotatedBitmap.getHeight(), flipMatrix, true);
 		////// Ende 
 //		 this.bitmap = Bitmap.createBitmap(bitmap);
 	}
 	
-	public Image(Bitmap bitmap, boolean shouldTurn) {
-		this.bitmap = bitmap;
-	}
-	
 	public void setPixel(int x, int y, int color) {
 		bitmap.setPixel(x, y, color);
-	}
-	
-	public Image getAsTexture() {
-		Matrix flipMatrix = new Matrix();
-		flipMatrix.preScale(1.0f, -1.0f);
-		Bitmap tmp = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), flipMatrix, true);
-		return new Image(tmp, false);
 	}
 	
 	public int[] getPixels() {
@@ -91,18 +79,6 @@ public class Image {
 	public float getIntensity(int x, int y) {
 		int pixel = bitmap.getPixel(x, y);
 		return getGreyscale(pixel);
-	}
-	
-	// TODO: Debugging. Wieder rausnehmen und Uli zeigen wg. Kuriosit�t
-	public float[][] getIntensity2() {
-		float[][] map = new float[getWidth()][getHeight()];
-		for (int x=0; x<getWidth(); x++) {
-			for (int y=0; y<getHeight(); y++) {
-				float intensity = getGreyscale(bitmap.getPixel(x, y));
-				map[x][y] = intensity;
-			}
-		}
-		return map;
 	}
 	
 	private float getGreyscale(int pixelColor) {
