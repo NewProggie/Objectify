@@ -64,6 +64,8 @@ public class CameraActivity extends BaseActivity {
 	private int counter = 0;
 	private Context context;
 	private Camera camera;
+	// TODO: Wieder entfernen. Wird zur Kalibrierung benutzt.
+	private String id = "";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -134,7 +136,7 @@ public class CameraActivity extends BaseActivity {
 	private void takePictures() {
 		camera.startPreview();
 		setLights();
-		SystemClock.sleep(200);
+		SystemClock.sleep(250);
 		camera.takePicture(null, null, jpegCallback());
 	}
 
@@ -167,9 +169,11 @@ public class CameraActivity extends BaseActivity {
 	 * @param suffix suffix which will be appended to the file name for better distinguish
 	 */
 	private void storeOnSD(byte[] data, int suffix) {
+		if (suffix == 0) {
+			id = String.valueOf(SystemClock.elapsedRealtime());
+		}
 		Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
 		try {
-			String id = String.valueOf(SystemClock.elapsedRealtime());
 			FileOutputStream out = new FileOutputStream(ExternalDirectory.getExternalImageDirectory()+"/"+id+"pic"+numberOfPictures+"_"+suffix+".png");
 			BufferedOutputStream bos = new BufferedOutputStream(out);
 			bmp.compress(CompressFormat.PNG, 100, out);
@@ -232,24 +236,24 @@ public class CameraActivity extends BaseActivity {
 			Matrix sInverse = sMatrix.pseudoInverse();
 			
 			// TODO: Debugging wieder rausnehmen
-			pictureList = new ArrayList<Image>();
-			AssetManager assetManager = getAssets();
-			try {
-//				InputStream is1 = assetManager.open("86629pic4_0.png");
-				InputStream is2 = assetManager.open("bunny_1.png");
-				InputStream is3 = assetManager.open("bunny_2.png");
-				InputStream is4 = assetManager.open("bunny_3.png");
+//			pictureList = new ArrayList<Image>();
+//			AssetManager assetManager = getAssets();
+//			try {
+//				InputStream is1 = assetManager.open("870729924pic4_0.png");
+//				InputStream is2 = assetManager.open("870729924pic4_1.png");
+//				InputStream is3 = assetManager.open("870729924pic4_2.png");
+//				InputStream is4 = assetManager.open("870729924pic4_3.png");
 //				Image img1 = new Image(BitmapFactory.decodeStream(is1), false);
-				Image img2 = new Image(BitmapFactory.decodeStream(is2), false);
-				Image img3 = new Image(BitmapFactory.decodeStream(is3), false);
-				Image img4 = new Image(BitmapFactory.decodeStream(is4), false);
+//				Image img2 = new Image(BitmapFactory.decodeStream(is2), false);
+//				Image img3 = new Image(BitmapFactory.decodeStream(is3), false);
+//				Image img4 = new Image(BitmapFactory.decodeStream(is4), false);
 //				pictureList.add(img1);
-				pictureList.add(img2);
-				pictureList.add(img3);
-				pictureList.add(img4);
-			} catch (IOException e) {
-				Log.e(TAG, e.getLocalizedMessage());
-			}
+//				pictureList.add(img2);
+//				pictureList.add(img3);
+//				pictureList.add(img4);
+//			} catch (IOException e) {
+//				Log.e(TAG, e.getLocalizedMessage());
+//			}
 			////////
 			
 			int imageWidth = pictureList.get(0).getWidth();

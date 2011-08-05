@@ -55,29 +55,29 @@ public class CameraLighting extends GLSurfaceView {
 		double[][] lightMatrix = new double[numberOfPictures][3];
 		// TODO: Debugging für Bunnys im Assetfolder. Wieder rausnehmen
 		if (numberOfPictures == 3) {
-			lightMatrix[0][0] = -0.2;
-			lightMatrix[0][1] = 0;
-			lightMatrix[0][2] = 1;
-			lightMatrix[1][0] = 0.2;
-			lightMatrix[1][1] = 0.2;
-			lightMatrix[1][2] = 1;
-			lightMatrix[2][0] = 0.2;
-			lightMatrix[2][1] = -0.2;
-			lightMatrix[2][2] = 1;
+			lightMatrix[0][0] = 0.0227;
+			lightMatrix[0][1] = 0.1045;
+			lightMatrix[0][2] = 1.0052;
+			lightMatrix[1][0] = 0.0364;
+			lightMatrix[1][1] = 0.1364;
+			lightMatrix[1][2] = 1.0086;
+			lightMatrix[2][0] = 0.0409;
+			lightMatrix[2][1] = 0.2682;
+			lightMatrix[2][2] = 1.0345;
 			////
 		} else if (numberOfPictures == 4) {
-			lightMatrix[0][0] = 0.0364;
-			lightMatrix[0][1] = 0.1318;
-			lightMatrix[0][2] = 1.0079;
-			lightMatrix[1][0] = 0.0227;
-			lightMatrix[1][1] = 0.1045;
-			lightMatrix[1][2] = 1.0052;
-			lightMatrix[2][0] = 0.0364;
-			lightMatrix[2][1] = 0.1364;
-			lightMatrix[2][2] = 1.0086;
-			lightMatrix[3][0] = 0.0409;
-			lightMatrix[3][1] = 0.2682;
-			lightMatrix[3][2] = 1.0345;
+			lightMatrix[0][0] = 0.0169;
+			lightMatrix[0][1] = 0.1667;
+			lightMatrix[0][2] = 1.0141;
+			lightMatrix[1][0] = 0.0104;
+			lightMatrix[1][1] = 0.0638;
+			lightMatrix[1][2] = 1.0022;
+			lightMatrix[2][0] = 0.0794;
+			lightMatrix[2][1] = 0.1719;
+			lightMatrix[2][2] = 1.0119;
+			lightMatrix[3][0] = 0.0416;
+			lightMatrix[3][1] = 0.2331;
+			lightMatrix[3][2] = 1.0264;
 			
 		} else {
 			// TODO: obsolet, für alle Fotos Matrizen mit Styropor errechnen
