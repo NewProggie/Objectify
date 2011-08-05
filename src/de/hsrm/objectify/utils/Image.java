@@ -127,8 +127,8 @@ public class Image {
 		int red = (pixelColor >> 16) & 0xFF;
 		int green = (pixelColor >> 8) & 0xFF;
 		int blue = (pixelColor >> 0) & 0xFF;
-		if (red==0 || green==0 || blue==0) {
-			return 0;
+		if (red==0 & green==0 & blue==0) {
+			return 1;
 		} else {
 			return (short) ((red + green + blue) / 3.0f);
 		}

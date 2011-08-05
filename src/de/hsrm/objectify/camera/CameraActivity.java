@@ -231,21 +231,21 @@ public class CameraActivity extends BaseActivity {
 			Matrix sInverse = sMatrix.pseudoInverse();
 			
 			// TODO: Debugging wieder rausnehmen
-//			pictureList = new ArrayList<Image>();
-//			AssetManager assetManager = getAssets();
-//			try {
-//				InputStream is1 = assetManager.open("bunny_1.png");
-//				InputStream is2 = assetManager.open("bunny_2.png");
-//				InputStream is3 = assetManager.open("bunny_3.png");
-//				Image img1 = new Image(BitmapFactory.decodeStream(is1), true);
-//				Image img2 = new Image(BitmapFactory.decodeStream(is2), true);
-//				Image img3 = new Image(BitmapFactory.decodeStream(is3), true);
-//				pictureList.add(img1);
-//				pictureList.add(img2);
-//				pictureList.add(img3);
-//			} catch (IOException e) {
-//				Log.e(TAG, e.getLocalizedMessage());
-//			}
+			pictureList = new ArrayList<Image>();
+			AssetManager assetManager = getAssets();
+			try {
+				InputStream is1 = assetManager.open("bunny_1.png");
+				InputStream is2 = assetManager.open("bunny_2.png");
+				InputStream is3 = assetManager.open("bunny_3.png");
+				Image img1 = new Image(BitmapFactory.decodeStream(is1), true);
+				Image img2 = new Image(BitmapFactory.decodeStream(is2), true);
+				Image img3 = new Image(BitmapFactory.decodeStream(is3), true);
+				pictureList.add(img1);
+				pictureList.add(img2);
+				pictureList.add(img3);
+			} catch (IOException e) {
+				Log.e(TAG, e.getLocalizedMessage());
+			}
 			////////
 			
 			int imageWidth = pictureList.get(0).getWidth();
