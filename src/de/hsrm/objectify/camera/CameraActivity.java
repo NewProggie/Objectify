@@ -16,8 +16,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Bitmap.CompressFormat;
+import android.graphics.BitmapFactory;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.os.AsyncTask;
@@ -60,7 +60,6 @@ public class CameraActivity extends BaseActivity {
 	private LinearLayout progress;
 	private CameraLighting cameraLighting;
 	private ArrayList<Image> pictureList;
-	private Image texture;
 	private int numberOfPictures;
 	private int counter = 0;
 	private Context context;
@@ -161,38 +160,33 @@ public class CameraActivity extends BaseActivity {
 		cameraLighting.setZOrderOnTop(true);
 		cameraLighting.putLightSource(numberOfPictures, counter);
 	}
+	
+	/**
+	 * This function is just for debugging and should be deleted before publishing
+	 * @param data byte data from camera callback
+	 * @param suffix suffix which will be appended to the file name for better distinguish
+	 */
+	private void storeOnSD(byte[] data, int suffix) {
+		Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
+		try {
+			FileOutputStream out = new FileOutputStream(ExternalDirectory.getExternalImageDirectory()+"/picture"+suffix+".png");
+			BufferedOutputStream bos = new BufferedOutputStream(out);
+			bmp.compress(CompressFormat.PNG, 100, out);
+			bos.flush();
+			bos.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
 	private PictureCallback jpegCallback() {
 		PictureCallback callback = new PictureCallback() {
 			@Override
 			public void onPictureTaken(byte[] data, Camera camera) {
-				Bitmap original = BitmapUtils.createScaledBitmap(data, CameraFinder.pictureSize, CameraFinder.imageFormat, 8.0f);
-				
-				android.graphics.Matrix rotMatrix = new android.graphics.Matrix();
-				rotMatrix.postRotate(-90);
-				Bitmap rotatedBitmap = Bitmap.createBitmap(original, 0, 0, original.getWidth(), original.getHeight(), rotMatrix, true);
-				
-				// WTF
-				android.graphics.Matrix rotMatrix2 = new android.graphics.Matrix();
-				rotMatrix2.postRotate(90);
-				Bitmap rotatedBitmap2 = Bitmap.createBitmap(rotatedBitmap, 0, 0, rotatedBitmap.getWidth(), rotatedBitmap.getHeight(), rotMatrix, true);
-				android.graphics.Matrix flipMatrix = new android.graphics.Matrix();
-				flipMatrix.preScale(1.0f, -1.0f);
-				Bitmap last = Bitmap.createBitmap(rotatedBitmap2, 0, 0, rotatedBitmap2.getWidth(), rotatedBitmap2.getHeight(), flipMatrix, true);
-				//
-				
-				Image image = new Image(last, true);
-				/////// TODO: Debugging wieder rausnehmen
-//				Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
-				try {
-					FileOutputStream out = new FileOutputStream(ExternalDirectory.getExternalImageDirectory()+"/rotatedBitmap_"+counter+".png");
-					BufferedOutputStream bos = new BufferedOutputStream(out);
-					rotatedBitmap.compress(CompressFormat.PNG, 100, bos);
-					bos.flush();
-					bos.close();
-				} catch (FileNotFoundException e) {} 
-				catch (IOException e) {}
-				/////// End Debugging
+				Image image = new Image(BitmapUtils.createScaledBitmap(data, CameraFinder.pictureSize, CameraFinder.imageFormat, 8.0f), true);
+//				storeOnSD(data, counter);
 				pictureList.add(image);
 				counter += 1;
 				if (counter == numberOfPictures) {
@@ -237,31 +231,25 @@ public class CameraActivity extends BaseActivity {
 			Matrix sInverse = sMatrix.pseudoInverse();
 			
 			// TODO: Debugging wieder rausnehmen
-			// TODO: Bunnys aus dem Assetsordner
 //			pictureList = new ArrayList<Image>();
 //			AssetManager assetManager = getAssets();
 //			try {
 //				InputStream is1 = assetManager.open("bunny_1.png");
 //				InputStream is2 = assetManager.open("bunny_2.png");
 //				InputStream is3 = assetManager.open("bunny_3.png");
-//				InputStream tex = assetManager.open("bunny_texture.png");
-//				Image img1 = new Image(BitmapFactory.decodeStream(is1));
-//				Image img2 = new Image(BitmapFactory.decodeStream(is2));
-//				Image img3 = new Image(BitmapFactory.decodeStream(is3));
-//				texture = new Image(BitmapFactory.decodeStream(tex));
+//				Image img1 = new Image(BitmapFactory.decodeStream(is1), true);
+//				Image img2 = new Image(BitmapFactory.decodeStream(is2), true);
+//				Image img3 = new Image(BitmapFactory.decodeStream(is3), true);
 //				pictureList.add(img1);
 //				pictureList.add(img2);
 //				pictureList.add(img3);
-//			} catch (IOException e) {}
+//			} catch (IOException e) {
+//				Log.e(TAG, e.getLocalizedMessage());
+//			}
 			////////
 			
 			int imageWidth = pictureList.get(0).getWidth();
 			int imageHeight = pictureList.get(0).getHeight();
-			texture = pictureList.get(1).copy();
-//			texture.toGrayscale();
-//			for(int i=0; i<pictureList.size(); i++) {
-//				pictureList.get(i).toGrayscale();
-//			}
 
 			ArrayList<Vector3f> normalField = new ArrayList<Vector3f>();
 			Matrix pGradients = new Matrix(imageHeight, imageWidth);
@@ -272,7 +260,6 @@ public class CameraActivity extends BaseActivity {
 					Vector3f normal = new Vector3f();
 					VectorNf intensity = new VectorNf(numberOfPictures);
 					for (int i=0; i<numberOfPictures; i++) {
-						// TODO: Den Code hier fixen und effizienter implementieren
 						intensity.set(i, pictureList.get(i).getIntensity(w, h));
 					}
 					Vector3f albedo = sInverse.multiply(intensity);
@@ -332,73 +319,7 @@ public class CameraActivity extends BaseActivity {
 			normals = normBuffer.array();
 			faces = indexBuffer.array();
 
-			/////// TODO: Debugging wieder rausnehmen
-//			Image img = pictureList.get(0);
-//			try {
-//				FileOutputStream out = new FileOutputStream(ExternalDirectory.getExternalImageDirectory()+"/originalPic.png");
-//				BufferedOutputStream bos = new BufferedOutputStream(out);
-//				img.compress(CompressFormat.PNG, 100, bos);
-//				bos.flush();
-//				bos.close();
-//				img.toGrayscale();
-//				FileOutputStream out2 = new FileOutputStream(ExternalDirectory.getExternalImageDirectory()+"/grayscalePic.png");
-//				BufferedOutputStream bos2 = new BufferedOutputStream(out2);
-//				img.compress(CompressFormat.PNG, 100, bos2);
-//				bos2.flush();
-//				bos2.close();
-//			} catch (FileNotFoundException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//			for (int id=0; id<pictureList.size(); id++) {
-//				try {
-//					Image img = pictureList.get(id);
-//					FileOutputStream out = new FileOutputStream(ExternalDirectory.getExternalImageDirectory()+"/picture("+numberOfPictures+")_"+id+".png");
-//					BufferedOutputStream bos = new BufferedOutputStream(out);
-//					img.compress(CompressFormat.PNG, 100, bos);
-//					bos.flush();
-//					bos.close();
-//				} catch (FileNotFoundException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				} catch (IOException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//				
-//			}
-			///////
-			// TODO: Debugging wieder rausnehmen. In Datei schreiben
-//			String filePath2 = ExternalDirectory.getExternalRootDirectory()
-//					+ "/object.obj";
-//			try {
-//				FileWriter fstream = new FileWriter(filePath2);
-//				BufferedWriter out = new BufferedWriter(fstream);
-//				for (int i = 0; i < vertices.length; i += 3) {
-//					String verts = "v " + vertices[i] + " " + vertices[i + 1]
-//							+ " " + vertices[i + 2] + "\n";
-//					out.write(verts);
-//				}
-//				for (int i = 0; i < normals.length; i += 3) {
-//					String norm = "vn " + normals[i] + " " + normals[i + 1]
-//							+ " " + normals[i + 2] + "\n";
-//					out.write(norm);
-//				}
-//				 for (int i=0; i<faces.length; i+=6) {
-//				 String surface = "f " + faces[i] + " " + faces[i+1] + " " +
-//				 faces[i+2] + "\nf " + faces[i+3] + " " + faces[i+4] + " " +
-//				 faces[i+5] + "\n";
-//				 out.write(surface);
-//				 }
-//				out.close();
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//	                        }
-			objectModel = new ObjectModel(vertices, normals, faces, texture);
+			objectModel = new ObjectModel(vertices, normals, faces, pictureList.get(0));
 			return true;
 		}
 		
