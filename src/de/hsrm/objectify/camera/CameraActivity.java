@@ -169,7 +169,8 @@ public class CameraActivity extends BaseActivity {
 	private void storeOnSD(byte[] data, int suffix) {
 		Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
 		try {
-			FileOutputStream out = new FileOutputStream(ExternalDirectory.getExternalImageDirectory()+"/picture"+suffix+".png");
+			String id = String.valueOf(SystemClock.elapsedRealtime());
+			FileOutputStream out = new FileOutputStream(ExternalDirectory.getExternalImageDirectory()+"/"+id+"pic"+numberOfPictures+"_"+suffix+".png");
 			BufferedOutputStream bos = new BufferedOutputStream(out);
 			bmp.compress(CompressFormat.PNG, 100, out);
 			bos.flush();
@@ -185,8 +186,8 @@ public class CameraActivity extends BaseActivity {
 		PictureCallback callback = new PictureCallback() {
 			@Override
 			public void onPictureTaken(byte[] data, Camera camera) {
-				Image image = new Image(BitmapUtils.createScaledBitmap(data, CameraFinder.pictureSize, CameraFinder.imageFormat, 8.0f), true);
 //				storeOnSD(data, counter);
+				Image image = new Image(BitmapUtils.createScaledBitmap(data, CameraFinder.pictureSize, CameraFinder.imageFormat, 8.0f), true);
 				pictureList.add(image);
 				counter += 1;
 				if (counter == numberOfPictures) {
@@ -234,15 +235,18 @@ public class CameraActivity extends BaseActivity {
 			pictureList = new ArrayList<Image>();
 			AssetManager assetManager = getAssets();
 			try {
-				InputStream is1 = assetManager.open("bunny_1.png");
-				InputStream is2 = assetManager.open("bunny_2.png");
-				InputStream is3 = assetManager.open("bunny_3.png");
-				Image img1 = new Image(BitmapFactory.decodeStream(is1), true);
-				Image img2 = new Image(BitmapFactory.decodeStream(is2), true);
-				Image img3 = new Image(BitmapFactory.decodeStream(is3), true);
-				pictureList.add(img1);
+//				InputStream is1 = assetManager.open("86629pic4_0.png");
+				InputStream is2 = assetManager.open("bunny_1.png");
+				InputStream is3 = assetManager.open("bunny_2.png");
+				InputStream is4 = assetManager.open("bunny_3.png");
+//				Image img1 = new Image(BitmapFactory.decodeStream(is1), false);
+				Image img2 = new Image(BitmapFactory.decodeStream(is2), false);
+				Image img3 = new Image(BitmapFactory.decodeStream(is3), false);
+				Image img4 = new Image(BitmapFactory.decodeStream(is4), false);
+//				pictureList.add(img1);
 				pictureList.add(img2);
 				pictureList.add(img3);
+				pictureList.add(img4);
 			} catch (IOException e) {
 				Log.e(TAG, e.getLocalizedMessage());
 			}

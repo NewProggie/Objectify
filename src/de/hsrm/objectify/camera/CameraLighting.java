@@ -66,18 +66,18 @@ public class CameraLighting extends GLSurfaceView {
 			lightMatrix[2][2] = 1;
 			////
 		} else if (numberOfPictures == 4) {
-			lightMatrix[0][0] = -0.176;
-			lightMatrix[0][1] = -0.052;
-			lightMatrix[0][2] = 1.0167;
-			lightMatrix[1][0] = -0.071;
-			lightMatrix[1][1] = -0.024;
-			lightMatrix[1][2] = 1.0028;
-			lightMatrix[2][0] = -0.157;
-			lightMatrix[2][1] = -0.090;
-			lightMatrix[2][2] = 1.0162;
-			lightMatrix[3][0] = -0.233;
-			lightMatrix[3][1] = -0.076;
-			lightMatrix[3][2] = 1.0296;
+			lightMatrix[0][0] = 0.0364;
+			lightMatrix[0][1] = 0.1318;
+			lightMatrix[0][2] = 1.0079;
+			lightMatrix[1][0] = 0.0227;
+			lightMatrix[1][1] = 0.1045;
+			lightMatrix[1][2] = 1.0052;
+			lightMatrix[2][0] = 0.0364;
+			lightMatrix[2][1] = 0.1364;
+			lightMatrix[2][2] = 1.0086;
+			lightMatrix[3][0] = 0.0409;
+			lightMatrix[3][1] = 0.2682;
+			lightMatrix[3][2] = 1.0345;
 			
 		} else {
 			// TODO: obsolet, für alle Fotos Matrizen mit Styropor errechnen

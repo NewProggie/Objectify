@@ -24,18 +24,27 @@ public class Image {
 		bitmap = Bitmap.createBitmap(width, height, config);
 	}
 	
-	public Image(Bitmap bitmap, boolean shouldRotateAndFlip) {
-		if (shouldRotateAndFlip) {
-			// TODO: Wieder rausnehmen, sobald der Fehler bei der 3D-Rekonstruktion gefixt ist.
-			////// Dreht das Bild um 90° nach rechts und spiegelt es vertikal
+	public Image(Bitmap bitmap) {
+		this.bitmap = Bitmap.createBitmap(bitmap);
+	}
+	
+	/**
+	 * Constructor for Image. 
+	 * @param bitmap
+	 * @param fromCamera
+	 */
+	public Image(Bitmap bitmap, boolean fromCamera) {
+		if (fromCamera) {
+			Matrix flipMatrix = new Matrix();
+			flipMatrix.preScale(1.0f, -1.0f);
+			this.bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), flipMatrix, true);
+		} else {
 			Matrix rotMatrix = new Matrix();
 			rotMatrix.postRotate(90);
 			Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), rotMatrix, true);
 			Matrix flipMatrix = new Matrix();
 			flipMatrix.preScale(1.0f, -1.0f);
 			this.bitmap = Bitmap.createBitmap(rotatedBitmap, 0, 0, rotatedBitmap.getWidth(), rotatedBitmap.getHeight(), flipMatrix, true);
-		} else {
-			this.bitmap = Bitmap.createBitmap(bitmap);
 		}
 	}
 	
@@ -79,7 +88,7 @@ public class Image {
 	}
 	
 	public Image copy() {
-		Image img = new Image(bitmap, false);
+		Image img = new Image(bitmap);
 		return img;
 	}
 
