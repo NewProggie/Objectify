@@ -54,39 +54,129 @@ public class CameraLighting extends GLSurfaceView {
 	public Matrix getLightMatrixS(int numberOfPictures) {
 		double[][] lightMatrix = new double[numberOfPictures][3];
 		// TODO: Debugging für Bunnys im Assetfolder. Wieder rausnehmen
-		if (numberOfPictures == 3) {
-			lightMatrix[0][0] = 0.0227;
-			lightMatrix[0][1] = 0.1045;
-			lightMatrix[0][2] = 1.0052;
-			lightMatrix[1][0] = 0.0364;
-			lightMatrix[1][1] = 0.1364;
-			lightMatrix[1][2] = 1.0086;
-			lightMatrix[2][0] = 0.0409;
-			lightMatrix[2][1] = 0.2682;
-			lightMatrix[2][2] = 1.0345;
-			////
-		} else if (numberOfPictures == 4) {
-			lightMatrix[0][0] = 0.0169;
-			lightMatrix[0][1] = 0.1667;
-			lightMatrix[0][2] = 1.0141;
-			lightMatrix[1][0] = 0.0104;
-			lightMatrix[1][1] = 0.0638;
-			lightMatrix[1][2] = 1.0022;
-			lightMatrix[2][0] = 0.0794;
-			lightMatrix[2][1] = 0.1719;
-			lightMatrix[2][2] = 1.0119;
-			lightMatrix[3][0] = 0.0416;
-			lightMatrix[3][1] = 0.2331;
-			lightMatrix[3][2] = 1.0264;
-			
-		} else {
-			// TODO: obsolet, für alle Fotos Matrizen mit Styropor errechnen
-			float angleUnit = 360.0f/numberOfPictures;
-			for (int i=0; i<numberOfPictures; i++) {
-				lightMatrix[i][0] = Math.cos( ((angleUnit*(i+1))*Math.PI)/180 );
-				lightMatrix[i][1] = Math.sin( ((angleUnit*(i+1))*Math.PI)/180 );
-				lightMatrix[i][2] = 1.0;
-			}
+		if (numberOfPictures == 4) {
+			lightMatrix[0][0] = 0.01693;
+			lightMatrix[0][1] = 0.16890;
+			lightMatrix[0][2] = 1.01483;
+			lightMatrix[1][0] = 0.01042;
+			lightMatrix[1][1] = 0.06380;
+			lightMatrix[1][2] = 1.00230;
+			lightMatrix[2][0] = 0.07943;
+			lightMatrix[2][1] = 0.17188;
+			lightMatrix[2][2] = 1.01186;
+			lightMatrix[3][0] = 0.04167;
+			lightMatrix[3][1] = 0.23307;
+			lightMatrix[3][2] = 1.02640;
+		} else if (numberOfPictures == 5) {
+			lightMatrix[0][0] = 0.03966;
+			lightMatrix[0][1] = 0.16890;
+			lightMatrix[0][2] = 1.01483;
+			lightMatrix[1][0] = 0.02270;
+			lightMatrix[1][1] = 0.10867;
+			lightMatrix[1][2] = 1.00593;
+			lightMatrix[2][0] = 0.06534;
+			lightMatrix[2][1] = 0.10649;
+			lightMatrix[2][2] = 1.00352;
+			lightMatrix[3][0] = 0.07614;
+			lightMatrix[3][1] = 0.23343;
+			lightMatrix[3][2] = 1.02421;
+			lightMatrix[4][0] = 0.03922;
+			lightMatrix[4][1] = 0.24588;
+			lightMatrix[4][2] = 1.02916;
+		} else if (numberOfPictures == 6) {
+			lightMatrix[0][0] = 0.01061;
+			lightMatrix[0][1] = 0.20498;
+			lightMatrix[0][2] = 1.02107;
+			lightMatrix[1][0] = -0.00643;
+			lightMatrix[1][1] = 0.10405;
+			lightMatrix[1][2] = 1.00542;
+			lightMatrix[2][0] = 0.03613;
+			lightMatrix[2][1] = 0.10528;
+			lightMatrix[2][2] = 1.00483;
+			lightMatrix[3][0] = 0.06335;
+			lightMatrix[3][1] = 0.16418;
+			lightMatrix[3][2] = 1.01173;
+			lightMatrix[4][0] = 0.03651;
+			lightMatrix[4][1] = 0.21506;
+			lightMatrix[4][2] = 1.02229;
+			lightMatrix[5][0] = 0.00412;
+			lightMatrix[5][1] = 0.21742;
+			lightMatrix[5][2] = 1.02350;
+		} else if (numberOfPictures == 7) {
+			lightMatrix[0][0] = 0.03921;
+			lightMatrix[0][1] = 0.17911;
+			lightMatrix[0][2] = 1.01557;
+			lightMatrix[1][0] = 0.00862;
+			lightMatrix[1][1] = 0.12259;
+			lightMatrix[1][2] = 1.00810;
+			lightMatrix[2][0] = 0.04275;
+			lightMatrix[2][1] = 0.10241;
+			lightMatrix[2][2] = 1.00469;
+			lightMatrix[3][0] = 0.08475;
+			lightMatrix[3][1] = 0.13522;
+			lightMatrix[3][2] = 1.00592;
+			lightMatrix[4][0] = 0.08690;
+			lightMatrix[4][1] = 0.18026;
+			lightMatrix[4][2] = 1.01263;
+			lightMatrix[5][0] = 0.06341;
+			lightMatrix[5][1] = 0.21369;
+			lightMatrix[5][2] = 1.02053;
+			lightMatrix[6][0] = 0.02536;
+			lightMatrix[6][1] = 0.19528;
+			lightMatrix[6][2] = 1.01861;
+		} else if (numberOfPictures == 8) {
+			lightMatrix[0][0] = -0.03815;
+			lightMatrix[0][1] = 0.14344;
+			lightMatrix[0][2] = 1.00704;
+			lightMatrix[1][0] = -0.03014;
+			lightMatrix[1][1] = 0.11026;
+			lightMatrix[1][2] = 1.00484;
+			lightMatrix[2][0] = -0.01174;
+			lightMatrix[2][1] = 0.09901;
+			lightMatrix[2][2] = 1.00249;
+			lightMatrix[3][0] = 0.00917;
+			lightMatrix[3][1] = 0.11213;
+			lightMatrix[3][2] = 1.00084;
+			lightMatrix[4][0] = 0.00089;
+			lightMatrix[4][1] = 0.13788;
+			lightMatrix[4][2] = 1.00413;
+			lightMatrix[5][0] = -0.02036;
+			lightMatrix[5][1] = 0.16001;
+			lightMatrix[5][2] = 1.00670;
+			lightMatrix[6][0] = -0.03744;
+			lightMatrix[6][1] = 0.17476;
+			lightMatrix[6][2] = 1.00917;
+			lightMatrix[7][0] = -0.05669;
+			lightMatrix[7][1] = 0.14003;
+			lightMatrix[7][2] = 1.00493;
+		} else if (numberOfPictures == 9) {
+			lightMatrix[0][0] = 0.03738;
+			lightMatrix[0][1] = 0.19945;
+			lightMatrix[0][2] = 1.01924;
+			lightMatrix[1][0] = -0.00034;
+			lightMatrix[1][1] = 0.13173;
+			lightMatrix[1][2] = 1.00878;
+			lightMatrix[2][0] = 0.03120;
+			lightMatrix[2][1] = 0.11857;
+			lightMatrix[2][2] = 1.00661;
+			lightMatrix[3][0] = 0.04811;
+			lightMatrix[3][1] = 0.11034;
+			lightMatrix[3][2] = 1.00489;
+			lightMatrix[4][0] = 0.06716;
+			lightMatrix[4][1] = 0.13489;
+			lightMatrix[4][2] = 1.00692;
+			lightMatrix[5][0] = 0.05521;
+			lightMatrix[5][1] = 0.17919;
+			lightMatrix[5][2] = 1.001427;
+			lightMatrix[6][0] = 0.04823;
+			lightMatrix[6][1] = 0.19635;
+			lightMatrix[6][2] = 1.01777;
+			lightMatrix[7][0] = 0.03646;
+			lightMatrix[7][1] = 0.20155;
+			lightMatrix[7][2] = 1.01930;
+			lightMatrix[8][0] = 0.01472;
+			lightMatrix[8][1] = 0.20436;
+			lightMatrix[8][2] = 1.02055;
 		}
 		return new Matrix(lightMatrix);
 	}
