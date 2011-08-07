@@ -65,6 +65,7 @@ public class CameraActivity extends BaseActivity {
 	private Context context;
 	private Camera camera;
 	// TODO: Wieder entfernen. Wird zur Kalibrierung benutzt.
+	private Image texture;
 	private String id = "";
 	
 	@Override
@@ -239,12 +240,12 @@ public class CameraActivity extends BaseActivity {
 //			pictureList = new ArrayList<Image>();
 //			AssetManager assetManager = getAssets();
 //			try {
-//				InputStream is1 = assetManager.open("962080818pic9_0.png");
-//				InputStream is2 = assetManager.open("962080818pic9_1.png");
-//				InputStream is3 = assetManager.open("962080818pic9_2.png");
-//				InputStream is4 = assetManager.open("962080818pic9_3.png");
-//				InputStream is5 = assetManager.open("962080818pic9_4.png");
-//				InputStream is6 = assetManager.open("962080818pic9_5.png");
+//				InputStream is1 = assetManager.open("870837537pic4_0.png");
+//				InputStream is2 = assetManager.open("870837537pic4_1.png");
+//				InputStream is3 = assetManager.open("870837537pic4_2.png");
+//				InputStream is4 = assetManager.open("870837537pic4_3.png");
+//				InputStream is5 = assetManager.open("texture.png");
+//				InputStream is6 = assetManager.open("texture.png");
 //				InputStream is7 = assetManager.open("962080818pic9_6.png");
 //				InputStream is8 = assetManager.open("962080818pic9_7.png");
 //				InputStream is9 = assetManager.open("962080818pic9_8.png");
@@ -252,7 +253,7 @@ public class CameraActivity extends BaseActivity {
 //				Image img2 = new Image(BitmapFactory.decodeStream(is2), false);
 //				Image img3 = new Image(BitmapFactory.decodeStream(is3), false);
 //				Image img4 = new Image(BitmapFactory.decodeStream(is4), false);
-//				Image img5 = new Image(BitmapFactory.decodeStream(is5), false);
+//				texture = new Image(BitmapFactory.decodeStream(is5), false);
 //				Image img6 = new Image(BitmapFactory.decodeStream(is6), false);
 //				Image img7 = new Image(BitmapFactory.decodeStream(is7), false);
 //				Image img8 = new Image(BitmapFactory.decodeStream(is8), false);
@@ -342,7 +343,7 @@ public class CameraActivity extends BaseActivity {
 			normals = normBuffer.array();
 			faces = indexBuffer.array();
 
-			objectModel = new ObjectModel(vertices, normals, faces, pictureList.get(0));
+			objectModel = new ObjectModel(vertices, normals, faces, texture);
 			return true;
 		}
 		
