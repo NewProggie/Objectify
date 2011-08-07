@@ -240,11 +240,11 @@ public class CameraActivity extends BaseActivity {
 //			pictureList = new ArrayList<Image>();
 //			AssetManager assetManager = getAssets();
 //			try {
-//				InputStream is1 = assetManager.open("870837537pic4_0.png");
-//				InputStream is2 = assetManager.open("870837537pic4_1.png");
-//				InputStream is3 = assetManager.open("870837537pic4_2.png");
-//				InputStream is4 = assetManager.open("870837537pic4_3.png");
-//				InputStream is5 = assetManager.open("texture.png");
+//				InputStream is1 = assetManager.open("1065607483pic5_0.png");
+//				InputStream is2 = assetManager.open("1065607483pic5_1.png");
+//				InputStream is3 = assetManager.open("1065607483pic5_2.png");
+//				InputStream is4 = assetManager.open("1065607483pic5_3.png");
+//				InputStream is5 = assetManager.open("1065607483pic5_4.png");
 //				InputStream is6 = assetManager.open("texture.png");
 //				InputStream is7 = assetManager.open("962080818pic9_6.png");
 //				InputStream is8 = assetManager.open("962080818pic9_7.png");
@@ -253,7 +253,8 @@ public class CameraActivity extends BaseActivity {
 //				Image img2 = new Image(BitmapFactory.decodeStream(is2), false);
 //				Image img3 = new Image(BitmapFactory.decodeStream(is3), false);
 //				Image img4 = new Image(BitmapFactory.decodeStream(is4), false);
-//				texture = new Image(BitmapFactory.decodeStream(is5), false);
+//				Image img5 = new Image(BitmapFactory.decodeStream(is5), false);
+//				texture = new Image(BitmapFactory.decodeStream(is6), false);
 //				Image img6 = new Image(BitmapFactory.decodeStream(is6), false);
 //				Image img7 = new Image(BitmapFactory.decodeStream(is7), false);
 //				Image img8 = new Image(BitmapFactory.decodeStream(is8), false);
@@ -272,6 +273,14 @@ public class CameraActivity extends BaseActivity {
 //			}
 			////////
 			
+			// save original for texture
+			texture = pictureList.get(0).copy();
+			// blur the input images
+			for(int i=0;i<pictureList.size(); i++) {
+				pictureList.set(i, BitmapUtils.blurBitmap(pictureList.get(i)));
+			}
+			
+		
 			int imageWidth = pictureList.get(0).getWidth();
 			int imageHeight = pictureList.get(0).getHeight();
 

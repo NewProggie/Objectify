@@ -1,6 +1,7 @@
 package de.hsrm.objectify.filter;
 
 import android.graphics.Bitmap;
+import de.hsrm.objectify.utils.Image;
 
 /**
  * This class apllies a gaussian blur to an image.
@@ -72,11 +73,11 @@ public class GaussianFilter {
 	}
 	
 	/**
-	 * Blurs the src Bitmap and returns a newly created blured bitmap.
-	 * @param src the source bitmap which should be blured.
-	 * @return a blured version of the source bitmap.
+	 * Blurs the src image and returns a newly created blured image.
+	 * @param src the source image which should be blured.
+	 * @return a blured version of the source image.
 	 */
-	public Bitmap filter(Bitmap src) {
+	public Image filter(Image src) {
 		int width = src.getWidth();
 		int height = src.getHeight();
 		
@@ -86,7 +87,7 @@ public class GaussianFilter {
 		
 		convolveAndTranspose(kernel, inPixels, outPixels, width, height);
 		convolveAndTranspose(kernel, outPixels, inPixels, height, width);
-		Bitmap dst = Bitmap.createBitmap(inPixels, width, height, src.getConfig());
+		Image dst = new Image(Bitmap.createBitmap(inPixels, width, height, src.getConfig()));
 		return dst;
 	}
 

@@ -70,6 +70,10 @@ public class Image {
 		bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, getWidth(), getHeight());
 		return pixels;
 	}
+	
+	public void getPixels(int[] pixels, int offset, int stride, int x, int y, int width, int height) {
+		bitmap.getPixels(pixels, offset, stride, x, y, width, height);
+	}
 
 	public int getWidth() {
 		return bitmap.getWidth();

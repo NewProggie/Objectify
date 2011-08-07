@@ -1,7 +1,6 @@
 package de.hsrm.objectify.utils;
 
 import java.io.ByteArrayOutputStream;
-import java.util.Arrays;
 
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
@@ -9,7 +8,10 @@ import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
+import android.os.SystemClock;
+import android.util.Log;
 import de.hsrm.objectify.camera.CameraFinder;
+import de.hsrm.objectify.filter.GaussianFilter;
 
 /**
  * Helper class for creating bitmaps, considering different picture sizes and
@@ -48,6 +50,17 @@ public class BitmapUtils {
 		default:
 			return null;
 		}
+	}
+	
+	/**
+	 * Creates a blured image based on the source image.
+	 * @param src source image.
+	 * @return a new blured image based on the source image.
+	 */
+	public static Image blurBitmap(Image src) {
+		GaussianFilter filter = new GaussianFilter(4);
+		Image dst = filter.filter(src);
+		return dst;
 	}
 	
 	/**
