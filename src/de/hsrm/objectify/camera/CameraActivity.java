@@ -274,7 +274,12 @@ public class CameraActivity extends BaseActivity {
 			////////
 			
 			// save original for texture
-			texture = pictureList.get(0).copy();
+			if (numberOfPictures > 6) {
+				texture = pictureList.get(2).copy();
+			} else {
+				texture = pictureList.get(1).copy();
+			}
+			
 			// blur the input images
 			for(int i=0;i<pictureList.size(); i++) {
 				pictureList.set(i, BitmapUtils.blurBitmap(pictureList.get(i)));
