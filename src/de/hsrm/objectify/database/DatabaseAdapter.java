@@ -22,8 +22,6 @@ public class DatabaseAdapter {
 	public static final int OBJECT_ID_COLUMN = 0;
 	public static final String OBJECT_FILE_PATH_KEY = "file_path";
 	public static final int OBJECT_FILE_PATH_COLUMN = 1;
-	public static final String OBJECT_TEXTURE_BITMAP_KEY = "texture_bitmap";
-	public static final int OBJECT_TEXTURE_BITMAP_COLUMN = 2;
 	
 	static final String DATABASE_TABLE_GALLERY = "gallery";
 	public static final String GALLERY_ID_KEY = "_id";
@@ -38,8 +36,7 @@ public class DatabaseAdapter {
 	public static final int GALLERY_OBJECT_ID_COLUMN = 4;
 
 	private static final String DATABASE_TABLE_OBJECT_CREATE = "CREATE TABLE " + DATABASE_TABLE_OBJECT + " (" +
-	OBJECT_ID_KEY + " INTEGER PRIMARY KEY AUTOINCREMENT" + ", " + OBJECT_FILE_PATH_KEY + " TEXT NOT NULL" + ", " +
-	OBJECT_TEXTURE_BITMAP_KEY + " BLOB" + ")";
+	OBJECT_ID_KEY + " INTEGER PRIMARY KEY AUTOINCREMENT" + ", " + OBJECT_FILE_PATH_KEY + " TEXT NOT NULL" + ")";
 	
 	private static final String DATABASE_TABLE_GALLERY_CREATE = "CREATE TABLE " + DATABASE_TABLE_GALLERY + " (" +
 		GALLERY_ID_KEY + " INTEGER PRIMARY KEY AUTOINCREMENT" + ", " + GALLERY_THUMBNAIL_PATH_KEY + " TEXT NOT NULL" + ", " +

@@ -336,9 +336,6 @@ public class CameraActivity extends BaseActivity {
 				obj_output.writeObject(objectModel);
 				obj_output.close();
 				values.put(DatabaseAdapter.OBJECT_FILE_PATH_KEY, path+filename);
-				ByteArrayOutputStream baos = new ByteArrayOutputStream();
-				texture.compress(CompressFormat.PNG, 100, baos);
-				values.put(DatabaseAdapter.OBJECT_TEXTURE_BITMAP_KEY, baos.toByteArray());
 				Uri objectResultUri = cr.insert(objectUri, values);	
 				String objectID = objectResultUri.getLastPathSegment();
 				values.clear();
