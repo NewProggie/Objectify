@@ -26,10 +26,9 @@ public class GalleryAdapter extends CursorAdapter {
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
 		ImageView image = (ImageView) view;
-		byte[] imageData = cursor.getBlob(DatabaseAdapter.GALLERY_IMAGE_COLUMN);
-		Bitmap bitmap = BitmapFactory.decodeByteArray(imageData, 0, imageData.length);
-		Log.d("bitmap.width", String.valueOf(bitmap.getWidth()));
-		Log.d("bitmap.height", String.valueOf(bitmap.getHeight()));
+		String pathName = cursor.getString(DatabaseAdapter.GALLERY_THUMBNAIL_PATH_COLUMN);
+		// TODO: Abfangen, falls bitmap null, weil z.B. SD nicht lesbar ist
+		Bitmap bitmap = BitmapFactory.decodeFile(pathName);
 		image.setImageBitmap(bitmap);
 	}
 	
@@ -37,7 +36,6 @@ public class GalleryAdapter extends CursorAdapter {
 	public View newView(Context context, Cursor cursor, ViewGroup parent) {		
 		ImageView imageView = new ImageView(context);
 		imageView.setLayoutParams(new GridView.LayoutParams(110,110));
-//		imageView.setScaleType(ImageView.ScaleType.CENTER);
 		imageView.setScaleType(ScaleType.FIT_XY);
 		imageView.setPadding(2, 2, 2, 0);
 		imageView.setBackgroundResource(R.drawable.polaroid_frame);

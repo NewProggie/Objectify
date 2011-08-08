@@ -147,5 +147,11 @@ public class Image {
 		}
 	}
 
+	public void rotate(int degrees) {
+		Matrix rotMatrix = new Matrix();
+		rotMatrix.postRotate(degrees);
+		this.bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), rotMatrix, true);
+	}
+
 
 }

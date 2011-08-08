@@ -1,6 +1,7 @@
 package de.hsrm.objectify.rendering;
 
 import java.io.ByteArrayOutputStream;
+import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -13,6 +14,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.graphics.Bitmap.CompressFormat;
 import android.opengl.GLUtils;
 import android.os.Bundle;
 import android.os.Parcel;
@@ -27,13 +29,14 @@ import de.hsrm.objectify.utils.Image;
  * @author kwolf001
  * 
  */
-public class ObjectModel implements Parcelable {
+public class ObjectModel implements Parcelable, Serializable {
 
+	private static final long serialVersionUID = 1L;
 	private static final String TAG = "ObjectModel";
-	private FloatBuffer vertexBuffer;
-	private FloatBuffer textureBuffer;
-	private FloatBuffer normalBuffer;
-	private ShortBuffer facesBuffer;
+	private transient FloatBuffer vertexBuffer;
+	private transient FloatBuffer textureBuffer;
+	private transient FloatBuffer normalBuffer;
+	private transient ShortBuffer facesBuffer;
 	
 	private int[] textures = new int[1];
 	
@@ -41,10 +44,9 @@ public class ObjectModel implements Parcelable {
 	private float vertices[];
 	private float normals[];
 	private short faces[];
-	private Image image;
+	private transient Image image;
 	private float[] boundingbox;
-	private float[] middlepoint;
-	private float length;
+	private byte[] bitmap_data;
 	
 	public ObjectModel(float[] vertices, float[] normals, short[] faces,
 			Image image) {
@@ -78,6 +80,12 @@ public class ObjectModel implements Parcelable {
 		textureBuffer.rewind();
 		
 		this.image = image.copy();
+		// copying bitmap data to byte array for serialization purposes
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		image.compress(CompressFormat.PNG, 100, bos);
+		byte[] bb = bos.toByteArray();
+		bitmap_data = new byte[bb.length];
+		System.arraycopy(bb, 0, bitmap_data, 0, bb.length);
 	}
 	
 	private ObjectModel(Parcel source) {
@@ -87,6 +95,8 @@ public class ObjectModel implements Parcelable {
 		setNormalVertices(b.getFloatArray("normals"));
 		setFaces(b.getShortArray("faces"));
 		byte[] bb = b.getByteArray("image");
+		bitmap_data = new byte[bb.length];
+		System.arraycopy(bb, 0, bitmap_data, 0, bb.length);
 		this.image = new Image(BitmapFactory.decodeByteArray(bb, 0, bb.length));
 		
 		ByteBuffer byteBuf = ByteBuffer.allocateDirect(vertices.length * 4);
@@ -137,6 +147,16 @@ public class ObjectModel implements Parcelable {
 		this.vertices = new float[verts.length];
 		System.arraycopy(verts, 0, this.vertices, 0, verts.length);
 		setVertexBuffer(this.vertices);
+	}
+	
+	/**
+	 * Needs to be called after object has been restored from hard disk.
+	 */
+	public void setup() {
+		setVertices(vertices);
+		setNormalVertices(normals);
+		setFaces(faces);
+		this.image = new Image(BitmapFactory.decodeByteArray(bitmap_data, 0, bitmap_data.length));
 	}
 	
 	public float[] getVertices() {
@@ -202,7 +222,7 @@ public class ObjectModel implements Parcelable {
 		facesBuffer.rewind();
 	}
 	
-	private static float max(float[] values, int offset) {
+	private float max(float[] values, int offset) {
 		float maximum = values[offset];
 		for (int i=offset; i<values.length; i+=3) {
 			if (values[i] > maximum) {
@@ -212,7 +232,7 @@ public class ObjectModel implements Parcelable {
 		return maximum;
 	}
 	
-	private static float max(float[] values) {
+	private float max(float[] values) {
 		float maximum = values[0];
 		for (int i=1; i<values.length; i+=3) {
 			if (values[i] > maximum) {
@@ -222,7 +242,7 @@ public class ObjectModel implements Parcelable {
 		return maximum;
 	}
 	
-	private static float min(float[] values, int offset) {
+	private float min(float[] values, int offset) {
 		float minimum = values[offset];
 		for (int i=offset; i<values.length; i+=3) {
 			if (values[i] < minimum) {
@@ -296,6 +316,8 @@ public class ObjectModel implements Parcelable {
 		gl.glNormalPointer(GL10.GL_FLOAT, 0, normalBuffer);
 		gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, textureBuffer);
 		
+		// TODO: Verschiedene Arten anzeigen, also Wireframe, Punktwolke etc.
+		//GL10.GL_LINES, GL10.GL_POINTS
 		gl.glDrawElements(GL10.GL_TRIANGLES, faces.length, GL10.GL_UNSIGNED_SHORT, facesBuffer);
 		
 		gl.glDisableClientState(GL10.GL_NORMAL_ARRAY);
@@ -313,7 +335,6 @@ public class ObjectModel implements Parcelable {
 		Bitmap texture = scaleTexture(image, 256);
 
 		gl.glGenTextures(1, textures, 0);
-		// TODO: Mach Licht zur Textur dassu
 		gl.glBindTexture(GL10.GL_TEXTURE_2D, textures[0]);
 
 		gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER,GL10.GL_NEAREST);

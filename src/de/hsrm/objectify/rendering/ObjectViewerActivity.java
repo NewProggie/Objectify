@@ -42,7 +42,7 @@ public class ObjectViewerActivity extends BaseActivity {
 			public void onClick(View v) {
 				Intent share = new Intent(Intent.ACTION_SEND);
 				share.setType("image/jpeg");
-				String path = ExternalDirectory.getExternalImageDirectory() + "/screenshot.png";
+				String path = ExternalDirectory.getExternalImageDirectory() + "/objectify_screenshot.png";
 				try {
 					FileOutputStream fos = new FileOutputStream(path);
 					BufferedOutputStream bos = new BufferedOutputStream(fos);
@@ -60,14 +60,15 @@ public class ObjectViewerActivity extends BaseActivity {
 				
 			}
 		});
-		addNewActionButton(R.drawable.ic_title_export, R.string.export, new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				
-			}
-		});
+		// TODO: KŸnftiges Feature: Export als obj
+//		addNewActionButton(R.drawable.ic_title_export, R.string.export, new OnClickListener() {
+//			
+//			@Override
+//			public void onClick(View v) {
+//				// TODO Auto-generated method stub
+//				
+//			}
+//		});
 		Display display = getWindowManager().getDefaultDisplay();
 		Bundle b = getIntent().getBundleExtra("bundle");
 		ObjectModel objectModel = b.getParcelable("objectModel");

@@ -1,35 +1,24 @@
 package de.hsrm.objectify.rendering;
 
-import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.Calendar;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Bitmap.CompressFormat;
 import android.graphics.Bitmap.Config;
 import android.graphics.Point;
-import android.net.Uri;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
-import android.os.AsyncTask;
 import android.os.SystemClock;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
-import de.hsrm.objectify.database.DatabaseAdapter;
-import de.hsrm.objectify.database.DatabaseProvider;
 import de.hsrm.objectify.math.Matrix4f;
 import de.hsrm.objectify.math.Quat4f;
-import de.hsrm.objectify.utils.ExternalDirectory;
-import de.hsrm.objectify.utils.OBJFormat;
 
 /**
  * Creates a touchable surface view to move, scale and spin a rendered object on
@@ -147,12 +136,7 @@ public class TouchSurfaceView extends GLSurfaceView {
 		private boolean shouldCopySurface = false;
 		private Bitmap surfaceBitmap;
 		public float angleX, angleY;
-		private float angle = 0.0f;
-		/**
-		 * used for indicating whether it's a newly created object and therefore
-		 * needs to be written to database.
-		 */
-		private boolean onFirstStart = true;
+
 		
 		public ObjectModelRenderer(Context context, ObjectModel objectModel) {
 			this.context = context;
@@ -210,48 +194,6 @@ public class TouchSurfaceView extends GLSurfaceView {
 
 			gl.glMatrixMode(GL10.GL_MODELVIEW);
 		}
-
-		/**
-		 * Writes the created object in an {@link AsyncTask} into the database.
-		 * Happens only once after the first frame was successfully drawn on the
-		 * display, so that we have a proper screenshot of the calculated
-		 * object.
-		 * 
-		 * @param gl
-		 *            the GL interface
-		 */
-		private void persist(GL10 gl) {
-			// need to copy pixels from gl, before writing into database inside an AsyncTask
-			IntBuffer intBuffer = IntBuffer.wrap(new int[displayWidth * displayHeight]);
-			intBuffer.position(0);
-			gl.glReadPixels(0, 0, displayWidth, displayHeight, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, intBuffer);
-			new AsyncTask<IntBuffer, Void, Void>() {
-
-				@Override
-				protected Void doInBackground(IntBuffer... params) {
-					IntBuffer intBuffer = params[0];
-					Uri uri = DatabaseProvider.CONTENT_URI.buildUpon().appendPath("gallery").build();
-					ContentResolver cr = context.getContentResolver();
-					ContentValues values = new ContentValues();
-					
-					Bitmap screenshot = Bitmap.createBitmap(intBuffer.array(), displayWidth, displayHeight, Config.ARGB_8888);
-					Bitmap smallScreenshot = Bitmap.createScaledBitmap(screenshot, ((int) displayWidth/8), ((int) displayHeight/8), true);
-					ByteArrayOutputStream baos = new ByteArrayOutputStream();
-					smallScreenshot.compress(CompressFormat.PNG, 100, baos);
-					values.put(DatabaseAdapter.GALLERY_IMAGE_KEY, baos.toByteArray());
-					values.put(DatabaseAdapter.GALLERY_SIZE_KEY, "0");
-					values.put(DatabaseAdapter.GALLERY_FACES_KEY, String.valueOf(objectModel.getFaces()).length());
-					values.put(DatabaseAdapter.GALLERY_VERTICES_KEY, String.valueOf(objectModel.getVertices()).length());
-					values.put(DatabaseAdapter.GALLERY_DIMENSIONS_KEY, String.valueOf(displayWidth)+"x"+String.valueOf(displayHeight));
-					values.put(DatabaseAdapter.GALLERY_DATE_KEY, String.valueOf(Calendar.getInstance().getTimeInMillis()));
-					cr.insert(uri, values);
-
-					return null;
-				}
-
-
-			}.execute(intBuffer);
-		}
 		
 		@Override
 		public void onDrawFrame(GL10 gl) {
@@ -260,8 +202,6 @@ public class TouchSurfaceView extends GLSurfaceView {
 			
 			gl.glMatrixMode(GL10.GL_MODELVIEW);
 			gl.glLoadIdentity();
-			// wichtig f�r die Arcball-Rotation
-			               // eye    |   center |   up  
 			GLU.gluLookAt(gl, 0, 0,-2,   0, 0, 0,   0, 1, 0);
 			thisRot.map(matrix);
 			gl.glMultMatrixf(matrix, 0);
@@ -272,15 +212,12 @@ public class TouchSurfaceView extends GLSurfaceView {
 			gl.glTranslatef(-objectModel.getMiddlePoint()[0], -objectModel.getMiddlePoint()[1], -objectModel.getMiddlePoint()[2]);
 			objectModel.draw(gl);
 			if (shouldCopySurface) {
+				// TODO: Screenshot ist gedreht und Farben falsch.
 				shouldCopySurface = false;
 				IntBuffer intBuffer = IntBuffer.wrap(new int[displayWidth * displayHeight]);
 				intBuffer.position(0);
 				gl.glReadPixels(0, 0, displayWidth, displayHeight, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, intBuffer);
 				surfaceBitmap = Bitmap.createBitmap(intBuffer.array(), displayWidth, displayHeight, Config.ARGB_8888);
-			}
-			if (onFirstStart) {
-				onFirstStart = false;
-				persist(gl);
 			}
 
 		}

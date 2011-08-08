@@ -1,23 +1,29 @@
 package de.hsrm.objectify.camera;
 
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import android.app.Activity;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
-import android.graphics.BitmapFactory;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -30,6 +36,8 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 import de.hsrm.objectify.R;
 import de.hsrm.objectify.SettingsActivity;
+import de.hsrm.objectify.database.DatabaseAdapter;
+import de.hsrm.objectify.database.DatabaseProvider;
 import de.hsrm.objectify.math.Matrix;
 import de.hsrm.objectify.math.Vector3f;
 import de.hsrm.objectify.math.VectorNf;
@@ -161,7 +169,7 @@ public class CameraActivity extends BaseActivity {
 	}
 	
 	/**
-	 * This function ist just for debugging and should be deleted before publishing
+	 * This function is just for debugging and should be deleted before publishing
 	 * @param image
 	 * @param filename
 	 */
@@ -238,7 +246,6 @@ public class CameraActivity extends BaseActivity {
 			for(int i=0;i<pictureList.size(); i++) {
 				pictureList.set(i, BitmapUtils.blurBitmap(pictureList.get(i)));
 			}
-			
 		
 			int imageWidth = pictureList.get(0).getWidth();
 			int imageHeight = pictureList.get(0).getHeight();
@@ -312,6 +319,74 @@ public class CameraActivity extends BaseActivity {
 			faces = indexBuffer.array();
 
 			objectModel = new ObjectModel(vertices, normals, faces, BitmapUtils.autoContrast(texture));
+		
+			// storing the newly created 3D object onto hard disk and create database entries
+			// TODO: Refactor me
+			Calendar cal = Calendar.getInstance();
+			String timestamp = String.valueOf(cal.getTimeInMillis());
+			String filename = timestamp+".kaw";
+			String path = ExternalDirectory.getExternalImageDirectory()+"/";
+			ContentValues values = new ContentValues();
+			ContentResolver cr = getContentResolver();
+			Uri objectUri = DatabaseProvider.CONTENT_URI.buildUpon().appendPath("object").build();
+			Uri galleryUri = DatabaseProvider.CONTENT_URI.buildUpon().appendPath("gallery").build();
+			try {
+				OutputStream out = new FileOutputStream(path+filename);
+				ObjectOutputStream obj_output = new ObjectOutputStream(out);
+				obj_output.writeObject(objectModel);
+				obj_output.close();
+				values.put(DatabaseAdapter.OBJECT_FILE_PATH_KEY, path+filename);
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				texture.compress(CompressFormat.PNG, 100, baos);
+				values.put(DatabaseAdapter.OBJECT_TEXTURE_BITMAP_KEY, baos.toByteArray());
+				Uri objectResultUri = cr.insert(objectUri, values);	
+				String objectID = objectResultUri.getLastPathSegment();
+				values.clear();
+				String thumbnail_path = ExternalDirectory.getExternalImageDirectory()+"/"+timestamp+".png";
+				FileOutputStream fos = new FileOutputStream(thumbnail_path);
+				BufferedOutputStream bos = new BufferedOutputStream(fos);
+				texture.rotate(-90);
+				texture.compress(CompressFormat.PNG, 100, bos);
+				bos.flush();
+				bos.close();
+				values.put(DatabaseAdapter.GALLERY_THUMBNAIL_PATH_KEY, thumbnail_path);
+				values.put(DatabaseAdapter.GALLERY_NUMBER_OF_PICTURES_KEY, String.valueOf(numberOfPictures));
+				values.put(DatabaseAdapter.GALLERY_DATE_KEY, timestamp);
+				values.put(DatabaseAdapter.GALLERY_OBJECT_ID_KEY, objectID);
+				Uri galleryResultUri = cr.insert(galleryUri, values);
+				Log.d("Debug:galleryResultUri", galleryResultUri.toString());
+			} catch (FileNotFoundException e) {
+				Log.e(TAG, e.getLocalizedMessage());
+				e.printStackTrace();
+			} catch (IOException e) {
+				Log.e(TAG, e.getLocalizedMessage());
+				e.printStackTrace();
+			}
+			
+			
+			// 1312836115524.kaw
+//			try {
+//				FileInputStream inputStream = new FileInputStream(ExternalDirectory.getExternalRootDirectory()+"/1312836115524.kaw");
+//				ObjectInputStream obj_input = new ObjectInputStream(inputStream);
+//				objectModel = (ObjectModel) obj_input.readObject();
+//				objectModel.setup();
+//			} catch (FileNotFoundException e) {
+//				Log.e(TAG, e.getLocalizedMessage());
+//				e.printStackTrace();
+//			} catch (StreamCorruptedException e) {
+//				Log.e(TAG, e.getLocalizedMessage());
+//				e.printStackTrace();
+//			} catch (IOException e) {
+//				Log.e(TAG, e.getLocalizedMessage());
+//				e.printStackTrace();
+//			} catch (ClassNotFoundException e) {
+//				Log.e(TAG, e.getLocalizedMessage());
+//				e.printStackTrace();
+//			}
+			
+
+			
+		
 			return true;
 		}
 		

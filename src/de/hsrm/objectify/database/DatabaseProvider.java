@@ -25,6 +25,7 @@ public class DatabaseProvider extends ContentProvider {
 	public static final Uri CONTENT_URI = Uri.parse(CONTENT_URI_STRING);
 	
 	private static final int GALLERY = 1;
+	private static final int OBJECT = 2;
 	
 	private static final UriMatcher uriMatcher;
 	
@@ -33,10 +34,13 @@ public class DatabaseProvider extends ContentProvider {
 	
 	private static final String VND_GALLERY_DIR = "vnd.android.cursor.dir/vnd.de.android.gallery";
 	private static final String VND_GALLERY_ITEM = "vnd.android.cursor.item/vnd.de.android.gallery";
+	private static final String VND_OBJECT_DIR = "vnd.android.cursor.dir/vnd.de.android.object";
+	private static final String VND_OBJECT_ITEM = "vnd.android.cursor.item/vnd.de.android.object";
 	
 	static {
 		uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 		uriMatcher.addURI(AUTHORITY, "gallery", GALLERY);
+		uriMatcher.addURI(AUTHORITY, "object", OBJECT);
 	}
 	
 	@Override
@@ -52,8 +56,10 @@ public class DatabaseProvider extends ContentProvider {
 		switch (uriMatcher.match(uri)) {
 		case GALLERY:
 			return VND_GALLERY_DIR;
+		case OBJECT:
+			return VND_OBJECT_DIR;
 		default:
-			throw new IllegalArgumentException("Unsuppoerted Uri: " + uri);
+			throw new IllegalArgumentException("Unsupported Uri: " + uri);
 		}
 	}
 	
@@ -65,7 +71,11 @@ public class DatabaseProvider extends ContentProvider {
 		switch (code) {
 		case GALLERY:
 			rowId = db.insert(DatabaseAdapter.DATABASE_TABLE_GALLERY, null, values);
-			erg = (rowId > 0) ? CONTENT_URI.buildUpon().appendPath("gallery").build() : null;
+			erg = (rowId > 0) ? CONTENT_URI.buildUpon().appendPath("gallery").appendPath("" + rowId).build() : null;
+			return erg;
+		case OBJECT:
+			rowId = db.insert(DatabaseAdapter.DATABASE_TABLE_OBJECT, null, values);
+			erg = (rowId > 0) ? CONTENT_URI.buildUpon().appendPath("object").appendPath("" + rowId).build() : null;
 			return erg;
 		}
 		return null;
@@ -77,6 +87,8 @@ public class DatabaseProvider extends ContentProvider {
 		switch (code) {
 		case GALLERY:
 			return db.query(DatabaseAdapter.DATABASE_TABLE_GALLERY, projection, selection, selectionArgs, null, null, null);
+		case OBJECT:
+			return db.query(DatabaseAdapter.DATABASE_TABLE_OBJECT, projection, selection, selectionArgs, null, null, null);
 		default:
 			Log.e(TAG, "uriMatcher.match(uri) error");
 			return null;
@@ -88,6 +100,8 @@ public class DatabaseProvider extends ContentProvider {
 		switch (uriMatcher.match(uri)) {
 		case GALLERY:
 			return db.update(DatabaseAdapter.DATABASE_TABLE_GALLERY, values, selection, selectionArgs);
+		case OBJECT:
+			return db.update(DatabaseAdapter.DATABASE_TABLE_OBJECT, values, selection, selectionArgs);
 		default:
 			Log.e(TAG, "uriMatcher.match(uri) error");
 			return 0;
@@ -96,9 +110,13 @@ public class DatabaseProvider extends ContentProvider {
 	
 	@Override
 	public int delete(Uri uri, String selection, String[] selectionArgs) {
+		int erg;
 		switch (uriMatcher.match(uri)) {
 		case GALLERY:
-			int erg = db.delete(DatabaseAdapter.DATABASE_TABLE_GALLERY, selection, selectionArgs);
+			erg = db.delete(DatabaseAdapter.DATABASE_TABLE_GALLERY, selection, selectionArgs);
+			return erg;
+		case OBJECT:
+			erg = db.delete(DatabaseAdapter.DATABASE_TABLE_OBJECT, selection, selectionArgs);
 			return erg;
 		}
 		return 0;
