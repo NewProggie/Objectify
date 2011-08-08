@@ -44,6 +44,8 @@
     <string name="vertices">Vertices:</string>
     <string name="dimension">Maße:</string>
     <string name="date">Datum:</string>
+    <string name="details">Details</string>
+    <string name="number_of_pictures">Anzahl verwendeter Bilder:</string>
     
     <!-- About -->
     <string name="developer_mail_address">kai.wolf@gmail.com</string>

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -11,6 +12,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Gallery;
 import android.widget.GridView;
@@ -49,18 +51,21 @@ public class GalleryActivity extends BaseActivity {
 		Cursor cursor = this.managedQuery(galleryUri, null, null, null, null);
 		adapter = new GalleryAdapter(this, cursor);
 		galleryGrid.setAdapter(adapter);
-		galleryGrid.setOnItemSelectedListener(galleryItemSelectedListener());
+		galleryGrid.setOnItemClickListener(galleryItemClickListener());
 		
 		if (adapter.getCount() == 0) {
 			showMessageAndExit(getString(R.string.gallery), getString(R.string.no_objects_saved));
 		}
 	}
 	
-	private OnItemSelectedListener galleryItemSelectedListener() {
-		OnItemSelectedListener listener = new OnItemSelectedListener() {
+	private OnItemClickListener galleryItemClickListener() {
+		OnItemClickListener listener = new OnItemClickListener() {
 
 			@Override
-			public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
+			public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+				Intent showDetails = new Intent(parent.getContext(), GalleryDetailsActivity.class);
+				showDetails.putExtra("id", id);
+				startActivity(showDetails);
 //				String[] args = { String.valueOf(id) };
 //				Cursor c = getContentResolver().query(galleryUri, null, DatabaseAdapter.GALLERY_ID_KEY+"=?", args, null);
 //				c.moveToFirst();
@@ -69,11 +74,7 @@ public class GalleryActivity extends BaseActivity {
 //				currentImage.setScaleType(ImageView.ScaleType.CENTER);
 //				c.close();
 			}
-
-			@Override
-			public void onNothingSelected(AdapterView<?> parent) {}
 		};
-		
 		return listener;
 	}
 
