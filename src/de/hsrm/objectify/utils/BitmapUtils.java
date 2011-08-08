@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.ImageFormat;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
@@ -62,6 +63,36 @@ public class BitmapUtils {
 		Image dst = filter.filter(src);
 		return dst;
 	}
+	
+	/**
+	 * Computes an automatic contrast and returns a new {@link Image} with the
+	 * adjusted contrast
+	 * 
+	 * @param image
+	 *            image which will be automatic contrast corrected
+	 * @return newly created Image with adjusted contrast.
+	 */
+    public static Image autoContrast(Image image) {
+    	int[] pixels = new int[image.getWidth()*image.getHeight()];
+    	image.getPixels(pixels, 0, image.getWidth(), 0, 0, image.getWidth(), image.getHeight());
+    	int amin = 0, amax = 255;
+    	int bRmin = 255, bRmax = 0, bGmin = 255, bGmax = 0, bBmin = 255, bBmax = 0;
+    	for (int i=0; i<pixels.length; i++) {
+    		if (Color.red(pixels[i]) < bRmin) { bRmin = Color.red(pixels[i]); }
+    		if (Color.red(pixels[i]) > bRmax) { bRmax = Color.red(pixels[i]); }
+    		if (Color.green(pixels[i]) < bGmin) { bGmin = Color.green(pixels[i]); }
+    		if (Color.green(pixels[i]) > bGmax) { bGmax = Color.green(pixels[i]); }
+    		if (Color.blue(pixels[i]) < bBmin) { bBmin = Color.blue(pixels[i]); }
+    		if (Color.blue(pixels[i]) > bBmax) { bBmax = Color.blue(pixels[i]); }
+    	}
+    	for (int i=0; i<pixels.length; i++) {
+    		int rNew = (int) (amin + (Color.red(pixels[i]) - bRmin) * (amax-bRmin)/(bRmax-bRmin*1.0f));
+    		int gNew = (int) (amin + (Color.green(pixels[i]) - bGmin) * (amax-bGmin)/(bGmax-bGmin*1.0f));
+    		int bNew = (int) (amin + (Color.blue(pixels[i]) - bBmin) * (amax-bBmin)/(bBmax-bBmin*1.0f));
+    		pixels[i] = Color.rgb(rNew, gNew, bNew);
+    	}
+    	return new Image(Bitmap.createBitmap(pixels, image.getWidth(), image.getHeight(), image.getConfig()));
+    }
 	
 	/**
 	 * Creates a downscaled bitmap depending on the specific image format and the scaling factor. Can return null.

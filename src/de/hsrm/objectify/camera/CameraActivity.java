@@ -4,7 +4,6 @@ import java.io.BufferedOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 import java.util.ArrayList;
@@ -14,7 +13,6 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
@@ -64,9 +62,7 @@ public class CameraActivity extends BaseActivity {
 	private int counter = 0;
 	private Context context;
 	private Camera camera;
-	// TODO: Wieder entfernen. Wird zur Kalibrierung benutzt.
 	private Image texture;
-	private String id = "";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -165,19 +161,15 @@ public class CameraActivity extends BaseActivity {
 	}
 	
 	/**
-	 * This function is just for debugging and should be deleted before publishing
-	 * @param data byte data from camera callback
-	 * @param suffix suffix which will be appended to the file name for better distinguish
+	 * This function ist just for debugging and should be deleted before publishing
+	 * @param image
+	 * @param filename
 	 */
-	private void storeOnSD(byte[] data, int suffix) {
-		if (suffix == 0) {
-			id = String.valueOf(SystemClock.elapsedRealtime());
-		}
-		Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
+	private void storeOnSD(Image image, String filename) {
 		try {
-			FileOutputStream out = new FileOutputStream(ExternalDirectory.getExternalImageDirectory()+"/"+id+"pic"+numberOfPictures+"_"+suffix+".png");
+			FileOutputStream out = new FileOutputStream(ExternalDirectory.getExternalImageDirectory()+"/"+filename);
 			BufferedOutputStream bos = new BufferedOutputStream(out);
-			bmp.compress(CompressFormat.PNG, 100, out);
+			image.compress(CompressFormat.PNG, 100, bos);
 			bos.flush();
 			bos.close();
 		} catch (FileNotFoundException e) {
@@ -191,7 +183,6 @@ public class CameraActivity extends BaseActivity {
 		PictureCallback callback = new PictureCallback() {
 			@Override
 			public void onPictureTaken(byte[] data, Camera camera) {
-//				storeOnSD(data, counter);
 				Image image = new Image(BitmapUtils.createScaledBitmap(data, CameraFinder.pictureSize, CameraFinder.imageFormat, 8.0f), true);
 				pictureList.add(image);
 				counter += 1;
@@ -235,43 +226,6 @@ public class CameraActivity extends BaseActivity {
 		protected Boolean doInBackground(Void... params) {
 			Matrix sMatrix = cameraLighting.getLightMatrixS(numberOfPictures);
 			Matrix sInverse = sMatrix.pseudoInverse();
-			
-			// TODO: Debugging wieder rausnehmen
-//			pictureList = new ArrayList<Image>();
-//			AssetManager assetManager = getAssets();
-//			try {
-//				InputStream is1 = assetManager.open("1065607483pic5_0.png");
-//				InputStream is2 = assetManager.open("1065607483pic5_1.png");
-//				InputStream is3 = assetManager.open("1065607483pic5_2.png");
-//				InputStream is4 = assetManager.open("1065607483pic5_3.png");
-//				InputStream is5 = assetManager.open("1065607483pic5_4.png");
-//				InputStream is6 = assetManager.open("texture.png");
-//				InputStream is7 = assetManager.open("962080818pic9_6.png");
-//				InputStream is8 = assetManager.open("962080818pic9_7.png");
-//				InputStream is9 = assetManager.open("962080818pic9_8.png");
-//				Image img1 = new Image(BitmapFactory.decodeStream(is1), false);
-//				Image img2 = new Image(BitmapFactory.decodeStream(is2), false);
-//				Image img3 = new Image(BitmapFactory.decodeStream(is3), false);
-//				Image img4 = new Image(BitmapFactory.decodeStream(is4), false);
-//				Image img5 = new Image(BitmapFactory.decodeStream(is5), false);
-//				texture = new Image(BitmapFactory.decodeStream(is6), false);
-//				Image img6 = new Image(BitmapFactory.decodeStream(is6), false);
-//				Image img7 = new Image(BitmapFactory.decodeStream(is7), false);
-//				Image img8 = new Image(BitmapFactory.decodeStream(is8), false);
-//				Image img9 = new Image(BitmapFactory.decodeStream(is9), false);
-//				pictureList.add(img1);
-//				pictureList.add(img2);
-//				pictureList.add(img3);
-//				pictureList.add(img4);
-//				pictureList.add(img5);
-//				pictureList.add(img6);
-//				pictureList.add(img7);
-//				pictureList.add(img8);
-//				pictureList.add(img9);
-//			} catch (IOException e) {
-//				Log.e(TAG, e.getLocalizedMessage());
-//			}
-			////////
 			
 			// save original for texture
 			if (numberOfPictures > 6) {
@@ -357,7 +311,7 @@ public class CameraActivity extends BaseActivity {
 			normals = normBuffer.array();
 			faces = indexBuffer.array();
 
-			objectModel = new ObjectModel(vertices, normals, faces, texture);
+			objectModel = new ObjectModel(vertices, normals, faces, BitmapUtils.autoContrast(texture));
 			return true;
 		}
 		

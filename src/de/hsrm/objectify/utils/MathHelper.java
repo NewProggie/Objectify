@@ -34,12 +34,6 @@ public class MathHelper {
 		
 		dfft.realForwardFull(pComplex);
 		dfft.realForwardFull(qComplex);
-		// TODO: Debug wieder rausnehmen
-//		for (int i=0; i<pComplex.length; i++) {
-//			for (int j=0; j<pComplex[0].length; j++) {
-//				Log.d("realForwardFull(pComplex)["+i+"]["+j+"]", String.valueOf(pComplex[i][j]));
-//			}
-//		}
 		
 		int idx = 0;
 		for (int i=0; i<imageHeight; i++) {

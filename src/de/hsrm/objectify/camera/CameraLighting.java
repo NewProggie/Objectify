@@ -53,7 +53,6 @@ public class CameraLighting extends GLSurfaceView {
 	 */
 	public Matrix getLightMatrixS(int numberOfPictures) {
 		double[][] lightMatrix = new double[numberOfPictures][3];
-		// TODO: Debugging für Bunnys im Assetfolder. Wieder rausnehmen
 		if (numberOfPictures == 4) {
 			lightMatrix[0][0] = 0.01693;
 			lightMatrix[0][1] = 0.16890;

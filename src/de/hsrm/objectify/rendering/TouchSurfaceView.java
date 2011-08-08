@@ -244,9 +244,7 @@ public class TouchSurfaceView extends GLSurfaceView {
 					values.put(DatabaseAdapter.GALLERY_DIMENSIONS_KEY, String.valueOf(displayWidth)+"x"+String.valueOf(displayHeight));
 					values.put(DatabaseAdapter.GALLERY_DATE_KEY, String.valueOf(Calendar.getInstance().getTimeInMillis()));
 					cr.insert(uri, values);
-					
-					// TODO: Debug: Cleanup here
-//					OBJFormat.writeFile(ExternalDirectory.getExternalImageDirectory()+"/test.obj", objectModel);
+
 					return null;
 				}
 

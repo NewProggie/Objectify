@@ -47,7 +47,6 @@ public abstract class BaseActivity extends Activity {
 	
 	@Override
 	protected void onRestart() {
-		// TODO Auto-generated method stub
 		super.onRestart();
 	}
 	
