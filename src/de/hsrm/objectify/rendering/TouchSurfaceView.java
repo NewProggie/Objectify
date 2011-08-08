@@ -235,8 +235,9 @@ public class TouchSurfaceView extends GLSurfaceView {
 					ContentValues values = new ContentValues();
 					
 					Bitmap screenshot = Bitmap.createBitmap(intBuffer.array(), displayWidth, displayHeight, Config.ARGB_8888);
+					Bitmap smallScreenshot = Bitmap.createScaledBitmap(screenshot, ((int) displayWidth/8), ((int) displayHeight/8), true);
 					ByteArrayOutputStream baos = new ByteArrayOutputStream();
-					screenshot.compress(CompressFormat.PNG, 100, baos);
+					smallScreenshot.compress(CompressFormat.PNG, 100, baos);
 					values.put(DatabaseAdapter.GALLERY_IMAGE_KEY, baos.toByteArray());
 					values.put(DatabaseAdapter.GALLERY_SIZE_KEY, "0");
 					values.put(DatabaseAdapter.GALLERY_FACES_KEY, String.valueOf(objectModel.getFaces()).length());

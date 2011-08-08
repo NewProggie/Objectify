@@ -13,6 +13,7 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Gallery;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.Toast;
 import de.hsrm.objectify.R;
@@ -30,8 +31,7 @@ import de.hsrm.objectify.ui.BaseActivity;
 public class GalleryActivity extends BaseActivity {
 
 	private static final String TAG = "GalleryActivity";
-	private Gallery gallery;
-	private ImageView currentImage;
+	private GridView galleryGrid;
 	private GalleryAdapter adapter;
 	private Context context;
 	private Uri galleryUri;
@@ -41,54 +41,15 @@ public class GalleryActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.gallery);
 		setupActionBar(getString(R.string.gallery), 0);
-		addNewActionButton(R.drawable.ic_title_show, R.string.show, new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				
-			}
-		});
-		addNewActionButton(R.drawable.ic_title_delete, R.string.delete, new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				AlertDialog.Builder builder = new AlertDialog.Builder(context);
-				builder.setMessage(getString(R.string.chosen_object_really_delete))
-					.setCancelable(false)
-					.setPositiveButton(getString(R.string.submit), new DialogInterface.OnClickListener() {
-						
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							long id = gallery.getSelectedItemId();
-//							deleteFromDatabaseAndSD(id);
-							Toast.makeText(context, getString(R.string.deleted_successfully), Toast.LENGTH_SHORT).show();
-							dialog.cancel();
-						}
-					})
-					.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
-						
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							dialog.cancel();
-						}
-					});
-				AlertDialog alert = builder.create();
-				alert.show();
-				
-				
-			}
-		});
 				
 		context = this;
 		
-		gallery = (Gallery) findViewById(R.id.object_gallery);
-		currentImage = (ImageView) findViewById(R.id.current_object_image);
+		galleryGrid = (GridView) findViewById(R.id.galleryGrid);
 		galleryUri = DatabaseProvider.CONTENT_URI.buildUpon().appendPath("gallery").build();
 		Cursor cursor = this.managedQuery(galleryUri, null, null, null, null);
 		adapter = new GalleryAdapter(this, cursor);
-		gallery.setAdapter(adapter);
-		gallery.setOnItemSelectedListener(galleryItemSelectedListener());
+		galleryGrid.setAdapter(adapter);
+		galleryGrid.setOnItemSelectedListener(galleryItemSelectedListener());
 		
 		if (adapter.getCount() == 0) {
 			showMessageAndExit(getString(R.string.gallery), getString(R.string.no_objects_saved));
@@ -100,13 +61,13 @@ public class GalleryActivity extends BaseActivity {
 
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
-				String[] args = { String.valueOf(id) };
-				Cursor c = getContentResolver().query(galleryUri, null, DatabaseAdapter.GALLERY_ID_KEY+"=?", args, null);
-				c.moveToFirst();
-				byte[] bb = c.getBlob(DatabaseAdapter.GALLERY_IMAGE_COLUMN);
-				currentImage.setImageBitmap(BitmapFactory.decodeByteArray(bb, 0, bb.length));
-				currentImage.setScaleType(ImageView.ScaleType.CENTER);
-				c.close();
+//				String[] args = { String.valueOf(id) };
+//				Cursor c = getContentResolver().query(galleryUri, null, DatabaseAdapter.GALLERY_ID_KEY+"=?", args, null);
+//				c.moveToFirst();
+//				byte[] bb = c.getBlob(DatabaseAdapter.GALLERY_IMAGE_COLUMN);
+//				currentImage.setImageBitmap(BitmapFactory.decodeByteArray(bb, 0, bb.length));
+//				currentImage.setScaleType(ImageView.ScaleType.CENTER);
+//				c.close();
 			}
 
 			@Override
