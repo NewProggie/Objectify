@@ -67,7 +67,7 @@ public class BitmapUtils {
 		return dst;
 	}
 	
-	public static Bitmap saveScreenshot(int width, int height, GL10 gl) {
+	public static Bitmap createScreenshot(int width, int height, GL10 gl) {
 		int b[] = new int[width*height];
 		int bt[] = new int[width*height];
 		IntBuffer intBuffer = IntBuffer.wrap(b);

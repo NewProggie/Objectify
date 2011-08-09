@@ -214,13 +214,12 @@ public class GalleryDetailsActivity extends BaseActivity {
 		
 		@Override
 		protected void onPostExecute(ObjectModel result) {
+			pleaseWait.dismiss();
 			if (result != null) {
 				Intent viewObject = new Intent(context, ObjectViewerActivity.class);
 				Bundle b = new Bundle();
 				b.putParcelable("objectModel", result);
-				viewObject.putExtra("bundle", b);
-				
-				pleaseWait.dismiss();
+				viewObject.putExtra("bundle", b);				
 				startActivity(viewObject);
 			} else {
 				Toast.makeText(context, getString(R.string.error_while_reading), Toast.LENGTH_LONG).show();

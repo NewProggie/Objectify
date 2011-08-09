@@ -362,27 +362,35 @@ public class CameraActivity extends BaseActivity {
 				values.put(DatabaseAdapter.GALLERY_NUMBER_OF_PICTURES_KEY, String.valueOf(numberOfPictures));
 				values.put(DatabaseAdapter.GALLERY_DATE_KEY, timestamp);
 				values.put(DatabaseAdapter.GALLERY_OBJECT_ID_KEY, objectID);
-				Uri galleryResultUri = cr.insert(galleryUri, values);
-				Log.d("Debug:galleryResultUri", galleryResultUri.toString());
+				cr.insert(galleryUri, values);
 			} catch (FileNotFoundException e) {
 				Log.e(TAG, e.getLocalizedMessage());
 				e.printStackTrace();
+				return false;
 			} catch (IOException e) {
 				Log.e(TAG, e.getLocalizedMessage());
 				e.printStackTrace();
+				return false;
 			}		
 		
 			return true;
 		}
 		
 		@Override
-		protected void onPostExecute(Boolean result) {
-			Intent viewObject = new Intent(context, ObjectViewerActivity.class);
-			Bundle b = new Bundle();
-			b.putParcelable("objectModel", objectModel);
-			viewObject.putExtra("bundle", b);
-			startActivity(viewObject);
-			((Activity) context).finish();
+		protected void onPostExecute(Boolean createdSuccessfully) {
+			if (createdSuccessfully) {
+				Intent viewObject = new Intent(context,
+						ObjectViewerActivity.class);
+				Bundle b = new Bundle();
+				b.putParcelable("objectModel", objectModel);
+				viewObject.putExtra("bundle", b);
+				startActivity(viewObject);
+				((Activity) context).finish();
+			} else {
+				Toast.makeText(context, getString(R.string.error_while_creating_object), Toast.LENGTH_LONG).show();
+				((Activity) context).finish();
+			}
+			
 		}
 		
 	}

@@ -30,6 +30,7 @@ public class OBJFormat {
 	 *            object which will be written to the obj file
 	 */
 	public static void writeFile(String path, ObjectModel objectModel) {
+		// TODO: Fixme. IO-Stuff immer im AsyncTask machen
 		try {
 			FileWriter fstream = new FileWriter(path);
 			BufferedWriter out = new BufferedWriter(fstream);

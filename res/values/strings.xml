@@ -20,6 +20,7 @@
     <string name="error_while_deleting">Beim Löschen trat ein Fehler auf</string>
     <string name="no_objects_saved">Bisher wurden noch keine Objekte gespeichert</string>
     <string name="couldnt_create_directory">Leider trat beim Erstellen eines Verzeichnisses ein Fehler auf</string>
+    <string name="error_while_creating_object">Beim Erstellen des 3D-Objekts trat leider ein Fehler auf</string>
     <string name="external_not_mounted">Das externe Speicherverzeichnis wurde nicht gefunden</string>
     <string name="error">Fehler</string>
     <string name="please_wait">Bitte warten...</string>
@@ -29,6 +30,8 @@
     <string name="about">Info</string>
 	<string name="no_object_found">Das Objekt konnte nicht geöffnet werden.</string>
 	<string name="error_while_reading">Fehler beim Einlesen des 3D-Objekts.</string>
+	<string name="screenshot_creating">Screenshot wird erstellt...</string>
+	<string name="screenshot_failed">Screenshot konnte leider nicht erstellt werden</string>
     
     <!-- Settings -->
     <string name="settings">Einstellungen</string>

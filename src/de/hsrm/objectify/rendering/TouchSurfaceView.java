@@ -99,7 +99,6 @@ public class TouchSurfaceView extends GLSurfaceView {
 	public Bitmap getSurfaceBitmap() {
 		renderer.shouldCopySurface = true;
 		requestRender();
-		SystemClock.sleep(300);
 		return renderer.getSurfaceBitmap();
 	}
 	
@@ -214,7 +213,7 @@ public class TouchSurfaceView extends GLSurfaceView {
 			objectModel.draw(gl);
 			if (shouldCopySurface) {
 				shouldCopySurface = false;
-				surfaceBitmap = BitmapUtils.saveScreenshot(displayWidth, displayHeight, gl);
+				surfaceBitmap = BitmapUtils.createScreenshot(displayWidth, displayHeight, gl);
 			}
 
 		}

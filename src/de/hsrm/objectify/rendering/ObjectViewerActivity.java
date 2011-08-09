@@ -8,12 +8,15 @@ import java.io.IOException;
 import javax.microedition.khronos.opengles.GL10;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
@@ -55,25 +58,7 @@ public class ObjectViewerActivity extends BaseActivity {
 			
 			@Override
 			public void onClick(View v) {
-				Intent share = new Intent(Intent.ACTION_SEND);
-				share.setType("image/jpeg");
-				String path = ExternalDirectory.getExternalImageDirectory() + "/objectify_screenshot.png";
-				try {
-					FileOutputStream fos = new FileOutputStream(path);
-					BufferedOutputStream bos = new BufferedOutputStream(fos);
-					// TODO: Fixme, manchmal schmiert es ab, weil screenshot null ist.
-					Bitmap screenshot = glSurfaceView.getSurfaceBitmap();
-					screenshot.compress(CompressFormat.PNG, 100, bos);
-					bos.flush();
-					bos.close();
-					share.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + path));
-					startActivity(Intent.createChooser(share, getString(R.string.share)));
-				} catch (FileNotFoundException e) {
-					Log.e(TAG, e.getMessage());
-				} catch (IOException e) {
-					Log.e(TAG, e.getMessage());
-				}
-				
+				new GetScreenshot().execute();				
 			}
 		});
 		// TODO: KŸnftiges Feature: Export als obj
@@ -121,5 +106,70 @@ public class ObjectViewerActivity extends BaseActivity {
 	protected void onResume() {
 		super.onResume();
 		glSurfaceView.onResume();
+	}
+	
+	/**
+	 * This class inherits from an {@link AsyncTask} and takes care of creating
+	 * a screenshot from the given {@link GL10} context. It tries a few times to
+	 * get the surface as a bitmap and finally gives up if theres no screenshot
+	 * returned.
+	 * 
+	 * @author kwolf001
+	 * 
+	 */
+	private class GetScreenshot extends AsyncTask<Void, Void, Bitmap> {
+
+		private ProgressDialog pleaseWait;
+		/**
+		 * Amount of trials how many times we try to get a bitmap from the given surfaceview.
+		 */
+		private int TRIALS = 7;
+		
+		@Override
+		protected void onPreExecute() {
+			pleaseWait = ProgressDialog.show(context, "", getString(R.string.screenshot_creating), true);
+		}
+		
+		@Override
+		protected Bitmap doInBackground(Void... params) {
+			Bitmap screenshot = null;
+			for (int i=1; i<=TRIALS; i++) {
+				Log.d("SCREENSHOT", "i = "+i);
+				screenshot = glSurfaceView.getSurfaceBitmap();
+				SystemClock.sleep(100*i);
+				if (screenshot != null) {
+					return screenshot;
+				}
+			}			
+			return null;
+		}
+		
+		@Override
+		protected void onPostExecute(Bitmap result) {
+			if (result != null) {
+				Intent share = new Intent(Intent.ACTION_SEND);
+				share.setType("image/jpeg");
+				String path = ExternalDirectory.getExternalImageDirectory() + "/objectify_screenshot.png";
+				try {
+					FileOutputStream fos = new FileOutputStream(path);
+					BufferedOutputStream bos = new BufferedOutputStream(fos);
+					result.compress(CompressFormat.PNG, 100, bos);
+					bos.flush();
+					bos.close();
+					share.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + path));
+					startActivity(Intent.createChooser(share, getString(R.string.share)));
+				} catch (FileNotFoundException e) {
+					Toast.makeText(context, getString(R.string.screenshot_failed), Toast.LENGTH_LONG).show();
+					Log.e(TAG, e.getMessage());
+				} catch (IOException e) {
+					Toast.makeText(context, getString(R.string.screenshot_failed), Toast.LENGTH_LONG).show();
+					Log.e(TAG, e.getMessage());
+				}
+			} else {
+				Toast.makeText(context, getString(R.string.screenshot_failed), Toast.LENGTH_LONG).show();
+			}
+			pleaseWait.dismiss();
+		}
+		
 	}
 }
