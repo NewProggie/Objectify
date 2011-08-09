@@ -46,6 +46,9 @@
     <string name="date">Datum:</string>
     <string name="details">Details</string>
     <string name="number_of_pictures">Anzahl verwendeter Bilder:</string>
+    <string name="textured">Texturiert</string>
+    <string name="points">Punktwolke</string>
+    <string name="wireframe">Gitter</string>
     
     <!-- About -->
     <string name="developer_mail_address">kai.wolf@gmail.com</string>

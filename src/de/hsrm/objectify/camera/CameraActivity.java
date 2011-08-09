@@ -196,15 +196,9 @@ public class CameraActivity extends BaseActivity {
 			public void onPictureTaken(byte[] data, Camera camera) {
 				Camera.Parameters params = camera.getParameters();
 				String device = params.get("device");
-				// another hack for the samsung galaxy tab
 				if (device != null && device.equals("GT-P1000")) {
 					Log.d(TAG, "in device != null && device.equals(\"GT-P1000\")");
 					Image image = new Image(BitmapUtils.createScaledBitmap(data, CameraFinder.pictureSize, CameraFinder.imageFormat, 8.0f), false);
-					if (counter == 2) {
-						Image image2 = new Image(BitmapUtils.createScaledBitmap(data, CameraFinder.pictureSize, CameraFinder.imageFormat, 8.0f));
-						storeOnSD(image2, "galaxy_screenshot.png");
-					}
-					
 					pictureList.add(image);
 					counter += 1;
 				} else {

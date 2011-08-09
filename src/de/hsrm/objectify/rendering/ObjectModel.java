@@ -12,13 +12,14 @@ import javax.microedition.khronos.opengles.GL10;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import android.graphics.Bitmap.CompressFormat;
 import android.opengl.GLUtils;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 import de.hsrm.objectify.utils.Image;
 
 /**
@@ -47,6 +48,7 @@ public class ObjectModel implements Parcelable, Serializable {
 	private transient Image image;
 	private float[] boundingbox;
 	private byte[] bitmap_data;
+	private int renderMode = GL10.GL_TRIANGLES;
 	
 	public ObjectModel(float[] vertices, float[] normals, short[] faces,
 			Image image) {
@@ -54,6 +56,7 @@ public class ObjectModel implements Parcelable, Serializable {
 		setVertices(vertices);
 		setNormalVertices(normals);
 		setFaces(faces);
+		renderMode = GL10.GL_TRIANGLES;
 		ByteBuffer byteBuf = ByteBuffer.allocateDirect(vertices.length * 4);
 		byteBuf.order(ByteOrder.nativeOrder());
 		vertexBuffer = byteBuf.asFloatBuffer();
@@ -90,6 +93,7 @@ public class ObjectModel implements Parcelable, Serializable {
 	
 	private ObjectModel(Parcel source) {
 		Bundle b = source.readBundle();
+		renderMode = GL10.GL_TRIANGLES;
 		textures = new int[1];
 		setVertices(b.getFloatArray("vertices"));
 		setNormalVertices(b.getFloatArray("normals"));
@@ -305,6 +309,10 @@ public class ObjectModel implements Parcelable, Serializable {
 		return 2.0f/max(tmp);
 	}
 	
+	public void setRenderingMode(int renderMode) {
+		this.renderMode = renderMode;
+	}
+	
 	public void draw(GL10 gl) {
 		gl.glBindTexture(GL10.GL_TEXTURE_2D, textures[0]);
 		
@@ -316,9 +324,7 @@ public class ObjectModel implements Parcelable, Serializable {
 		gl.glNormalPointer(GL10.GL_FLOAT, 0, normalBuffer);
 		gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, textureBuffer);
 		
-		// TODO: Verschiedene Arten anzeigen, also Wireframe, Punktwolke etc.
-		//GL10.GL_LINES, GL10.GL_POINTS
-		gl.glDrawElements(GL10.GL_TRIANGLES, faces.length, GL10.GL_UNSIGNED_SHORT, facesBuffer);
+		gl.glDrawElements(renderMode, faces.length, GL10.GL_UNSIGNED_SHORT, facesBuffer);
 		
 		gl.glDisableClientState(GL10.GL_NORMAL_ARRAY);
 		gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
