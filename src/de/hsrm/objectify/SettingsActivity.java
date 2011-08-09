@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import android.hardware.Camera;
 import android.hardware.Camera.Size;
 import android.os.Bundle;
-import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.PreferenceActivity;
 import de.hsrm.objectify.camera.CameraFinder;
@@ -23,7 +22,6 @@ import de.hsrm.objectify.ui.SliderInputPreference;
 public class SettingsActivity extends PreferenceActivity {
 
 	private ListPreference cameraResolutions;
-	private EditTextPreference savingDirectory;
 	private SliderInputPreference amountPictures;
 	
 	@Override
@@ -32,7 +30,6 @@ public class SettingsActivity extends PreferenceActivity {
 		addPreferencesFromResource(R.xml.settings);
 		
 		cameraResolutions = (ListPreference) findPreference(getString(R.string.settings_camera_resolutions));
-		savingDirectory = (EditTextPreference) findPreference(getString(R.string.settings_saving_directory));
 		amountPictures = (SliderInputPreference) findPreference(getString(R.string.settings_amount_pictures));
 		
 		cameraResolutions.setEntries(getAvailableResolutions());

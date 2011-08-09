@@ -13,12 +13,4 @@
 			android:text="@string/settings_suffix_pictures"
 			android:summary="@string/settings_amount_pictures_hint" />
 	</PreferenceCategory>
-	<PreferenceCategory
-		android:title="@string/settings_saving_directory_title">
-		<EditTextPreference
-			android:key="@string/settings_saving_directory"
-			android:title="@string/settings_saving_directory"
-			android:defaultValue="/.objectify/"
-			android:summary="@string/settings_saving_directory_hint" />	
-	</PreferenceCategory>
 </PreferenceScreen>

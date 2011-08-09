@@ -31,9 +31,6 @@
     <string name="settings">Einstellungen</string>
     <string name="settings_camera_resolutions">Kamera-Auflösungen</string>
     <string name="settings_camera_resolutions_hint">Legt die Auflösung der Frontkamera fest</string>
-    <string name="settings_saving_directory_title">Externer Speicher</string>
-    <string name="settings_saving_directory">Speicherort</string>
-    <string name="settings_saving_directory_hint">Ändert den Speicherort für Bilder und erstellte 3D-Objekte</string>
     <string name="settings_amount_pictures">Anzahl Fotos</string>
     <string name="settings_suffix_pictures">Fotos</string>
     <string name="settings_amount_pictures_hint">Ändert die Anzahl an Fotos, die pro 3D-Rekonstruktion benutzt werden</string>
