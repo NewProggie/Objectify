@@ -50,4 +50,20 @@ public class ExternalDirectory {
 			throw new RuntimeException("External Storage is currently not available");
 		}
 	}
+	
+	/**
+	 * Abstracts from the different states of the external storage and returns
+	 * true if the external storage is mounted and writable. In every other case
+	 * this function will return false.
+	 * 
+	 * @return true, if the external storage is mounted and readable, else false
+	 */
+	public static boolean isMounted() {
+		String state = Environment.getExternalStorageState();
+		if (Environment.MEDIA_MOUNTED.equals(state)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 }

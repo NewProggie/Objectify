@@ -17,6 +17,7 @@
     <string name="cancel">Abbrechen</string>
     <string name="chosen_object_really_delete">Soll dieses Objekt gelöscht werden?</string>
     <string name="deleted_successfully">Erfolgreich gelöscht</string>
+    <string name="error_while_deleting">Beim Löschen trat ein Fehler auf</string>
     <string name="no_objects_saved">Bisher wurden noch keine Objekte gespeichert</string>
     <string name="couldnt_create_directory">Leider trat beim Erstellen eines Verzeichnisses ein Fehler auf</string>
     <string name="external_not_mounted">Das externe Speicherverzeichnis wurde nicht gefunden</string>
