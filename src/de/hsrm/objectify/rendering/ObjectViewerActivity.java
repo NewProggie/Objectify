@@ -61,6 +61,7 @@ public class ObjectViewerActivity extends BaseActivity {
 				try {
 					FileOutputStream fos = new FileOutputStream(path);
 					BufferedOutputStream bos = new BufferedOutputStream(fos);
+					// TODO: Fixme, manchmal schmiert es ab, weil screenshot null ist.
 					Bitmap screenshot = glSurfaceView.getSurfaceBitmap();
 					screenshot.compress(CompressFormat.PNG, 100, bos);
 					bos.flush();

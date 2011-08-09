@@ -19,6 +19,7 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import de.hsrm.objectify.math.Matrix4f;
 import de.hsrm.objectify.math.Quat4f;
+import de.hsrm.objectify.utils.BitmapUtils;
 
 /**
  * Creates a touchable surface view to move, scale and spin a rendered object on
@@ -98,7 +99,7 @@ public class TouchSurfaceView extends GLSurfaceView {
 	public Bitmap getSurfaceBitmap() {
 		renderer.shouldCopySurface = true;
 		requestRender();
-		SystemClock.sleep(200);
+		SystemClock.sleep(300);
 		return renderer.getSurfaceBitmap();
 	}
 	
@@ -212,12 +213,8 @@ public class TouchSurfaceView extends GLSurfaceView {
 			gl.glTranslatef(-objectModel.getMiddlePoint()[0], -objectModel.getMiddlePoint()[1], -objectModel.getMiddlePoint()[2]);
 			objectModel.draw(gl);
 			if (shouldCopySurface) {
-				// TODO: Screenshot ist gedreht und Farben falsch.
 				shouldCopySurface = false;
-				IntBuffer intBuffer = IntBuffer.wrap(new int[displayWidth * displayHeight]);
-				intBuffer.position(0);
-				gl.glReadPixels(0, 0, displayWidth, displayHeight, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, intBuffer);
-				surfaceBitmap = Bitmap.createBitmap(intBuffer.array(), displayWidth, displayHeight, Config.ARGB_8888);
+				surfaceBitmap = BitmapUtils.saveScreenshot(displayWidth, displayHeight, gl);
 			}
 
 		}

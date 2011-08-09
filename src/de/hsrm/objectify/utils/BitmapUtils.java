@@ -1,6 +1,9 @@
 package de.hsrm.objectify.utils;
 
 import java.io.ByteArrayOutputStream;
+import java.nio.IntBuffer;
+
+import javax.microedition.khronos.opengles.GL10;
 
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
@@ -62,6 +65,25 @@ public class BitmapUtils {
 		GaussianFilter filter = new GaussianFilter(4);
 		Image dst = filter.filter(src);
 		return dst;
+	}
+	
+	public static Bitmap saveScreenshot(int width, int height, GL10 gl) {
+		int b[] = new int[width*height];
+		int bt[] = new int[width*height];
+		IntBuffer intBuffer = IntBuffer.wrap(b);
+		intBuffer.rewind();
+		gl.glReadPixels(0, 0, width, height, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, intBuffer);
+		for (int i=0; i<height; i++) {
+			for (int j=0; j<width; j++) {
+				int pix = b[i*width+j];
+				int pb = (pix>>16) & 0xFF;
+				int pr = (pix<<16) & 0x00FF0000;
+				int pix1 = (pix & 0xFF00FF00) | pr | pb;
+				bt[(height-i-1)*width+j] = pix1;
+			}
+		}
+		Bitmap screenshot = Bitmap.createBitmap(bt, width, height, Config.ARGB_8888);
+		return screenshot;
 	}
 	
 	/**

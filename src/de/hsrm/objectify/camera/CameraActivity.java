@@ -370,31 +370,7 @@ public class CameraActivity extends BaseActivity {
 			} catch (IOException e) {
 				Log.e(TAG, e.getLocalizedMessage());
 				e.printStackTrace();
-			}
-			
-			
-			// 1312836115524.kaw
-//			try {
-//				FileInputStream inputStream = new FileInputStream(ExternalDirectory.getExternalRootDirectory()+"/1312836115524.kaw");
-//				ObjectInputStream obj_input = new ObjectInputStream(inputStream);
-//				objectModel = (ObjectModel) obj_input.readObject();
-//				objectModel.setup();
-//			} catch (FileNotFoundException e) {
-//				Log.e(TAG, e.getLocalizedMessage());
-//				e.printStackTrace();
-//			} catch (StreamCorruptedException e) {
-//				Log.e(TAG, e.getLocalizedMessage());
-//				e.printStackTrace();
-//			} catch (IOException e) {
-//				Log.e(TAG, e.getLocalizedMessage());
-//				e.printStackTrace();
-//			} catch (ClassNotFoundException e) {
-//				Log.e(TAG, e.getLocalizedMessage());
-//				e.printStackTrace();
-//			}
-			
-
-			
+			}		
 		
 			return true;
 		}
