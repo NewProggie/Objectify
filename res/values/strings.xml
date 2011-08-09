@@ -26,6 +26,8 @@
     <string name="search">Suche</string>
     <string name="no_ffc_was_found">Es konnte keine Frontkamera gefunden werden.</string>
     <string name="about">Info</string>
+	<string name="no_object_found">Das Objekt konnte nicht geöffnet werden.</string>
+	<string name="error_while_reading">Fehler beim Einlesen des 3D-Objekts.</string>
     
     <!-- Settings -->
     <string name="settings">Einstellungen</string>

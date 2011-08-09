@@ -4,7 +4,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
@@ -27,8 +26,11 @@ public class GalleryAdapter extends CursorAdapter {
 	public void bindView(View view, Context context, Cursor cursor) {
 		ImageView image = (ImageView) view;
 		String pathName = cursor.getString(DatabaseAdapter.GALLERY_THUMBNAIL_PATH_COLUMN);
-		// TODO: Abfangen, falls bitmap null, weil z.B. SD nicht lesbar ist
 		Bitmap bitmap = BitmapFactory.decodeFile(pathName);
+		if (bitmap == null) {
+			// Couldn't find thumbnail
+			bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.image_not_available);
+		}
 		image.setImageBitmap(bitmap);
 	}
 	

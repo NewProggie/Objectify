@@ -66,13 +66,6 @@ public class GalleryActivity extends BaseActivity {
 				Intent showDetails = new Intent(parent.getContext(), GalleryDetailsActivity.class);
 				showDetails.putExtra("id", id);
 				startActivity(showDetails);
-//				String[] args = { String.valueOf(id) };
-//				Cursor c = getContentResolver().query(galleryUri, null, DatabaseAdapter.GALLERY_ID_KEY+"=?", args, null);
-//				c.moveToFirst();
-//				byte[] bb = c.getBlob(DatabaseAdapter.GALLERY_IMAGE_COLUMN);
-//				currentImage.setImageBitmap(BitmapFactory.decodeByteArray(bb, 0, bb.length));
-//				currentImage.setScaleType(ImageView.ScaleType.CENTER);
-//				c.close();
 			}
 		};
 		return listener;
