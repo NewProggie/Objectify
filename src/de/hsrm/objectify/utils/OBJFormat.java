@@ -29,8 +29,7 @@ public class OBJFormat {
 	 * @param objectModel
 	 *            object which will be written to the obj file
 	 */
-	public static void writeFile(String path, ObjectModel objectModel) {
-		// TODO: Fixme. IO-Stuff immer im AsyncTask machen
+	public static boolean writeFile(String path, ObjectModel objectModel) {
 		try {
 			FileWriter fstream = new FileWriter(path);
 			BufferedWriter out = new BufferedWriter(fstream);
@@ -65,9 +64,10 @@ public class OBJFormat {
 			}
 			out.flush();
 			out.close();
-			// TODO faces einlesen
+			return true;
 		} catch (IOException e) {
 			Log.e(TAG, e.getMessage());
+			return false;
 		}
 	}
 	

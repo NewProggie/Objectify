@@ -61,15 +61,6 @@ public class ObjectViewerActivity extends BaseActivity {
 				new GetScreenshot().execute();				
 			}
 		});
-		// TODO: KŸnftiges Feature: Export als obj
-//		addNewActionButton(R.drawable.ic_title_export, R.string.export, new OnClickListener() {
-//			
-//			@Override
-//			public void onClick(View v) {
-//				// TODO Auto-generated method stub
-//				
-//			}
-//		});
 		Display display = getWindowManager().getDefaultDisplay();
 		Bundle b = getIntent().getBundleExtra("bundle");
 		objectModel = b.getParcelable("objectModel");

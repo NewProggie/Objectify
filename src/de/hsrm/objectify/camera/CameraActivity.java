@@ -234,12 +234,14 @@ public class CameraActivity extends BaseActivity {
 	private class CalculateModel extends AsyncTask<Void, Void, Boolean> {
 
 		private ObjectModel objectModel;
+		private ContentResolver cr;
 
 		@Override
 		protected void onPreExecute() {
 			progress.setVisibility(View.VISIBLE);
 			cameraLighting.setVisibility(View.GONE);
 			cameraLighting.setZOrderOnTop(false);
+			cr = getContentResolver();
 		}
 
 		@Override
@@ -333,13 +335,12 @@ public class CameraActivity extends BaseActivity {
 			objectModel = new ObjectModel(vertices, normals, faces, BitmapUtils.autoContrast(texture));
 		
 			// storing the newly created 3D object onto hard disk and create database entries
-			// TODO: Refactor me
 			Calendar cal = Calendar.getInstance();
 			String timestamp = String.valueOf(cal.getTimeInMillis());
 			String filename = timestamp+".kaw";
 			String path = ExternalDirectory.getExternalImageDirectory()+"/";
 			ContentValues values = new ContentValues();
-			ContentResolver cr = getContentResolver();
+			cr = getContentResolver();
 			Uri objectUri = DatabaseProvider.CONTENT_URI.buildUpon().appendPath("object").build();
 			Uri galleryUri = DatabaseProvider.CONTENT_URI.buildUpon().appendPath("gallery").build();
 			try {
