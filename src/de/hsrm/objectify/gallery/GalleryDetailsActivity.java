@@ -3,6 +3,8 @@ package de.hsrm.objectify.gallery;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.ObjectInputStream;
+import java.util.Calendar;
+import java.util.Locale;
 
 import android.app.Activity;
 import android.content.ContentResolver;
@@ -58,9 +60,11 @@ public class GalleryDetailsActivity extends BaseActivity {
 		String thumbnailPath = c.getString(DatabaseAdapter.GALLERY_THUMBNAIL_PATH_COLUMN);
 		String numberOfPics = c.getString(DatabaseAdapter.GALLERY_NUMBER_OF_PICTURES_COLUMN);
 		String strDate = c.getString(DatabaseAdapter.GALLERY_DATE_COLUMN);
+		Calendar cal = Calendar.getInstance(Locale.getDefault());
+		cal.setTimeInMillis(Long.valueOf(strDate));
 		objectId = c.getString(DatabaseAdapter.GALLERY_OBJECT_ID_COLUMN);
 		picture.setImageBitmap(BitmapFactory.decodeFile(thumbnailPath));
-		dateTextview.setText(strDate);
+		dateTextview.setText(cal.getTime().toLocaleString());
 		numberofpicsTextview.setText(numberOfPics);
 		addNewActionButton(R.drawable.ic_title_show, R.string.show, new OnClickListener() {
 			
