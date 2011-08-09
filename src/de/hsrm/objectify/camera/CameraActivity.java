@@ -82,6 +82,7 @@ public class CameraActivity extends BaseActivity {
 
 		cameraPreview = (CameraPreview) findViewById(R.id.camera_surface);
 		cameraLighting = (CameraLighting) findViewById(R.id.camera_lighting);
+		cameraLighting.setZOrderOnTop(true);
 		progress = (LinearLayout) findViewById(R.id.progress);
 		triggerPictures = (Button) findViewById(R.id.trigger_picture_button);
 		triggerPictures.setOnClickListener(new OnClickListener() {
@@ -181,8 +182,10 @@ public class CameraActivity extends BaseActivity {
 			bos.flush();
 			bos.close();
 		} catch (FileNotFoundException e) {
+			Log.e(TAG, "KONNTE NICHT SPEICHERN");
 			e.printStackTrace();
 		} catch (IOException e) {
+			Log.e(TAG, "KONNTE NICHT SPEICHERN");
 			e.printStackTrace();
 		}
 	}
@@ -191,9 +194,24 @@ public class CameraActivity extends BaseActivity {
 		PictureCallback callback = new PictureCallback() {
 			@Override
 			public void onPictureTaken(byte[] data, Camera camera) {
-				Image image = new Image(BitmapUtils.createScaledBitmap(data, CameraFinder.pictureSize, CameraFinder.imageFormat, 8.0f), true);
-				pictureList.add(image);
-				counter += 1;
+				Camera.Parameters params = camera.getParameters();
+				String device = params.get("device");
+				// another hack for the samsung galaxy tab
+				if (device != null && device.equals("GT-P1000")) {
+					Log.d(TAG, "in device != null && device.equals(\"GT-P1000\")");
+					Image image = new Image(BitmapUtils.createScaledBitmap(data, CameraFinder.pictureSize, CameraFinder.imageFormat, 8.0f), false);
+					if (counter == 2) {
+						Image image2 = new Image(BitmapUtils.createScaledBitmap(data, CameraFinder.pictureSize, CameraFinder.imageFormat, 8.0f));
+						storeOnSD(image2, "galaxy_screenshot.png");
+					}
+					
+					pictureList.add(image);
+					counter += 1;
+				} else {
+					Image image = new Image(BitmapUtils.createScaledBitmap(data, CameraFinder.pictureSize, CameraFinder.imageFormat, 8.0f), true);
+					pictureList.add(image);
+					counter += 1;
+				}
 				if (counter == numberOfPictures) {
 					Log.d(TAG, "Photos taken, calculating object");
 					new CalculateModel().execute(); 

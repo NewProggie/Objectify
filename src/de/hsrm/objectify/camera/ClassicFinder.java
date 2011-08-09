@@ -22,16 +22,20 @@ public class ClassicFinder extends CameraFinder {
 			// format on this device
 			Camera camera = Camera.open();
 			Camera.Parameters params = camera.getParameters();
-			pictureSize = new de.hsrm.objectify.utils.Size(800, 600);
+			
+			pictureSize = new de.hsrm.objectify.utils.Size(600, 800);
 			// dirty hack! Even though this device promises to deliver a jpeg
 			// image, BitmapFactory.decodeByteArray(..) fails to create one. So
 			// we're setting PreviewFormat instead of PictureFormat and take
 			// care of it by ourself.
 			imageFormat = params.getSupportedPreviewFormats().get(0);
 			params.setPictureSize(pictureSize.getWidth(), pictureSize.getHeight());
+			params.setPreviewSize(800, 600);
 			params.setPictureFormat(imageFormat);
+			params.set("device", "GT-P1000");
 			params.set("camera-id", 2); // using front-cam (2) instead of back-cam (1)
-			params.set("orientation", "portrait");
+			params.set("exifOrientation", 90);
+			
 			camera.setParameters(params);
 			return camera;
 		}

@@ -48,6 +48,15 @@ public class Image {
 		}
 	}
 	
+	public Image(Bitmap bitmap, int degrees) {
+		Matrix rotMatrix = new Matrix();
+		rotMatrix.postRotate(degrees);
+		Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), rotMatrix, true);
+		Matrix flipMatrix = new Matrix();
+		flipMatrix.preScale(1.0f, -1.0f);
+		this.bitmap = Bitmap.createBitmap(rotatedBitmap, 0, 0, rotatedBitmap.getWidth(), rotatedBitmap.getHeight(), flipMatrix, true);
+	}
+	
 	/**
 	 * Converts picture into a grayscaled picture and calculates a grayscale
 	 * splay
