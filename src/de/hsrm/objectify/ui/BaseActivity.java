@@ -27,12 +27,14 @@ import de.hsrm.objectify.SettingsActivity;
 public abstract class BaseActivity extends Activity {
 
 	private ViewGroup content;
+	private boolean optionsMenuEnabled;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		super.setContentView(R.layout.activity_empty);
 		content = (ViewGroup) super.findViewById(R.id.layout_container);
+		optionsMenuEnabled = true;
 	}
 	
 	@Override
@@ -199,10 +201,18 @@ public abstract class BaseActivity extends Activity {
 		startActivity(intent);
 	}
 	
+	protected void disableOptionsMenu() {
+		optionsMenuEnabled = false;
+	}
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.option, menu);
-		return super.onCreateOptionsMenu(menu);
+		if (optionsMenuEnabled) {
+			getMenuInflater().inflate(R.menu.option, menu);
+			return super.onCreateOptionsMenu(menu);
+		} else {
+			return false;
+		}
 	}
 
 	@Override

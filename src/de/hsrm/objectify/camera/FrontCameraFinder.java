@@ -31,7 +31,6 @@ public class FrontCameraFinder extends CameraFinder {
 				params.setPictureSize(pictureSize.getWidth(), pictureSize.getHeight());
 				params.setPictureFormat(imageFormat);
 				params.setExposureCompensation((int) (params.getMaxExposureCompensation()/4.0f));
-				params.setWhiteBalance(params.getWhiteBalance());
 				camera.setParameters(params);
 				camera.setDisplayOrientation(90);
 				return camera;

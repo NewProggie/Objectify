@@ -78,6 +78,7 @@ public class CameraActivity extends BaseActivity {
 		setContentView(R.layout.camera);
 		context = this;
 		disableActionBar();
+		disableOptionsMenu();
 		setScreenBrightness(1);
 
 		cameraPreview = (CameraPreview) findViewById(R.id.camera_surface);
