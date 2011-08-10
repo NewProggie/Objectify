@@ -115,6 +115,7 @@ public class CameraActivity extends BaseActivity {
 	protected void onPause() {
 		super.onPause();
 		setScreenBrightness(-1);
+		((Activity)context).finish();
 	}
 	
 	@Override
