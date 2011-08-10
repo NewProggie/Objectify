@@ -3,7 +3,7 @@
       package="de.hsrm.objectify"
       android:versionCode="1"
       android:versionName="1.0">
-    <uses-sdk android:minSdkVersion="8" />
+    <uses-sdk android:minSdkVersion="10" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.HARDWARE_TEST" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -24,16 +24,7 @@
         <activity android:name=".camera.CameraActivity" android:screenOrientation="portrait"/>
 		<activity android:name=".gallery.GalleryActivity" />
 		<activity android:name=".gallery.GalleryDetailsActivity" />
-		<activity android:name=".rendering.ObjectViewerActivity">
-			<intent-filter>
-				<action android:name="android.intent.action.VIEW" />
-				<category android:name="android.intent.category.DEFAULT" />
-				<data android:scheme="file" />
-				<data android:mimeType="application/x-tgif" />
-				<data android:pathPattern=".*\\.obj" />
-				<data android:host="*" />
-			</intent-filter>
-		</activity>
+		<activity android:name=".rendering.ObjectViewerActivity"></activity>
 		<activity android:name=".howto.HowToActivity" />
 		<provider android:name=".database.DatabaseProvider" android:authorities="de.hsrm.objectify.databaseprovider.content" />
     </application>
