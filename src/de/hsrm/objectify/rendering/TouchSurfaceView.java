@@ -3,18 +3,15 @@ package de.hsrm.objectify.rendering;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Bitmap.Config;
 import android.graphics.Point;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
-import android.os.SystemClock;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import de.hsrm.objectify.math.Matrix4f;
@@ -156,7 +153,7 @@ public class TouchSurfaceView extends GLSurfaceView {
 			objectModel.loadGLTexture(gl, context);
 			gl.glEnable(GL10.GL_TEXTURE_2D);
 			gl.glShadeModel(GL10.GL_SMOOTH);
-			gl.glClearColor(0.6f, 0.6f, 0.6f, 0.5f); 
+			gl.glClearColor(0.05f, 0.05f, 0.05f, 1.0f); 
 			gl.glClearDepthf(1.0f);
 			gl.glEnable(GL10.GL_DEPTH_TEST);
 			gl.glDepthFunc(GL10.GL_LEQUAL);
