@@ -12,11 +12,7 @@ public class HowToActivity extends BaseActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
-		WebView webView = new WebView(this);
-		webView.getSettings().setJavaScriptEnabled(true);
-		webView.loadUrl("http://www.innovations-report.de/html/berichte/maschinenbau/bericht-56413.html");
-		setContentView(webView);
 		setupActionBar(getString(R.string.howto), 0);
+		setContentView(R.layout.howto);
 	}
 }

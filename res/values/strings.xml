@@ -56,6 +56,11 @@
     <!-- Share -->
     <string name="mailtext">Hi,\n\ndu musst dir unbedingt diese App anschauen:\n\nhttp://market.android.com.</string>
     
+    <!-- Howto -->
+    <string name="howto_step1">Schritt 1: In einen dunklen Raum gehen...</string>
+    <string name="howto_step2">Schritt 2: Smartphone ruhig halten und auf den Auslöser drücken.</string>
+    <string name="howto_step3">Schritt 3: Ergebnis betrachten, verschicken, weitererzählen oder nochmal erleben.</string>
+    
     <!-- About -->
     <string name="developer_mail_address">kai.wolf@gmail.com</string>
     <string name="no_mailclient_found">Kein Programm zum Versenden einer Mail gefunden.</string>
