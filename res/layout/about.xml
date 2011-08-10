@@ -9,8 +9,20 @@
 		android:id="@+id/about_text"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
-		android:layout_weight="1"
+		android:textSize="@dimen/text_size_medium"
+		android:text="@string/name_and_copyright"
+		android:layout_marginBottom="6dip"
 		style="@style/ShadowedText" />
+	<TextView 
+		android:id="@+id/about_explanation_third_party_sw"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_weight="1"
+		android:typeface="monospace"
+		android:autoLink="web"
+		android:textSize="@dimen/text_size_small"
+		style="@style/ShadowedText"
+		android:text="@string/explanation_third_party"/>
 	<Button
 		android:id="@+id/feedback_button"
 		android:layout_width="fill_parent"

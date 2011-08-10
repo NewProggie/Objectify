@@ -24,7 +24,7 @@ import de.hsrm.objectify.ui.BaseActivity;
  */
 public class AboutActivity extends BaseActivity {
 
-	private TextView aboutText;
+	private TextView nameAndCopyright, explanationThirdParty;
 	private Button sendFeedback;
 	private Context context;
 
@@ -35,10 +35,9 @@ public class AboutActivity extends BaseActivity {
 		setupActionBar(getString(R.string.about), 0);
 		this.context = this;
 
-		aboutText = (TextView) findViewById(R.id.about_text);
+		nameAndCopyright = (TextView) findViewById(R.id.about_text);
+		explanationThirdParty = (TextView) findViewById(R.id.about_explanation_third_party_sw);
 		sendFeedback = (Button) findViewById(R.id.feedback_button);
-
-		aboutText.setText("Copyright (c) 2011 Kai Wolf.\nAll rights reserved");
 		sendFeedback.setOnClickListener(new OnClickListener() {
 
 			@Override

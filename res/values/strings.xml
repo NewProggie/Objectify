@@ -63,6 +63,8 @@
     
     <!-- About -->
     <string name="developer_mail_address">kai.wolf@gmail.com</string>
+    <string name="name_and_copyright">Copyright (c) 2011 Kai Wolf.\nAll rights reserved.</string>
+    <string name="explanation_third_party">This application makes use of Jama: A Java Matrix Package. Visit http://math.nist.gov/javanumerics/jama/ for further information.\n\nIn addition this application uses an open source, multithreaded FFT Library JTransforms. Visit https://sites.google.com/site/piotrwendykier/software/jtransforms for further information.</string>
     <string name="no_mailclient_found">Kein Programm zum Versenden einer Mail gefunden.</string>
     
 </resources>
