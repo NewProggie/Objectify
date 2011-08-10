@@ -53,6 +53,9 @@
     <string name="points">Punktwolke</string>
     <string name="wireframe">Gitter</string>
     
+    <!-- Share -->
+    <string name="mailtext">Hi,\n\ndu musst dir unbedingt diese App anschauen:\n\nhttp://market.android.com.</string>
+    
     <!-- About -->
     <string name="developer_mail_address">kai.wolf@gmail.com</string>
     <string name="no_mailclient_found">Kein Programm zum Versenden einer Mail gefunden.</string>

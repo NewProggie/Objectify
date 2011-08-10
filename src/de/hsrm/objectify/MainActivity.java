@@ -1,8 +1,12 @@
 package de.hsrm.objectify;
 
+import java.util.List;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -70,7 +74,7 @@ public class MainActivity extends BaseActivity {
 			startActivity(howto);
 			break;
 		case R.id.dashboard_share_button:
-			Toast.makeText(context, "share", Toast.LENGTH_SHORT).show();
+			writeMail();
 			break;
 		case R.id.dashboard_camera_button:
 			Intent camera = new Intent(context, CameraActivity.class);
@@ -80,6 +84,20 @@ public class MainActivity extends BaseActivity {
 			Intent settings = new Intent(context, SettingsActivity.class);
 			startActivity(settings);
 			break;
+		}
+	}
+	
+	private void writeMail() {
+		Intent tellOthers = new Intent(android.content.Intent.ACTION_SEND);
+		tellOthers.setType("plain/text");
+		PackageManager pm = getPackageManager();
+		List<ResolveInfo> list = pm.queryIntentActivities(tellOthers, PackageManager.MATCH_DEFAULT_ONLY);
+		if (list.size() > 0) {
+			tellOthers.putExtra(android.content.Intent.EXTRA_SUBJECT, "Android " + getString(R.string.app_name));
+			tellOthers.putExtra(android.content.Intent.EXTRA_TEXT, getString(R.string.mailtext));
+			startActivity(tellOthers);
+		} else {
+			Toast.makeText(context,getString(R.string.no_mailclient_found),Toast.LENGTH_LONG).show();
 		}
 	}
 
