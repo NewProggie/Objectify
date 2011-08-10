@@ -15,11 +15,11 @@
 			android:layout_width="fill_parent"	
 			android:layout_height="fill_parent"
 			android:scaleType="fitXY"
-			android:src="@drawable/lighting_mask"/> 
+			android:src="@drawable/lighting_mask2"/> 
 		<Button 
 			android:layout_width="wrap_content" 
 			android:layout_height="wrap_content"
-			android:layout_marginBottom="4dip"
+			android:layout_marginBottom="2dip"
 			android:background="@drawable/aperture_button_selector"
 			android:id="@+id/trigger_picture_button" 
 			android:layout_gravity="bottom|center_horizontal" />
