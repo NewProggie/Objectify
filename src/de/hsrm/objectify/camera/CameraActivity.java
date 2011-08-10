@@ -168,27 +168,6 @@ public class CameraActivity extends BaseActivity {
 		cameraLighting.setZOrderOnTop(true);
 		cameraLighting.putLightSource(numberOfPictures, counter);
 	}
-	
-	/**
-	 * This function is just for debugging and should be deleted before publishing
-	 * @param image
-	 * @param filename
-	 */
-	private void storeOnSD(Image image, String filename) {
-		try {
-			FileOutputStream out = new FileOutputStream(ExternalDirectory.getExternalImageDirectory()+"/"+filename);
-			BufferedOutputStream bos = new BufferedOutputStream(out);
-			image.compress(CompressFormat.PNG, 100, bos);
-			bos.flush();
-			bos.close();
-		} catch (FileNotFoundException e) {
-			Log.e(TAG, "KONNTE NICHT SPEICHERN");
-			e.printStackTrace();
-		} catch (IOException e) {
-			Log.e(TAG, "KONNTE NICHT SPEICHERN");
-			e.printStackTrace();
-		}
-	}
 
 	private PictureCallback jpegCallback() {
 		PictureCallback callback = new PictureCallback() {
@@ -258,6 +237,7 @@ public class CameraActivity extends BaseActivity {
 			
 			// blur the input images
 			for(int i=0;i<pictureList.size(); i++) {
+//				pictureList.get(i).toGrayscale();
 				pictureList.set(i, BitmapUtils.blurBitmap(pictureList.get(i)));
 			}
 		

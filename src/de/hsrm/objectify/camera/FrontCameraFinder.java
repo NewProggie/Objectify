@@ -2,6 +2,7 @@ package de.hsrm.objectify.camera;
 
 import android.hardware.Camera;
 import android.hardware.Camera.Size;
+import android.util.Log;
 
 /**
  * Returns front facing camera from current device using 2.3 (Gingerbread) API.
@@ -29,6 +30,8 @@ public class FrontCameraFinder extends CameraFinder {
 				imageFormat = params.getSupportedPictureFormats().get(0);
 				params.setPictureSize(pictureSize.getWidth(), pictureSize.getHeight());
 				params.setPictureFormat(imageFormat);
+				params.setExposureCompensation((int) (params.getMaxExposureCompensation()/4.0f));
+				params.setWhiteBalance(params.getWhiteBalance());
 				camera.setParameters(params);
 				camera.setDisplayOrientation(90);
 				return camera;
