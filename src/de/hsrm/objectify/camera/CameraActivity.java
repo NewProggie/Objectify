@@ -178,7 +178,6 @@ public class CameraActivity extends BaseActivity {
 				Camera.Parameters params = camera.getParameters();
 				String device = params.get("device");
 				if (device != null && device.equals("GT-P1000")) {
-					Log.d(TAG, "in device != null && device.equals(\"GT-P1000\")");
 					Image image = new Image(BitmapUtils.createScaledBitmap(data, CameraFinder.pictureSize, CameraFinder.imageFormat, 8.0f), false);
 					pictureList.add(image);
 					counter += 1;
@@ -216,6 +215,7 @@ public class CameraActivity extends BaseActivity {
 
 		private ObjectModel objectModel;
 		private ContentResolver cr;
+		private boolean sdIsMounted = true;
 
 		@Override
 		protected void onPreExecute() {
@@ -316,54 +316,69 @@ public class CameraActivity extends BaseActivity {
 
 			objectModel = new ObjectModel(vertices, normals, faces, BitmapUtils.autoContrast(texture));
 		
-			// storing the newly created 3D object onto hard disk and create database entries
-			Calendar cal = Calendar.getInstance();
-			String timestamp = String.valueOf(cal.getTimeInMillis());
-			String filename = timestamp+".kaw";
-			String path = ExternalDirectory.getExternalImageDirectory()+"/";
-			ContentValues values = new ContentValues();
-			cr = getContentResolver();
-			Uri objectUri = DatabaseProvider.CONTENT_URI.buildUpon().appendPath("object").build();
-			Uri galleryUri = DatabaseProvider.CONTENT_URI.buildUpon().appendPath("gallery").build();
-			try {
-				OutputStream out = new FileOutputStream(path+filename);
-				ObjectOutputStream obj_output = new ObjectOutputStream(out);
-				obj_output.writeObject(objectModel);
-				obj_output.close();
-				values.put(DatabaseAdapter.OBJECT_FILE_PATH_KEY, path+filename);
-				Uri objectResultUri = cr.insert(objectUri, values);	
-				String objectID = objectResultUri.getLastPathSegment();
-				values.clear();
-				String thumbnail_path = ExternalDirectory.getExternalImageDirectory()+"/"+timestamp+".png";
-				FileOutputStream fos = new FileOutputStream(thumbnail_path);
-				BufferedOutputStream bos = new BufferedOutputStream(fos);
-				texture.rotate(-90);
-				texture.compress(CompressFormat.PNG, 100, bos);
-				bos.flush();
-				bos.close();
-				values.put(DatabaseAdapter.GALLERY_THUMBNAIL_PATH_KEY, thumbnail_path);
-				values.put(DatabaseAdapter.GALLERY_NUMBER_OF_PICTURES_KEY, String.valueOf(numberOfPictures));
-				values.put(DatabaseAdapter.GALLERY_DATE_KEY, timestamp);
-				values.put(DatabaseAdapter.GALLERY_OBJECT_ID_KEY, objectID);
-				cr.insert(galleryUri, values);
-			} catch (FileNotFoundException e) {
-				Log.e(TAG, e.getLocalizedMessage());
-				e.printStackTrace();
-				return false;
-			} catch (IOException e) {
-				Log.e(TAG, e.getLocalizedMessage());
-				e.printStackTrace();
-				return false;
-			}		
-		
+			if (ExternalDirectory.isMounted()) {
+				// storing the newly created 3D object onto hard disk and create database entries
+				Calendar cal = Calendar.getInstance();
+				String timestamp = String.valueOf(cal.getTimeInMillis());
+				String filename = timestamp + ".kaw";
+				String path = ExternalDirectory.getExternalImageDirectory()
+						+ "/";
+				ContentValues values = new ContentValues();
+				cr = getContentResolver();
+				Uri objectUri = DatabaseProvider.CONTENT_URI.buildUpon()
+						.appendPath("object").build();
+				Uri galleryUri = DatabaseProvider.CONTENT_URI.buildUpon()
+						.appendPath("gallery").build();
+				try {
+					OutputStream out = new FileOutputStream(path + filename);
+					ObjectOutputStream obj_output = new ObjectOutputStream(out);
+					obj_output.writeObject(objectModel);
+					obj_output.close();
+					values.put(DatabaseAdapter.OBJECT_FILE_PATH_KEY, path
+							+ filename);
+					Uri objectResultUri = cr.insert(objectUri, values);
+					String objectID = objectResultUri.getLastPathSegment();
+					values.clear();
+					String thumbnail_path = ExternalDirectory
+							.getExternalImageDirectory()
+							+ "/"
+							+ timestamp
+							+ ".png";
+					FileOutputStream fos = new FileOutputStream(thumbnail_path);
+					BufferedOutputStream bos = new BufferedOutputStream(fos);
+					texture.rotate(-90);
+					texture.compress(CompressFormat.PNG, 100, bos);
+					bos.flush();
+					bos.close();
+					values.put(DatabaseAdapter.GALLERY_THUMBNAIL_PATH_KEY,
+							thumbnail_path);
+					values.put(DatabaseAdapter.GALLERY_NUMBER_OF_PICTURES_KEY,
+							String.valueOf(numberOfPictures));
+					values.put(DatabaseAdapter.GALLERY_DATE_KEY, timestamp);
+					values.put(DatabaseAdapter.GALLERY_OBJECT_ID_KEY, objectID);
+					cr.insert(galleryUri, values);
+				} catch (FileNotFoundException e) {
+					Log.e(TAG, e.getLocalizedMessage());
+					e.printStackTrace();
+					return false;
+				} catch (IOException e) {
+					Log.e(TAG, e.getLocalizedMessage());
+					e.printStackTrace();
+					return false;
+				}
+			} else {
+				sdIsMounted = false;
+			}
 			return true;
 		}
 		
 		@Override
 		protected void onPostExecute(Boolean createdSuccessfully) {
 			if (createdSuccessfully) {
-				Intent viewObject = new Intent(context,
-						ObjectViewerActivity.class);
+				if (!sdIsMounted) {
+					Toast.makeText(context, getString(R.string.obj_could_not_be_saved), Toast.LENGTH_SHORT).show();
+				}
+				Intent viewObject = new Intent(context, ObjectViewerActivity.class);
 				Bundle b = new Bundle();
 				b.putParcelable("objectModel", objectModel);
 				viewObject.putExtra("bundle", b);

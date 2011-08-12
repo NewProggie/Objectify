@@ -22,6 +22,7 @@
     <string name="couldnt_create_directory">Leider trat beim Erstellen eines Verzeichnisses ein Fehler auf</string>
     <string name="error_while_creating_object">Beim Erstellen des 3D-Objekts trat leider ein Fehler auf</string>
     <string name="external_not_mounted">Das externe Speicherverzeichnis wurde nicht gefunden</string>
+    <string name="obj_could_not_be_saved">Das erzeugte Modell konnte nicht gespeichert werden</string>
     <string name="error">Fehler</string>
     <string name="please_wait">Bitte warten...</string>
     <string name="send_feedback">Feedback senden</string>
