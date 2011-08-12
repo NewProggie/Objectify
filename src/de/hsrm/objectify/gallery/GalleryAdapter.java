@@ -40,7 +40,7 @@ public class GalleryAdapter extends CursorAdapter {
 		imageView.setLayoutParams(new GridView.LayoutParams(110,110));
 		imageView.setScaleType(ScaleType.FIT_XY);
 		imageView.setPadding(2, 2, 2, 0);
-		imageView.setBackgroundResource(R.drawable.polaroid_frame);
+		imageView.setBackgroundResource(R.drawable.dropshadow);
 		return imageView;
 	}
 
