@@ -19,7 +19,7 @@
     <string name="deleted_successfully">Deleted Successfully</string>
     <string name="error_while_deleting">An Error occurred while deleting</string>
     <string name="no_objects_saved">There are no saved objects right now</string>
-    <string name="couldnt_create_directory">Couldnt create directory</string>
+    <string name="couldnt_create_directory">Could not create directory</string>
     <string name="error_while_creating_object">An error occurred while creating object</string>
     <string name="external_not_mounted">The external hard disk could not be mounted</string>
     <string name="obj_could_not_be_saved">The previously created object could not be saved</string>
@@ -32,16 +32,16 @@
 	<string name="no_object_found">The selected object could not be opened</string>
 	<string name="error_while_reading">An error occurred while loading the selected object</string>
 	<string name="screenshot_creating">Creating Screenshot...</string>
-	<string name="screenshot_failed">An error occurred while creating a screenshot</string>
+	<string name="screenshot_failed">The screenshot could not be created</string>
 	<string name="edit">Edit</string>
     
     <!-- Settings -->
     <string name="settings">Settings</string>
     <string name="settings_camera_resolutions">Camera-Resolutions</string>
-    <string name="settings_camera_resolutions_hint">setting the resolution of the front facing camera</string>
+    <string name="settings_camera_resolutions_hint">Setting the resolution of the front facing camera</string>
     <string name="settings_amount_pictures">Number of pictures</string>
     <string name="settings_suffix_pictures">Pictures</string>
-    <string name="settings_amount_pictures_hint">Adjust the number of pictures used for creating a 3D model</string>
+    <string name="settings_amount_pictures_hint">Adjust the number of pictures required to create a 3D model</string>
     
     <!-- Gallery -->
     <string name="size">Size:</string>
