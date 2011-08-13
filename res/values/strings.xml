@@ -1,71 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Objectify</string>
-    <string name="gallery">Galerie</string>
+    <string name="gallery">Gallery</string>
     <string name="howto">Howto</string>
     <string name="export">Export</string>
-    <string name="share">Weitererzählen</string>
-    <string name="delete">Löschen</string>
-    <string name="camera">Kamera</string>
-    <string name="trigger">Auslöser</string>
+    <string name="share">Share</string>
+    <string name="delete">Delete</string>
+    <string name="camera">Camera</string>
+    <string name="trigger">Trigger</string>
     <string name="info">Info</string>
-    <string name="show">Zeigen</string>
+    <string name="show">Show</string>
     <string name="home">Home</string>
     <string name="object_viewer">Modelviewer</string>
-    <string name="submit">Ok</string>
-    <string name="more">Mehr</string>
-    <string name="cancel">Abbrechen</string>
-    <string name="chosen_object_really_delete">Soll dieses Objekt gelöscht werden?</string>
-    <string name="deleted_successfully">Erfolgreich gelöscht</string>
-    <string name="error_while_deleting">Beim Löschen trat ein Fehler auf</string>
-    <string name="no_objects_saved">Bisher wurden noch keine Objekte gespeichert</string>
-    <string name="couldnt_create_directory">Leider trat beim Erstellen eines Verzeichnisses ein Fehler auf</string>
-    <string name="error_while_creating_object">Beim Erstellen des 3D-Objekts trat leider ein Fehler auf</string>
-    <string name="external_not_mounted">Das externe Speicherverzeichnis wurde nicht gefunden</string>
-    <string name="obj_could_not_be_saved">Das erzeugte Modell konnte nicht gespeichert werden</string>
-    <string name="error">Fehler</string>
-    <string name="please_wait">Bitte warten...</string>
-    <string name="send_feedback">Feedback senden</string>
-    <string name="search">Suche</string>
-    <string name="no_ffc_was_found">Es konnte keine Frontkamera gefunden werden.</string>
-    <string name="about">Info</string>
-	<string name="no_object_found">Das Objekt konnte nicht geöffnet werden.</string>
-	<string name="error_while_reading">Fehler beim Einlesen des 3D-Objekts.</string>
-	<string name="screenshot_creating">Screenshot wird erstellt...</string>
-	<string name="screenshot_failed">Screenshot konnte leider nicht erstellt werden</string>
+    <string name="submit">Submit</string>
+    <string name="more">More</string>
+    <string name="cancel">Cancel</string>
+    <string name="chosen_object_really_delete">Really Delete?</string>
+    <string name="deleted_successfully">Deleted Successfully</string>
+    <string name="error_while_deleting">An Error occurred while deleting</string>
+    <string name="no_objects_saved">There are no saved objects right now</string>
+    <string name="couldnt_create_directory">Couldnt create directory</string>
+    <string name="error_while_creating_object">An error occurred while creating object</string>
+    <string name="external_not_mounted">The external hard disk could not be mounted</string>
+    <string name="obj_could_not_be_saved">The previously created object could not be saved</string>
+    <string name="error">Error</string>
+    <string name="please_wait">Please wait...</string>
+    <string name="send_feedback">Send feedback</string>
+    <string name="search">Search</string>
+    <string name="no_ffc_was_found">No front facing camera was found</string>
+    <string name="about">About</string>
+	<string name="no_object_found">The selected object could not be opened</string>
+	<string name="error_while_reading">An error occurred while loading the selected object</string>
+	<string name="screenshot_creating">Creating Screenshot...</string>
+	<string name="screenshot_failed">An error occurred while creating a screenshot</string>
+	<string name="edit">Edit</string>
     
     <!-- Settings -->
-    <string name="settings">Einstellungen</string>
-    <string name="settings_camera_resolutions">Kamera-Auflösungen</string>
-    <string name="settings_camera_resolutions_hint">Legt die Auflösung der Frontkamera fest</string>
-    <string name="settings_amount_pictures">Anzahl Fotos</string>
-    <string name="settings_suffix_pictures">Fotos</string>
-    <string name="settings_amount_pictures_hint">Ändert die Anzahl an Fotos, die pro 3D-Rekonstruktion benutzt werden</string>
+    <string name="settings">Settings</string>
+    <string name="settings_camera_resolutions">Camera-Resolutions</string>
+    <string name="settings_camera_resolutions_hint">setting the resolution of the front facing camera</string>
+    <string name="settings_amount_pictures">Number of pictures</string>
+    <string name="settings_suffix_pictures">Pictures</string>
+    <string name="settings_amount_pictures_hint">Adjust the number of pictures used for creating a 3D model</string>
     
     <!-- Gallery -->
-    <string name="size">Größe:</string>
+    <string name="size">Size:</string>
     <string name="faces">Faces:</string>
     <string name="vertices">Vertices:</string>
-    <string name="dimension">Maße:</string>
-    <string name="date">Datum:</string>
+    <string name="dimension">Dimension:</string>
+    <string name="date">Date:</string>
     <string name="details">Details</string>
-    <string name="number_of_pictures">Anzahl Fotos:</string>
-    <string name="textured">Texturiert</string>
-    <string name="points">Punktwolke</string>
-    <string name="wireframe">Gitter</string>
+    <string name="number_of_pictures">Number of pictures:</string>
+    <string name="textured">Textured</string>
+    <string name="points">Points</string>
+    <string name="wireframe">Wireframe</string>
     
     <!-- Share -->
-    <string name="mailtext">Hi,\n\ndu musst dir unbedingt diese App anschauen:\n\nhttp://market.android.com.</string>
+    <string name="mailtext">Hi,\n\ncheck out this app in the market:\n\nhttp://market.android.com.</string>
     
     <!-- Howto -->
-    <string name="howto_step1">Schritt 1: In einen dunklen Raum gehen...</string>
-    <string name="howto_step2">Schritt 2: Smartphone ruhig halten und auf den Auslöser drücken.</string>
-    <string name="howto_step3">Schritt 3: Ergebnis betrachten, verschicken, weitererzählen oder nochmal erleben.</string>
+    <string name="howto_step1">Step 1: Go into a dark room...</string>
+    <string name="howto_step2">Step 2: Hold smartphone still near to the target object.</string>
+    <string name="howto_step3">Step 3: View the result, send it, tell it to others or do it again.</string>
     
     <!-- About -->
     <string name="developer_mail_address">kai.wolf@gmail.com</string>
     <string name="name_and_copyright">Copyright (c) 2011 Kai Wolf.\nAll rights reserved.</string>
     <string name="explanation_third_party">This application makes use of Jama: A Java Matrix Package. Visit http://math.nist.gov/javanumerics/jama/ for further information.\n\nIn addition this application uses an open source, multithreaded FFT Library JTransforms. Visit https://sites.google.com/site/piotrwendykier/software/jtransforms for further information.</string>
-    <string name="no_mailclient_found">Kein Programm zum Versenden einer Mail gefunden.</string>
+    <string name="no_mailclient_found">No appropriate mail client was found on this device.</string>
     
 </resources>
