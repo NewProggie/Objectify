@@ -1,7 +1,6 @@
 package de.hsrm.objectify.camera;
 
 import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -21,11 +20,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
+import android.graphics.BitmapFactory;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
@@ -71,6 +72,10 @@ public class CameraActivity extends BaseActivity {
 	private Context context;
 	private Camera camera;
 	private Image texture;
+	public static Runnable shootPicture;
+	public static Handler handler;
+	// TODO: Debugging
+	private String id;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -98,7 +103,7 @@ public class CameraActivity extends BaseActivity {
 				triggerPictures.setVisibility(View.GONE);
 				/* New ArrayList for storing the pictures temporarily */
 				pictureList = new ArrayList<Image>();
-				takePictures();
+				setLights();
 			}
 		});
 
@@ -108,6 +113,16 @@ public class CameraActivity extends BaseActivity {
 		} else {
 			cameraPreview.setCamera(camera);
 		}
+		
+		handler = new Handler();
+		shootPicture = new Runnable() {
+			
+			@Override
+			public void run() {
+				camera.startPreview();
+				camera.takePicture(null, null, jpegCallback());
+			}
+		};
 
 	}
 	
@@ -139,16 +154,6 @@ public class CameraActivity extends BaseActivity {
 	}
 
 	/**
-	 * Takes {@code numberOfPictures} pictures in sequence.
-	 */
-	private void takePictures() {
-		camera.startPreview();
-		setLights();
-		SystemClock.sleep(250);
-		camera.takePicture(null, null, jpegCallback());
-	}
-
-	/**
 	 * Will be called when no front facing camera was found.
 	 * 
 	 * @param message
@@ -170,11 +175,35 @@ public class CameraActivity extends BaseActivity {
 		cameraLighting.setZOrderOnTop(true);
 		cameraLighting.putLightSource(numberOfPictures, counter);
 	}
+	
+	//TODO: Debugging
+	private void storeOnSD(byte[] data, int suffix) {
+		if (suffix == 0) {
+			id = String.valueOf(SystemClock.elapsedRealtime());
+		}
+		Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
+		try {
+			FileOutputStream out = new FileOutputStream(
+					ExternalDirectory.getExternalRootDirectory() + "/" + id
+							+ "pic" + numberOfPictures + "_" + suffix + ".png");
+			BufferedOutputStream bos = new BufferedOutputStream(out);
+			bmp.compress(CompressFormat.PNG, 100, out);
+			bos.flush();
+			bos.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
 	private PictureCallback jpegCallback() {
 		PictureCallback callback = new PictureCallback() {
 			@Override
 			public void onPictureTaken(byte[] data, Camera camera) {
+				// TODO: Debugging
+//				storeOnSD(data, counter);
+				
 				Camera.Parameters params = camera.getParameters();
 				String device = params.get("device");
 				if (device != null && device.equals("GT-P1000")) {
@@ -187,10 +216,9 @@ public class CameraActivity extends BaseActivity {
 					counter += 1;
 				}
 				if (counter == numberOfPictures) {
-					Log.d(TAG, "Photos taken, calculating object");
 					new CalculateModel().execute(); 
 				} else {
-					takePictures();
+					setLights();
 				}
 			}
 		};

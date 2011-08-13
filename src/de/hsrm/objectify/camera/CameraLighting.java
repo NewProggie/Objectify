@@ -5,7 +5,9 @@ import javax.microedition.khronos.opengles.GL10;
 
 import android.content.Context;
 import android.opengl.GLSurfaceView;
+import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.Log;
 import de.hsrm.objectify.math.Matrix;
 import de.hsrm.objectify.rendering.Circle;
 
@@ -54,18 +56,18 @@ public class CameraLighting extends GLSurfaceView {
 	public Matrix getLightMatrixS(int numberOfPictures) {
 		double[][] lightMatrix = new double[numberOfPictures][3];
 		if (numberOfPictures == 4) {
-			lightMatrix[0][0] = 0.01693;
-			lightMatrix[0][1] = 0.16890;
-			lightMatrix[0][2] = 1.01483;
-			lightMatrix[1][0] = 0.01042;
-			lightMatrix[1][1] = 0.06380;
-			lightMatrix[1][2] = 1.00230;
-			lightMatrix[2][0] = 0.07943;
-			lightMatrix[2][1] = 0.17188;
-			lightMatrix[2][2] = 1.01186;
-			lightMatrix[3][0] = 0.04167;
-			lightMatrix[3][1] = 0.23307;
-			lightMatrix[3][2] = 1.02640;
+			lightMatrix[0][0] = 0.015384615384615385;
+			lightMatrix[0][1] = 0.14871794871794872;
+			lightMatrix[0][2] = 1.0108809731518058;
+			lightMatrix[1][0] = 0.015384615384615385;
+			lightMatrix[1][1] = 0.02564102564102564;
+			lightMatrix[1][2] = 1.0002103657758157;
+			lightMatrix[2][0] = 0.066666666666666666;
+			lightMatrix[2][1] = 0.12820512820512819;
+			lightMatrix[2][2] = 1.0059781858736545;
+			lightMatrix[3][0] = 0.041025641025641026;
+			lightMatrix[3][1] = 0.1641025641025641;
+			lightMatrix[3][2] = 1.0125445907827819;
 		} else if (numberOfPictures == 5) {
 			lightMatrix[0][0] = 0.03966;
 			lightMatrix[0][1] = 0.16890;
@@ -149,50 +151,49 @@ public class CameraLighting extends GLSurfaceView {
 			lightMatrix[7][1] = 0.14003;
 			lightMatrix[7][2] = 1.00493;
 		} else if (numberOfPictures == 9) {
-			lightMatrix[0][0] = 0.03738;
-			lightMatrix[0][1] = 0.19945;
-			lightMatrix[0][2] = 1.01924;
-			lightMatrix[1][0] = -0.00034;
-			lightMatrix[1][1] = 0.13173;
-			lightMatrix[1][2] = 1.00878;
-			lightMatrix[2][0] = 0.03120;
-			lightMatrix[2][1] = 0.11857;
-			lightMatrix[2][2] = 1.00661;
-			lightMatrix[3][0] = 0.04811;
-			lightMatrix[3][1] = 0.11034;
-			lightMatrix[3][2] = 1.00489;
-			lightMatrix[4][0] = 0.06716;
-			lightMatrix[4][1] = 0.13489;
-			lightMatrix[4][2] = 1.00692;
-			lightMatrix[5][0] = 0.05521;
-			lightMatrix[5][1] = 0.17919;
-			lightMatrix[5][2] = 1.001427;
-			lightMatrix[6][0] = 0.04823;
-			lightMatrix[6][1] = 0.19635;
-			lightMatrix[6][2] = 1.01777;
-			lightMatrix[7][0] = 0.03646;
-			lightMatrix[7][1] = 0.20155;
-			lightMatrix[7][2] = 1.01930;
-			lightMatrix[8][0] = 0.01472;
-			lightMatrix[8][1] = 0.20436;
-			lightMatrix[8][2] = 1.02055;
+			lightMatrix[0][0] = -0.005076142131979695;
+			lightMatrix[0][1] = 0.14213197969543148;
+			lightMatrix[0][2] = 1.0100374906077489;
+			lightMatrix[1][0] = -0.01015228426395939;
+			lightMatrix[1][1] = 0.03553299492385787;
+			lightMatrix[1][2] = 1.0005795944613716;
+			lightMatrix[2][0] = -0.005076142131979695;
+			lightMatrix[2][1] = 0.030456852791878174;
+			lightMatrix[2][2] = 1.0004508247100614;
+			lightMatrix[3][0] = 0.02030456852791878;
+			lightMatrix[3][1] = 0.03553299492385787;
+			lightMatrix[3][2] = 1.0004250687708471;
+			lightMatrix[4][0] = 0.045685279187817257;
+			lightMatrix[4][1] = 0.12182741116751269;
+			lightMatrix[4][2] = 1.0063571798210165;
+			lightMatrix[5][0] = 0.03553299492385787;
+			lightMatrix[5][1] = 0.14213197969543148;
+			lightMatrix[5][2] = 1.0094250372979083;
+			lightMatrix[6][0] = 0.02030456852791878;
+			lightMatrix[6][1] = 0.16243654822335024;
+			lightMatrix[6][2] = 1.0129034291064531;
+			lightMatrix[7][0] = 0.005076142131979695;
+			lightMatrix[7][1] = 0.17258883248730963;
+			lightMatrix[7][2] = 1.0147714707659004;
+			lightMatrix[8][0] = 0.01015228426395939;
+			lightMatrix[8][1] = 0.16243654822335024;
+			lightMatrix[8][2] = 1.0130560514221021;
 		}
 		return new Matrix(lightMatrix);
 	}
 
 	private class CameraLightingRenderer implements GLSurfaceView.Renderer {
 
-		private Context context;
 		private float xcoord = 0.0f;
 		private float ycoord = 0.0f;
-		private float RADIUS = 2.7f;
-		private int width, height;
+		private float RADIUS_LIGHTSOURCE = 3.5f;
+		private float RADIUS_LIGHTPATH = 3.8f;
 		private float ratio;
 		private Circle lightSource;
+		private boolean toggle = false;
 		
 		public CameraLightingRenderer(Context context) {
-			this.context = context;
-			this.lightSource = new Circle(RADIUS);
+			this.lightSource = new Circle(RADIUS_LIGHTSOURCE);
 		}
 		
 		@Override
@@ -208,8 +209,6 @@ public class CameraLighting extends GLSurfaceView {
 		
 		@Override
 		public void onSurfaceChanged(GL10 gl, int width, int height) {
-			this.width = width;
-			this.height = height;
 			ratio = (float) width / height;
 			gl.glMatrixMode(GL10.GL_PROJECTION);
 			gl.glLoadIdentity();
@@ -229,12 +228,17 @@ public class CameraLighting extends GLSurfaceView {
 			lightSource.draw(gl);
 			gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
             gl.glDisableClientState(GL10.GL_COLOR_ARRAY);
+            if (toggle) {
+            	toggle = false;
+            	CameraActivity.handler.post(CameraActivity.shootPicture);
+            }
 		}
 		
 		public void putLightSource(int numberOfTotalPictures, int currentPictureCount) {
 			float currentDegree = (360/numberOfTotalPictures)*currentPictureCount;
-			xcoord = (float) (3.0f * (Math.cos(getAngle(currentDegree))));
-			ycoord = (float) (3.0f * (Math.sin(getAngle(currentDegree))));
+			xcoord = (float) (RADIUS_LIGHTPATH * (Math.cos(getAngle(currentDegree))));
+			ycoord = (float) (RADIUS_LIGHTPATH * (Math.sin(getAngle(currentDegree))));
+			toggle = true;
 			requestRender();
 		}
 		
