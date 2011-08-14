@@ -6,23 +6,26 @@
 	android:layout_gravity="bottom|center_horizontal">
 	<Button 
 		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
 		android:onClick="actionControl"
 		android:tag="texture"
+		android:lines="2"
+		android:layout_gravity="bottom"
 		android:text="@string/textured"
-		android:layout_weight="1"/>
+		android:layout_weight="1" android:layout_height="match_parent"/>
 	<Button 
 		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
 		android:onClick="actionControl"
+		android:lines="2"
+		android:layout_gravity="bottom"
 		android:tag="points"
 		android:text="@string/points"
-		android:layout_weight="1"/>
+		android:layout_weight="1" android:layout_height="match_parent"/>
 	<Button 
 		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
 		android:onClick="actionControl"
+		android:lines="2"
+		android:layout_gravity="bottom"
 		android:tag="wireframe"
 		android:text="@string/wireframe"
-		android:layout_weight="1"/>
+		android:layout_weight="1" android:layout_height="match_parent"/>
 </LinearLayout>
