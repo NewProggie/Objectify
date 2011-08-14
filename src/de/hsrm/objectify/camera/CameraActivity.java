@@ -383,6 +383,9 @@ public class CameraActivity extends BaseActivity {
 					values.put(DatabaseAdapter.GALLERY_NUMBER_OF_PICTURES_KEY,
 							String.valueOf(numberOfPictures));
 					values.put(DatabaseAdapter.GALLERY_DATE_KEY, timestamp);
+					values.put(DatabaseAdapter.GALLERY_DIMENSION_KEY, objectModel.getTextureBitmapSize());
+					values.put(DatabaseAdapter.GALLERY_FACES_KEY, String.valueOf(objectModel.getFaces().length));
+					values.put(DatabaseAdapter.GALLERY_VERTICES_KEY, String.valueOf(objectModel.getVertices().length));
 					values.put(DatabaseAdapter.GALLERY_OBJECT_ID_KEY, objectID);
 					cr.insert(galleryUri, values);
 				} catch (FileNotFoundException e) {

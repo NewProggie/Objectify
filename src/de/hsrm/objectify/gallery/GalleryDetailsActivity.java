@@ -44,7 +44,7 @@ public class GalleryDetailsActivity extends BaseActivity {
 
 	private final String TAG = "GalleryDetailsActivity";
 	private ImageView picture;
-	private TextView date, numberOfPics;
+	private TextView date, numberOfPics, dimension, faces, vertices;
 	private String objectId, galleryId;
 	private ContentResolver cr;
 	private Context context;
@@ -60,16 +60,23 @@ public class GalleryDetailsActivity extends BaseActivity {
 		picture = (ImageView) findViewById(R.id.galleryDetailImage);
 		date = (TextView) findViewById(R.id.dateTextview);
 		numberOfPics = (TextView) findViewById(R.id.numberOfPicsTextview);
+		dimension = (TextView) findViewById(R.id.dimensionsTextView);
+		faces = (TextView) findViewById(R.id.facesTextView);
+		vertices = (TextView) findViewById(R.id.verticesTextView);
 		
 		galleryId = String.valueOf(getIntent().getLongExtra("id", 1));
 		cr = getContentResolver();
 		galleryItemUri = DatabaseProvider.CONTENT_URI.buildUpon().appendPath("gallery").build();
+		
 		Cursor c = cr.query(galleryItemUri, null, DatabaseAdapter.GALLERY_ID_KEY+"=?", new String[] { galleryId }, null);
 		c.moveToFirst();
 		
 		String thumbnailPath = c.getString(DatabaseAdapter.GALLERY_THUMBNAIL_PATH_COLUMN);
 		String amountPics = c.getString(DatabaseAdapter.GALLERY_NUMBER_OF_PICTURES_COLUMN);
 		String strDate = c.getString(DatabaseAdapter.GALLERY_DATE_COLUMN);
+		String strDimens = c.getString(DatabaseAdapter.GALLERY_DIMENSION_COLUMN);
+		String strFaces = c.getString(DatabaseAdapter.GALLERY_FACES_COLUMN);
+		String strVertices = c.getString(DatabaseAdapter.GALLERY_VERTICES_COLUMN);
 		objectId = c.getString(DatabaseAdapter.GALLERY_OBJECT_ID_COLUMN);
 		c.close();
 		
@@ -85,6 +92,9 @@ public class GalleryDetailsActivity extends BaseActivity {
 		}
 		date.setText(cal.getTime().toLocaleString());
 		numberOfPics.setText(amountPics);
+		dimension.setText(strDimens + " " + getString(R.string.pixel));
+		faces.setText(strFaces);
+		vertices.setText(strVertices);
 		
 		addNewActionButton(R.drawable.ic_title_show, R.string.show, onShowclicked());
 		addNewActionButton(R.drawable.ic_title_delete, R.string.delete, onDeleteclicked());

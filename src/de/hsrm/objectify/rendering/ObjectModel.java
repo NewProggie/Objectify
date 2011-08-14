@@ -163,6 +163,14 @@ public class ObjectModel implements Parcelable, Serializable {
 		this.image = new Image(BitmapFactory.decodeByteArray(bitmap_data, 0, bitmap_data.length));
 	}
 	
+	public String getTextureBitmapSize() {
+		StringBuffer sb = new StringBuffer();
+		sb.append(this.image.getWidth());
+		sb.append("x");
+		sb.append(this.image.getHeight());
+		return sb.toString();
+	}
+	
 	public float[] getVertices() {
 		return this.vertices;
 	}

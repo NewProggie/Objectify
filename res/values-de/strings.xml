@@ -47,13 +47,14 @@
     <string name="size">Größe:</string>
     <string name="faces">Faces:</string>
     <string name="vertices">Vertices:</string>
-    <string name="dimension">Maße:</string>
+    <string name="dimension">Bildgröße:</string>
     <string name="date">Datum:</string>
     <string name="details">Details</string>
     <string name="number_of_pictures">Anzahl Fotos:</string>
     <string name="textured">Texturiert</string>
     <string name="points">Punktwolke</string>
     <string name="wireframe">Wireframe</string>
+    <string name="pixel">Pixel</string>
     
     <!-- Share -->
     <string name="mailtext">Hi,\n\ndu musst dir unbedingt diese App anschauen:\n\nhttp://market.android.com.</string>

@@ -54,6 +54,7 @@
     <string name="textured">Textured</string>
     <string name="points">Points</string>
     <string name="wireframe">Wireframe</string>
+    <string name="pixel">Pixel</string>
     
     <!-- Share -->
     <string name="mailtext">Hi,\n\ncheck out this app in the market:\n\nhttp://market.android.com.</string>

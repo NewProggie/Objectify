@@ -54,6 +54,7 @@
     <string name="textured">Texturiert</string>
     <string name="points">Punktwolke</string>
     <string name="wireframe">Gitter</string>
+    <string name="pixel">Pixel</string>
     
     <!-- Share -->
     <string name="mailtext">Hi,\n\ndu musst dir unbedingt diese App anschauen:\n\nhttp://market.android.com.</string>

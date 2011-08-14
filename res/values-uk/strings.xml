@@ -54,6 +54,7 @@
     <string name="textured">Текстурований</string>
     <string name="points">Відзначений пунктиром</string>
     <string name="wireframe">Ґратчастий</string>
+    <string name="pixel">Піксель</string>
     
     <!-- Share -->
     <string name="mailtext">Привіт,\n\nознайомся з цією програмою:\n\nhttp://market.android.com.</string>

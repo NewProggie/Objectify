@@ -32,8 +32,14 @@ public class DatabaseAdapter {
 	public static final int GALLERY_NUMBER_OF_PICTURES_COLUMN = 2;
 	public static final String GALLERY_DATE_KEY = "date";
 	public static final int GALLERY_DATE_COLUMN = 3;
+	public static final String GALLERY_DIMENSION_KEY = "dimension";
+	public static final int GALLERY_DIMENSION_COLUMN = 4;
+	public static final String GALLERY_FACES_KEY = "faces";
+	public static final int GALLERY_FACES_COLUMN = 5;
+	public static final String GALLERY_VERTICES_KEY = "vertices";
+	public static final int GALLERY_VERTICES_COLUMN = 6;
 	public static final String GALLERY_OBJECT_ID_KEY = "object_id";
-	public static final int GALLERY_OBJECT_ID_COLUMN = 4;
+	public static final int GALLERY_OBJECT_ID_COLUMN = 7;
 
 	private static final String DATABASE_TABLE_OBJECT_CREATE = "CREATE TABLE " + DATABASE_TABLE_OBJECT + " (" +
 	OBJECT_ID_KEY + " INTEGER PRIMARY KEY AUTOINCREMENT" + ", " + OBJECT_FILE_PATH_KEY + " TEXT NOT NULL" + ")";
@@ -41,6 +47,8 @@ public class DatabaseAdapter {
 	private static final String DATABASE_TABLE_GALLERY_CREATE = "CREATE TABLE " + DATABASE_TABLE_GALLERY + " (" +
 		GALLERY_ID_KEY + " INTEGER PRIMARY KEY AUTOINCREMENT" + ", " + GALLERY_THUMBNAIL_PATH_KEY + " TEXT NOT NULL" + ", " +
 		GALLERY_NUMBER_OF_PICTURES_KEY + " TEXT NOT NULL" + ", " + GALLERY_DATE_KEY + " TEXT NOT NULL" + "," +
+		GALLERY_DIMENSION_KEY + " TEXT NOT NULL" + ", " + GALLERY_FACES_KEY + " TEXT NOT NULL" + ", " +
+		GALLERY_VERTICES_KEY+ " TEXt NOT NULL" + ", " +
 		GALLERY_OBJECT_ID_KEY + " INTEGER REFERENCES" + DATABASE_TABLE_OBJECT + ")";
 	
 	private static SQLiteDatabase db;

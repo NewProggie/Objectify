@@ -18,22 +18,49 @@
 		<TextView 
     		android:layout_width="wrap_content" 
     		android:layout_height="wrap_content" 
+    		android:layout_marginBottom="3dip"
     		android:text="@string/date"
-    		style="@style/ShadowedBlackText" android:layout_gravity="right"/>
+    		style="@style/ShadowedBlackText" 
+    		android:layout_gravity="right" />
     	<TextView 
     		android:layout_width="wrap_content" 
     		android:layout_height="wrap_content" 
+    		android:layout_marginBottom="3dip"
     		android:text="@string/number_of_pictures"
-    		style="@style/ShadowedBlackText" android:layout_gravity="right"/>
+    		style="@style/ShadowedBlackText" 
+    		android:layout_gravity="right" />
+    	<TextView 
+    		android:layout_width="wrap_content" 
+    		android:layout_height="wrap_content"
+    		android:layout_marginBottom="3dip" 
+    		android:text="@string/dimension"
+    		style="@style/ShadowedBlackText" 
+    		android:layout_gravity="right" />
+    	<TextView 
+    		android:layout_width="wrap_content" 
+    		android:layout_height="wrap_content" 
+    		android:layout_marginBottom="3dip"
+    		android:text="@string/faces"
+    		style="@style/ShadowedBlackText" 
+    		android:layout_gravity="right" />
+    	<TextView 
+    		android:layout_width="wrap_content" 
+    		android:layout_height="wrap_content" 
+    		android:layout_marginBottom="3dip"
+    		android:text="@string/vertices"
+    		style="@style/ShadowedBlackText" 
+    		android:layout_gravity="right" />
 	</LinearLayout>
 	<LinearLayout 
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent"
 		android:orientation="vertical"
-		android:layout_weight="1" android:layout_marginTop="167dip">
+		android:layout_weight="1" 
+		android:layout_marginTop="167dip">
 		<TextView 
     		android:id="@+id/dateTextview" 
     		android:layout_width="wrap_content" 
+    		android:layout_marginBottom="3dip"
     		android:text="13.08.2011 13:45:54"
     		android:layout_height="wrap_content" 
     		style="@style/ShadowedBlackText" />
@@ -41,7 +68,26 @@
     		android:id="@+id/numberOfPicsTextview" 
     		android:layout_width="wrap_content" 
     		android:layout_height="wrap_content"
+    		android:layout_marginBottom="3dip"
     		android:text="5" 
+    		style="@style/ShadowedBlackText" />
+    	<TextView 
+    		android:id="@+id/dimensionsTextView"
+    		android:layout_width="wrap_content"
+    		android:layout_height="wrap_content"
+    		android:layout_marginBottom="3dip"
+    		style="@style/ShadowedBlackText" />
+    	<TextView 
+    		android:id="@+id/facesTextView"
+    		android:layout_width="wrap_content"
+    		android:layout_height="wrap_content"
+    		android:layout_marginBottom="3dip"
+    		style="@style/ShadowedBlackText" />
+    	<TextView 
+    		android:id="@+id/verticesTextView"
+    		android:layout_width="wrap_content"
+    		android:layout_height="wrap_content"
+    		android:layout_marginBottom="3dip"
     		style="@style/ShadowedBlackText" />
 	</LinearLayout>
 </LinearLayout>
