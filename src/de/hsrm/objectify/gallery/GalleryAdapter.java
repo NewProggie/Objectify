@@ -15,7 +15,7 @@ import de.hsrm.objectify.database.DatabaseAdapter;
 
 public class GalleryAdapter extends CursorAdapter {
 	
-	public Cursor cursor;
+	private Cursor cursor;
 	
 	public GalleryAdapter(Context context, Cursor c) {
 		super(context, c);
@@ -32,6 +32,10 @@ public class GalleryAdapter extends CursorAdapter {
 			bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.image_not_available);
 		}
 		image.setImageBitmap(bitmap);
+	}
+	
+	public Cursor getCursor() {
+		return cursor;
 	}
 	
 	@Override

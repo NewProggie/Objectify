@@ -172,6 +172,7 @@ public class GalleryDetailsActivity extends BaseActivity {
 		
 		@Override
 		protected void onPostExecute(Boolean successfullyDeleted) {
+			pleaseWait.dismiss();
 			if (successfullyDeleted) {
 				Toast.makeText(context, getString(R.string.deleted_successfully), Toast.LENGTH_SHORT).show();
 			} else {

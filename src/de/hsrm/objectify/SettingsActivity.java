@@ -60,8 +60,7 @@ public class SettingsActivity extends PreferenceActivity {
 		if (camera != null) {
 			Camera.Parameters params = camera.getParameters();
 			for (Size size : params.getSupportedPictureSizes()) {
-				tempResolutions.add(String.valueOf(size.width) + "x"
-						+ String.valueOf(size.height));
+				tempResolutions.add(String.valueOf(size.width) + "x" + String.valueOf(size.height));
 			}
 			camera.release();
 			resolutions = new CharSequence[tempResolutions.size()];
