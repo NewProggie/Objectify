@@ -1,58 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:orientation="vertical" 
+	android:orientation="horizontal" 
 	android:background="@drawable/background_noise" 
-	android:padding="10dip"
-	android:layout_gravity="clip_vertical"
 	android:layout_height="match_parent" 
 	android:layout_width="match_parent">
-	<ImageView 
-		android:id="@+id/galleryDetailImage"
-		android:layout_width="fill_parent"
-		android:layout_height="fill_parent"
-		android:layout_weight="1"
-		android:scaleType="fitStart" />
 	<LinearLayout 
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent"
 		android:orientation="vertical"
-		android:layout_marginTop="10dip"
-		android:layout_weight="5">
-		<LinearLayout
-	    	android:id="@+id/date_container"
-	   	 	android:layout_width="fill_parent"
-	   		android:layout_height="wrap_content">
-	   	 	<TextView 
-    			android:layout_width="wrap_content" 
-    			android:layout_height="wrap_content" 
-    			android:text="@string/date"
-    			style="@style/ShadowedBlackText" />
-    		<TextView 
-    			android:id="@+id/dateTextview" 
-    			android:layout_width="wrap_content" 
-    			android:layout_height="wrap_content" 
-    			android:layout_marginLeft="10dip"
-    			android:layout_weight="1"
-    			android:text="20.01.2011"
-    			style="@style/ShadowedBlackText" />
-		</LinearLayout>
-		<LinearLayout
-	    	android:id="@+id/numberOfPics_container"
-	    	android:layout_width="fill_parent"
-	    	android:layout_height="wrap_content">
-	   	 	<TextView 
-    			android:layout_width="wrap_content" 
-    			android:layout_height="wrap_content" 
-    			android:text="@string/number_of_pictures"
-    			style="@style/ShadowedBlackText" />
-    		<TextView 
-    			android:id="@+id/numberOfPicsTextview" 
-    			android:layout_width="wrap_content" 
-    			android:layout_height="wrap_content" 
-    			android:layout_marginLeft="10dip"
-    			android:layout_weight="1"
-    			android:text="4"
-    			style="@style/ShadowedBlackText" />
-		</LinearLayout>
+		android:layout_weight="1" android:padding="10dip">
+		<ImageView 
+			android:id="@+id/galleryDetailImage"
+			android:layout_width="fill_parent"
+			android:scaleType="fitXY"
+			android:background="@drawable/polaroid_frame"
+			android:layout_marginBottom="6dip" android:layout_height="150dip"/>
+		<TextView 
+    		android:layout_width="wrap_content" 
+    		android:layout_height="wrap_content" 
+    		android:text="@string/date"
+    		style="@style/ShadowedBlackText" android:layout_gravity="right"/>
+    	<TextView 
+    		android:layout_width="wrap_content" 
+    		android:layout_height="wrap_content" 
+    		android:text="@string/number_of_pictures"
+    		style="@style/ShadowedBlackText" android:layout_gravity="right"/>
+	</LinearLayout>
+	<LinearLayout 
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:orientation="vertical"
+		android:layout_weight="1" android:layout_marginTop="167dip">
+		<TextView 
+    		android:id="@+id/dateTextview" 
+    		android:layout_width="wrap_content" 
+    		android:text="13.08.2011 13:45:54"
+    		android:layout_height="wrap_content" 
+    		style="@style/ShadowedBlackText" />
+    	<TextView 
+    		android:id="@+id/numberOfPicsTextview" 
+    		android:layout_width="wrap_content" 
+    		android:layout_height="wrap_content"
+    		android:text="5" 
+    		style="@style/ShadowedBlackText" />
 	</LinearLayout>
 </LinearLayout>
