@@ -202,7 +202,7 @@ public class CameraActivity extends BaseActivity {
 			@Override
 			public void onPictureTaken(byte[] data, Camera camera) {
 				// TODO: Debugging
-//				storeOnSD(data, counter);
+				storeOnSD(data, counter);
 				
 				Camera.Parameters params = camera.getParameters();
 				String device = params.get("device");
