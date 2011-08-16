@@ -74,8 +74,6 @@ public class CameraActivity extends BaseActivity {
 	private Image texture;
 	public static Runnable shootPicture;
 	public static Handler handler;
-	// TODO: Debugging
-	private String id;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -176,34 +174,10 @@ public class CameraActivity extends BaseActivity {
 		cameraLighting.putLightSource(numberOfPictures, counter);
 	}
 	
-	//TODO: Debugging
-	private void storeOnSD(byte[] data, int suffix) {
-		if (suffix == 0) {
-			id = String.valueOf(SystemClock.elapsedRealtime());
-		}
-		Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
-		try {
-			FileOutputStream out = new FileOutputStream(
-					ExternalDirectory.getExternalRootDirectory() + "/" + id
-							+ "pic" + numberOfPictures + "_" + suffix + ".png");
-			BufferedOutputStream bos = new BufferedOutputStream(out);
-			bmp.compress(CompressFormat.PNG, 100, out);
-			bos.flush();
-			bos.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
 	private PictureCallback jpegCallback() {
 		PictureCallback callback = new PictureCallback() {
 			@Override
 			public void onPictureTaken(byte[] data, Camera camera) {
-				// TODO: Debugging
-				storeOnSD(data, counter);
-				
 				Camera.Parameters params = camera.getParameters();
 				String device = params.get("device");
 				if (device != null && device.equals("GT-P1000")) {
@@ -267,7 +241,6 @@ public class CameraActivity extends BaseActivity {
 			
 			// blur the input images
 			for(int i=0;i<pictureList.size(); i++) {
-//				pictureList.get(i).toGrayscale();
 				pictureList.set(i, BitmapUtils.blurBitmap(pictureList.get(i)));
 			}
 		
