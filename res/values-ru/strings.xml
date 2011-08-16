@@ -52,21 +52,21 @@
     <string name="details">Детали</string>
     <string name="number_of_pictures">Количество фотографий:</string>
     <string name="textured">Текстурованной</string>
-    <string name="points">Punktwolke</string>
-    <string name="wireframe">Gitter</string>
+    <string name="points">Отмечен пунктиром</string>
+    <string name="wireframe">Решетчатый</string>
     
     <!-- Share -->
-    <string name="mailtext">Hi,\n\ndu musst dir unbedingt diese App anschauen:\n\nhttp://market.android.com.</string>
+    <string name="mailtext">Привет,\n\nознакомьтесь с этой программой:\n\nhttp://market.android.com.</string>
     
     <!-- Howto -->
-    <string name="howto_step1">Schritt 1: In einen dunklen Raum gehen...</string>
-    <string name="howto_step2">Schritt 2: Smartphone ruhig halten und auf den Auslöser drücken.</string>
-    <string name="howto_step3">Schritt 3: Ergebnis betrachten, verschicken, weitererzählen oder nochmal erleben.</string>
+    <string name="howto_step1">Шаг 1: Пойти в тьомное помещение...</string>
+    <string name="howto_step2">Шаг 2: Держать смартфон спокойно и нажать на триггер.</string>
+    <string name="howto_step3">Шаг 3: Посмотреть на результат, вислать, поделится или повторить.</string>
     
     <!-- About -->
     <string name="developer_mail_address">kai.wolf@gmail.com</string>
     <string name="name_and_copyright">Copyright (c) 2011 Kai Wolf.\nAll rights reserved.</string>
     <string name="explanation_third_party">This application makes use of Jama: A Java Matrix Package. Visit http://math.nist.gov/javanumerics/jama/ for further information.\n\nIn addition this application uses an open source, multithreaded FFT Library JTransforms. Visit https://sites.google.com/site/piotrwendykier/software/jtransforms for further information.</string>
-    <string name="no_mailclient_found">Kein Programm zum Versenden einer Mail gefunden.</string>
+    <string name="no_mailclient_found">Не найдено программи для отправки електронной почты.</string>
     
 </resources>
