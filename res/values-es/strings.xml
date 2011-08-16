@@ -60,7 +60,7 @@
     <string name="mailtext">Hola,\n\nmira ésta aplicación:\n\nhttp://market.android.com.</string>
     
     <!-- Howto -->
-    <string name="howto_step1">paso 1: entrar una habitación obscura...</string>
+    <string name="howto_step1">paso 1: entrar una habitación oscura...</string>
     <string name="howto_step2">paso 2: no mover celular y empujar disparador</string>
     <string name="howto_step3">paso 3: mirar resultado, mandar, compartir o otra vez</string>
     

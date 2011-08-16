@@ -3,15 +3,27 @@ package de.hsrm.objectify;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.provider.Settings.Secure;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.Toast;
+
+import com.android.vending.licensing.AESObfuscator;
+import com.android.vending.licensing.LicenseChecker;
+import com.android.vending.licensing.LicenseCheckerCallback;
+import com.android.vending.licensing.ServerManagedPolicy;
+
 import de.hsrm.objectify.camera.CameraActivity;
 import de.hsrm.objectify.gallery.GalleryActivity;
 import de.hsrm.objectify.howto.HowToActivity;
@@ -29,7 +41,9 @@ import de.hsrm.objectify.ui.DashboardLayout;
 public class MainActivity extends BaseActivity {
 
 	private Context context;
-
+	private LicenseCheckerCallback licenseCheckerCallback;
+	private LicenseChecker checker;
+	private Handler handler;
 	@SuppressWarnings("unused")
 	private Button galleryButton, howtoButton, shareButton, cameraButton, settingsButton;
 
@@ -39,6 +53,7 @@ public class MainActivity extends BaseActivity {
 		setContentView(R.layout.dashboard);
 		context = this;
 
+		handler = new Handler();
 		setupActionBar(null, 0);
 		addNewActionButton(R.drawable.ic_title_camera, R.string.camera, new OnClickListener() {
 
@@ -54,7 +69,43 @@ public class MainActivity extends BaseActivity {
 		shareButton = (Button) findViewById(R.id.dashboard_share_button);
 		cameraButton = (Button) findViewById(R.id.dashboard_camera_button);
 		settingsButton = (Button) findViewById(R.id.dashboard_settings_button);
+		
+		// Construct the LicenseCheckerCallback. The library calls this when done
+		licenseCheckerCallback = new ObjectifyLicenseCheckerCallback();
+
+		// Construct the LicenseChecker with a Policy
+		deviceId = Secure.getString(context.getContentResolver(),
+	            Secure.ANDROID_ID); 
+		checker = new LicenseChecker(context, new ServerManagedPolicy(context,
+				new AESObfuscator(SALT, getPackageName(), deviceId)),
+				BASE_64_PUBLIC_KEY);
+		// validate this copy of objectify
+		doCheck();
 	}
+
+	private void doCheck() {
+		checker.checkAccess(licenseCheckerCallback);
+	}
+	
+	protected Dialog onCreateDialog(int id) {
+        // We have only one dialog.
+        return new AlertDialog.Builder(this)
+            .setTitle(R.string.unlicensed_dialog_title)
+            .setMessage(R.string.unlicensed_dialog_body)
+            .setPositiveButton(R.string.buy_button, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    Intent marketIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(
+                        "http://market.android.com/details?id=" + getPackageName()));
+                    startActivity(marketIntent);
+                }
+            })
+            .setNegativeButton(R.string.quit_button, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    finish();
+                }
+            })
+            .create();
+    }
 
 	/**
 	 * Predefined method from the appropriate xml layout file. Will be called if
@@ -99,6 +150,57 @@ public class MainActivity extends BaseActivity {
 		} else {
 			Toast.makeText(context,getString(R.string.no_mailclient_found),Toast.LENGTH_LONG).show();
 		}
+	}
+	
+	private void displayResult(final String result) {
+		handler.post(new Runnable() {
+			
+			@Override
+			public void run() {
+				Toast.makeText(context, result, Toast.LENGTH_SHORT).show();
+			}
+		});
+	}
+	
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		checker.onDestroy();
+	}
+	
+	private static final String BASE_64_PUBLIC_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyvnIeG1BPK0Gnjj7dZmzWqyCT9YHFl4h7HR2JaKLgpgaD1mmseIMVwSh+2uVr0AS/CEfUawiHKPAmm6D9EqXs2kL/Odh41TagwYU2OxfXaB1R4wx9mZ7+kJ47uzvs6i+2mbkgdIgtIwsoI/jpspCB7bSZE8nrk+bG5OZdq/i2cWYBtbYQsXO9BwI90DK0gX4kZnO6OAfnoaazIghIEy4hIYQpnBnEBpnCY85K5WDmKNEb9nip6Rb8n3hNDHXA8hTKAGBtQBp/zArCuKSR9d4Un5Zu+DYp2/iAxIHLzB067WqUAWOfhrfkRSmHfaQHLVvTQxgJ4cUPojRAUKhRjPL+QIDAQAB";
+	private static final byte[] SALT = new byte[] {
+	     -17, 4, 89, -118, -10, -79, 23, -4, 11, 28, 99,
+	     -34, 62, -12, -50, -16, -25, 30, -16, 55
+	     };
+	private String deviceId;
+	
+	private class ObjectifyLicenseCheckerCallback implements LicenseCheckerCallback {
+
+		@Override
+		public void allow() {
+			if (isFinishing()) {
+				return;
+			}
+		}
+
+		@Override
+		public void dontAllow() {
+			if (isFinishing()) {
+				return;
+			}
+			showDialog(0);
+		}
+
+		@Override
+		public void applicationError(ApplicationErrorCode errorCode) {
+			if (isFinishing()) {
+				return;
+			}
+			String result = String.format(getString(R.string.application_error), errorCode);
+            displayResult(result);
+		}
+		
 	}
 
 }

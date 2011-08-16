@@ -34,6 +34,18 @@
 	<string name="screenshot_creating">Screenshot wird erstellt...</string>
 	<string name="screenshot_failed">Screenshot konnte leider nicht erstellt werden</string>
 	<string name="edit">Bearbeiten</string>
+	
+	<!-- License checking status messages -->
+    <string name="check_license">Lizenzcheck</string>
+    <string name="checking_license">Überprüfe Lizenz...</string>
+    <string name="application_error">Fehler: %1$s</string>
+
+    <!-- Unlicensed dialog messages -->
+    <string name="unlicensed_dialog_title">App nicht lizenziert</string>
+    <string name="unlicensed_dialog_body">Diese Kopie der App ist nicht gültig. Kaufen Sie bitte eine gültige Version im Android Market.</string>
+    <string name="buy_button">App kaufen</string>
+    <string name="dont_allow">Entschuldigung. Es scheint, dass diese Kopie von Objectify nicht gültig ist.</string>
+    <string name="quit_button">Exit</string>
     
     <!-- Settings -->
     <string name="settings">Einstellungen</string>
@@ -62,7 +74,7 @@
     <!-- Howto -->
     <string name="howto_step1">Schritt 1: In einen dunklen Raum gehen...</string>
     <string name="howto_step2">Schritt 2: Smartphone ruhig halten und auf den Auslöser drücken.</string>
-    <string name="howto_step3">Schritt 3: Ergebnis betrachten, verschicken, weitererzählen oder nochmal erleben.</string>
+    <string name="howto_step3">Schritt 3: Ergebnis betrachten, verschicken, weitererzählen oder ein neues Modell erstellen.</string>
     
     <!-- About -->
     <string name="developer_mail_address">kai.wolf@gmail.com</string>

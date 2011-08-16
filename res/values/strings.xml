@@ -34,6 +34,18 @@
 	<string name="screenshot_creating">Creating Screenshot...</string>
 	<string name="screenshot_failed">The screenshot could not be created</string>
 	<string name="edit">Edit</string>
+	
+    <!-- License checking status messages -->
+    <string name="check_license">Check license</string>
+    <string name="checking_license">Checking license...</string>
+    <string name="application_error">Application error: %1$s</string>
+
+    <!-- Unlicensed dialog messages -->
+    <string name="unlicensed_dialog_title">Application not licensed</string>
+    <string name="unlicensed_dialog_body">This application is not licensed. Please purchase it from Android Market.</string>
+    <string name="buy_button">Buy app</string>
+    <string name="dont_allow">Sorry. This copy of Objectify does not seem to be valid.</string>
+    <string name="quit_button">Exit</string>
     
     <!-- Settings -->
     <string name="settings">Settings</string>
