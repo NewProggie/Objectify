@@ -107,7 +107,7 @@ public class CameraActivity extends BaseActivity {
 			}
 		});
 
-		camera = CameraFinder.INSTANCE.open();
+		camera = CameraFinder.INSTANCE.open(context);
 		if (camera == null) {
 			showToastAndFinish(getString(R.string.no_ffc_was_found));
 		} else {

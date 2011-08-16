@@ -2,6 +2,7 @@ package de.hsrm.objectify;
 
 import java.util.ArrayList;
 
+import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.SharedPreferences;
 import android.hardware.Camera;
@@ -23,11 +24,13 @@ public class SettingsActivity extends PreferenceActivity {
 
 	private ListPreference cameraResolutions;
 	private SliderInputPreference amountPictures;
+	private Context context;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		addPreferencesFromResource(R.xml.settings);
+		context = this;
 		
 		cameraResolutions = (ListPreference) findPreference(getString(R.string.settings_camera_resolutions));
 		amountPictures = (SliderInputPreference) findPreference(getString(R.string.settings_amount_pictures));
@@ -56,7 +59,7 @@ public class SettingsActivity extends PreferenceActivity {
 	private CharSequence[] getAvailableResolutions() {
 		ArrayList<String> tempResolutions = new ArrayList<String>();
 		CharSequence[] resolutions;
-		Camera camera = CameraFinder.INSTANCE.open();
+		Camera camera = CameraFinder.INSTANCE.open(context);
 		if (camera != null) {
 			Camera.Parameters params = camera.getParameters();
 			for (Size size : params.getSupportedPictureSizes()) {

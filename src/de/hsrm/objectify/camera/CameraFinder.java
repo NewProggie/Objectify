@@ -1,5 +1,6 @@
 package de.hsrm.objectify.camera;
 
+import android.content.Context;
 import android.hardware.Camera;
 import android.os.Build;
 import de.hsrm.objectify.utils.Size;
@@ -16,7 +17,7 @@ import de.hsrm.objectify.utils.Size;
  */
 public abstract class CameraFinder {
 
-	public abstract Camera open();
+	public abstract Camera open(Context context);
 	static int imageFormat;
 	static Size pictureSize;
 	public static CameraFinder INSTANCE = buildFinder();

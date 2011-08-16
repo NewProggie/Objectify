@@ -1,5 +1,6 @@
 package de.hsrm.objectify.camera;
 
+import android.content.Context;
 import android.hardware.Camera;
 
 /**
@@ -16,7 +17,7 @@ public class ClassicFinder extends CameraFinder {
 	/**
 	 * Return a new instance from front facing camera or null if none was found.
 	 */
-	public Camera open() {
+	public Camera open(Context context) {
 		if (android.os.Build.PRODUCT.equals("GT-P1000")) {
 			// running on samsung galaxy tab, using only working size and picture
 			// format on this device

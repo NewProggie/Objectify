@@ -5,9 +5,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 import android.content.Context;
 import android.opengl.GLSurfaceView;
-import android.os.Handler;
 import android.util.AttributeSet;
-import android.util.Log;
 import de.hsrm.objectify.math.Matrix;
 import de.hsrm.objectify.rendering.Circle;
 
@@ -187,7 +185,7 @@ public class CameraLighting extends GLSurfaceView {
 		private float xcoord = 0.0f;
 		private float ycoord = 0.0f;
 		private float RADIUS_LIGHTSOURCE = 3.5f;
-		private float RADIUS_LIGHTPATH = 3.8f;
+		private float RADIUS_LIGHTPATH = 3.5f;
 		private float ratio;
 		private Circle lightSource;
 		private boolean toggle = false;

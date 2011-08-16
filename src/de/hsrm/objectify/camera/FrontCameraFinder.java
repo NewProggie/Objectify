@@ -1,8 +1,13 @@
 package de.hsrm.objectify.camera;
 
+import android.content.Context;
+import android.content.ContextWrapper;
+import android.content.SharedPreferences;
 import android.hardware.Camera;
-import android.hardware.Camera.Size;
 import android.util.Log;
+import de.hsrm.objectify.R;
+import de.hsrm.objectify.SettingsActivity;
+import de.hsrm.objectify.utils.Size;
 
 /**
  * Returns front facing camera from current device using 2.3 (Gingerbread) API.
@@ -16,7 +21,7 @@ public class FrontCameraFinder extends CameraFinder {
 	/**
 	 * Returns a new instance from front facing camera or null if none was found.
 	 */
-	public Camera open() {
+	public Camera open(Context context) {
 		Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
 		
 		for (int i=0; i<Camera.getNumberOfCameras();i++) {
@@ -25,8 +30,18 @@ public class FrontCameraFinder extends CameraFinder {
 			if (cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
 				Camera camera = Camera.open(i);
 				Camera.Parameters params = camera.getParameters();
-				Size s = params.getSupportedPictureSizes().get(0);
-				pictureSize = new de.hsrm.objectify.utils.Size(s.width, s.height);
+				
+				SharedPreferences preferences = SettingsActivity.getSettings((ContextWrapper) context);
+				String userSettingPicDim = preferences.getString(context.getString(R.string.settings_camera_resolutions), "");
+				Size picDim;
+				if (userSettingPicDim == "") {
+					picDim = new Size(params.getSupportedPictureSizes().get(0).width, params.getSupportedPictureSizes().get(0).height);
+				} else {
+					String[] dims = userSettingPicDim.split("x");
+					picDim = new de.hsrm.objectify.utils.Size(Integer.valueOf(dims[0]),Integer.valueOf(dims[1]));
+				}
+								
+				pictureSize = new Size(picDim.getWidth(), picDim.getHeight());
 				imageFormat = params.getSupportedPictureFormats().get(0);
 				params.setPictureSize(pictureSize.getWidth(), pictureSize.getHeight());
 				params.setPictureFormat(imageFormat);
