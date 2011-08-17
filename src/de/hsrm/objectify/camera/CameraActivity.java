@@ -376,7 +376,7 @@ public class CameraActivity extends BaseActivity {
 							String.valueOf(numberOfPictures));
 					values.put(DatabaseAdapter.GALLERY_DATE_KEY, timestamp);
 					values.put(DatabaseAdapter.GALLERY_DIMENSION_KEY, objectModel.getTextureBitmapSize());
-					values.put(DatabaseAdapter.GALLERY_FACES_KEY, String.valueOf(objectModel.getFaces().length));
+					values.put(DatabaseAdapter.GALLERY_FACES_KEY, String.valueOf(objectModel.getVertices().length/3));
 					values.put(DatabaseAdapter.GALLERY_VERTICES_KEY, String.valueOf(objectModel.getVertices().length));
 					values.put(DatabaseAdapter.GALLERY_OBJECT_ID_KEY, objectID);
 					cr.insert(galleryUri, values);
