@@ -57,7 +57,7 @@
     <string name="pixel">Піксель</string>
     
     <!-- Share -->
-    <string name="mailtext">Привіт,\n\nознайомся з цією програмою:\n\nhttp://market.android.com.</string>
+    <string name="mailtext">Привіт,\n\nознайомся з цією програмою:\n</string>
     
     <!-- Howto -->
     <string name="howto_step1">Крок 1: Піти в темне приміщення...</string>

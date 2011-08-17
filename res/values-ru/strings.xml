@@ -56,7 +56,7 @@
     <string name="wireframe">Решетчатый</string>
     
     <!-- Share -->
-    <string name="mailtext">Привет,\n\nознакомьтесь с этой программой:\n\nhttp://market.android.com.</string>
+    <string name="mailtext">Привет,\n\nознакомьтесь с этой программой:\n</string>
     
     <!-- Howto -->
     <string name="howto_step1">Шаг 1: Пойти в тьомное помещение...</string>

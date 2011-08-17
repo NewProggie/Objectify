@@ -69,7 +69,7 @@
     <string name="pixel">Pixel</string>
     
     <!-- Share -->
-    <string name="mailtext">Hi,\n\ndu musst dir unbedingt diese App anschauen:\n\nhttp://market.android.com.</string>
+    <string name="mailtext">Hi,\n\ndu musst dir unbedingt diese App anschauen:\n</string>
     
     <!-- Howto -->
     <string name="howto_step1">Schritt 1: In einen dunklen Raum gehen...</string>

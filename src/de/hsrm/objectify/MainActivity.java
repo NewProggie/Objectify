@@ -145,7 +145,7 @@ public class MainActivity extends BaseActivity {
 		List<ResolveInfo> list = pm.queryIntentActivities(tellOthers, PackageManager.MATCH_DEFAULT_ONLY);
 		if (list.size() > 0) {
 			tellOthers.putExtra(android.content.Intent.EXTRA_SUBJECT, "Android " + getString(R.string.app_name));
-			tellOthers.putExtra(android.content.Intent.EXTRA_TEXT, getString(R.string.mailtext));
+			tellOthers.putExtra(android.content.Intent.EXTRA_TEXT, getString(R.string.mailtext)+"\nhttp://market.android.com/details?id=" + getPackageName());
 			startActivity(tellOthers);
 		} else {
 			Toast.makeText(context,getString(R.string.no_mailclient_found),Toast.LENGTH_LONG).show();
