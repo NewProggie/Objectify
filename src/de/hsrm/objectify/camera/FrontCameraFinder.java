@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.SharedPreferences;
 import android.hardware.Camera;
-import android.util.Log;
 import de.hsrm.objectify.R;
 import de.hsrm.objectify.SettingsActivity;
 import de.hsrm.objectify.utils.Size;

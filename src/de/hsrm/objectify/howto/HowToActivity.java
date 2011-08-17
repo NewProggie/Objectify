@@ -1,7 +1,6 @@
 package de.hsrm.objectify.howto;
 
 import android.os.Bundle;
-import android.webkit.WebView;
 import de.hsrm.objectify.R;
 import de.hsrm.objectify.ui.BaseActivity;
 

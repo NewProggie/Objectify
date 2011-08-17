@@ -12,8 +12,6 @@ import android.graphics.Color;
 import android.graphics.ImageFormat;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
-import android.os.SystemClock;
-import android.util.Log;
 import de.hsrm.objectify.camera.CameraFinder;
 import de.hsrm.objectify.filter.GaussianFilter;
 
