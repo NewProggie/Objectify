@@ -20,14 +20,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
-import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -232,20 +231,40 @@ public class CameraActivity extends BaseActivity {
 			Matrix sMatrix = cameraLighting.getLightMatrixS(numberOfPictures);
 			Matrix sInverse = sMatrix.pseudoInverse();
 			
-			// save original for texture
-			if (numberOfPictures > 6) {
-				texture = pictureList.get(2).copy();
-			} else {
-				texture = pictureList.get(1).copy();
+			
+			int imageWidth = pictureList.get(0).getWidth();
+			int imageHeight = pictureList.get(0).getHeight();
+			
+			// sum images and use as texture
+			int[] sumRed = new int[imageWidth*imageHeight];
+			int[] sumGreen = new int[imageWidth*imageHeight];
+			int[] sumBlue = new int[imageWidth*imageHeight];
+			int[] sumColor = new int[imageWidth*imageHeight];
+			for (int i=0; i<sumRed.length; i++) {
+				sumRed[i] = 0;
+				sumGreen[i] = 0;
+				sumBlue[i] = 0;
 			}
+			for (Image img : pictureList) {
+				int[] current = img.getPixels();
+				for (int i=0; i<current.length; i++) {
+					sumRed[i] += Color.red(current[i]);
+					sumGreen[i] += Color.green(current[i]);
+					sumBlue[i] += Color.blue(current[i]);
+				}
+			}
+			for (int i=0; i<sumColor.length; i++) {
+				int red = clamp((int) (sumRed[i] / numberOfPictures));
+				int green = clamp((int) (sumGreen[i] / numberOfPictures));
+				int blue = clamp((int) (sumBlue[i] / numberOfPictures));
+				sumColor[i] = Color.rgb(red, green, blue);
+			}
+			texture = new Image(Bitmap.createBitmap(sumColor, imageWidth, imageHeight, pictureList.get(0).getConfig()));
 			
 			// blur the input images
 			for(int i=0;i<pictureList.size(); i++) {
 				pictureList.set(i, BitmapUtils.blurBitmap(pictureList.get(i)));
 			}
-		
-			int imageWidth = pictureList.get(0).getWidth();
-			int imageHeight = pictureList.get(0).getHeight();
 
 			ArrayList<Vector3f> normalField = new ArrayList<Vector3f>();
 			Matrix pGradients = new Matrix(imageHeight, imageWidth);
@@ -393,6 +412,13 @@ public class CameraActivity extends BaseActivity {
 				((Activity) context).finish();
 			}
 			
+		}
+		
+		private int clamp(int value) {
+			if (value > 255)
+				return 255;
+			else
+				return value;
 		}
 		
 	}
