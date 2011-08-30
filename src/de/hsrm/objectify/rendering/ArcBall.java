@@ -40,10 +40,10 @@ public class ArcBall {
 	 * @param vector
 	 *            vector from objects middlepoint to fingertouch
 	 */
-	public void mapToSphere(Point point, Vector3f vector) {
+	public void mapToSphere(PointF point, Vector3f vector) {
 		PointF tempPoint = new PointF(point.x, point.y);
 
-		tempPoint.x = (tempPoint.x * this.adjustWidth) - 1.0f;
+		tempPoint.x = 1.0f - (tempPoint.x * this.adjustWidth);
 		tempPoint.y = 1.0f - (tempPoint.y * this.adjustHeight);
 
 		float length = (tempPoint.x * tempPoint.x) + (tempPoint.y * tempPoint.y);
@@ -73,7 +73,7 @@ public class ArcBall {
 		adjustHeight = 1.0f / ((height - 1.0f) * 0.5f);
 	}
 
-	public void click(Point NewPt) {
+	public void click(PointF NewPt) {
 		mapToSphere(NewPt, this.StVec);
 
 	}
@@ -83,7 +83,7 @@ public class ArcBall {
 	 * @param NewPt new point
 	 * @param NewRot new rotation
 	 */
-	public void drag(Point NewPt, Quat4f NewRot) {
+	public void drag(PointF NewPt, Quat4f NewRot) {
 
 		this.mapToSphere(NewPt, EnVec);
 

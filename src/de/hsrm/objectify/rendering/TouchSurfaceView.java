@@ -10,6 +10,7 @@ import javax.microedition.khronos.opengles.GL10;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Point;
+import android.graphics.PointF;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
 import android.view.MotionEvent;
@@ -70,19 +71,19 @@ public class TouchSurfaceView extends GLSurfaceView {
 	
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		int x = displayWidth - (Float.valueOf(event.getX()).intValue());
-		int y = Float.valueOf(event.getY()).intValue();
+		float x = event.getX();
+		float y = event.getY();
 		scaleDetector.onTouchEvent(event);
 		switch (event.getAction()) {
 		case MotionEvent.ACTION_DOWN:
 			synchronized (matrixLock) {
 				lastRot.copy(thisRot);
 			}
-			arcBall.click(new Point(x, y));
+			arcBall.click(new PointF(x, y));
 			break;
 		case MotionEvent.ACTION_MOVE:
 			Quat4f thisQuat = new Quat4f();
-			arcBall.drag(new Point(x, y), thisQuat);
+			arcBall.drag(new PointF(x, y), thisQuat);
 			synchronized (matrixLock) {
 				thisRot.setRotation(thisQuat);
 				thisRot = Matrix4f.mul(lastRot, thisRot);
