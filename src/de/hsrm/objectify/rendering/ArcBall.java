@@ -1,6 +1,5 @@
 package de.hsrm.objectify.rendering;
 
-import android.graphics.Point;
 import android.graphics.PointF;
 import de.hsrm.objectify.math.Quat4f;
 import de.hsrm.objectify.math.Vector3f;
@@ -29,7 +28,11 @@ public class ArcBall {
 	public ArcBall(float width, float height) {
 		StVec = new Vector3f();
 		EnVec = new Vector3f();
-		setBounds(height, width);
+		if (height>=width) {
+			setBounds(height, height);
+		} else {
+			setBounds(width, width);
+		}
 	}
 
 	/**
