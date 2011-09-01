@@ -1,8 +1,10 @@
 package de.hsrm.objectify.rendering;
 
 import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 
 import javax.microedition.khronos.opengles.GL10;
@@ -61,6 +63,13 @@ public class ObjectViewerActivity extends BaseActivity {
 				new GetScreenshot().execute();				
 			}
 		});
+		addNewActionButton(R.drawable.ic_title_export, R.string.export, new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				new ExportToObj().execute();
+			}
+		});
 		Display display = getWindowManager().getDefaultDisplay();
 		Bundle b = getIntent().getBundleExtra("bundle");
 		objectModel = b.getParcelable("objectModel");
@@ -97,6 +106,59 @@ public class ObjectViewerActivity extends BaseActivity {
 	protected void onResume() {
 		super.onResume();
 		glSurfaceView.onResume();
+	}
+	
+	private class ExportToObj extends AsyncTask<Void, Void, Boolean> {
+
+		private ProgressDialog pleaseWait;
+		private String path;
+		
+		@Override
+		protected void onPreExecute() {
+			pleaseWait = ProgressDialog.show(context, "", getString(R.string.creating_obj), true);
+		}
+		
+		@Override
+		protected Boolean doInBackground(Void... params) {
+			path = ExternalDirectory.getExternalRootDirectory() + "/objectify_model.obj";
+			try {
+				BufferedWriter out = new BufferedWriter(new FileWriter(path));
+				out.write("# Created by Objectify\n");
+				float[] vertices = objectModel.getVertices();
+				short[] faces = objectModel.getFaces();
+				/* writing vertices */
+				for(int i=0; i<vertices.length; i+=3) {
+					out.write("v " + vertices[i] + " " + vertices[i+1] + " " + vertices[i+2] + "\n");
+				}
+				/* writing faces */
+				for(int i=0; i<faces.length; i+=3) {
+					int one = faces[i]+1;
+					int two = faces[i+1]+1;
+					int three = faces[i+2]+1;
+					out.write("f " + one + " " + two + " " + three + "\n");
+				}
+				out.write("\n");
+				out.flush();
+				out.close();
+			} catch (IOException e) {
+				Log.e("ExportToObj", e.getLocalizedMessage());
+				return false;
+			}
+			return true;
+		}
+		
+		@Override
+		protected void onPostExecute(Boolean result) {
+			pleaseWait.dismiss();
+			if (result) {
+				Intent export = new Intent(Intent.ACTION_SEND);
+				export.setType("model/obj");
+				export.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + path));
+				startActivity(Intent.createChooser(export, getString(R.string.export)));
+			} else {
+				Toast.makeText(context, getString(R.string.creating_obj_failed), Toast.LENGTH_LONG).show();
+			}
+		}
 	}
 	
 	/**

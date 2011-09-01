@@ -32,6 +32,8 @@
 	<string name="no_object_found">The selected object could not be opened</string>
 	<string name="error_while_reading">An error occurred while loading the selected object</string>
 	<string name="screenshot_creating">Creating Screenshot...</string>
+    <string name="creating_obj">Creating OBJ...</string>
+    <string name="creating_obj_failed">Creating OBJ failed</string>
 	<string name="screenshot_failed">The screenshot could not be created</string>
 	<string name="edit">Edit</string>
 	
