@@ -16,6 +16,7 @@ public class ArcBall {
 	Vector3f EnVec;
 	float adjustWidth;
 	float adjustHeight;
+	int width, height;
 
 	/**
 	 * creates new arcball
@@ -25,14 +26,12 @@ public class ArcBall {
 	 * @param height
 	 *            arcball height
 	 */
-	public ArcBall(float width, float height) {
+	public ArcBall(int width, int height) {
 		StVec = new Vector3f();
 		EnVec = new Vector3f();
-		if (height>=width) {
-			setBounds(height, height);
-		} else {
-			setBounds(width, width);
-		}
+		setBounds(width, height);
+		this.width = width;
+		this.height = height;
 	}
 
 	/**
@@ -46,8 +45,8 @@ public class ArcBall {
 	public void mapToSphere(PointF point, Vector3f vector) {
 		PointF tempPoint = new PointF(point.x, point.y);
 
-		tempPoint.x = 1.0f - (tempPoint.x * this.adjustWidth);
-		tempPoint.y = 1.0f - (tempPoint.y * this.adjustHeight);
+		tempPoint.x = (tempPoint.x * this.adjustWidth) - 1.0f;
+		tempPoint.y = (tempPoint.y * this.adjustHeight) - 1.0f;
 
 		float length = (tempPoint.x * tempPoint.x) + (tempPoint.y * tempPoint.y);
 
@@ -56,6 +55,7 @@ public class ArcBall {
 			vector.x = tempPoint.x * norm;
 			vector.y = tempPoint.y * norm;
 			vector.z = 0.0f;
+			
 		} else {
 			vector.x = tempPoint.x;
 			vector.y = tempPoint.y;
@@ -87,13 +87,14 @@ public class ArcBall {
 	 * @param NewRot new rotation
 	 */
 	public void drag(PointF NewPt, Quat4f NewRot) {
-
+		
 		this.mapToSphere(NewPt, EnVec);
 
 		if (NewRot != null) {
 			Vector3f Perp = new Vector3f();
 
 			Vector3f.cross(StVec, EnVec, Perp);
+			Perp = Vector3f.invert(Perp);
 
 			if (Perp.length() > Epsilon) {
 				NewRot.x = Perp.x;
