@@ -12,6 +12,7 @@ import android.graphics.Bitmap;
 import android.graphics.PointF;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import de.hsrm.objectify.math.Matrix4f;
@@ -72,7 +73,11 @@ public class TouchSurfaceView extends GLSurfaceView {
 	public boolean onTouchEvent(MotionEvent event) {
 		float x = event.getX();
 		float y = event.getY();
-		scaleDetector.onTouchEvent(event);
+		if (event.getPointerCount() > 1) {
+			scaleDetector.onTouchEvent(event);
+			requestRender();
+			return true;
+		}
 		switch (event.getAction()) {
 		case MotionEvent.ACTION_DOWN:
 			synchronized (matrixLock) {
