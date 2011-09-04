@@ -217,6 +217,7 @@ public class CameraActivity extends BaseActivity {
 		private ObjectModel objectModel;
 		private ContentResolver cr;
 		private boolean sdIsMounted = true;
+		private boolean useBlurring = false;
 
 		@Override
 		protected void onPreExecute() {
@@ -224,6 +225,8 @@ public class CameraActivity extends BaseActivity {
 			cameraLighting.setVisibility(View.GONE);
 			cameraLighting.setZOrderOnTop(false);
 			cr = getContentResolver();
+			SharedPreferences settings = SettingsActivity.getSettings((ContextWrapper) context);
+			useBlurring = settings.getBoolean(getString(R.string.settings_use_blurring), false);
 		}
 
 		@Override
@@ -262,10 +265,11 @@ public class CameraActivity extends BaseActivity {
 			texture = new Image(Bitmap.createBitmap(sumColor, imageWidth, imageHeight, pictureList.get(0).getConfig()));
 			
 			// blur the input images
-			for(int i=0;i<pictureList.size(); i++) {
-				pictureList.set(i, BitmapUtils.blurBitmap(pictureList.get(i)));
+			if (useBlurring) {
+				for (int i = 0; i < pictureList.size(); i++) {
+					pictureList.set(i, BitmapUtils.blurBitmap(pictureList.get(i)));
+				}
 			}
-
 			ArrayList<Vector3f> normalField = new ArrayList<Vector3f>();
 			Matrix pGradients = new Matrix(imageHeight, imageWidth);
 			Matrix qGradients = new Matrix(imageHeight, imageWidth);

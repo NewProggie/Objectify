@@ -13,4 +13,10 @@
 			android:text="@string/settings_suffix_pictures"
 			android:summary="@string/settings_amount_pictures_hint" />
 	</PreferenceCategory>
+    <PreferenceCategory android:title="@string/reconstruction">
+        <CheckBoxPreference
+            android:key="@string/settings_use_blurring"
+            android:title="@string/settings_use_blurring"
+            android:summary="@string/settings_use_blurring_hint" />
+    </PreferenceCategory>
 </PreferenceScreen>

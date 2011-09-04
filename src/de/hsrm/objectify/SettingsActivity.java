@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.hardware.Camera;
 import android.hardware.Camera.Size;
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.PreferenceActivity;
 import de.hsrm.objectify.camera.CameraFinder;
@@ -24,6 +25,7 @@ public class SettingsActivity extends PreferenceActivity {
 
 	private ListPreference cameraResolutions;
 	private SliderInputPreference amountPictures;
+	private CheckBoxPreference useBlurring;
 	private Context context;
 	
 	@Override
@@ -33,6 +35,7 @@ public class SettingsActivity extends PreferenceActivity {
 		context = this;
 		
 		cameraResolutions = (ListPreference) findPreference(getString(R.string.settings_camera_resolutions));
+		useBlurring = (CheckBoxPreference) findPreference(getString(R.string.settings_use_blurring));
 		amountPictures = (SliderInputPreference) findPreference(getString(R.string.settings_amount_pictures));
 		
 		cameraResolutions.setEntries(getAvailableResolutions());
