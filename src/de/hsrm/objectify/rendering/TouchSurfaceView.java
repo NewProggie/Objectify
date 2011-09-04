@@ -12,7 +12,6 @@ import android.graphics.Bitmap;
 import android.graphics.PointF;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import de.hsrm.objectify.math.Matrix4f;
@@ -167,33 +166,60 @@ public class TouchSurfaceView extends GLSurfaceView {
 			
 			gl.glEnable(GL10.GL_LIGHTING);
 			gl.glEnable(GL10.GL_LIGHT0);
+			gl.glEnable(GL10.GL_LIGHT1);
+			// LIGHT0
 			// define ambient component of first light
 			float[] light0Ambient = new float[] { 0.7f, 0.7f, 0.7f, 1.0f };
 			ByteBuffer byteBuf = ByteBuffer.allocateDirect(light0Ambient.length * 4);
 			byteBuf.order(ByteOrder.nativeOrder());
-			FloatBuffer ambientBuffer = byteBuf.asFloatBuffer();
-			ambientBuffer.put(light0Ambient);
-			ambientBuffer.rewind();
-			gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_AMBIENT, ambientBuffer);
+			FloatBuffer light0AmbientBuffer = byteBuf.asFloatBuffer();
+			light0AmbientBuffer.put(light0Ambient);
+			light0AmbientBuffer.rewind();
+			gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_AMBIENT, light0AmbientBuffer);
 			// define diffuse component of first light
 			float[] light0Diffuse = new float[] { 0.7f, 0.7f, 0.7f, 1.0f };
-			FloatBuffer diffuseBuffer = byteBuf.asFloatBuffer();
-			diffuseBuffer.put(light0Diffuse);
-			diffuseBuffer.rewind();
-			gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_DIFFUSE, diffuseBuffer);
+			FloatBuffer light0diffuseBuffer = byteBuf.asFloatBuffer();
+			light0diffuseBuffer.put(light0Diffuse);
+			light0diffuseBuffer.rewind();
+			gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_DIFFUSE, light0diffuseBuffer);
 			// define specular component of first light
 			float[] light0Specular = new float[] { 0.7f, 0.7f, 0.7f, 1.0f };
-			FloatBuffer specularBuffer = byteBuf.asFloatBuffer();
-			specularBuffer.put(light0Specular);
-			specularBuffer.rewind();
-			gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_SPECULAR, specularBuffer);
-			float[] light0Position = new float[] { 0.0f, 5.0f, 5.0f, 0.0f };
+			FloatBuffer light0specularBuffer = byteBuf.asFloatBuffer();
+			light0specularBuffer.put(light0Specular);
+			light0specularBuffer.rewind();
+			gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_SPECULAR, light0specularBuffer);
+			float[] light0Position = new float[] { 0.0f, 5.0f, 5.0f, 1.0f };
 			FloatBuffer lightPosBuffer = byteBuf.asFloatBuffer();
 			lightPosBuffer.put(light0Position);
 			lightPosBuffer.rewind();
 			gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_POSITION, lightPosBuffer);
-			gl.glLightf(GL10.GL_LIGHT0, GL10.GL_SPOT_CUTOFF, 60.0f);
-
+			gl.glLightf(GL10.GL_LIGHT0, GL10.GL_SPOT_CUTOFF, 65.0f);
+			// LIGHT1
+			// ambient component
+			float[] light1Ambient = new float[] { 0.7f, 0.7f, 0.7f, 1.0f };
+			FloatBuffer light1AmbientBuffer = byteBuf.asFloatBuffer();
+			light1AmbientBuffer.put(light1Ambient);
+			light1AmbientBuffer.rewind();
+			gl.glLightfv(GL10.GL_LIGHT1, GL10.GL_AMBIENT, light1AmbientBuffer);
+			// diffuse component
+			float[] light1Diffuse = new float[] { 0.7f, 0.7f, 0.7f, 1.0f };
+			FloatBuffer light1diffuseBuffer = byteBuf.asFloatBuffer();
+			light1diffuseBuffer.put(light1Diffuse);
+			light1diffuseBuffer.rewind();
+			gl.glLightfv(GL10.GL_LIGHT1, GL10.GL_DIFFUSE, light1diffuseBuffer);
+			// specular component
+			float[] light1Specular = new float[] { 0.7f, 0.7f, 0.7f, 1.0f };
+			FloatBuffer light1specularBuffer = byteBuf.asFloatBuffer();
+			light1specularBuffer.put(light1Specular);
+			light1specularBuffer.rewind();
+			gl.glLightfv(GL10.GL_LIGHT1, GL10.GL_SPECULAR, light1specularBuffer);
+			float[] light1Position = new float[] { 5.0f, 0.0f, 5.0f, 1.0f };
+			FloatBuffer light1PosBuffer = byteBuf.asFloatBuffer();
+			light1PosBuffer.put(light1Position);
+			light1PosBuffer.rewind();
+			gl.glLightfv(GL10.GL_LIGHT1, GL10.GL_POSITION, light1PosBuffer);
+			gl.glLightf(GL10.GL_LIGHT1, GL10.GL_SPOT_CUTOFF, 65.0f);
+			
 			gl.glMatrixMode(GL10.GL_MODELVIEW);
 		}
 		
