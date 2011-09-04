@@ -10,6 +10,7 @@ import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 
 import android.app.Activity;
 import android.content.ContentResolver;
@@ -31,6 +32,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
+import android.webkit.WebChromeClient.CustomViewCallback;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -218,6 +220,7 @@ public class CameraActivity extends BaseActivity {
 		private ContentResolver cr;
 		private boolean sdIsMounted = true;
 		private boolean useBlurring = false;
+		private int[] cumHistogramm;
 
 		@Override
 		protected void onPreExecute() {
@@ -227,6 +230,7 @@ public class CameraActivity extends BaseActivity {
 			cr = getContentResolver();
 			SharedPreferences settings = SettingsActivity.getSettings((ContextWrapper) context);
 			useBlurring = settings.getBoolean(getString(R.string.settings_use_blurring), false);
+			cumHistogramm = new int[256];
 		}
 
 		@Override
@@ -262,6 +266,24 @@ public class CameraActivity extends BaseActivity {
 				int blue = clamp((int) (sumBlue[i] / numberOfPictures));
 				sumColor[i] = Color.rgb(red, green, blue);
 			}
+			
+			// calculate cumulative histogram
+			int[] histogram = new int[256];
+			for(int i=0; i<histogram.length; i++) {
+				histogram[i] = 0;
+				cumHistogramm[i] = 0;
+			}
+			for (int i=0; i<sumColor.length; i++) {
+				int intensity = getintensity(sumColor[i]);
+				histogram[intensity] += 1;
+			}
+			for(int i=0; i<histogram.length; i++) {
+				for(int j=0; j<=i; j++) {
+					cumHistogramm[i] += histogram[j];
+				}
+			}
+
+			
 			texture = new Image(Bitmap.createBitmap(sumColor, imageWidth, imageHeight, pictureList.get(0).getConfig()));
 			
 			// blur the input images
@@ -338,7 +360,7 @@ public class CameraActivity extends BaseActivity {
 			normals = normBuffer.array();
 			faces = indexBuffer.array();
 
-			objectModel = new ObjectModel(vertices, normals, faces, BitmapUtils.autoContrast(texture));
+			objectModel = new ObjectModel(vertices, normals, faces, BitmapUtils.modAutoContrast(texture, cumHistogramm));
 		
 			if (ExternalDirectory.isMounted()) {
 				// storing the newly created 3D object onto hard disk and create database entries
@@ -425,6 +447,9 @@ public class CameraActivity extends BaseActivity {
 				return value;
 		}
 		
+		private int getintensity(int color) {
+			return Math.round((0.2989f * Color.red(color)) + (0.5870f * Color.green(color)) + (0.1140f * Color.blue(color)));
+		}
 	}
 
 }

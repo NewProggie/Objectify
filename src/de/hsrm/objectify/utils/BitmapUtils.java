@@ -85,6 +85,62 @@ public class BitmapUtils {
 	}
 	
 	/**
+	 * Computes a modified automatic contrast with saturated fixed percentage of
+	 * given pixels
+	 * 
+	 * @param image
+	 *            image which will be automatic contrast corrected
+	 * @param cumulativeHistogramm
+	 *            cumulative histogramm of image
+	 * @return newly created Image with adjusted contrast.
+	 */
+	public static Image modAutoContrast(Image image, int[] cumulativeHistogramm) {
+		int[] pixels = new int[image.getWidth() * image.getHeight()];
+		image.getPixels(pixels, 0, image.getWidth(), 0, 0, image.getWidth(), image.getHeight());
+		float s = 0.005f;
+		int alow = minI(cumulativeHistogramm, image.getWidth(), image.getHeight(), s);
+		int ahigh = maxI(cumulativeHistogramm, image.getWidth(), image.getHeight(), s);
+		int amin = 0, amax = 255;
+		for(int i=0; i<pixels.length; i++) {
+			int rNew = 0, gNew = 0, bNew = 0;
+			int r = Color.red(pixels[i]);
+			int g = Color.green(pixels[i]);
+			int b = Color.blue(pixels[i]);
+			if (r <= alow) { rNew = amin; }
+			if (g <= alow) { gNew = amin; }
+			if (b <= alow) { bNew = amin; }
+			if (alow < r && r < ahigh) { rNew = amin + (r - alow) * (amax-amin)/(ahigh-alow); }
+			if (alow < g && g < ahigh) { gNew = amin + (g - alow) * (amax-amin)/(ahigh-alow); }
+			if (alow < b && b < ahigh) { bNew = amin + (b - alow) * (amax-amin)/(ahigh-alow); }
+			if (r >= ahigh) { rNew = amax; }
+			if (g >= ahigh) { gNew = amax; }
+			if (b >= ahigh) { bNew = amax; }
+			pixels[i] = Color.rgb(rNew, gNew, bNew);
+		}
+		return new Image(Bitmap.createBitmap(pixels, image.getWidth(), image.getHeight(), image.getConfig()));
+	}
+	
+	private static int minI(int[] cumulativeHistogramm, int M, int N, float s) {
+		int t = (int) (M*N*s);
+		for(int i=0; i<cumulativeHistogramm.length; i++) {
+			if (t >= cumulativeHistogramm[i]) {
+				return i;
+			}
+		}
+		return 255;
+	}
+	
+	private static int maxI(int[] cumulativeHistogramm, int M, int N, float s) {
+		int t = (int) (M*N*(1.0f-s));
+		for(int i=cumulativeHistogramm.length-1; i>=0; i--) {
+			if (t >= cumulativeHistogramm[i]) {
+				return i;
+			}
+		}
+		return 0;
+	}
+	
+	/**
 	 * Computes an automatic contrast and returns a new {@link Image} with the
 	 * adjusted contrast
 	 * 
@@ -183,6 +239,10 @@ public class BitmapUtils {
 			idx++;
 		}
 		return intArray;
+	}
+	
+	private int getintensity(int color) {
+		return Math.round((0.2989f * Color.red(color)) + (0.5870f * Color.green(color)) + (0.1140f * Color.blue(color)));
 	}
 
 }
