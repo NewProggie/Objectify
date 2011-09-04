@@ -50,10 +50,12 @@
     <!-- Settings -->
     <string name="settings">Einstellungen</string>
     <string name="settings_camera_resolutions">Kamera-Auflösungen</string>
-    <string name="settings_camera_resolutions_hint">Legt die Auflösung der Frontkamera fest</string>
+    <string name="settings_camera_resolutions_hint">Legt die Auflösung der Frontkamera fest.</string>
     <string name="settings_amount_pictures">Anzahl Fotos</string>
     <string name="settings_suffix_pictures">Fotos</string>
-    <string name="settings_amount_pictures_hint">Ändert die Anzahl an Fotos, die pro 3D-Rekonstruktion benutzt werden</string>
+    <string name="settings_amount_pictures_hint">Ändert die Anzahl an Fotos, die pro 3D-Rekonstruktion benutzt werden.</string>
+    <string name="settings_use_blurring">Gauss-Filter benutzen</string>
+    <string name="settings_use_blurring_hint">Gauss-Filter einschalten, um Bildrauschen zu reduzieren. Glättet das 3D-Modell etwas.</string>
     
     <!-- Gallery -->
     <string name="size">Größe:</string>
