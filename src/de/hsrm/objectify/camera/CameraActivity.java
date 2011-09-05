@@ -10,7 +10,6 @@ import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 
 import android.app.Activity;
 import android.content.ContentResolver;
@@ -32,7 +31,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
-import android.webkit.WebChromeClient.CustomViewCallback;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -75,7 +73,7 @@ public class CameraActivity extends BaseActivity {
 	private Image texture;
 	public static Runnable shootPicture;
 	public static Handler handler;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -112,10 +110,10 @@ public class CameraActivity extends BaseActivity {
 		} else {
 			cameraPreview.setCamera(camera);
 		}
-		
+
 		handler = new Handler();
 		shootPicture = new Runnable() {
-			
+
 			@Override
 			public void run() {
 				camera.startPreview();
@@ -124,14 +122,14 @@ public class CameraActivity extends BaseActivity {
 		};
 
 	}
-	
+
 	@Override
 	protected void onPause() {
 		super.onPause();
 		setScreenBrightness(-1);
-		((Activity)context).finish();
+		((Activity) context).finish();
 	}
-	
+
 	@Override
 	protected void onResume() {
 		super.onResume();
@@ -174,7 +172,7 @@ public class CameraActivity extends BaseActivity {
 		cameraLighting.setZOrderOnTop(true);
 		cameraLighting.putLightSource(numberOfPictures, counter);
 	}
-	
+
 	private PictureCallback jpegCallback() {
 		PictureCallback callback = new PictureCallback() {
 			@Override
@@ -182,16 +180,18 @@ public class CameraActivity extends BaseActivity {
 				Camera.Parameters params = camera.getParameters();
 				String device = params.get("device");
 				if (device != null && device.equals("GT-P1000")) {
-					Image image = new Image(BitmapUtils.createScaledBitmap(data, CameraFinder.pictureSize, CameraFinder.imageFormat, 8.0f), false);
+					Image image = new Image(BitmapUtils.createScaledBitmap(data, CameraFinder.pictureSize,
+							CameraFinder.imageFormat, 8.0f), false);
 					pictureList.add(image);
 					counter += 1;
 				} else {
-					Image image = new Image(BitmapUtils.createScaledBitmap(data, CameraFinder.pictureSize, CameraFinder.imageFormat, 8.0f), true);
+					Image image = new Image(BitmapUtils.createScaledBitmap(data, CameraFinder.pictureSize,
+							CameraFinder.imageFormat, 8.0f), true);
 					pictureList.add(image);
 					counter += 1;
 				}
 				if (counter == numberOfPictures) {
-					new CalculateModel().execute(); 
+					new CalculateModel().execute();
 				} else {
 					setLights();
 				}
@@ -202,8 +202,9 @@ public class CameraActivity extends BaseActivity {
 	}
 
 	/**
-	 * Calculates <a href="http://en.wikipedia.org/wiki/Normal_mapping">normalmap</a>  
-	 * and <a href="http://en.wikipedia.org/wiki/Heightmap">heightmap</a> from shot
+	 * Calculates <a
+	 * href="http://en.wikipedia.org/wiki/Normal_mapping">normalmap</a> and <a
+	 * href="http://en.wikipedia.org/wiki/Heightmap">heightmap</a> from shot
 	 * photos. The parameters for the AsyncTask are:
 	 * <ul>
 	 * <li>Void: all pictures will be held by the {@link CameraActivity}.</li>
@@ -237,55 +238,54 @@ public class CameraActivity extends BaseActivity {
 		protected Boolean doInBackground(Void... params) {
 			Matrix sMatrix = cameraLighting.getLightMatrixS(numberOfPictures);
 			Matrix sInverse = sMatrix.pseudoInverse();
-			
-			
+
 			int imageWidth = pictureList.get(0).getWidth();
 			int imageHeight = pictureList.get(0).getHeight();
-			
+
 			// sum images and use as texture
-			int[] sumRed = new int[imageWidth*imageHeight];
-			int[] sumGreen = new int[imageWidth*imageHeight];
-			int[] sumBlue = new int[imageWidth*imageHeight];
-			int[] sumColor = new int[imageWidth*imageHeight];
-			for (int i=0; i<sumRed.length; i++) {
+			int[] sumRed = new int[imageWidth * imageHeight];
+			int[] sumGreen = new int[imageWidth * imageHeight];
+			int[] sumBlue = new int[imageWidth * imageHeight];
+			int[] sumColor = new int[imageWidth * imageHeight];
+			for (int i = 0; i < sumRed.length; i++) {
 				sumRed[i] = 0;
 				sumGreen[i] = 0;
 				sumBlue[i] = 0;
 			}
 			for (Image img : pictureList) {
 				int[] current = img.getPixels();
-				for (int i=0; i<current.length; i++) {
+				for (int i = 0; i < current.length; i++) {
 					sumRed[i] += Color.red(current[i]);
 					sumGreen[i] += Color.green(current[i]);
 					sumBlue[i] += Color.blue(current[i]);
 				}
 			}
-			for (int i=0; i<sumColor.length; i++) {
+			for (int i = 0; i < sumColor.length; i++) {
 				int red = clamp((int) (sumRed[i] / numberOfPictures));
 				int green = clamp((int) (sumGreen[i] / numberOfPictures));
 				int blue = clamp((int) (sumBlue[i] / numberOfPictures));
 				sumColor[i] = Color.rgb(red, green, blue);
 			}
-			
+
 			// calculate cumulative histogram
 			int[] histogram = new int[256];
-			for(int i=0; i<histogram.length; i++) {
+			for (int i = 0; i < histogram.length; i++) {
 				histogram[i] = 0;
 				cumHistogramm[i] = 0;
 			}
-			for (int i=0; i<sumColor.length; i++) {
+			for (int i = 0; i < sumColor.length; i++) {
 				int intensity = getintensity(sumColor[i]);
 				histogram[intensity] += 1;
 			}
-			for(int i=0; i<histogram.length; i++) {
-				for(int j=0; j<=i; j++) {
+			for (int i = 0; i < histogram.length; i++) {
+				for (int j = 0; j <= i; j++) {
 					cumHistogramm[i] += histogram[j];
 				}
 			}
 
-			
-			texture = new Image(Bitmap.createBitmap(sumColor, imageWidth, imageHeight, pictureList.get(0).getConfig()));
-			
+			texture = new Image(Bitmap.createBitmap(sumColor, imageWidth, imageHeight, pictureList.get(0)
+					.getConfig()));
+
 			// blur the input images
 			if (useBlurring) {
 				for (int i = 0; i < pictureList.size(); i++) {
@@ -295,17 +295,18 @@ public class CameraActivity extends BaseActivity {
 			ArrayList<Vector3f> normalField = new ArrayList<Vector3f>();
 			Matrix pGradients = new Matrix(imageHeight, imageWidth);
 			Matrix qGradients = new Matrix(imageHeight, imageWidth);
-			
-			for (int h=0; h<imageHeight; h++) {
-				for (int w=0; w<imageWidth; w++) {
+
+			for (int h = 0; h < imageHeight; h++) {
+				for (int w = 0; w < imageWidth; w++) {
 					Vector3f normal = new Vector3f();
 					VectorNf intensity = new VectorNf(numberOfPictures);
-					for (int i=0; i<numberOfPictures; i++) {
+					for (int i = 0; i < numberOfPictures; i++) {
 						intensity.set(i, pictureList.get(i).getIntensity(w, h));
 					}
 					Vector3f albedo = sInverse.multiply(intensity);
-					
-					float reg = (float) Math.sqrt(Math.pow(albedo.x, 2) + Math.pow(albedo.y, 2) + Math.pow(albedo.z, 2));
+
+					float reg = (float) Math.sqrt(Math.pow(albedo.x, 2) + Math.pow(albedo.y, 2)
+							+ Math.pow(albedo.z, 2));
 					normal.x = albedo.x / reg;
 					normal.y = albedo.y / reg;
 					normal.z = albedo.z / reg;
@@ -315,44 +316,47 @@ public class CameraActivity extends BaseActivity {
 					qGradients.set(h, w, normal.y / normal.z);
 				}
 			}
-			
-			double[][] heightField = MathHelper.twoDimIntegration(pGradients, qGradients, imageHeight, imageWidth);
-						
-			FloatBuffer vertBuffer = FloatBuffer.allocate(imageHeight*imageWidth*3);
-			FloatBuffer normBuffer = FloatBuffer.allocate(imageHeight*imageWidth*3);
+
+			double[][] heightField = MathHelper.twoDimIntegration(pGradients, qGradients, imageHeight,
+					imageWidth);
+
+			FloatBuffer vertBuffer = FloatBuffer.allocate(imageHeight * imageWidth * 3);
+			FloatBuffer normBuffer = FloatBuffer.allocate(imageHeight * imageWidth * 3);
 			ArrayList<Short> indexes = new ArrayList<Short>();
 			vertBuffer.rewind();
 			normBuffer.rewind();
 			// Vertices und Normale
 			int idx = 0;
-			for (int x=0;x<imageHeight;x++) {
-				for (int y=0;y<imageWidth;y++) {
-					float[] imgPoint = new float[] { Float.valueOf(y), Float.valueOf(x), (float) heightField[x][y] };
-					float[] normVec = new float[] { normalField.get(idx).x, normalField.get(idx).y, normalField.get(idx).z };
+			for (int x = 0; x < imageHeight; x++) {
+				for (int y = 0; y < imageWidth; y++) {
+					float[] imgPoint = new float[] { Float.valueOf(y), Float.valueOf(x),
+							(float) heightField[x][y] };
+					float[] normVec = new float[] { normalField.get(idx).x, normalField.get(idx).y,
+							normalField.get(idx).z };
 					vertBuffer.put(imgPoint);
 					normBuffer.put(normVec);
 					idx += 1;
 				}
 			}
 			// Faces
-			for (int i=0; i<imageHeight-1;i++) {
-				for (int j=0; j<imageWidth-1;j++) {
-					short index = (short) (j + (i*imageWidth));
+			for (int i = 0; i < imageHeight - 1; i++) {
+				for (int j = 0; j < imageWidth - 1; j++) {
+					short index = (short) (j + (i * imageWidth));
 					indexes.add((short) (index));
-					indexes.add((short) (index+imageWidth));
-					indexes.add((short) (index+1));
-					
-					indexes.add((short) (index+1));
-					indexes.add((short) (index+imageWidth));
-					indexes.add((short) (index+imageWidth+1));
+					indexes.add((short) (index + imageWidth));
+					indexes.add((short) (index + 1));
+
+					indexes.add((short) (index + 1));
+					indexes.add((short) (index + imageWidth));
+					indexes.add((short) (index + imageWidth + 1));
 				}
 			}
 			ShortBuffer indexBuffer = ShortBuffer.allocate(indexes.size());
 			indexBuffer.rewind();
-			for (int i=0; i<indexes.size(); i++) {
+			for (int i = 0; i < indexes.size(); i++) {
 				indexBuffer.put(indexes.get(i));
 			}
-			
+
 			float[] vertices = new float[vertBuffer.limit()];
 			float[] normals = new float[normBuffer.limit()];
 			short[] faces = new short[indexBuffer.limit()];
@@ -360,35 +364,30 @@ public class CameraActivity extends BaseActivity {
 			normals = normBuffer.array();
 			faces = indexBuffer.array();
 
-			objectModel = new ObjectModel(vertices, normals, faces, BitmapUtils.modAutoContrast(texture, cumHistogramm));
-		
+			objectModel = new ObjectModel(vertices, normals, faces, BitmapUtils.modAutoContrast(texture,
+					cumHistogramm));
+
 			if (ExternalDirectory.isMounted()) {
-				// storing the newly created 3D object onto hard disk and create database entries
+				// storing the newly created 3D object onto hard disk and create
+				// database entries
 				Calendar cal = Calendar.getInstance();
 				String timestamp = String.valueOf(cal.getTimeInMillis());
 				String filename = timestamp + ".kaw";
-				String path = ExternalDirectory.getExternalImageDirectory()
-						+ "/";
+				String path = ExternalDirectory.getExternalImageDirectory() + "/";
 				ContentValues values = new ContentValues();
 				cr = getContentResolver();
-				Uri objectUri = DatabaseProvider.CONTENT_URI.buildUpon()
-						.appendPath("object").build();
-				Uri galleryUri = DatabaseProvider.CONTENT_URI.buildUpon()
-						.appendPath("gallery").build();
+				Uri objectUri = DatabaseProvider.CONTENT_URI.buildUpon().appendPath("object").build();
+				Uri galleryUri = DatabaseProvider.CONTENT_URI.buildUpon().appendPath("gallery").build();
 				try {
 					OutputStream out = new FileOutputStream(path + filename);
 					ObjectOutputStream obj_output = new ObjectOutputStream(out);
 					obj_output.writeObject(objectModel);
 					obj_output.close();
-					values.put(DatabaseAdapter.OBJECT_FILE_PATH_KEY, path
-							+ filename);
+					values.put(DatabaseAdapter.OBJECT_FILE_PATH_KEY, path + filename);
 					Uri objectResultUri = cr.insert(objectUri, values);
 					String objectID = objectResultUri.getLastPathSegment();
 					values.clear();
-					String thumbnail_path = ExternalDirectory
-							.getExternalImageDirectory()
-							+ "/"
-							+ timestamp
+					String thumbnail_path = ExternalDirectory.getExternalImageDirectory() + "/" + timestamp
 							+ ".png";
 					FileOutputStream fos = new FileOutputStream(thumbnail_path);
 					BufferedOutputStream bos = new BufferedOutputStream(fos);
@@ -396,14 +395,15 @@ public class CameraActivity extends BaseActivity {
 					texture.compress(CompressFormat.PNG, 100, bos);
 					bos.flush();
 					bos.close();
-					values.put(DatabaseAdapter.GALLERY_THUMBNAIL_PATH_KEY,
-							thumbnail_path);
+					values.put(DatabaseAdapter.GALLERY_THUMBNAIL_PATH_KEY, thumbnail_path);
 					values.put(DatabaseAdapter.GALLERY_NUMBER_OF_PICTURES_KEY,
 							String.valueOf(numberOfPictures));
 					values.put(DatabaseAdapter.GALLERY_DATE_KEY, timestamp);
 					values.put(DatabaseAdapter.GALLERY_DIMENSION_KEY, objectModel.getTextureBitmapSize());
-					values.put(DatabaseAdapter.GALLERY_FACES_KEY, String.valueOf(objectModel.getVertices().length/3));
-					values.put(DatabaseAdapter.GALLERY_VERTICES_KEY, String.valueOf(objectModel.getVertices().length));
+					values.put(DatabaseAdapter.GALLERY_FACES_KEY,
+							String.valueOf(objectModel.getVertices().length / 3));
+					values.put(DatabaseAdapter.GALLERY_VERTICES_KEY,
+							String.valueOf(objectModel.getVertices().length));
 					values.put(DatabaseAdapter.GALLERY_OBJECT_ID_KEY, objectID);
 					cr.insert(galleryUri, values);
 				} catch (FileNotFoundException e) {
@@ -420,12 +420,13 @@ public class CameraActivity extends BaseActivity {
 			}
 			return true;
 		}
-		
+
 		@Override
 		protected void onPostExecute(Boolean createdSuccessfully) {
 			if (createdSuccessfully) {
 				if (!sdIsMounted) {
-					Toast.makeText(context, getString(R.string.obj_could_not_be_saved), Toast.LENGTH_SHORT).show();
+					Toast.makeText(context, getString(R.string.obj_could_not_be_saved), Toast.LENGTH_SHORT)
+							.show();
 				}
 				Intent viewObject = new Intent(context, ObjectViewerActivity.class);
 				Bundle b = new Bundle();
@@ -434,21 +435,23 @@ public class CameraActivity extends BaseActivity {
 				startActivity(viewObject);
 				((Activity) context).finish();
 			} else {
-				Toast.makeText(context, getString(R.string.error_while_creating_object), Toast.LENGTH_LONG).show();
+				Toast.makeText(context, getString(R.string.error_while_creating_object), Toast.LENGTH_LONG)
+						.show();
 				((Activity) context).finish();
 			}
-			
+
 		}
-		
+
 		private int clamp(int value) {
 			if (value > 255)
 				return 255;
 			else
 				return value;
 		}
-		
+
 		private int getintensity(int color) {
-			return Math.round((0.2989f * Color.red(color)) + (0.5870f * Color.green(color)) + (0.1140f * Color.blue(color)));
+			return Math.round((0.2989f * Color.red(color)) + (0.5870f * Color.green(color))
+					+ (0.1140f * Color.blue(color)));
 		}
 	}
 
