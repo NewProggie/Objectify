@@ -349,8 +349,10 @@ public class BitmapUtils {
 	 * @return new downscaled bitmap or null
 	 */
 	public static Bitmap createScaledBitmap(byte[] data, Size pictureSize, int imageFormat, float factor) {
-		int scaledWidth = (int) (pictureSize.getWidth() * 1 / factor);
-		int scaledHeight = (int) (pictureSize.getHeight() * 1 / factor);
+		// int scaledWidth = (int) (pictureSize.getWidth() * 1 / factor);
+		// int scaledHeight = (int) (pictureSize.getHeight() * 1 / factor);
+		int scaledWidth = 80;
+		int scaledHeight = 60;
 		switch (imageFormat) {
 		case ImageFormat.JPEG:
 			Bitmap tmp = BitmapFactory.decodeByteArray(data, 0, data.length);
