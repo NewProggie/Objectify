@@ -18,9 +18,7 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
-import android.graphics.Color;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.net.Uri;
@@ -221,7 +219,6 @@ public class CameraActivity extends BaseActivity {
 		private ContentResolver cr;
 		private boolean sdIsMounted = true;
 		private boolean useBlurring = false;
-		private int[] cumHistogramm;
 
 		@Override
 		protected void onPreExecute() {
@@ -231,7 +228,6 @@ public class CameraActivity extends BaseActivity {
 			cr = getContentResolver();
 			SharedPreferences settings = SettingsActivity.getSettings((ContextWrapper) context);
 			useBlurring = settings.getBoolean(getString(R.string.settings_use_blurring), false);
-			cumHistogramm = new int[256];
 		}
 
 		@Override
@@ -242,51 +238,17 @@ public class CameraActivity extends BaseActivity {
 			int imageWidth = pictureList.get(0).getWidth();
 			int imageHeight = pictureList.get(0).getHeight();
 
-			// sum images and use as texture
-			int[] sumRed = new int[imageWidth * imageHeight];
-			int[] sumGreen = new int[imageWidth * imageHeight];
-			int[] sumBlue = new int[imageWidth * imageHeight];
-			int[] sumColor = new int[imageWidth * imageHeight];
-			for (int i = 0; i < sumRed.length; i++) {
-				sumRed[i] = 0;
-				sumGreen[i] = 0;
-				sumBlue[i] = 0;
-			}
-			for (Image img : pictureList) {
-				int[] current = img.getPixels();
-				for (int i = 0; i < current.length; i++) {
-					sumRed[i] += Color.red(current[i]);
-					sumGreen[i] += Color.green(current[i]);
-					sumBlue[i] += Color.blue(current[i]);
-				}
-			}
-			for (int i = 0; i < sumColor.length; i++) {
-				int red = clamp((int) (sumRed[i] / numberOfPictures));
-				int green = clamp((int) (sumGreen[i] / numberOfPictures));
-				int blue = clamp((int) (sumBlue[i] / numberOfPictures));
-				sumColor[i] = Color.rgb(red, green, blue);
-			}
+			/* sum images and use as texture */
+			texture = BitmapUtils.imagesToStack(pictureList);
 
-			// calculate cumulative histogram
-			int[] histogram = new int[256];
-			for (int i = 0; i < histogram.length; i++) {
-				histogram[i] = 0;
-				cumHistogramm[i] = 0;
-			}
-			for (int i = 0; i < sumColor.length; i++) {
-				int intensity = getintensity(sumColor[i]);
-				histogram[intensity] += 1;
-			}
-			for (int i = 0; i < histogram.length; i++) {
-				for (int j = 0; j <= i; j++) {
-					cumHistogramm[i] += histogram[j];
-				}
-			}
+			/* adjust contrast automagically */
+			texture = BitmapUtils.autoContrast(texture);
+			// texture = BitmapUtils.modAutoContrast(texture);
 
-			texture = new Image(Bitmap.createBitmap(sumColor, imageWidth, imageHeight, pictureList.get(0)
-					.getConfig()));
+			/* equalize histogram for more saturated color */
+			// texture = BitmapUtils.equalizeHistogram(texture);
 
-			// blur the input images
+			/* blur the input images */
 			if (useBlurring) {
 				for (int i = 0; i < pictureList.size(); i++) {
 					pictureList.set(i, BitmapUtils.blurBitmap(pictureList.get(i)));
@@ -364,8 +326,7 @@ public class CameraActivity extends BaseActivity {
 			normals = normBuffer.array();
 			faces = indexBuffer.array();
 
-			objectModel = new ObjectModel(vertices, normals, faces, BitmapUtils.modAutoContrast(texture,
-					cumHistogramm));
+			objectModel = new ObjectModel(vertices, normals, faces, texture);
 
 			if (ExternalDirectory.isMounted()) {
 				// storing the newly created 3D object onto hard disk and create
@@ -442,17 +403,6 @@ public class CameraActivity extends BaseActivity {
 
 		}
 
-		private int clamp(int value) {
-			if (value > 255)
-				return 255;
-			else
-				return value;
-		}
-
-		private int getintensity(int color) {
-			return Math.round((0.2989f * Color.red(color)) + (0.5870f * Color.green(color))
-					+ (0.1140f * Color.blue(color)));
-		}
 	}
 
 }
