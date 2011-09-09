@@ -36,5 +36,10 @@
 			<type>2</type>
 			<locationURI>_android_com_android_vending_licensing_82f7090e/src</locationURI>
 		</link>
+		<link>
+			<name>objectify_market_licensing_src</name>
+			<type>2</type>
+			<locationURI>_android_objectify_market_licensing_60d5b91d/src</locationURI>
+		</link>
 	</linkedResources>
 </projectDescription>
