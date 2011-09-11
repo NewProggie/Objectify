@@ -52,20 +52,24 @@ public class CameraLighting extends GLSurfaceView {
 	 * @return the light matrix as a 2d double array
 	 */
 	public Matrix getLightMatrixS(int numberOfPictures) {
-		double[][] lightMatrix = new double[numberOfPictures][3];
+		double[][] lightMatrix = new double[numberOfPictures][4];
 		if (numberOfPictures == 4) {
 			lightMatrix[0][0] = -0.03365;
 			lightMatrix[0][1] =  0.11473;
 			lightMatrix[0][2] =  1.00599;
+			lightMatrix[0][3] = 1;
 			lightMatrix[1][0] =  0.01680;
 			lightMatrix[1][1] =  0.06232;
 			lightMatrix[1][2] =  1.00175;
+			lightMatrix[1][3] = 1;
 			lightMatrix[2][0] =  0.08802;
 			lightMatrix[2][1] =  0.17509;
 			lightMatrix[2][2] =  1.01137;
+			lightMatrix[2][3] = 1;
 			lightMatrix[3][0] =  0.01382;
 			lightMatrix[3][1] =  0.23145;
 			lightMatrix[3][2] =  1.02623;
+			lightMatrix[3][3] = 1;
 		} else if (numberOfPictures == 5) {
 			lightMatrix[0][0] = -0.03960;
 			lightMatrix[0][1] =  0.11386;

@@ -265,13 +265,11 @@ public class CameraActivity extends BaseActivity {
 					for (int i = 0; i < numberOfPictures; i++) {
 						intensity.set(i, pictureList.get(i).getIntensity(w, h));
 					}
-					Vector3f albedo = sInverse.multiply(intensity);
+					VectorNf n_and_a = sInverse.multiply(intensity);
 
-					float reg = (float) Math.sqrt(Math.pow(albedo.x, 2) + Math.pow(albedo.y, 2)
-							+ Math.pow(albedo.z, 2));
-					normal.x = albedo.x / reg;
-					normal.y = albedo.y / reg;
-					normal.z = albedo.z / reg;
+					normal.x = n_and_a.get(0);
+					normal.y = n_and_a.get(1);
+					normal.z = n_and_a.get(2);
 
 					normalField.add(normal);
 					pGradients.set(h, w, normal.x / normal.z);
