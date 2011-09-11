@@ -348,11 +348,11 @@ public class BitmapUtils {
 	 *            factor for downscaled image. Should be an exponent of two.
 	 * @return new downscaled bitmap or null
 	 */
-	public static Bitmap createScaledBitmap(byte[] data, Size pictureSize, int imageFormat, float factor) {
-		// int scaledWidth = (int) (pictureSize.getWidth() * 1 / factor);
-		// int scaledHeight = (int) (pictureSize.getHeight() * 1 / factor);
-		int scaledWidth = 80;
-		int scaledHeight = 60;
+	public static Bitmap createScaledBitmap(byte[] data, Size pictureSize, int imageFormat) {
+		float MAXWIDTH = 80.0f; // limiting max width of scaled bitmap to avoid memory issues (heap)
+		float factor = MAXWIDTH/pictureSize.getWidth();
+		int scaledWidth = (int) (pictureSize.getWidth() * factor);
+		int scaledHeight = (int) (pictureSize.getHeight() * factor);
 		switch (imageFormat) {
 		case ImageFormat.JPEG:
 			Bitmap tmp = BitmapFactory.decodeByteArray(data, 0, data.length);

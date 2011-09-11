@@ -179,12 +179,12 @@ public class CameraActivity extends BaseActivity {
 				String device = params.get("device");
 				if (device != null && device.equals("GT-P1000")) {
 					Image image = new Image(BitmapUtils.createScaledBitmap(data, CameraFinder.pictureSize,
-							CameraFinder.imageFormat, 8.0f), false);
+							CameraFinder.imageFormat), false);
 					pictureList.add(image);
 					counter += 1;
 				} else {
 					Image image = new Image(BitmapUtils.createScaledBitmap(data, CameraFinder.pictureSize,
-							CameraFinder.imageFormat, 8.0f), true);
+							CameraFinder.imageFormat), true);
 					pictureList.add(image);
 					counter += 1;
 				}
