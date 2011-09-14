@@ -52,7 +52,7 @@ public class MainActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.dashboard);
 		context = this;
-
+		
 		handler = new Handler();
 		setupActionBar(null, 0);
 		addNewActionButton(R.drawable.ic_title_camera, R.string.camera, new OnClickListener() {
