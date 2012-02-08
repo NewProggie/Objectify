@@ -41,8 +41,8 @@ import de.hsrm.objectify.ui.DashboardLayout;
 public class MainActivity extends BaseActivity {
 
 	private Context context;
-	private LicenseCheckerCallback licenseCheckerCallback;
-	private LicenseChecker checker;
+//	private LicenseCheckerCallback licenseCheckerCallback;
+//	private LicenseChecker checker;
 	private Handler handler;
 	@SuppressWarnings("unused")
 	private Button galleryButton, howtoButton, shareButton, cameraButton, settingsButton;
@@ -71,20 +71,20 @@ public class MainActivity extends BaseActivity {
 		settingsButton = (Button) findViewById(R.id.dashboard_settings_button);
 		
 		// Construct the LicenseCheckerCallback. The library calls this when done
-		licenseCheckerCallback = new ObjectifyLicenseCheckerCallback();
+//		licenseCheckerCallback = new ObjectifyLicenseCheckerCallback();
 
 		// Construct the LicenseChecker with a Policy
 		deviceId = Secure.getString(context.getContentResolver(),
 	            Secure.ANDROID_ID); 
-		checker = new LicenseChecker(context, new ServerManagedPolicy(context,
-				new AESObfuscator(SALT, getPackageName(), deviceId)),
-				BASE_64_PUBLIC_KEY);
+//		checker = new LicenseChecker(context, new ServerManagedPolicy(context,
+//				new AESObfuscator(SALT, getPackageName(), deviceId)),
+//				BASE_64_PUBLIC_KEY);
 		// validate this copy of objectify
-		doCheck();
+//		doCheck();
 	}
 
 	private void doCheck() {
-		checker.checkAccess(licenseCheckerCallback);
+//		checker.checkAccess(licenseCheckerCallback);
 	}
 	
 	protected Dialog onCreateDialog(int id) {
@@ -165,7 +165,7 @@ public class MainActivity extends BaseActivity {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		checker.onDestroy();
+//		checker.onDestroy();
 	}
 	
 	private static final String BASE_64_PUBLIC_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyvnIeG1BPK0Gnjj7dZmzWqyCT9YHFl4h7HR2JaKLgpgaD1mmseIMVwSh+2uVr0AS/CEfUawiHKPAmm6D9EqXs2kL/Odh41TagwYU2OxfXaB1R4wx9mZ7+kJ47uzvs6i+2mbkgdIgtIwsoI/jpspCB7bSZE8nrk+bG5OZdq/i2cWYBtbYQsXO9BwI90DK0gX4kZnO6OAfnoaazIghIEy4hIYQpnBnEBpnCY85K5WDmKNEb9nip6Rb8n3hNDHXA8hTKAGBtQBp/zArCuKSR9d4Un5Zu+DYp2/iAxIHLzB067WqUAWOfhrfkRSmHfaQHLVvTQxgJ4cUPojRAUKhRjPL+QIDAQAB";
