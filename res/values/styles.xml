@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<style name="AppTheme" parent="android:style/Theme.Light">
+	<style name="AppTheme" parent="android:style/Theme.Black">
 		 <item name="actionbarSeparatorStyle">@style/ActionBarSeparator</item>
 		 <item name="actionbarTextStyle">@style/ActionBarText</item>
 		 <item name="actionbarButtonStyle">@style/ActionBarButton</item>
@@ -79,11 +79,6 @@
    	 	<item name="android:shadowDy">1</item>
     	<item name="android:shadowRadius">1</item>
 		<item name="android:background">@null</item>
-	</style>
-	<style name="Animations" />
-	<style name="Animations.PopupWindow">
-		<item name="@android:windowEnterAnimation">@anim/grow_from_topright_to_bottomleft</item>
-		<item name="@android:windowExitAnimation">@anim/shrink_from_bottomleft_to_topright</item>
 	</style>
 	
 	 <style name="ActionBarCompat">
