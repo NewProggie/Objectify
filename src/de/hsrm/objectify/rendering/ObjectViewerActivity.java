@@ -23,6 +23,9 @@ import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
@@ -56,23 +59,6 @@ public class ObjectViewerActivity extends ActionBarActivity {
 		frameLayout = new FrameLayout(this);
 		setContentView(frameLayout);
 		setTitle(getString(R.string.object_viewer));
-		// TODO: add actionbar buttons
-//		addNewActionButton(R.drawable.ic_title_share, R.string.share,
-//				new OnClickListener() {
-//
-//					@Override
-//					public void onClick(View v) {
-//						new GetScreenshot().execute();
-//					}
-//				});
-//		addNewActionButton(R.drawable.ic_title_export, R.string.export,
-//				new OnClickListener() {
-//
-//					@Override
-//					public void onClick(View v) {
-//						new ExportToObj().execute();
-//					}
-//				});
 		Display display = getWindowManager().getDefaultDisplay();
 		Bundle b = getIntent().getBundleExtra("bundle");
 		objectModel = b.getParcelable("objectModel");
@@ -101,6 +87,26 @@ public class ObjectViewerActivity extends ActionBarActivity {
 			objectModel.setRenderingMode(GL10.GL_LINES);
 			glSurfaceView.requestRender();
 		}
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.objectviewer, menu);
+		return super.onCreateOptionsMenu(menu);
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.opt_share:
+			new GetScreenshot().execute();
+			break;
+		case R.id.opt_export:
+			new ExportToObj().execute();
+			break;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 
 	@Override

@@ -19,12 +19,16 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import de.hsrm.objectify.R;
+import de.hsrm.objectify.SettingsActivity;
 import de.hsrm.objectify.actionbarcompat.ActionBarActivity;
 import de.hsrm.objectify.database.DatabaseAdapter;
 import de.hsrm.objectify.database.DatabaseProvider;
@@ -103,23 +107,32 @@ public class GalleryDetailsActivity extends ActionBarActivity {
 		faces.setText(strFaces);
 		vertices.setText(strVertices);
 		picture.setOnClickListener(onShowclicked());
-
-		// TODO: add actionbar buttons
-//		addNewActionButton(R.drawable.ic_title_show, R.string.show,
-//				onShowclicked());
-//		addNewActionButton(R.drawable.ic_title_delete, R.string.delete,
-//				onDeleteclicked());
 	}
 
-	private OnClickListener onDeleteclicked() {
-		OnClickListener listener = new OnClickListener() {
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.gallerydetails, menu);
+		return super.onCreateOptionsMenu(menu);
+	}
 
-			@Override
-			public void onClick(View v) {
-				new DeleteObject().execute(galleryId, objectId);
-			}
-		};
-		return listener;
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.opt_show:
+			Uri objectUri = DatabaseProvider.CONTENT_URI.buildUpon()
+					.appendPath("object").build();
+			new LoadingObject().execute(objectUri);
+			break;
+		case R.id.opt_delete:
+			new DeleteObject().execute(galleryId, objectId);
+			break;
+		case R.id.opt_settings:
+			Intent toSettings = new Intent(this, SettingsActivity.class);
+			startActivity(toSettings);
+			break;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 
 	private OnClickListener onShowclicked() {
