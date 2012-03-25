@@ -177,15 +177,20 @@ public class MainActivity extends ActionBarActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.option, menu);
+		inflater.inflate(R.menu.main, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case android.R.id.home:
-			Toast.makeText(context, "Home", Toast.LENGTH_SHORT).show();
+		case R.id.opt_settings:
+			Intent toSettings = new Intent(context, SettingsActivity.class);
+			startActivity(toSettings);
+			break;
+		case R.id.opt_about:
+			Intent toAbout = new Intent(context, AboutActivity.class);
+			startActivity(toAbout);
 			break;
 		}
 		return super.onOptionsItemSelected(item);
