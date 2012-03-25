@@ -18,10 +18,11 @@ import de.hsrm.objectify.utils.Size;
 public abstract class CameraFinder {
 
 	public abstract Camera open(Context context);
+
 	static int imageFormat;
 	static Size pictureSize;
 	public static CameraFinder INSTANCE = buildFinder();
-	
+
 	private static CameraFinder buildFinder() {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
 			return (new FrontCameraFinder());

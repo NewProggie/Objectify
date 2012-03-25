@@ -14,8 +14,9 @@ import de.hsrm.objectify.R;
 import de.hsrm.objectify.SettingsActivity;
 
 /**
- * This class implements a custom dialog view in the settings. holding a slider to adjust the
- * amount of photos which will be used creating a 3d rendered object.
+ * This class implements a custom dialog view in the settings. holding a slider
+ * to adjust the amount of photos which will be used creating a 3d rendered
+ * object.
  * 
  * @author kwolf001
  * 
@@ -28,15 +29,18 @@ public class SliderInputPreference extends DialogPreference implements
 	private SeekBar slider;
 	private TextView numberOfPicturesText;
 	/**
-	 * Setting the constant value for minimum amount of pictures taken for a 3d reconstruction.
+	 * Setting the constant value for minimum amount of pictures taken for a 3d
+	 * reconstruction.
 	 */
 	private final int MIN_PICTURES = 4;
 	/**
-	 * Setting the constant value for maximum amount of pictures taken for a 3d reconstruction.
+	 * Setting the constant value for maximum amount of pictures taken for a 3d
+	 * reconstruction.
 	 */
 	private final int MAX_PIXTURES = 9;
 	/**
-	 * Setting the constant value for default amount of pictures taken for a 3d reconstruction.
+	 * Setting the constant value for default amount of pictures taken for a 3d
+	 * reconstruction.
 	 */
 	private final int DEFAULT_PICTURES = 4;
 
@@ -56,24 +60,32 @@ public class SliderInputPreference extends DialogPreference implements
 		LayoutInflater inflater = LayoutInflater.from(context);
 		View view = inflater.inflate(R.layout.slider_input, null);
 
-		SharedPreferences prefs = SettingsActivity.getSettings((ContextWrapper) context);
-		currentNumberOfPictures = prefs.getInt(context.getResources().getString(R.string.settings_amount_pictures), DEFAULT_PICTURES);
-		
-		numberOfPicturesText = (TextView) view.findViewById(R.id.curr_amount_photos);
+		SharedPreferences prefs = SettingsActivity
+				.getSettings((ContextWrapper) context);
+		currentNumberOfPictures = prefs
+				.getInt(context.getResources().getString(
+						R.string.settings_amount_pictures), DEFAULT_PICTURES);
+
+		numberOfPicturesText = (TextView) view
+				.findViewById(R.id.curr_amount_photos);
 		numberOfPicturesText.setText(String.valueOf(currentNumberOfPictures));
 		slider = (SeekBar) view.findViewById(R.id.slider_photos);
 		slider.setOnSeekBarChangeListener(this);
-		slider.setMax(MAX_PIXTURES-MIN_PICTURES);
-		slider.setProgress(currentNumberOfPictures-MIN_PICTURES);
-		
+		slider.setMax(MAX_PIXTURES - MIN_PICTURES);
+		slider.setProgress(currentNumberOfPictures - MIN_PICTURES);
+
 		return view;
 	}
 
 	@Override
-	protected void onSetInitialValue(boolean restorePersistedValue, Object defaultValue) {
+	protected void onSetInitialValue(boolean restorePersistedValue,
+			Object defaultValue) {
 		if (restorePersistedValue) {
-			SharedPreferences prefs = SettingsActivity.getSettings((ContextWrapper) context);
-			currentNumberOfPictures = prefs.getInt(context.getResources().getString(R.string.settings_amount_pictures), DEFAULT_PICTURES);
+			SharedPreferences prefs = SettingsActivity
+					.getSettings((ContextWrapper) context);
+			currentNumberOfPictures = prefs.getInt(context.getResources()
+					.getString(R.string.settings_amount_pictures),
+					DEFAULT_PICTURES);
 		} else {
 			currentNumberOfPictures = DEFAULT_PICTURES;
 		}
@@ -90,7 +102,7 @@ public class SliderInputPreference extends DialogPreference implements
 
 	@Override
 	public void onClick(DialogInterface dialog, int which) {
-		switch(which) {
+		switch (which) {
 		case DialogInterface.BUTTON_POSITIVE:
 			if (shouldPersist())
 				persistInt(currentNumberOfPictures);
@@ -98,9 +110,9 @@ public class SliderInputPreference extends DialogPreference implements
 		case DialogInterface.BUTTON_NEGATIVE:
 			break;
 		}
-		
+
 	}
-	
+
 	@Override
 	public void onStartTrackingTouch(SeekBar seek) {
 	}

@@ -36,15 +36,15 @@ public class Circle {
 		}
 		vertexBuffer.rewind();
 	}
-	
+
 	public float getWidth() {
-		return 2*radius;
+		return 2 * radius;
 	}
-	
+
 	public float getHeight() {
-		return 2*radius;
+		return 2 * radius;
 	}
-	
+
 	public float getRadius() {
 		return radius;
 	}

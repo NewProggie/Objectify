@@ -38,29 +38,31 @@ public class Image {
 		if (fromCamera) {
 			Matrix flipMatrix = new Matrix();
 			flipMatrix.preScale(1.0f, -1.0f);
-			this.bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(),
-					flipMatrix, true);
+			this.bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),
+					bitmap.getHeight(), flipMatrix, true);
 		} else {
 			Matrix rotMatrix = new Matrix();
 			rotMatrix.postRotate(90);
-			Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(),
-					rotMatrix, true);
+			Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0,
+					bitmap.getWidth(), bitmap.getHeight(), rotMatrix, true);
 			Matrix flipMatrix = new Matrix();
 			flipMatrix.preScale(1.0f, -1.0f);
-			this.bitmap = Bitmap.createBitmap(rotatedBitmap, 0, 0, rotatedBitmap.getWidth(),
-					rotatedBitmap.getHeight(), flipMatrix, true);
+			this.bitmap = Bitmap.createBitmap(rotatedBitmap, 0, 0,
+					rotatedBitmap.getWidth(), rotatedBitmap.getHeight(),
+					flipMatrix, true);
 		}
 	}
 
 	public Image(Bitmap bitmap, int degrees) {
 		Matrix rotMatrix = new Matrix();
 		rotMatrix.postRotate(degrees);
-		Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(),
-				rotMatrix, true);
+		Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0,
+				bitmap.getWidth(), bitmap.getHeight(), rotMatrix, true);
 		Matrix flipMatrix = new Matrix();
 		flipMatrix.preScale(1.0f, -1.0f);
-		this.bitmap = Bitmap.createBitmap(rotatedBitmap, 0, 0, rotatedBitmap.getWidth(),
-				rotatedBitmap.getHeight(), flipMatrix, true);
+		this.bitmap = Bitmap.createBitmap(rotatedBitmap, 0, 0,
+				rotatedBitmap.getWidth(), rotatedBitmap.getHeight(),
+				flipMatrix, true);
 	}
 
 	public void setPixel(int x, int y, int color) {
@@ -69,11 +71,13 @@ public class Image {
 
 	public int[] getPixels() {
 		int[] pixels = new int[bitmap.getWidth() * bitmap.getHeight()];
-		bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, getWidth(), getHeight());
+		bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, getWidth(),
+				getHeight());
 		return pixels;
 	}
 
-	public void getPixels(int[] pixels, int offset, int stride, int x, int y, int width, int height) {
+	public void getPixels(int[] pixels, int offset, int stride, int x, int y,
+			int width, int height) {
 		bitmap.getPixels(pixels, offset, stride, x, y, width, height);
 	}
 
@@ -84,7 +88,8 @@ public class Image {
 		}
 
 		int[] pixels = new int[bitmap.getWidth() * bitmap.getHeight()];
-		bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, getWidth(), getHeight());
+		bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, getWidth(),
+				getHeight());
 
 		for (int i = 0; i < pixels.length; i++) {
 			int intensity = getintensity(pixels[i]);
@@ -107,7 +112,8 @@ public class Image {
 		}
 		int[] pixels = new int[bitmap.getWidth() * bitmap.getHeight()];
 		int[] tmp = new int[bitmap.getWidth() * bitmap.getHeight()];
-		bitmap.getPixels(tmp, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
+		bitmap.getPixels(tmp, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(),
+				bitmap.getHeight());
 		switch (channel) {
 		case 0:
 			for (int i = 0; i < pixels.length; i++) {
@@ -153,16 +159,19 @@ public class Image {
 		return img;
 	}
 
-	public void compress(CompressFormat format, int quality, BufferedOutputStream bos) {
+	public void compress(CompressFormat format, int quality,
+			BufferedOutputStream bos) {
 		bitmap.compress(format, quality, bos);
 	}
 
-	public void compress(CompressFormat format, int quality, ByteArrayOutputStream baos) {
+	public void compress(CompressFormat format, int quality,
+			ByteArrayOutputStream baos) {
 		bitmap.compress(format, quality, baos);
 	}
 
 	private static int getintensity(int color) {
-		return Math.round((0.2989f * Color.red(color)) + (0.5870f * Color.green(color))
+		return Math.round((0.2989f * Color.red(color))
+				+ (0.5870f * Color.green(color))
 				+ (0.1140f * Color.blue(color)));
 	}
 
@@ -185,8 +194,8 @@ public class Image {
 	public void rotate(int degrees) {
 		Matrix rotMatrix = new Matrix();
 		rotMatrix.postRotate(degrees);
-		this.bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), rotMatrix,
-				true);
+		this.bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),
+				bitmap.getHeight(), rotMatrix, true);
 	}
 
 }

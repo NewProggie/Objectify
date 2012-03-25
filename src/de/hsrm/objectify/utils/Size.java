@@ -7,15 +7,15 @@ package de.hsrm.objectify.utils;
  * 
  */
 public class Size {
-	
+
 	private int width;
 	private int height;
-	
+
 	public Size() {
 		this.width = 0;
 		this.height = 0;
 	}
-	
+
 	public Size(int width, int height) {
 		this.width = width;
 		this.height = height;
@@ -36,7 +36,7 @@ public class Size {
 	public void setHeight(int height) {
 		this.height = height;
 	}
-	
+
 	@Override
 	public String toString() {
 		return String.valueOf(width) + "x" + String.valueOf(height);

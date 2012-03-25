@@ -7,5 +7,5 @@
 	<color name="dashboard_text">#FFFFFF</color>
 	<color name="actionbar_text">#FFFFFF</color>
 	<color name="actionbar_text_shadow">#000000</color>
-	
+	<color name="actionbar_title_color">#224894</color>
 </resources>

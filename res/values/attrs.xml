@@ -1,11 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <declare-styleable name="galleryStyle">
         <attr name="android:galleryItemBackground" />
     </declare-styleable>
     <declare-styleable name="AppTheme">
-    	<attr name="actionbarSeparatorStyle" format="reference" />
-    	<attr name="actionbarTextStyle" format="reference" />
-    	<attr name="actionbarButtonStyle" format="reference" />
+        <attr name="actionbarSeparatorStyle" format="reference" />
+        <attr name="actionbarTextStyle" format="reference" />
+        <attr name="actionbarButtonStyle" format="reference" />
+        <attr name="actionbarCompatTitleStyle" format="reference" />
+        <attr name="actionbarCompatItemStyle" format="reference" />
+        <attr name="actionbarCompatItemHomeStyle" format="reference" />
+        <attr name="actionbarCompatProgressIndicatorStyle" format="reference" />
     </declare-styleable>
+    <declare-styleable name="BezelImageView">
+        <attr name="maskDrawable" format="reference" />
+        <attr name="borderDrawable" format="reference" />
+    </declare-styleable>
+
 </resources>

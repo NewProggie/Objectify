@@ -3,10 +3,12 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
-	<classpathentry kind="lib" path="/Users/kai/Projekte/eigene/Objectify/source/lib/Jama-1.0.2.jar"/>
-	<classpathentry kind="lib" path="/Users/kai/Projekte/eigene/Objectify/source/lib/jtransforms-2.3.jar"/>
+	<classpathentry kind="lib" path="/Users/kai/Projekte/eigene/Objectify/source/libs/Jama-1.0.2.jar"/>
+	<classpathentry kind="lib" path="/Users/kai/Projekte/eigene/Objectify/source/libs/jtransforms-2.3.jar"/>
 	<classpathentry kind="src" path="com_android_vending_licensing_src"/>
 	<classpathentry kind="src" path="objectify_market_licensing_src"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
+	<classpathentry kind="lib" path="/Users/kai/Projekte/eigene/Objectify/source/libs/android-support-v7-gridlayout.jar"/>
+	<classpathentry kind="lib" path="/Users/kai/Projekte/eigene/Objectify/source/libs/android-support-v4.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

@@ -38,23 +38,26 @@ public class BitmapUtils {
 	 *            Image format set in {@link CameraFinder}
 	 * @return New bitmap or null
 	 */
-	public static Bitmap createBitmap(byte[] data, Size pictureSize, int imageFormat) {
+	public static Bitmap createBitmap(byte[] data, Size pictureSize,
+			int imageFormat) {
 		switch (imageFormat) {
 		case ImageFormat.JPEG:
 			return BitmapFactory.decodeByteArray(data, 0, data.length);
 		case ImageFormat.NV21:
 			// convert yuv to jpg
-			YuvImage yuvImage = new YuvImage(data, ImageFormat.NV21, pictureSize.getWidth(),
-					pictureSize.getHeight(), null);
-			Rect rect = new Rect(0, 0, pictureSize.getWidth(), pictureSize.getHeight());
+			YuvImage yuvImage = new YuvImage(data, ImageFormat.NV21,
+					pictureSize.getWidth(), pictureSize.getHeight(), null);
+			Rect rect = new Rect(0, 0, pictureSize.getWidth(),
+					pictureSize.getHeight());
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			yuvImage.compressToJpeg(rect, 100, baos);
 			// convert jpg to bmp
-			return BitmapFactory.decodeByteArray(baos.toByteArray(), 0, baos.size());
+			return BitmapFactory.decodeByteArray(baos.toByteArray(), 0,
+					baos.size());
 		case ImageFormat.RGB_565:
 			int[] pixels = convertByteArray(data);
-			return Bitmap.createBitmap(pixels, pictureSize.getWidth(), pictureSize.getHeight(),
-					Config.RGB_565);
+			return Bitmap.createBitmap(pixels, pictureSize.getWidth(),
+					pictureSize.getHeight(), Config.RGB_565);
 		default:
 			return null;
 		}
@@ -78,7 +81,8 @@ public class BitmapUtils {
 		int bt[] = new int[width * height];
 		IntBuffer intBuffer = IntBuffer.wrap(b);
 		intBuffer.rewind();
-		gl.glReadPixels(0, 0, width, height, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, intBuffer);
+		gl.glReadPixels(0, 0, width, height, GL10.GL_RGBA,
+				GL10.GL_UNSIGNED_BYTE, intBuffer);
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
 				int pix = b[i * width + j];
@@ -88,7 +92,8 @@ public class BitmapUtils {
 				bt[(height - i - 1) * width + j] = pix1;
 			}
 		}
-		Bitmap screenshot = Bitmap.createBitmap(bt, width, height, Config.ARGB_8888);
+		Bitmap screenshot = Bitmap.createBitmap(bt, width, height,
+				Config.ARGB_8888);
 		return screenshot;
 	}
 
@@ -134,7 +139,8 @@ public class BitmapUtils {
 			if (r <= alowRed) {
 				rNew = amin;
 			} else if (alowRed < r && r < ahighRed) {
-				rNew = amin + (r - alowRed) * ((amax - amin) / (ahighRed - alowRed));
+				rNew = amin + (r - alowRed)
+						* ((amax - amin) / (ahighRed - alowRed));
 			} else if (r >= ahighRed) {
 				rNew = amax;
 			}
@@ -142,7 +148,8 @@ public class BitmapUtils {
 			if (g <= alowGreen) {
 				gNew = amin;
 			} else if (alowGreen < g && g < ahighGreen) {
-				gNew = amin + (g - alowGreen) * ((amax - amin) / (ahighGreen - alowGreen));
+				gNew = amin + (g - alowGreen)
+						* ((amax - amin) / (ahighGreen - alowGreen));
 			} else if (g >= ahighGreen) {
 				gNew = amax;
 			}
@@ -150,14 +157,15 @@ public class BitmapUtils {
 			if (b <= alowBlue) {
 				bNew = amin;
 			} else if (alowBlue < b && b < ahighBlue) {
-				bNew = amin + (b - alowBlue) * ((amax - amin) / (ahighBlue - alowBlue));
+				bNew = amin + (b - alowBlue)
+						* ((amax - amin) / (ahighBlue - alowBlue));
 			} else if (b >= ahighBlue) {
 				bNew = amax;
 			}
 			colorPixels[i] = Color.rgb(rNew, gNew, bNew);
 		}
-		return new Image(Bitmap.createBitmap(colorPixels, image.getWidth(), image.getHeight(),
-				image.getConfig()));
+		return new Image(Bitmap.createBitmap(colorPixels, image.getWidth(),
+				image.getHeight(), image.getConfig()));
 	}
 
 	public static Image equalizeHistogram(Image image) {
@@ -209,7 +217,8 @@ public class BitmapUtils {
 				idx += 1;
 			}
 		}
-		return new Image(Bitmap.createBitmap(colorPixels, w, h, image.getConfig()));
+		return new Image(Bitmap.createBitmap(colorPixels, w, h,
+				image.getConfig()));
 	}
 
 	private static int[] getCumulativeHistogram(Image image) {
@@ -300,7 +309,8 @@ public class BitmapUtils {
 	 */
 	public static Image autoContrast(Image image) {
 		int[] pixels = new int[image.getWidth() * image.getHeight()];
-		image.getPixels(pixels, 0, image.getWidth(), 0, 0, image.getWidth(), image.getHeight());
+		image.getPixels(pixels, 0, image.getWidth(), 0, 0, image.getWidth(),
+				image.getHeight());
 		int amin = 0, amax = 255;
 		int bRmin = 255, bRmax = 0, bGmin = 255, bGmax = 0, bBmin = 255, bBmax = 0;
 		for (int i = 0; i < pixels.length; i++) {
@@ -324,14 +334,16 @@ public class BitmapUtils {
 			}
 		}
 		for (int i = 0; i < pixels.length; i++) {
-			int rNew = (int) (amin + (Color.red(pixels[i]) - bRmin) * (amax - bRmin) / (bRmax - bRmin * 1.0f));
-			int gNew = (int) (amin + (Color.green(pixels[i]) - bGmin) * (amax - bGmin)
-					/ (bGmax - bGmin * 1.0f));
-			int bNew = (int) (amin + (Color.blue(pixels[i]) - bBmin) * (amax - bBmin)
-					/ (bBmax - bBmin * 1.0f));
+			int rNew = (int) (amin + (Color.red(pixels[i]) - bRmin)
+					* (amax - bRmin) / (bRmax - bRmin * 1.0f));
+			int gNew = (int) (amin + (Color.green(pixels[i]) - bGmin)
+					* (amax - bGmin) / (bGmax - bGmin * 1.0f));
+			int bNew = (int) (amin + (Color.blue(pixels[i]) - bBmin)
+					* (amax - bBmin) / (bBmax - bBmin * 1.0f));
 			pixels[i] = Color.rgb(rNew, gNew, bNew);
 		}
-		return new Image(Bitmap.createBitmap(pixels, image.getWidth(), image.getHeight(), image.getConfig()));
+		return new Image(Bitmap.createBitmap(pixels, image.getWidth(),
+				image.getHeight(), image.getConfig()));
 	}
 
 	/**
@@ -348,38 +360,45 @@ public class BitmapUtils {
 	 *            factor for downscaled image. Should be an exponent of two.
 	 * @return new downscaled bitmap or null
 	 */
-	public static Bitmap createScaledBitmap(byte[] data, Size pictureSize, int imageFormat) {
-		float MAXWIDTH = 80.0f; // limiting max width of scaled bitmap to avoid memory issues (heap)
-		float factor = MAXWIDTH/pictureSize.getWidth();
+	public static Bitmap createScaledBitmap(byte[] data, Size pictureSize,
+			int imageFormat) {
+		float MAXWIDTH = 80.0f; // limiting max width of scaled bitmap to avoid
+								// memory issues (heap)
+		float factor = MAXWIDTH / pictureSize.getWidth();
 		int scaledWidth = (int) (pictureSize.getWidth() * factor);
 		int scaledHeight = (int) (pictureSize.getHeight() * factor);
 		switch (imageFormat) {
 		case ImageFormat.JPEG:
 			Bitmap tmp = BitmapFactory.decodeByteArray(data, 0, data.length);
 			if (tmp != null) {
-				return Bitmap.createScaledBitmap(tmp, scaledWidth, scaledHeight, true);
+				return Bitmap.createScaledBitmap(tmp, scaledWidth,
+						scaledHeight, true);
 			} else {
 				return null;
 			}
 		case ImageFormat.NV21:
 			// convert yuv to jpg
-			YuvImage yuvImage = new YuvImage(data, ImageFormat.NV21, pictureSize.getWidth(),
-					pictureSize.getHeight(), null);
-			Rect rect = new Rect(0, 0, pictureSize.getWidth(), pictureSize.getHeight());
+			YuvImage yuvImage = new YuvImage(data, ImageFormat.NV21,
+					pictureSize.getWidth(), pictureSize.getHeight(), null);
+			Rect rect = new Rect(0, 0, pictureSize.getWidth(),
+					pictureSize.getHeight());
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			yuvImage.compressToJpeg(rect, 100, baos);
 			// convert jpg to bmp
-			Bitmap tmp2 = BitmapFactory.decodeByteArray(baos.toByteArray(), 0, baos.size());
+			Bitmap tmp2 = BitmapFactory.decodeByteArray(baos.toByteArray(), 0,
+					baos.size());
 			if (tmp2 != null) {
-				return Bitmap.createScaledBitmap(tmp2, scaledWidth, scaledHeight, true);
+				return Bitmap.createScaledBitmap(tmp2, scaledWidth,
+						scaledHeight, true);
 			} else {
 				return null;
 			}
 		case ImageFormat.RGB_565:
 			int[] pixels = convertByteArray(data);
-			Bitmap tmp3 = Bitmap.createBitmap(pixels, pictureSize.getWidth(), pictureSize.getHeight(),
-					Config.RGB_565);
-			return Bitmap.createScaledBitmap(tmp3, scaledWidth, scaledHeight, true);
+			Bitmap tmp3 = Bitmap.createBitmap(pixels, pictureSize.getWidth(),
+					pictureSize.getHeight(), Config.RGB_565);
+			return Bitmap.createScaledBitmap(tmp3, scaledWidth, scaledHeight,
+					true);
 		default:
 			return null;
 		}
@@ -413,7 +432,8 @@ public class BitmapUtils {
 	}
 
 	private int getintensity(int color) {
-		return Math.round((0.2989f * Color.red(color)) + (0.5870f * Color.green(color))
+		return Math.round((0.2989f * Color.red(color))
+				+ (0.5870f * Color.green(color))
 				+ (0.1140f * Color.blue(color)));
 	}
 

@@ -14,9 +14,9 @@ import de.hsrm.objectify.R;
 import de.hsrm.objectify.database.DatabaseAdapter;
 
 public class GalleryAdapter extends CursorAdapter {
-	
+
 	private Cursor cursor;
-	
+
 	public GalleryAdapter(Context context, Cursor c) {
 		super(context, c);
 		this.cursor = c;
@@ -25,23 +25,25 @@ public class GalleryAdapter extends CursorAdapter {
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
 		ImageView image = (ImageView) view;
-		String pathName = cursor.getString(DatabaseAdapter.GALLERY_THUMBNAIL_PATH_COLUMN);
+		String pathName = cursor
+				.getString(DatabaseAdapter.GALLERY_THUMBNAIL_PATH_COLUMN);
 		Bitmap bitmap = BitmapFactory.decodeFile(pathName);
 		if (bitmap == null) {
 			// Couldn't find thumbnail
-			bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.image_not_available);
+			bitmap = BitmapFactory.decodeResource(context.getResources(),
+					R.drawable.image_not_available);
 		}
 		image.setImageBitmap(bitmap);
 	}
-	
+
 	public Cursor getCursor() {
 		return cursor;
 	}
-	
+
 	@Override
-	public View newView(Context context, Cursor cursor, ViewGroup parent) {		
+	public View newView(Context context, Cursor cursor, ViewGroup parent) {
 		ImageView imageView = new ImageView(context);
-		imageView.setLayoutParams(new GridView.LayoutParams(110,110));
+		imageView.setLayoutParams(new GridView.LayoutParams(110, 110));
 		imageView.setScaleType(ScaleType.FIT_XY);
 		imageView.setPadding(2, 2, 2, 0);
 		imageView.setBackgroundResource(R.drawable.dropshadow);

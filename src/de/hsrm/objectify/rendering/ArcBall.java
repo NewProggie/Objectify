@@ -48,14 +48,15 @@ public class ArcBall {
 		tempPoint.x = (tempPoint.x * this.adjustWidth) - 1.0f;
 		tempPoint.y = (tempPoint.y * this.adjustHeight) - 1.0f;
 
-		float length = (tempPoint.x * tempPoint.x) + (tempPoint.y * tempPoint.y);
+		float length = (tempPoint.x * tempPoint.x)
+				+ (tempPoint.y * tempPoint.y);
 
 		if (length > 1.0f) {
 			float norm = (float) (1.0 / Math.sqrt(length));
 			vector.x = tempPoint.x * norm;
 			vector.y = tempPoint.y * norm;
 			vector.z = 0.0f;
-			
+
 		} else {
 			vector.x = tempPoint.x;
 			vector.y = tempPoint.y;
@@ -66,8 +67,11 @@ public class ArcBall {
 
 	/**
 	 * sets new bounds for arcball
-	 * @param width new width
-	 * @param height new height
+	 * 
+	 * @param width
+	 *            new width
+	 * @param height
+	 *            new height
 	 */
 	public void setBounds(float width, float height) {
 		assert ((width > 1.0f) && (height > 1.0f));
@@ -83,11 +87,14 @@ public class ArcBall {
 
 	/**
 	 * finger dragging while rotating with arcball
-	 * @param NewPt new point
-	 * @param NewRot new rotation
+	 * 
+	 * @param NewPt
+	 *            new point
+	 * @param NewRot
+	 *            new rotation
 	 */
 	public void drag(PointF NewPt, Quat4f NewRot) {
-		
+
 		this.mapToSphere(NewPt, EnVec);
 
 		if (NewRot != null) {

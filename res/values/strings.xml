@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string name="app_name">Objectify</string>
     <string name="gallery">Gallery</string>
     <string name="howto">Howto</string>
@@ -29,14 +30,14 @@
     <string name="search">Search</string>
     <string name="no_ffc_was_found">No front facing camera was found</string>
     <string name="about">About</string>
-	<string name="no_object_found">The selected object could not be opened</string>
-	<string name="error_while_reading">An error occurred while loading the selected object</string>
-	<string name="screenshot_creating">Creating Screenshot...</string>
+    <string name="no_object_found">The selected object could not be opened</string>
+    <string name="error_while_reading">An error occurred while loading the selected object</string>
+    <string name="screenshot_creating">Creating Screenshot...</string>
     <string name="creating_obj">Creating OBJ...</string>
     <string name="creating_obj_failed">Creating OBJ failed</string>
-	<string name="screenshot_failed">The screenshot could not be created</string>
-	<string name="edit">Edit</string>
-	
+    <string name="screenshot_failed">The screenshot could not be created</string>
+    <string name="edit">Edit</string>
+
     <!-- License checking status messages -->
     <string name="check_license">Check license</string>
     <string name="checking_license">Checking license...</string>
@@ -48,7 +49,7 @@
     <string name="buy_button">Buy app</string>
     <string name="dont_allow">Sorry. This copy of Objectify does not seem to be valid.</string>
     <string name="quit_button">Exit</string>
-    
+
     <!-- Settings -->
     <string name="settings">Settings</string>
     <string name="settings_camera_resolutions">Camera-Resolutions</string>
@@ -58,7 +59,7 @@
     <string name="settings_amount_pictures_hint">Adjust the number of pictures required to create a 3D model</string>
     <string name="settings_use_blurring">Use Gaussian Blurring</string>
     <string name="settings_use_blurring_hint">Adjust picture noise by using a Gaussian Blurr. This option reduces amount of details but gives 3d models a smoother look</string>
-    
+
     <!-- Gallery -->
     <string name="size">Size:</string>
     <string name="faces">Faces:</string>
@@ -71,20 +72,27 @@
     <string name="points">Points</string>
     <string name="wireframe">Wireframe</string>
     <string name="pixel">Pixel</string>
-    
+
     <!-- Share -->
     <string name="mailtext">Hi,\n\ncheck out this app in the market:\n</string>
-    
+
     <!-- Howto -->
     <string name="howto_step1">Step 1: Go into a dark room...</string>
     <string name="howto_step2">Step 2: Hold smartphone still near to the target object.</string>
     <string name="howto_step3">Step 3: View the result, send it, tell it to others or do it again.</string>
-    
+
     <!-- About -->
     <string name="developer_mail_address">kai.wolf@gmail.com</string>
     <string name="name_and_copyright">Copyright (c) 2011 Kai Wolf.\nAll rights reserved.</string>
     <string name="explanation_third_party">This application makes use of Jama: A Java Matrix Package. Visit http://math.nist.gov/javanumerics/jama/ for further information.\n\nIn addition this application uses an open source, multithreaded FFT Library JTransforms. Visit https://sites.google.com/site/piotrwendykier/software/jtransforms for further information.</string>
     <string name="no_mailclient_found">No appropriate mail client was found on this device.</string>
     <string name="reconstruction">Reconstruction</string>
+   
     
+    <string name="alternate_title">An alternate title that is long</string>
+    <string name="toggle_title">Toggle title</string>
+    <string name="menu_refresh">Refresh</string>
+    <string name="menu_search">Search</string>
+    <string name="menu_share">Share</string>
+
 </resources>

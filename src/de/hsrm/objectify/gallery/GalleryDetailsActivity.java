@@ -25,11 +25,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import de.hsrm.objectify.R;
+import de.hsrm.objectify.actionbarcompat.ActionBarActivity;
 import de.hsrm.objectify.database.DatabaseAdapter;
 import de.hsrm.objectify.database.DatabaseProvider;
 import de.hsrm.objectify.rendering.ObjectModel;
 import de.hsrm.objectify.rendering.ObjectViewerActivity;
-import de.hsrm.objectify.ui.BaseActivity;
 import de.hsrm.objectify.utils.ExternalDirectory;
 
 /**
@@ -40,7 +40,7 @@ import de.hsrm.objectify.utils.ExternalDirectory;
  * @author kwolf001
  * 
  */
-public class GalleryDetailsActivity extends BaseActivity {
+public class GalleryDetailsActivity extends ActionBarActivity {
 
 	private final String TAG = "GalleryDetailsActivity";
 	private ImageView picture;
@@ -55,7 +55,7 @@ public class GalleryDetailsActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		context = this;
 		setContentView(R.layout.gallery_details);
-		setupActionBar(getString(R.string.details), 0);
+		setTitle(getString(R.string.details));
 
 		picture = (ImageView) findViewById(R.id.galleryDetailImage);
 		date = (TextView) findViewById(R.id.dateTextview);
@@ -66,18 +66,24 @@ public class GalleryDetailsActivity extends BaseActivity {
 
 		galleryId = String.valueOf(getIntent().getLongExtra("id", 1));
 		cr = getContentResolver();
-		galleryItemUri = DatabaseProvider.CONTENT_URI.buildUpon().appendPath("gallery").build();
+		galleryItemUri = DatabaseProvider.CONTENT_URI.buildUpon()
+				.appendPath("gallery").build();
 
-		Cursor c = cr.query(galleryItemUri, null, DatabaseAdapter.GALLERY_ID_KEY + "=?",
+		Cursor c = cr.query(galleryItemUri, null,
+				DatabaseAdapter.GALLERY_ID_KEY + "=?",
 				new String[] { galleryId }, null);
 		c.moveToFirst();
 
-		String thumbnailPath = c.getString(DatabaseAdapter.GALLERY_THUMBNAIL_PATH_COLUMN);
-		String amountPics = c.getString(DatabaseAdapter.GALLERY_NUMBER_OF_PICTURES_COLUMN);
+		String thumbnailPath = c
+				.getString(DatabaseAdapter.GALLERY_THUMBNAIL_PATH_COLUMN);
+		String amountPics = c
+				.getString(DatabaseAdapter.GALLERY_NUMBER_OF_PICTURES_COLUMN);
 		String strDate = c.getString(DatabaseAdapter.GALLERY_DATE_COLUMN);
-		String strDimens = c.getString(DatabaseAdapter.GALLERY_DIMENSION_COLUMN);
+		String strDimens = c
+				.getString(DatabaseAdapter.GALLERY_DIMENSION_COLUMN);
 		String strFaces = c.getString(DatabaseAdapter.GALLERY_FACES_COLUMN);
-		String strVertices = c.getString(DatabaseAdapter.GALLERY_VERTICES_COLUMN);
+		String strVertices = c
+				.getString(DatabaseAdapter.GALLERY_VERTICES_COLUMN);
 		objectId = c.getString(DatabaseAdapter.GALLERY_OBJECT_ID_COLUMN);
 		c.close();
 
@@ -86,7 +92,8 @@ public class GalleryDetailsActivity extends BaseActivity {
 
 		Bitmap preview = BitmapFactory.decodeFile(thumbnailPath);
 		if (preview == null) {
-			Toast.makeText(this, getString(R.string.no_object_found), Toast.LENGTH_LONG).show();
+			Toast.makeText(this, getString(R.string.no_object_found),
+					Toast.LENGTH_LONG).show();
 		} else {
 			picture.setImageBitmap(preview);
 		}
@@ -97,8 +104,11 @@ public class GalleryDetailsActivity extends BaseActivity {
 		vertices.setText(strVertices);
 		picture.setOnClickListener(onShowclicked());
 
-		addNewActionButton(R.drawable.ic_title_show, R.string.show, onShowclicked());
-		addNewActionButton(R.drawable.ic_title_delete, R.string.delete, onDeleteclicked());
+		// TODO: add actionbar buttons
+//		addNewActionButton(R.drawable.ic_title_show, R.string.show,
+//				onShowclicked());
+//		addNewActionButton(R.drawable.ic_title_delete, R.string.delete,
+//				onDeleteclicked());
 	}
 
 	private OnClickListener onDeleteclicked() {
@@ -117,7 +127,8 @@ public class GalleryDetailsActivity extends BaseActivity {
 
 			@Override
 			public void onClick(View v) {
-				Uri objectUri = DatabaseProvider.CONTENT_URI.buildUpon().appendPath("object").build();
+				Uri objectUri = DatabaseProvider.CONTENT_URI.buildUpon()
+						.appendPath("object").build();
 				new LoadingObject().execute(objectUri);
 			}
 		};
@@ -131,7 +142,8 @@ public class GalleryDetailsActivity extends BaseActivity {
 
 		@Override
 		protected void onPreExecute() {
-			pleaseWait = ProgressDialog.show(context, "", getString(R.string.please_wait), true);
+			pleaseWait = ProgressDialog.show(context, "",
+					getString(R.string.please_wait), true);
 			cr = getContentResolver();
 		}
 
@@ -144,29 +156,36 @@ public class GalleryDetailsActivity extends BaseActivity {
 				return false;
 			}
 
-			Uri objectUri = DatabaseProvider.CONTENT_URI.buildUpon().appendPath("object").build();
-			Uri galleryUri = DatabaseProvider.CONTENT_URI.buildUpon().appendPath("gallery").build();
+			Uri objectUri = DatabaseProvider.CONTENT_URI.buildUpon()
+					.appendPath("object").build();
+			Uri galleryUri = DatabaseProvider.CONTENT_URI.buildUpon()
+					.appendPath("gallery").build();
 
-			Cursor objectCursor = cr.query(objectUri, null, DatabaseAdapter.OBJECT_ID_KEY + "=?",
+			Cursor objectCursor = cr.query(objectUri, null,
+					DatabaseAdapter.OBJECT_ID_KEY + "=?",
 					new String[] { objectId }, null);
 			objectCursor.moveToFirst();
-			String filePath = objectCursor.getString(DatabaseAdapter.OBJECT_FILE_PATH_COLUMN);
+			String filePath = objectCursor
+					.getString(DatabaseAdapter.OBJECT_FILE_PATH_COLUMN);
 			objectCursor.close();
 			File objFile = new File(filePath);
 			boolean objDeleted = objFile.delete();
 
-			Cursor galleryCursor = cr.query(galleryUri, null, DatabaseAdapter.GALLERY_ID_KEY + "=?",
+			Cursor galleryCursor = cr.query(galleryUri, null,
+					DatabaseAdapter.GALLERY_ID_KEY + "=?",
 					new String[] { galleryId }, null);
 			galleryCursor.moveToFirst();
-			String imgPath = galleryCursor.getString(DatabaseAdapter.GALLERY_THUMBNAIL_PATH_COLUMN);
+			String imgPath = galleryCursor
+					.getString(DatabaseAdapter.GALLERY_THUMBNAIL_PATH_COLUMN);
 			galleryCursor.close();
 			File thumbnail = new File(imgPath);
 			boolean imgDeleted = thumbnail.delete();
 
-			int result1 = cr.delete(galleryItemUri, DatabaseAdapter.GALLERY_ID_KEY + "=?",
+			int result1 = cr.delete(galleryItemUri,
+					DatabaseAdapter.GALLERY_ID_KEY + "=?",
 					new String[] { galleryId });
-			int result2 = cr.delete(objectUri, DatabaseAdapter.OBJECT_ID_KEY + "=?",
-					new String[] { objectId });
+			int result2 = cr.delete(objectUri, DatabaseAdapter.OBJECT_ID_KEY
+					+ "=?", new String[] { objectId });
 
 			if ((result1 + result2) >= 2 && objDeleted && imgDeleted) {
 				return true;
@@ -179,9 +198,13 @@ public class GalleryDetailsActivity extends BaseActivity {
 		protected void onPostExecute(Boolean successfullyDeleted) {
 			pleaseWait.dismiss();
 			if (successfullyDeleted) {
-				Toast.makeText(context, getString(R.string.deleted_successfully), Toast.LENGTH_SHORT).show();
+				Toast.makeText(context,
+						getString(R.string.deleted_successfully),
+						Toast.LENGTH_SHORT).show();
 			} else {
-				Toast.makeText(context, getString(R.string.error_while_deleting), Toast.LENGTH_SHORT).show();
+				Toast.makeText(context,
+						getString(R.string.error_while_deleting),
+						Toast.LENGTH_SHORT).show();
 			}
 			((Activity) context).finish();
 		}
@@ -201,7 +224,8 @@ public class GalleryDetailsActivity extends BaseActivity {
 
 		@Override
 		protected void onPreExecute() {
-			pleaseWait = ProgressDialog.show(context, "", getString(R.string.please_wait), true);
+			pleaseWait = ProgressDialog.show(context, "",
+					getString(R.string.please_wait), true);
 			cr = getContentResolver();
 		}
 
@@ -209,8 +233,8 @@ public class GalleryDetailsActivity extends BaseActivity {
 		protected ObjectModel doInBackground(Uri... params) {
 			Uri objectUri = params[0];
 			ObjectModel objectModel = null;
-			Cursor c = cr.query(objectUri, null, DatabaseAdapter.OBJECT_ID_KEY + "=?",
-					new String[] { objectId }, null);
+			Cursor c = cr.query(objectUri, null, DatabaseAdapter.OBJECT_ID_KEY
+					+ "=?", new String[] { objectId }, null);
 			c.moveToFirst();
 			try {
 				FileInputStream inputStream = new FileInputStream(
@@ -234,13 +258,16 @@ public class GalleryDetailsActivity extends BaseActivity {
 		protected void onPostExecute(ObjectModel result) {
 			pleaseWait.dismiss();
 			if (result != null) {
-				Intent viewObject = new Intent(context, ObjectViewerActivity.class);
+				Intent viewObject = new Intent(context,
+						ObjectViewerActivity.class);
 				Bundle b = new Bundle();
 				b.putParcelable("objectModel", result);
 				viewObject.putExtra("bundle", b);
 				startActivity(viewObject);
 			} else {
-				Toast.makeText(context, getString(R.string.error_while_reading), Toast.LENGTH_LONG).show();
+				Toast.makeText(context,
+						getString(R.string.error_while_reading),
+						Toast.LENGTH_LONG).show();
 			}
 		}
 

@@ -13,11 +13,13 @@ import android.view.SurfaceView;
 
 /**
  * Shows camera preview
+ * 
  * @author kwolf001
- *
+ * 
  */
-public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
-	
+public class CameraPreview extends SurfaceView implements
+		SurfaceHolder.Callback {
+
 	private final String TAG = "CameraPreview";
 	private SurfaceHolder holder;
 	private Camera camera;
@@ -28,7 +30,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 		holder.addCallback(this);
 		holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 	}
-	
+
 	public CameraPreview(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		holder = getHolder();
@@ -42,7 +44,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 		holder.addCallback(this);
 		holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 	}
-	
+
 	public Camera getCamera() {
 		return camera;
 	}
@@ -65,7 +67,8 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 	}
 
 	@Override
-	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+	public void surfaceChanged(SurfaceHolder holder, int format, int width,
+			int height) {
 		if (camera != null) {
 			Camera.Parameters params = camera.getParameters();
 			List<Size> sizes = params.getSupportedPreviewSizes();
@@ -119,5 +122,5 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 		}
 		return optimalSize;
 	}
-	
+
 }

@@ -34,6 +34,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 import de.hsrm.objectify.R;
 import de.hsrm.objectify.SettingsActivity;
+import de.hsrm.objectify.actionbarcompat.ActionBarActivity;
 import de.hsrm.objectify.database.DatabaseAdapter;
 import de.hsrm.objectify.database.DatabaseProvider;
 import de.hsrm.objectify.math.Matrix;
@@ -42,7 +43,6 @@ import de.hsrm.objectify.math.VectorNf;
 import de.hsrm.objectify.rendering.Circle;
 import de.hsrm.objectify.rendering.ObjectModel;
 import de.hsrm.objectify.rendering.ObjectViewerActivity;
-import de.hsrm.objectify.ui.BaseActivity;
 import de.hsrm.objectify.utils.BitmapUtils;
 import de.hsrm.objectify.utils.ExternalDirectory;
 import de.hsrm.objectify.utils.Image;
@@ -56,7 +56,7 @@ import de.hsrm.objectify.utils.MathHelper;
  * @author kwolf001
  * 
  */
-public class CameraActivity extends BaseActivity {
+public class CameraActivity extends Activity {
 
 	private String TAG = "CameraActivity";
 	private CameraPreview cameraPreview;
@@ -77,8 +77,6 @@ public class CameraActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.camera);
 		context = this;
-		disableActionBar();
-		disableOptionsMenu();
 		setScreenBrightness(1);
 
 		cameraPreview = (CameraPreview) findViewById(R.id.camera_surface);
@@ -92,8 +90,10 @@ public class CameraActivity extends BaseActivity {
 			public void onClick(View v) {
 				/* Fetching number of pictures to shoot from the settings */
 				ContextWrapper contextWrapper = new ContextWrapper(context);
-				SharedPreferences prefs = SettingsActivity.getSettings(contextWrapper);
-				numberOfPictures = prefs.getInt(getString(R.string.settings_amount_pictures), 4);
+				SharedPreferences prefs = SettingsActivity
+						.getSettings(contextWrapper);
+				numberOfPictures = prefs.getInt(
+						getString(R.string.settings_amount_pictures), 4);
 				/* Setting the trigger button to invisible */
 				triggerPictures.setVisibility(View.GONE);
 				/* New ArrayList for storing the pictures temporarily */
@@ -178,12 +178,14 @@ public class CameraActivity extends BaseActivity {
 				Camera.Parameters params = camera.getParameters();
 				String device = params.get("device");
 				if (device != null && device.equals("GT-P1000")) {
-					Image image = new Image(BitmapUtils.createScaledBitmap(data, CameraFinder.pictureSize,
+					Image image = new Image(BitmapUtils.createScaledBitmap(
+							data, CameraFinder.pictureSize,
 							CameraFinder.imageFormat), false);
 					pictureList.add(image);
 					counter += 1;
 				} else {
-					Image image = new Image(BitmapUtils.createScaledBitmap(data, CameraFinder.pictureSize,
+					Image image = new Image(BitmapUtils.createScaledBitmap(
+							data, CameraFinder.pictureSize,
 							CameraFinder.imageFormat), true);
 					pictureList.add(image);
 					counter += 1;
@@ -226,8 +228,10 @@ public class CameraActivity extends BaseActivity {
 			cameraLighting.setVisibility(View.GONE);
 			cameraLighting.setZOrderOnTop(false);
 			cr = getContentResolver();
-			SharedPreferences settings = SettingsActivity.getSettings((ContextWrapper) context);
-			useBlurring = settings.getBoolean(getString(R.string.settings_use_blurring), false);
+			SharedPreferences settings = SettingsActivity
+					.getSettings((ContextWrapper) context);
+			useBlurring = settings.getBoolean(
+					getString(R.string.settings_use_blurring), false);
 		}
 
 		@Override
@@ -251,7 +255,8 @@ public class CameraActivity extends BaseActivity {
 			/* blur the input images */
 			if (useBlurring) {
 				for (int i = 0; i < pictureList.size(); i++) {
-					pictureList.set(i, BitmapUtils.blurBitmap(pictureList.get(i)));
+					pictureList.set(i,
+							BitmapUtils.blurBitmap(pictureList.get(i)));
 				}
 			}
 			ArrayList<Vector3f> normalField = new ArrayList<Vector3f>();
@@ -267,8 +272,8 @@ public class CameraActivity extends BaseActivity {
 					}
 					Vector3f albedo = sInverse.multiply(intensity);
 
-					float reg = (float) Math.sqrt(Math.pow(albedo.x, 2) + Math.pow(albedo.y, 2)
-							+ Math.pow(albedo.z, 2));
+					float reg = (float) Math.sqrt(Math.pow(albedo.x, 2)
+							+ Math.pow(albedo.y, 2) + Math.pow(albedo.z, 2));
 					normal.x = albedo.x / reg;
 					normal.y = albedo.y / reg;
 					normal.z = albedo.z / reg;
@@ -279,11 +284,13 @@ public class CameraActivity extends BaseActivity {
 				}
 			}
 
-			double[][] heightField = MathHelper.twoDimIntegration(pGradients, qGradients, imageHeight,
-					imageWidth);
+			double[][] heightField = MathHelper.twoDimIntegration(pGradients,
+					qGradients, imageHeight, imageWidth);
 
-			FloatBuffer vertBuffer = FloatBuffer.allocate(imageHeight * imageWidth * 3);
-			FloatBuffer normBuffer = FloatBuffer.allocate(imageHeight * imageWidth * 3);
+			FloatBuffer vertBuffer = FloatBuffer.allocate(imageHeight
+					* imageWidth * 3);
+			FloatBuffer normBuffer = FloatBuffer.allocate(imageHeight
+					* imageWidth * 3);
 			ArrayList<Short> indexes = new ArrayList<Short>();
 			vertBuffer.rewind();
 			normBuffer.rewind();
@@ -291,10 +298,10 @@ public class CameraActivity extends BaseActivity {
 			int idx = 0;
 			for (int x = 0; x < imageHeight; x++) {
 				for (int y = 0; y < imageWidth; y++) {
-					float[] imgPoint = new float[] { Float.valueOf(y), Float.valueOf(x),
-							(float) heightField[x][y] };
-					float[] normVec = new float[] { normalField.get(idx).x, normalField.get(idx).y,
-							normalField.get(idx).z };
+					float[] imgPoint = new float[] { Float.valueOf(y),
+							Float.valueOf(x), (float) heightField[x][y] };
+					float[] normVec = new float[] { normalField.get(idx).x,
+							normalField.get(idx).y, normalField.get(idx).z };
 					vertBuffer.put(imgPoint);
 					normBuffer.put(normVec);
 					idx += 1;
@@ -334,21 +341,28 @@ public class CameraActivity extends BaseActivity {
 				Calendar cal = Calendar.getInstance();
 				String timestamp = String.valueOf(cal.getTimeInMillis());
 				String filename = timestamp + ".kaw";
-				String path = ExternalDirectory.getExternalImageDirectory() + "/";
+				String path = ExternalDirectory.getExternalImageDirectory()
+						+ "/";
 				ContentValues values = new ContentValues();
 				cr = getContentResolver();
-				Uri objectUri = DatabaseProvider.CONTENT_URI.buildUpon().appendPath("object").build();
-				Uri galleryUri = DatabaseProvider.CONTENT_URI.buildUpon().appendPath("gallery").build();
+				Uri objectUri = DatabaseProvider.CONTENT_URI.buildUpon()
+						.appendPath("object").build();
+				Uri galleryUri = DatabaseProvider.CONTENT_URI.buildUpon()
+						.appendPath("gallery").build();
 				try {
 					OutputStream out = new FileOutputStream(path + filename);
 					ObjectOutputStream obj_output = new ObjectOutputStream(out);
 					obj_output.writeObject(objectModel);
 					obj_output.close();
-					values.put(DatabaseAdapter.OBJECT_FILE_PATH_KEY, path + filename);
+					values.put(DatabaseAdapter.OBJECT_FILE_PATH_KEY, path
+							+ filename);
 					Uri objectResultUri = cr.insert(objectUri, values);
 					String objectID = objectResultUri.getLastPathSegment();
 					values.clear();
-					String thumbnail_path = ExternalDirectory.getExternalImageDirectory() + "/" + timestamp
+					String thumbnail_path = ExternalDirectory
+							.getExternalImageDirectory()
+							+ "/"
+							+ timestamp
 							+ ".png";
 					FileOutputStream fos = new FileOutputStream(thumbnail_path);
 					BufferedOutputStream bos = new BufferedOutputStream(fos);
@@ -356,13 +370,15 @@ public class CameraActivity extends BaseActivity {
 					texture.compress(CompressFormat.PNG, 100, bos);
 					bos.flush();
 					bos.close();
-					values.put(DatabaseAdapter.GALLERY_THUMBNAIL_PATH_KEY, thumbnail_path);
+					values.put(DatabaseAdapter.GALLERY_THUMBNAIL_PATH_KEY,
+							thumbnail_path);
 					values.put(DatabaseAdapter.GALLERY_NUMBER_OF_PICTURES_KEY,
 							String.valueOf(numberOfPictures));
 					values.put(DatabaseAdapter.GALLERY_DATE_KEY, timestamp);
-					values.put(DatabaseAdapter.GALLERY_DIMENSION_KEY, objectModel.getTextureBitmapSize());
-					values.put(DatabaseAdapter.GALLERY_FACES_KEY,
-							String.valueOf(objectModel.getVertices().length / 3));
+					values.put(DatabaseAdapter.GALLERY_DIMENSION_KEY,
+							objectModel.getTextureBitmapSize());
+					values.put(DatabaseAdapter.GALLERY_FACES_KEY, String
+							.valueOf(objectModel.getVertices().length / 3));
 					values.put(DatabaseAdapter.GALLERY_VERTICES_KEY,
 							String.valueOf(objectModel.getVertices().length));
 					values.put(DatabaseAdapter.GALLERY_OBJECT_ID_KEY, objectID);
@@ -386,18 +402,21 @@ public class CameraActivity extends BaseActivity {
 		protected void onPostExecute(Boolean createdSuccessfully) {
 			if (createdSuccessfully) {
 				if (!sdIsMounted) {
-					Toast.makeText(context, getString(R.string.obj_could_not_be_saved), Toast.LENGTH_SHORT)
-							.show();
+					Toast.makeText(context,
+							getString(R.string.obj_could_not_be_saved),
+							Toast.LENGTH_SHORT).show();
 				}
-				Intent viewObject = new Intent(context, ObjectViewerActivity.class);
+				Intent viewObject = new Intent(context,
+						ObjectViewerActivity.class);
 				Bundle b = new Bundle();
 				b.putParcelable("objectModel", objectModel);
 				viewObject.putExtra("bundle", b);
 				startActivity(viewObject);
 				((Activity) context).finish();
 			} else {
-				Toast.makeText(context, getString(R.string.error_while_creating_object), Toast.LENGTH_LONG)
-						.show();
+				Toast.makeText(context,
+						getString(R.string.error_while_creating_object),
+						Toast.LENGTH_LONG).show();
 				((Activity) context).finish();
 			}
 

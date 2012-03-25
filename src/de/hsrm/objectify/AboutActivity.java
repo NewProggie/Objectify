@@ -12,7 +12,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.Toast;
-import de.hsrm.objectify.ui.BaseActivity;
+import de.hsrm.objectify.actionbarcompat.ActionBarActivity;
 
 /**
  * Simple {@link Activity} displaying the terms and conditions and a button for
@@ -21,7 +21,7 @@ import de.hsrm.objectify.ui.BaseActivity;
  * @author kwolf001
  * 
  */
-public class AboutActivity extends BaseActivity {
+public class AboutActivity extends ActionBarActivity {
 
 	private Button sendFeedback;
 	private Context context;
@@ -30,7 +30,7 @@ public class AboutActivity extends BaseActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.about);
-		setupActionBar(getString(R.string.about), 0);
+		setTitle(getString(R.string.about));
 		this.context = this;
 
 		sendFeedback = (Button) findViewById(R.id.feedback_button);

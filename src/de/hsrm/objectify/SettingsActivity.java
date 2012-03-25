@@ -27,32 +27,35 @@ public class SettingsActivity extends PreferenceActivity {
 	private SliderInputPreference amountPictures;
 	private CheckBoxPreference useBlurring;
 	private Context context;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		addPreferencesFromResource(R.xml.settings);
 		context = this;
-		
+
 		cameraResolutions = (ListPreference) findPreference(getString(R.string.settings_camera_resolutions));
 		useBlurring = (CheckBoxPreference) findPreference(getString(R.string.settings_use_blurring));
 		amountPictures = (SliderInputPreference) findPreference(getString(R.string.settings_amount_pictures));
-		
+
 		cameraResolutions.setEntries(getAvailableResolutions());
 		cameraResolutions.setEntryValues(getAvailableResolutions());
 
 	}
-	
+
 	/**
 	 * Returns the persisted shared preferences
-	 * @param context context wrapper
+	 * 
+	 * @param context
+	 *            context wrapper
 	 * @return shared preferences
 	 */
-	public static final SharedPreferences getSettings(final ContextWrapper context) {
+	public static final SharedPreferences getSettings(
+			final ContextWrapper context) {
 		String name = context.getPackageName() + "_preferences";
 		return context.getSharedPreferences(name, MODE_PRIVATE);
 	}
-	
+
 	/**
 	 * Reads available resolutions from the camera and returns an
 	 * {@link CharSequence} array with the combined resolutions, e.g. 800x600
@@ -66,7 +69,8 @@ public class SettingsActivity extends PreferenceActivity {
 		if (camera != null) {
 			Camera.Parameters params = camera.getParameters();
 			for (Size size : params.getSupportedPictureSizes()) {
-				tempResolutions.add(String.valueOf(size.width) + "x" + String.valueOf(size.height));
+				tempResolutions.add(String.valueOf(size.width) + "x"
+						+ String.valueOf(size.height));
 			}
 			camera.release();
 			resolutions = new CharSequence[tempResolutions.size()];
@@ -76,5 +80,5 @@ public class SettingsActivity extends PreferenceActivity {
 		}
 		return resolutions;
 	}
-	
+
 }

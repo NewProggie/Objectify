@@ -28,7 +28,7 @@ import de.hsrm.objectify.utils.BitmapUtils;
  * 
  */
 public class TouchSurfaceView extends GLSurfaceView {
-	
+
 	private static final String TAG = "TouchSurfaceView";
 	private Matrix4f lastRot = new Matrix4f();
 	private Matrix4f thisRot = new Matrix4f();
@@ -40,26 +40,31 @@ public class TouchSurfaceView extends GLSurfaceView {
 	private ObjectModelRenderer renderer;
 	private ScaleGestureDetector scaleDetector;
 	private float skalierung = 1;
-	
+
 	/**
 	 * Creates a touchable surface view and ...
+	 * 
 	 * @param context
 	 * @param objectModel
-	 * @param width display width
-	 * @param height display height
+	 * @param width
+	 *            display width
+	 * @param height
+	 *            display height
 	 */
-	public TouchSurfaceView(Context context, ObjectModel objectModel, int width, int height) {
+	public TouchSurfaceView(Context context, ObjectModel objectModel,
+			int width, int height) {
 		super(context);
 		this.displayWidth = width;
 		this.displayHeight = height;
-		
+
 		arcBall.setBounds((float) width, (float) height);
 		renderer = new ObjectModelRenderer(context, objectModel);
 		setRenderer(renderer);
 		setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
-		scaleDetector = new ScaleGestureDetector(context, new SimpleScaleListener());
+		scaleDetector = new ScaleGestureDetector(context,
+				new SimpleScaleListener());
 	}
-	
+
 	@Override
 	public boolean onTrackballEvent(MotionEvent event) {
 		renderer.angleX += event.getX() * TRACKBALL_SCALE_FACTOR;
@@ -67,7 +72,7 @@ public class TouchSurfaceView extends GLSurfaceView {
 		requestRender();
 		return true;
 	}
-	
+
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		float x = event.getX();
@@ -96,24 +101,26 @@ public class TouchSurfaceView extends GLSurfaceView {
 		}
 		return true;
 	}
-	
+
 	public Bitmap getSurfaceBitmap() {
 		renderer.shouldCopySurface = true;
 		requestRender();
 		return renderer.getSurfaceBitmap();
 	}
-	
+
 	/**
 	 * Pinch-and-Zoom implementation. New since Android 2.2 Froyo
 	 * 
 	 * @author kwolf001
 	 * 
 	 */
-	private class SimpleScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
-		
+	private class SimpleScaleListener extends
+			ScaleGestureDetector.SimpleOnScaleGestureListener {
+
 		public boolean onScale(ScaleGestureDetector detector) {
 			skalierung *= detector.getScaleFactor();
-			// Maximale Skalierung festlegen, damit das Objekt nicht komplett verschwinden kann
+			// Maximale Skalierung festlegen, damit das Objekt nicht komplett
+			// verschwinden kann
 			if (skalierung < 0.5f)
 				skalierung = 0.5f;
 			else if (skalierung > 1.5f)
@@ -122,7 +129,7 @@ public class TouchSurfaceView extends GLSurfaceView {
 			return true;
 		}
 	}
-	
+
 	/**
 	 * This class takes care of the rendering of the model, implementing
 	 * {@link GLSurfaceView.Renderer} and adapting for our needs.
@@ -131,14 +138,13 @@ public class TouchSurfaceView extends GLSurfaceView {
 	 * 
 	 */
 	private class ObjectModelRenderer implements GLSurfaceView.Renderer {
-		
+
 		private ObjectModel objectModel;
 		private Context context;
 		private boolean shouldCopySurface = false;
 		private Bitmap surfaceBitmap;
 		public float angleX, angleY;
 
-		
 		public ObjectModelRenderer(Context context, ObjectModel objectModel) {
 			this.context = context;
 			this.objectModel = objectModel;
@@ -147,7 +153,7 @@ public class TouchSurfaceView extends GLSurfaceView {
 			thisRot.setIdentity();
 			thisRot.map(matrix);
 		}
-		
+
 		public Bitmap getSurfaceBitmap() {
 			return surfaceBitmap;
 		}
@@ -157,20 +163,21 @@ public class TouchSurfaceView extends GLSurfaceView {
 			objectModel.loadGLTexture(gl, context);
 			gl.glEnable(GL10.GL_TEXTURE_2D);
 			gl.glShadeModel(GL10.GL_SMOOTH);
-			gl.glClearColor(0.2f, 0.2f, 0.2f, 1.0f); 
+			gl.glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 			gl.glClearDepthf(1.0f);
 			gl.glEnable(GL10.GL_DEPTH_TEST);
 			gl.glDepthFunc(GL10.GL_LEQUAL);
 			gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
 			gl.glEnable(GL10.GL_NORMALIZE);
-			
+
 			gl.glEnable(GL10.GL_LIGHTING);
 			gl.glEnable(GL10.GL_LIGHT0);
 			gl.glEnable(GL10.GL_LIGHT1);
 			// LIGHT0
 			// define ambient component of first light
 			float[] light0Ambient = new float[] { 0.7f, 0.7f, 0.7f, 1.0f };
-			ByteBuffer byteBuf = ByteBuffer.allocateDirect(light0Ambient.length * 4);
+			ByteBuffer byteBuf = ByteBuffer
+					.allocateDirect(light0Ambient.length * 4);
 			byteBuf.order(ByteOrder.nativeOrder());
 			FloatBuffer light0AmbientBuffer = byteBuf.asFloatBuffer();
 			light0AmbientBuffer.put(light0Ambient);
@@ -219,33 +226,37 @@ public class TouchSurfaceView extends GLSurfaceView {
 			light1PosBuffer.rewind();
 			gl.glLightfv(GL10.GL_LIGHT1, GL10.GL_POSITION, light1PosBuffer);
 			gl.glLightf(GL10.GL_LIGHT1, GL10.GL_SPOT_CUTOFF, 65.0f);
-			
+
 			gl.glMatrixMode(GL10.GL_MODELVIEW);
 		}
-		
+
 		@Override
 		public void onDrawFrame(GL10 gl) {
 			gl.glColor4f(0, 0, 0, 0);
 			gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
-			
+
 			gl.glMatrixMode(GL10.GL_MODELVIEW);
 			gl.glLoadIdentity();
-			GLU.gluLookAt(gl, 0, 0,-2,   0, 0, 0,   0, 1, 0);
+			GLU.gluLookAt(gl, 0, 0, -2, 0, 0, 0, 0, 1, 0);
 			thisRot.map(matrix);
 			gl.glMultMatrixf(matrix, 0);
 			gl.glRotatef(180, 1, 0, 0);
 			gl.glRotatef(270, 0, 0, 1);
 			gl.glScalef(skalierung, skalierung, skalierung);
-			gl.glScalef(objectModel.getLength(), objectModel.getLength(), objectModel.getLength());
-			gl.glTranslatef(-objectModel.getMiddlePoint()[0], -objectModel.getMiddlePoint()[1], -objectModel.getMiddlePoint()[2]);
+			gl.glScalef(objectModel.getLength(), objectModel.getLength(),
+					objectModel.getLength());
+			gl.glTranslatef(-objectModel.getMiddlePoint()[0],
+					-objectModel.getMiddlePoint()[1],
+					-objectModel.getMiddlePoint()[2]);
 			objectModel.draw(gl);
 			if (shouldCopySurface) {
 				shouldCopySurface = false;
-				surfaceBitmap = BitmapUtils.createScreenshot(displayWidth, displayHeight, gl);
+				surfaceBitmap = BitmapUtils.createScreenshot(displayWidth,
+						displayHeight, gl);
 			}
 
 		}
-		
+
 		@Override
 		public void onSurfaceChanged(GL10 gl, int width, int height) {
 			float ratio = (float) width / height;
@@ -254,7 +265,7 @@ public class TouchSurfaceView extends GLSurfaceView {
 			gl.glFrustumf(-ratio, ratio, -1, 1, 1, 10);
 			gl.glViewport(0, 0, width, height);
 		}
-		
+
 	}
 
 }
