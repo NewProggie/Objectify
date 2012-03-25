@@ -42,7 +42,8 @@
         <activity android:name=".AboutActivity" />
         <activity
             android:name=".camera.CameraActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait" 
+            android:theme="@android:style/Theme.Black.NoTitleBar" />
         <activity android:name=".gallery.GalleryActivity" />
         <activity android:name=".gallery.GalleryDetailsActivity" />
         <activity android:name=".rendering.ObjectViewerActivity" >
