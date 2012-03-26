@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings.Secure;
+import android.support.v7.widget.GridLayout;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -24,10 +25,9 @@ import de.hsrm.objectify.actionbarcompat.ActionBarActivity;
 import de.hsrm.objectify.camera.CameraActivity;
 import de.hsrm.objectify.gallery.GalleryActivity;
 import de.hsrm.objectify.howto.HowToActivity;
-import de.hsrm.objectify.ui.DashboardLayout;
 
 /**
- * Front door {@link Activity} that displays {@link DashboardLayout} with
+ * Front door {@link Activity} that displays {@link GridLayout} with
  * different features of this app. Inherits an action bar from
  * {@link BaseActivity} and initializes it.
  * 
@@ -52,17 +52,6 @@ public class MainActivity extends ActionBarActivity {
 
 		handler = new Handler();
 		setTitle(R.string.app_name);
-//		addNewActionButton(R.drawable.ic_title_camera, R.string.camera,
-//				new OnClickListener() {
-//
-//					@Override
-//					public void onClick(View v) {
-//						Intent camera = new Intent(v.getContext(),
-//								CameraActivity.class);
-//						startActivity(camera);
-//					}
-//				});
-
 		galleryButton = (Button) findViewById(R.id.dashboard_gallery_button);
 		howtoButton = (Button) findViewById(R.id.dashboard_howto_button);
 		shareButton = (Button) findViewById(R.id.dashboard_share_button);

@@ -16,6 +16,7 @@
     <string name="submit">Submit</string>
     <string name="more">More</string>
     <string name="cancel">Cancel</string>
+    <string name="new_scan">New scan</string>
     <string name="chosen_object_really_delete">Really Delete?</string>
     <string name="deleted_successfully">Deleted Successfully</string>
     <string name="error_while_deleting">An Error occurred while deleting</string>

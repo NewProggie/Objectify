@@ -19,7 +19,7 @@
             android:layout_weight="1"
             android:drawableTop="@drawable/camera_button_selector"
             android:onClick="buttonClick"
-            android:text="@string/camera" />
+            android:text="@string/new_scan" />
 
         <Button
             android:id="@+id/dashboard_gallery_button"

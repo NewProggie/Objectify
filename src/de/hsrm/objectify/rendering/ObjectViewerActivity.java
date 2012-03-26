@@ -2,6 +2,7 @@ package de.hsrm.objectify.rendering;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
@@ -14,6 +15,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Bitmap.CompressFormat;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -27,14 +29,15 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 import de.hsrm.objectify.R;
 import de.hsrm.objectify.actionbarcompat.ActionBarActivity;
+import de.hsrm.objectify.utils.Compress;
 import de.hsrm.objectify.utils.ExternalDirectory;
+import de.hsrm.objectify.utils.Image;
 
 /**
  * This {@link Activity} holds a {@link TouchSurfaceView} which contains the
@@ -125,7 +128,11 @@ public class ObjectViewerActivity extends ActionBarActivity {
 
 		private ProgressDialog pleaseWait;
 		private String path;
-
+		private String texture;
+		private String mtlFile;
+		private String zip;
+		private Compress zipFile;
+		
 		@Override
 		protected void onPreExecute() {
 			pleaseWait = ProgressDialog.show(context, "",
@@ -136,9 +143,14 @@ public class ObjectViewerActivity extends ActionBarActivity {
 		protected Boolean doInBackground(Void... params) {
 			path = ExternalDirectory.getExternalRootDirectory()
 					+ "/objectify_model.obj";
+			mtlFile = ExternalDirectory.getExternalRootDirectory() + "/objectify_model.mtl";
+			texture = ExternalDirectory.getExternalRootDirectory() + "/objectify_model.jpg";
+			zip = ExternalDirectory.getExternalRootDirectory() + "/objectify_model.zip";
 			try {
+				// writing obj for export
 				BufferedWriter out = new BufferedWriter(new FileWriter(path));
 				out.write("# Created by Objectify\n");
+				out.write("mtllib objectify_model.mtl\n");
 				float[] vertices = objectModel.getVertices();
 				short[] faces = objectModel.getFaces();
 				/* writing vertices */
@@ -146,16 +158,41 @@ public class ObjectViewerActivity extends ActionBarActivity {
 					out.write("v " + vertices[i] + " " + vertices[i + 1] + " "
 							+ vertices[i + 2] + "\n");
 				}
+				/* writing texture coords */
+				int width = objectModel.getTextureWidth();
+				int height = objectModel.getTextureHeight();
+				for (int h = height-1; h >= 0; h--) {
+					for(int w = 0; w < width; w++) {
+						out.write("vt " + (float) w/ (float) (width-1) + " " + (float) h/ (float) (height-1) + "\n");
+					}
+				}
 				/* writing faces */
+				out.write("usemtl picture\n");
 				for (int i = 0; i < faces.length; i += 3) {
 					int one = faces[i] + 1;
 					int two = faces[i + 1] + 1;
 					int three = faces[i + 2] + 1;
-					out.write("f " + one + " " + two + " " + three + "\n");
+					out.write("f " + one + "/" + one + " " + two + "/" + two + " " + three + "/" + three + "\n");
 				}
 				out.write("\n");
 				out.flush();
 				out.close();
+				// Write texture image to jpg file
+				byte[] bb = objectModel.getBitmapData();
+				Bitmap textureBitmap = BitmapFactory.decodeByteArray(bb, 0, bb.length);
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				textureBitmap.compress(Bitmap.CompressFormat.JPEG, 90, baos);
+				FileOutputStream fout = new FileOutputStream(texture);
+				fout.write(baos.toByteArray());
+				// Create mtl for texture
+				out = new BufferedWriter(new FileWriter(mtlFile));
+				out.write("newmtl picture\n");
+				out.write("map_Kd objectify_model.jpg\n");
+				out.flush();
+				out.close();
+				// Creating zip file
+				zipFile = new Compress(new String[] { path, mtlFile, texture}, zip);
+				zipFile.zip();
 			} catch (IOException e) {
 				Log.e("ExportToObj", e.getLocalizedMessage());
 				return false;
@@ -168,9 +205,9 @@ public class ObjectViewerActivity extends ActionBarActivity {
 			pleaseWait.dismiss();
 			if (result) {
 				Intent export = new Intent(Intent.ACTION_SEND);
-				export.setType("model/obj");
+				export.setType("application/zip");
 				export.putExtra(Intent.EXTRA_STREAM,
-						Uri.parse("file://" + path));
+						Uri.parse("file://" + zip));
 				startActivity(Intent.createChooser(export,
 						getString(R.string.export)));
 			} else {
