@@ -16,19 +16,24 @@
 
 package de.hsrm.objectify.actionbarcompat;
 
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
-import de.hsrm.objectify.R;
-
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.XmlResourceParser;
 import android.os.Bundle;
+import android.sax.StartElementListener;
 import android.view.InflateException;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -37,10 +42,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
+import de.hsrm.objectify.MainActivity;
+import de.hsrm.objectify.R;
 
 /**
  * A class that implements the action bar pattern for pre-Honeycomb devices.
