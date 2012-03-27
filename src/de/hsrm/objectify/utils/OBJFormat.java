@@ -1,11 +1,15 @@
 package de.hsrm.objectify.utils;
 
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 import de.hsrm.objectify.rendering.ObjectModel;
 
@@ -29,45 +33,64 @@ public class OBJFormat {
 	 * @param objectModel
 	 *            object which will be written to the obj file
 	 */
-	public static boolean writeFile(String path, ObjectModel objectModel) {
+	public static String writeFile(ObjectModel objectModel) {
 		try {
-			FileWriter fstream = new FileWriter(path);
-			BufferedWriter out = new BufferedWriter(fstream);
+			// writing obj for export
+			String suffix = ExternalDirectory.getExternalRootDirectory();
+			String objPath = suffix + "/objectify_model.obj";
+			String mtlPath = suffix + "/objectify_model.mtl";
+			String texPath = suffix + "/objectify_model.jpg";
+			String zipPath = suffix + "/objectify_model.zip";
+			
+			BufferedWriter out = new BufferedWriter(new FileWriter(objPath));
+			out.write("# Created by Objectify\n");
+			out.write("mtllib objectify_model.mtl\n");
 			float[] vertices = objectModel.getVertices();
-			float[] n_vertices = objectModel.getNormalVertices();
 			short[] faces = objectModel.getFaces();
-			int[] textures = objectModel.getTextures();
-
-			// writing header
-			out.write("# OBJ Export\n#Objectify for Android\n\n");
-
-			// writing vertices
-			for (int i = 0; i < vertices.length; i++) {
-				if (i % 3 == 0)
-					out.write("\nv " + String.valueOf(vertices[i]));
-				else
-					out.write(" " + String.valueOf(vertices[i]));
+			/* writing vertices */
+			for (int i = 0; i < vertices.length; i += 3) {
+				out.write("v " + vertices[i] + " " + vertices[i + 1] + " "
+						+ vertices[i + 2] + "\n");
 			}
-
-			// writing normals
-			for (int i = 0; i < n_vertices.length; i++) {
-				if (i % 3 == 0)
-					out.write("\nvn " + String.valueOf(n_vertices[i]));
-				else
-					out.write(" " + String.valueOf(n_vertices[i]));
+			/* writing texture coords */
+			int width = objectModel.getTextureWidth();
+			int height = objectModel.getTextureHeight();
+			for (int h = height-1; h >= 0; h--) {
+				for(int w = 0; w < width; w++) {
+					out.write("vt " + (float) w/ (float) (width-1) + " " + (float) h/ (float) (height-1) + "\n");
+				}
 			}
-
-			// writing faces
-			for (int i = 0; i < faces.length; i++) {
-				if (i % 3 == 0)
-					out.write("\nf ");
+			/* writing faces */
+			out.write("usemtl picture\n");
+			for (int i = 0; i < faces.length; i += 3) {
+				int one = faces[i] + 1;
+				int two = faces[i + 1] + 1;
+				int three = faces[i + 2] + 1;
+				out.write("f " + one + "/" + one + " " + two + "/" + two + " " + three + "/" + three + "\n");
 			}
+			out.write("\n");
 			out.flush();
 			out.close();
-			return true;
+			/* Write texture image to jpg file */
+			byte[] bb = objectModel.getBitmapData();
+			Bitmap textureBitmap = BitmapFactory.decodeByteArray(bb, 0, bb.length);
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			textureBitmap.compress(Bitmap.CompressFormat.JPEG, 90, baos);
+			FileOutputStream fout = new FileOutputStream(texPath);
+			fout.write(baos.toByteArray());
+			/* Create mtl for texture */
+			out = new BufferedWriter(new FileWriter(mtlPath));
+			out.write("newmtl picture\n");
+			out.write("map_Kd objectify_model.jpg\n");
+			out.flush();
+			out.close();
+			/* Creating zip file */
+			Compress pack = new Compress(new String[] { objPath, mtlPath, texPath }, zipPath);
+			pack.zip();
+			return zipPath;
 		} catch (IOException e) {
-			Log.e(TAG, e.getMessage());
-			return false;
+			Log.e(TAG, e.getLocalizedMessage());
+			return null;
 		}
 	}
 

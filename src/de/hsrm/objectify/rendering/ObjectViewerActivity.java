@@ -38,6 +38,7 @@ import de.hsrm.objectify.actionbarcompat.ActionBarActivity;
 import de.hsrm.objectify.utils.Compress;
 import de.hsrm.objectify.utils.ExternalDirectory;
 import de.hsrm.objectify.utils.Image;
+import de.hsrm.objectify.utils.OBJFormat;
 
 /**
  * This {@link Activity} holds a {@link TouchSurfaceView} which contains the
@@ -141,63 +142,12 @@ public class ObjectViewerActivity extends ActionBarActivity {
 
 		@Override
 		protected Boolean doInBackground(Void... params) {
-			path = ExternalDirectory.getExternalRootDirectory()
-					+ "/objectify_model.obj";
-			mtlFile = ExternalDirectory.getExternalRootDirectory() + "/objectify_model.mtl";
-			texture = ExternalDirectory.getExternalRootDirectory() + "/objectify_model.jpg";
-			zip = ExternalDirectory.getExternalRootDirectory() + "/objectify_model.zip";
-			try {
-				// writing obj for export
-				BufferedWriter out = new BufferedWriter(new FileWriter(path));
-				out.write("# Created by Objectify\n");
-				out.write("mtllib objectify_model.mtl\n");
-				float[] vertices = objectModel.getVertices();
-				short[] faces = objectModel.getFaces();
-				/* writing vertices */
-				for (int i = 0; i < vertices.length; i += 3) {
-					out.write("v " + vertices[i] + " " + vertices[i + 1] + " "
-							+ vertices[i + 2] + "\n");
-				}
-				/* writing texture coords */
-				int width = objectModel.getTextureWidth();
-				int height = objectModel.getTextureHeight();
-				for (int h = height-1; h >= 0; h--) {
-					for(int w = 0; w < width; w++) {
-						out.write("vt " + (float) w/ (float) (width-1) + " " + (float) h/ (float) (height-1) + "\n");
-					}
-				}
-				/* writing faces */
-				out.write("usemtl picture\n");
-				for (int i = 0; i < faces.length; i += 3) {
-					int one = faces[i] + 1;
-					int two = faces[i + 1] + 1;
-					int three = faces[i + 2] + 1;
-					out.write("f " + one + "/" + one + " " + two + "/" + two + " " + three + "/" + three + "\n");
-				}
-				out.write("\n");
-				out.flush();
-				out.close();
-				// Write texture image to jpg file
-				byte[] bb = objectModel.getBitmapData();
-				Bitmap textureBitmap = BitmapFactory.decodeByteArray(bb, 0, bb.length);
-				ByteArrayOutputStream baos = new ByteArrayOutputStream();
-				textureBitmap.compress(Bitmap.CompressFormat.JPEG, 90, baos);
-				FileOutputStream fout = new FileOutputStream(texture);
-				fout.write(baos.toByteArray());
-				// Create mtl for texture
-				out = new BufferedWriter(new FileWriter(mtlFile));
-				out.write("newmtl picture\n");
-				out.write("map_Kd objectify_model.jpg\n");
-				out.flush();
-				out.close();
-				// Creating zip file
-				zipFile = new Compress(new String[] { path, mtlFile, texture}, zip);
-				zipFile.zip();
-			} catch (IOException e) {
-				Log.e("ExportToObj", e.getLocalizedMessage());
+			zip = OBJFormat.writeFile(objectModel);
+			if (zip != null) {
+				return true;
+			} else {
 				return false;
 			}
-			return true;
 		}
 
 		@Override
