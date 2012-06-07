@@ -175,21 +175,12 @@ public class CameraActivity extends Activity {
 		PictureCallback callback = new PictureCallback() {
 			@Override
 			public void onPictureTaken(byte[] data, Camera camera) {
-				Camera.Parameters params = camera.getParameters();
-				String device = params.get("device");
-				if (device != null && device.equals("GT-P1000")) {
-					Image image = new Image(BitmapUtils.createScaledBitmap(
-							data, CameraFinder.pictureSize,
-							CameraFinder.imageFormat), false);
-					pictureList.add(image);
-					counter += 1;
-				} else {
-					Image image = new Image(BitmapUtils.createScaledBitmap(
-							data, CameraFinder.pictureSize,
-							CameraFinder.imageFormat), true);
-					pictureList.add(image);
-					counter += 1;
-				}
+				Image image = new Image(BitmapUtils.createScaledBitmap(data,
+						CameraFinder.pictureSize, CameraFinder.imageFormat),
+						true);
+				pictureList.add(image);
+				counter += 1;
+
 				if (counter == numberOfPictures) {
 					new CalculateModel().execute();
 				} else {

@@ -1,11 +1,8 @@
 package de.hsrm.objectify.rendering;
 
 import java.io.BufferedOutputStream;
-import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 
 import javax.microedition.khronos.opengles.GL10;
@@ -15,7 +12,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Bitmap.CompressFormat;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -35,9 +31,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 import de.hsrm.objectify.R;
 import de.hsrm.objectify.actionbarcompat.ActionBarActivity;
-import de.hsrm.objectify.utils.Compress;
 import de.hsrm.objectify.utils.ExternalDirectory;
-import de.hsrm.objectify.utils.Image;
 import de.hsrm.objectify.utils.OBJFormat;
 
 /**
@@ -128,11 +122,7 @@ public class ObjectViewerActivity extends ActionBarActivity {
 	private class ExportToObj extends AsyncTask<Void, Void, Boolean> {
 
 		private ProgressDialog pleaseWait;
-		private String path;
-		private String texture;
-		private String mtlFile;
 		private String zip;
-		private Compress zipFile;
 		
 		@Override
 		protected void onPreExecute() {

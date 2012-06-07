@@ -2,8 +2,6 @@ package de.hsrm.objectify.utils;
 
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -103,13 +101,6 @@ public class OBJFormat {
 	 * @return a new ObjectModel or null if fill is corrupt
 	 */
 	public static ObjectModel readFile(String path) {
-		try {
-			FileInputStream fin = new FileInputStream(path);
-
-		} catch (FileNotFoundException e) {
-			Log.e(TAG, e.getMessage());
-			return null;
-		}
 		return null;
 	}
 
