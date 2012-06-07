@@ -2,4 +2,5 @@
 /bin
 /doc
 /gen
+.settings/
 .DS_Store
