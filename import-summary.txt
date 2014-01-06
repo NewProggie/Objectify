@@ -1,0 +1,293 @@
+ECLIPSE ANDROID PROJECT IMPORT SUMMARY
+======================================
+
+Ignored Files:
+--------------
+The following files were *not* copied into the new Gradle project; you
+should evaluate whether these are still needed in your project and if
+so manually move them:
+
+* .DS_Store
+* .git
+* .gitignore
+* build.gradle
+* default.properties
+* doc
+* doc/.DS_Store
+* doc/allclasses-frame.html
+* doc/allclasses-noframe.html
+* doc/constant-values.html
+* doc/de
+* doc/de/hsrm
+* doc/de/hsrm/objectify
+* doc/de/hsrm/objectify/AboutActivity.html
+* doc/de/hsrm/objectify/MainActivity.html
+* doc/de/hsrm/objectify/ObjectifyWidgetProvider.html
+* doc/de/hsrm/objectify/R.anim.html
+* doc/de/hsrm/objectify/R.attr.html
+* doc/de/hsrm/objectify/R.color.html
+* doc/de/hsrm/objectify/R.dimen.html
+* doc/de/hsrm/objectify/R.drawable.html
+* doc/de/hsrm/objectify/R.html
+* doc/de/hsrm/objectify/R.id.html
+* doc/de/hsrm/objectify/R.layout.html
+* doc/de/hsrm/objectify/R.menu.html
+* doc/de/hsrm/objectify/R.string.html
+* doc/de/hsrm/objectify/R.style.html
+* doc/de/hsrm/objectify/R.styleable.html
+* doc/de/hsrm/objectify/R.xml.html
+* doc/de/hsrm/objectify/SettingsActivity.html
+* doc/de/hsrm/objectify/camera
+* doc/de/hsrm/objectify/camera/CameraActivity.CalculateModel.html
+* doc/de/hsrm/objectify/camera/CameraActivity.html
+* doc/de/hsrm/objectify/camera/CameraFinder.html
+* doc/de/hsrm/objectify/camera/CameraLighting.CameraLightingRenderer.html
+* doc/de/hsrm/objectify/camera/CameraLighting.html
+* doc/de/hsrm/objectify/camera/CameraPreview.html
+* doc/de/hsrm/objectify/camera/ClassicFinder.html
+* doc/de/hsrm/objectify/camera/FrontCameraFinder.html
+* doc/de/hsrm/objectify/camera/class-use
+* doc/de/hsrm/objectify/camera/class-use/CameraActivity.CalculateModel.html
+* doc/de/hsrm/objectify/camera/class-use/CameraActivity.html
+* doc/de/hsrm/objectify/camera/class-use/CameraFinder.html
+* doc/de/hsrm/objectify/camera/class-use/CameraLighting.CameraLightingRenderer.html
+* doc/de/hsrm/objectify/camera/class-use/CameraLighting.html
+* doc/de/hsrm/objectify/camera/class-use/CameraPreview.html
+* doc/de/hsrm/objectify/camera/class-use/ClassicFinder.html
+* doc/de/hsrm/objectify/camera/class-use/FrontCameraFinder.html
+* doc/de/hsrm/objectify/camera/package-frame.html
+* doc/de/hsrm/objectify/camera/package-summary.html
+* doc/de/hsrm/objectify/camera/package-tree.html
+* doc/de/hsrm/objectify/camera/package-use.html
+* doc/de/hsrm/objectify/class-use
+* doc/de/hsrm/objectify/class-use/AboutActivity.html
+* doc/de/hsrm/objectify/class-use/MainActivity.html
+* doc/de/hsrm/objectify/class-use/ObjectifyWidgetProvider.html
+* doc/de/hsrm/objectify/class-use/R.anim.html
+* doc/de/hsrm/objectify/class-use/R.attr.html
+* doc/de/hsrm/objectify/class-use/R.color.html
+* doc/de/hsrm/objectify/class-use/R.dimen.html
+* doc/de/hsrm/objectify/class-use/R.drawable.html
+* doc/de/hsrm/objectify/class-use/R.html
+* doc/de/hsrm/objectify/class-use/R.id.html
+* doc/de/hsrm/objectify/class-use/R.layout.html
+* doc/de/hsrm/objectify/class-use/R.menu.html
+* doc/de/hsrm/objectify/class-use/R.string.html
+* doc/de/hsrm/objectify/class-use/R.style.html
+* doc/de/hsrm/objectify/class-use/R.styleable.html
+* doc/de/hsrm/objectify/class-use/R.xml.html
+* doc/de/hsrm/objectify/class-use/SettingsActivity.html
+* doc/de/hsrm/objectify/database
+* doc/de/hsrm/objectify/database/DatabaseAdapter.DatabaseHelper.html
+* doc/de/hsrm/objectify/database/DatabaseAdapter.html
+* doc/de/hsrm/objectify/database/DatabaseProvider.html
+* doc/de/hsrm/objectify/database/class-use
+* doc/de/hsrm/objectify/database/class-use/DatabaseAdapter.DatabaseHelper.html
+* doc/de/hsrm/objectify/database/class-use/DatabaseAdapter.html
+* doc/de/hsrm/objectify/database/class-use/DatabaseProvider.html
+* doc/de/hsrm/objectify/database/package-frame.html
+* doc/de/hsrm/objectify/database/package-summary.html
+* doc/de/hsrm/objectify/database/package-tree.html
+* doc/de/hsrm/objectify/database/package-use.html
+* doc/de/hsrm/objectify/filter
+* doc/de/hsrm/objectify/filter/GaussianFilter.html
+* doc/de/hsrm/objectify/filter/Kernel.html
+* doc/de/hsrm/objectify/filter/class-use
+* doc/de/hsrm/objectify/filter/class-use/GaussianFilter.html
+* doc/de/hsrm/objectify/filter/class-use/Kernel.html
+* doc/de/hsrm/objectify/filter/package-frame.html
+* doc/de/hsrm/objectify/filter/package-summary.html
+* doc/de/hsrm/objectify/filter/package-tree.html
+* doc/de/hsrm/objectify/filter/package-use.html
+* doc/de/hsrm/objectify/gallery
+* doc/de/hsrm/objectify/gallery/GalleryActivity.DeleteObject.html
+* doc/de/hsrm/objectify/gallery/GalleryActivity.LoadingObject.html
+* doc/de/hsrm/objectify/gallery/GalleryActivity.html
+* doc/de/hsrm/objectify/gallery/GalleryAdapter.html
+* doc/de/hsrm/objectify/gallery/GalleryDetailsActivity.DeleteObject.html
+* doc/de/hsrm/objectify/gallery/GalleryDetailsActivity.LoadingObject.html
+* doc/de/hsrm/objectify/gallery/GalleryDetailsActivity.html
+* doc/de/hsrm/objectify/gallery/class-use
+* doc/de/hsrm/objectify/gallery/class-use/GalleryActivity.DeleteObject.html
+* doc/de/hsrm/objectify/gallery/class-use/GalleryActivity.LoadingObject.html
+* doc/de/hsrm/objectify/gallery/class-use/GalleryActivity.html
+* doc/de/hsrm/objectify/gallery/class-use/GalleryAdapter.html
+* doc/de/hsrm/objectify/gallery/class-use/GalleryDetailsActivity.DeleteObject.html
+* doc/de/hsrm/objectify/gallery/class-use/GalleryDetailsActivity.LoadingObject.html
+* doc/de/hsrm/objectify/gallery/class-use/GalleryDetailsActivity.html
+* doc/de/hsrm/objectify/gallery/package-frame.html
+* doc/de/hsrm/objectify/gallery/package-summary.html
+* doc/de/hsrm/objectify/gallery/package-tree.html
+* doc/de/hsrm/objectify/gallery/package-use.html
+* doc/de/hsrm/objectify/howto
+* doc/de/hsrm/objectify/howto/HowToActivity.html
+* doc/de/hsrm/objectify/howto/class-use
+* doc/de/hsrm/objectify/howto/class-use/HowToActivity.html
+* doc/de/hsrm/objectify/howto/package-frame.html
+* doc/de/hsrm/objectify/howto/package-summary.html
+* doc/de/hsrm/objectify/howto/package-tree.html
+* doc/de/hsrm/objectify/howto/package-use.html
+* doc/de/hsrm/objectify/math
+* doc/de/hsrm/objectify/math/Matrix.html
+* doc/de/hsrm/objectify/math/Matrix4f.html
+* doc/de/hsrm/objectify/math/Quat4f.html
+* doc/de/hsrm/objectify/math/Vector3f.html
+* doc/de/hsrm/objectify/math/VectorNf.html
+* doc/de/hsrm/objectify/math/class-use
+* doc/de/hsrm/objectify/math/class-use/Matrix.html
+* doc/de/hsrm/objectify/math/class-use/Matrix4f.html
+* doc/de/hsrm/objectify/math/class-use/Quat4f.html
+* doc/de/hsrm/objectify/math/class-use/Vector3f.html
+* doc/de/hsrm/objectify/math/class-use/VectorNf.html
+* doc/de/hsrm/objectify/math/package-frame.html
+* doc/de/hsrm/objectify/math/package-summary.html
+* doc/de/hsrm/objectify/math/package-tree.html
+* doc/de/hsrm/objectify/math/package-use.html
+* doc/de/hsrm/objectify/package-frame.html
+* doc/de/hsrm/objectify/package-summary.html
+* doc/de/hsrm/objectify/package-tree.html
+* doc/de/hsrm/objectify/package-use.html
+* doc/de/hsrm/objectify/rendering
+* doc/de/hsrm/objectify/rendering/ArcBall.html
+* doc/de/hsrm/objectify/rendering/Circle.html
+* doc/de/hsrm/objectify/rendering/ObjectModel.html
+* doc/de/hsrm/objectify/rendering/ObjectViewerActivity.ExportToObj.html
+* doc/de/hsrm/objectify/rendering/ObjectViewerActivity.GetScreenshot.html
+* doc/de/hsrm/objectify/rendering/ObjectViewerActivity.html
+* doc/de/hsrm/objectify/rendering/TouchSurfaceView.ObjectModelRenderer.html
+* doc/de/hsrm/objectify/rendering/TouchSurfaceView.SimpleScaleListener.html
+* doc/de/hsrm/objectify/rendering/TouchSurfaceView.html
+* doc/de/hsrm/objectify/rendering/class-use
+* doc/de/hsrm/objectify/rendering/class-use/ArcBall.html
+* doc/de/hsrm/objectify/rendering/class-use/Circle.html
+* doc/de/hsrm/objectify/rendering/class-use/ObjectModel.html
+* doc/de/hsrm/objectify/rendering/class-use/ObjectViewerActivity.ExportToObj.html
+* doc/de/hsrm/objectify/rendering/class-use/ObjectViewerActivity.GetScreenshot.html
+* doc/de/hsrm/objectify/rendering/class-use/ObjectViewerActivity.html
+* doc/de/hsrm/objectify/rendering/class-use/TouchSurfaceView.ObjectModelRenderer.html
+* doc/de/hsrm/objectify/rendering/class-use/TouchSurfaceView.SimpleScaleListener.html
+* doc/de/hsrm/objectify/rendering/class-use/TouchSurfaceView.html
+* doc/de/hsrm/objectify/rendering/package-frame.html
+* doc/de/hsrm/objectify/rendering/package-summary.html
+* doc/de/hsrm/objectify/rendering/package-tree.html
+* doc/de/hsrm/objectify/rendering/package-use.html
+* doc/de/hsrm/objectify/ui
+* doc/de/hsrm/objectify/ui/BaseActivity.html
+* doc/de/hsrm/objectify/ui/DashboardLayout.html
+* doc/de/hsrm/objectify/ui/InfoPopupWindow.html
+* doc/de/hsrm/objectify/ui/SliderInputPreference.html
+* doc/de/hsrm/objectify/ui/class-use
+* doc/de/hsrm/objectify/ui/class-use/BaseActivity.html
+* doc/de/hsrm/objectify/ui/class-use/DashboardLayout.html
+* doc/de/hsrm/objectify/ui/class-use/InfoPopupWindow.html
+* doc/de/hsrm/objectify/ui/class-use/SliderInputPreference.html
+* doc/de/hsrm/objectify/ui/package-frame.html
+* doc/de/hsrm/objectify/ui/package-summary.html
+* doc/de/hsrm/objectify/ui/package-tree.html
+* doc/de/hsrm/objectify/ui/package-use.html
+* doc/de/hsrm/objectify/utils
+* doc/de/hsrm/objectify/utils/BitmapUtils.html
+* doc/de/hsrm/objectify/utils/ExternalDirectory.html
+* doc/de/hsrm/objectify/utils/Image.html
+* doc/de/hsrm/objectify/utils/MathHelper.html
+* doc/de/hsrm/objectify/utils/OBJFormat.html
+* doc/de/hsrm/objectify/utils/Size.html
+* doc/de/hsrm/objectify/utils/class-use
+* doc/de/hsrm/objectify/utils/class-use/BitmapUtils.html
+* doc/de/hsrm/objectify/utils/class-use/ExternalDirectory.html
+* doc/de/hsrm/objectify/utils/class-use/Image.html
+* doc/de/hsrm/objectify/utils/class-use/MathHelper.html
+* doc/de/hsrm/objectify/utils/class-use/OBJFormat.html
+* doc/de/hsrm/objectify/utils/class-use/Size.html
+* doc/de/hsrm/objectify/utils/package-frame.html
+* doc/de/hsrm/objectify/utils/package-summary.html
+* doc/de/hsrm/objectify/utils/package-tree.html
+* doc/de/hsrm/objectify/utils/package-use.html
+* doc/deprecated-list.html
+* doc/help-doc.html
+* doc/index-files
+* doc/index-files/index-1.html
+* doc/index-files/index-10.html
+* doc/index-files/index-11.html
+* doc/index-files/index-12.html
+* doc/index-files/index-13.html
+* doc/index-files/index-14.html
+* doc/index-files/index-15.html
+* doc/index-files/index-16.html
+* doc/index-files/index-17.html
+* doc/index-files/index-18.html
+* doc/index-files/index-19.html
+* doc/index-files/index-2.html
+* doc/index-files/index-20.html
+* doc/index-files/index-21.html
+* doc/index-files/index-22.html
+* doc/index-files/index-23.html
+* doc/index-files/index-24.html
+* doc/index-files/index-25.html
+* doc/index-files/index-26.html
+* doc/index-files/index-27.html
+* doc/index-files/index-3.html
+* doc/index-files/index-4.html
+* doc/index-files/index-5.html
+* doc/index-files/index-6.html
+* doc/index-files/index-7.html
+* doc/index-files/index-8.html
+* doc/index-files/index-9.html
+* doc/index.html
+* doc/overview-frame.html
+* doc/overview-summary.html
+* doc/overview-tree.html
+* doc/package-list
+* doc/resources
+* doc/resources/inherit.gif
+* doc/serialized-form.html
+* doc/stylesheet.css
+* gradle
+* gradle/wrapper
+* gradle/wrapper/gradle-wrapper.jar
+* gradle/wrapper/gradle-wrapper.properties
+* gradlew
+* gradlew.bat
+* lint.xml
+* proguard.cfg
+
+Replaced Jars with Dependencies:
+--------------------------------
+The importer recognized the following .jar files as third party
+libraries and replaced them with Gradle dependencies instead. This has
+the advantage that more explicit version information is known, and the
+libraries can be updated automatically. However, it is possible that
+the .jar file in your project was of an older version than the
+dependency we picked, which could render the project not compileable.
+You can disable the jar replacement in the import wizard and try again:
+
+android-support-v4.jar => com.android.support:support-v4:+
+android-support-v7-gridlayout.jar => com.android.support:gridlayout-v7:+
+
+Moved Files:
+------------
+Android Gradle projects use a different directory structure than ADT
+Eclipse projects. Here's how the projects were restructured:
+
+* AndroidManifest.xml => app/src/main/AndroidManifest.xml
+* assets/ => app/src/main/assets/
+* libs/.DS_Store => app/libs/.DS_Store
+* libs/Jama-1.0.2.jar => app/libs/Jama-1.0.2.jar
+* libs/jtransforms-2.3.jar => app/libs/jtransforms-2.3.jar
+* res/ => app/src/main/res/
+* src/ => app/src/main/java/
+
+Next Steps:
+-----------
+You can now build the project. The Gradle project needs network
+connectivity to download dependencies.
+
+Bugs:
+-----
+If for some reason your project does not build, and you determine that
+it is due to a bug or limitation of the Eclipse to Gradle importer,
+please file a bug at http://b.android.com with category
+Component-Tools.
+
+(This import summary is for your information only, and can be deleted
+after import once you are satisfied with the results.)
