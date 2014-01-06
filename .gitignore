@@ -1,11 +1,6 @@
-/assets
-/bin
-/doc
-/gen
 .settings/
 .DS_Store
 app/build
 .gradle/
 gradle/
 .idea/
-.class
