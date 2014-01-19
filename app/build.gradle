@@ -20,7 +20,6 @@ android {
 dependencies {
     compile 'com.android.support:support-v4:+'
     compile 'com.android.support:gridlayout-v7:+'
-    compile files('libs/.DS_Store')
-    compile files('libs/Jama-1.0.2.jar')
-    compile files('libs/jtransforms-2.3.jar')
+    compile files('libs/Jama-1.0.3.jar')
+    compile files('libs/jtransforms-2.4.jar')
 }
