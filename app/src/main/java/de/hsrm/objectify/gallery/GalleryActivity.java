@@ -24,7 +24,6 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.GridView;
 import android.widget.Toast;
 import de.hsrm.objectify.R;
-import de.hsrm.objectify.actionbarcompat.ActionBarActivity;
 import de.hsrm.objectify.database.DatabaseAdapter;
 import de.hsrm.objectify.database.DatabaseProvider;
 import de.hsrm.objectify.rendering.ObjectModel;
@@ -38,7 +37,7 @@ import de.hsrm.objectify.utils.ExternalDirectory;
  * @author kwolf001
  * 
  */
-public class GalleryActivity extends ActionBarActivity {
+public class GalleryActivity extends Activity {
 
 	private static final String TAG = "GalleryActivity";
 	private GridView galleryGrid;

@@ -29,7 +29,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import de.hsrm.objectify.R;
 import de.hsrm.objectify.SettingsActivity;
-import de.hsrm.objectify.actionbarcompat.ActionBarActivity;
 import de.hsrm.objectify.database.DatabaseAdapter;
 import de.hsrm.objectify.database.DatabaseProvider;
 import de.hsrm.objectify.rendering.ObjectModel;
@@ -44,7 +43,7 @@ import de.hsrm.objectify.utils.ExternalDirectory;
  * @author kwolf001
  * 
  */
-public class GalleryDetailsActivity extends ActionBarActivity {
+public class GalleryDetailsActivity extends Activity {
 
 	private final String TAG = "GalleryDetailsActivity";
 	private ImageView picture;

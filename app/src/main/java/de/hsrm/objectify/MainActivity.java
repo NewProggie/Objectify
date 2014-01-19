@@ -21,7 +21,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
-import de.hsrm.objectify.actionbarcompat.ActionBarActivity;
 import de.hsrm.objectify.camera.CameraActivity;
 import de.hsrm.objectify.gallery.GalleryActivity;
 import de.hsrm.objectify.howto.HowToActivity;
@@ -34,7 +33,7 @@ import de.hsrm.objectify.howto.HowToActivity;
  * @author kwolf001
  * 
  */
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends Activity {
 
 	private Context context;
 	// private LicenseCheckerCallback licenseCheckerCallback;

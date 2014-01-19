@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.Toast;
-import de.hsrm.objectify.actionbarcompat.ActionBarActivity;
 
 /**
  * Simple {@link Activity} displaying the terms and conditions and a button for
@@ -21,7 +20,7 @@ import de.hsrm.objectify.actionbarcompat.ActionBarActivity;
  * @author kwolf001
  * 
  */
-public class AboutActivity extends ActionBarActivity {
+public class AboutActivity extends Activity {
 
 	private Button sendFeedback;
 	private Context context;

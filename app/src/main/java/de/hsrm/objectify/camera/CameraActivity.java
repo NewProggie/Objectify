@@ -37,7 +37,6 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 import de.hsrm.objectify.R;
 import de.hsrm.objectify.SettingsActivity;
-import de.hsrm.objectify.actionbarcompat.ActionBarActivity;
 import de.hsrm.objectify.database.DatabaseAdapter;
 import de.hsrm.objectify.database.DatabaseProvider;
 import de.hsrm.objectify.math.Matrix;

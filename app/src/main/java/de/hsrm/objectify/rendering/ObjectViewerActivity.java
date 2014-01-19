@@ -30,7 +30,6 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 import de.hsrm.objectify.R;
-import de.hsrm.objectify.actionbarcompat.ActionBarActivity;
 import de.hsrm.objectify.utils.ExternalDirectory;
 import de.hsrm.objectify.utils.OBJFormat;
 
@@ -42,7 +41,7 @@ import de.hsrm.objectify.utils.OBJFormat;
  * @author kwolf001
  * 
  */
-public class ObjectViewerActivity extends ActionBarActivity {
+public class ObjectViewerActivity extends Activity {
 
 	private static final String TAG = "ObjectViewer";
 	private TouchSurfaceView glSurfaceView;

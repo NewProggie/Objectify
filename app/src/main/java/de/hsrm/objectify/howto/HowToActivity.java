@@ -1,10 +1,10 @@
 package de.hsrm.objectify.howto;
 
+import android.app.Activity;
 import android.os.Bundle;
 import de.hsrm.objectify.R;
-import de.hsrm.objectify.actionbarcompat.ActionBarActivity;
 
-public class HowToActivity extends ActionBarActivity {
+public class HowToActivity extends Activity {
 
 	private static final String TAG = "HowToActivity";
 
