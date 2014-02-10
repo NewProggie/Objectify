@@ -175,6 +175,10 @@ public class Image {
 				+ (0.1140f * Color.blue(color)));
 	}
 
+    public void setIntensity(int x, int y, int color) {
+        bitmap.setPixel(x, y, getintensity(color));
+    }
+
 	public int getIntensity(int x, int y) {
 		int pixel = bitmap.getPixel(x, y);
 		return getGreyscale(pixel);
@@ -197,5 +201,9 @@ public class Image {
 		this.bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),
 				bitmap.getHeight(), rotMatrix, true);
 	}
+
+    public Bitmap getBitmap() {
+        return this.bitmap;
+    }
 
 }

@@ -231,11 +231,10 @@ public class CameraActivity extends Activity {
 					getString(R.string.settings_use_blurring), false);
 		}
 
-		@Override
-		protected Boolean doInBackground(Void... params) {
+        Bitmap computeNormals(ArrayList<Image> pictureList) {
 
-			int imageWidth = pictureList.get(0).getWidth();
-			int imageHeight = pictureList.get(0).getHeight();
+            int imageWidth = pictureList.get(0).getWidth();
+            int imageHeight = pictureList.get(0).getHeight();
             int numPics = pictureList.size();
 
             /* populate A */
@@ -252,12 +251,10 @@ public class CameraActivity extends Activity {
 
             DenseMatrix64F A = new DenseMatrix64F(a);
             SingularValueDecomposition<DenseMatrix64F> svd = DecompositionFactory.svd(A.numRows, A.numCols, true, true, true);
-
             if( !svd.decompose(A) )
                 throw new RuntimeException("Decomposition failed");
 
             DenseMatrix64F U = svd.getU(null,false);
-
             Bitmap S = Bitmap.createBitmap(imageWidth, imageHeight, Bitmap.Config.RGB_565);
             int idx = 0;
             for (int i = 0; i < imageHeight; i++) {
@@ -274,12 +271,46 @@ public class CameraActivity extends Activity {
                 }
             }
 
+            return S;
+        }
+
+        Bitmap localHeightfield(Bitmap Normals) {
+
+            int height = Normals.getHeight();
+            int width = Normals.getWidth();
+            Image Z = new Image(Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565));
+            for (int k = 0; k < 300; k++) {
+                for (int i = 1; i < height-1; i++) {
+                    for (int j = 1; j < width-1; j++) {
+                        float zU = Z.getIntensity(j,i);
+                        float zD = Z.getIntensity(j,i+1);
+                        float zL = Z.getIntensity(j-1,i);
+                        float zR = Z.getIntensity(j+1,i);
+                        float nxC = Color.red(Normals.getPixel(j,i));
+                        float nyC = Color.green(Normals.getPixel(j,i));
+                        float nxU = Color.red(Normals.getPixel(j,i-1));
+                        float nyL = Color.green(Normals.getPixel(j-1,i));
+                        int intens = (int) (1.0f/4.0f * (zD + zU + zR + zL + nxU - nxC + nyL - nyC));
+                        Z.setPixel(j, i, Color.rgb(intens, intens, intens));
+                    }
+                }
+            }
+
+            return Z.getBitmap();
+        }
+
+		@Override
+		protected Boolean doInBackground(Void... params) {
+
+            Bitmap S = computeNormals(pictureList);
+            Bitmap Result = localHeightfield(S);
+
 			if (ExternalDirectory.isMounted()) {
 				try {
                     /* temp debugging normalmap */
                     FileOutputStream fos = new FileOutputStream(ExternalDirectory.getExternalImageDirectory()+"/export.png");
                     BufferedOutputStream bos = new BufferedOutputStream(fos);
-                    S.compress(CompressFormat.PNG, 100, bos);
+                    Result.compress(CompressFormat.PNG, 100, bos);
                     bos.flush();
                     bos.close();
 				} catch (FileNotFoundException e) {
