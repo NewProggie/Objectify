@@ -22,4 +22,5 @@ dependencies {
     compile 'com.android.support:gridlayout-v7:+'
     compile files('libs/Jama-1.0.3.jar')
     compile files('libs/jtransforms-2.4.jar')
+    compile files('libs/ejml-0.24.jar')
 }
