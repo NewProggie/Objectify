@@ -1,20 +1,14 @@
 package de.hsrm.objectify.camera;
 
 import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
-import java.nio.FloatBuffer;
-import java.nio.ShortBuffer;
 import java.util.ArrayList;
-import java.util.Calendar;
 
 import android.app.Activity;
 import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
@@ -22,6 +16,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.net.Uri;
@@ -35,20 +30,17 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+
+import org.ejml.data.DenseMatrix64F;
+import org.ejml.factory.DecompositionFactory;
+import org.ejml.factory.SingularValueDecomposition;
+
 import de.hsrm.objectify.R;
 import de.hsrm.objectify.SettingsActivity;
-import de.hsrm.objectify.database.DatabaseAdapter;
-import de.hsrm.objectify.database.DatabaseProvider;
-import de.hsrm.objectify.math.Matrix;
-import de.hsrm.objectify.math.Vector3f;
-import de.hsrm.objectify.math.VectorNf;
 import de.hsrm.objectify.rendering.Circle;
 import de.hsrm.objectify.rendering.ObjectModel;
-import de.hsrm.objectify.rendering.ObjectViewerActivity;
-import de.hsrm.objectify.utils.BitmapUtils;
 import de.hsrm.objectify.utils.ExternalDirectory;
 import de.hsrm.objectify.utils.Image;
-import de.hsrm.objectify.utils.MathHelper;
 
 /**
  * This {@link Activity} shoots photos with the front facing camera, manages
@@ -177,9 +169,20 @@ public class CameraActivity extends Activity {
 		PictureCallback callback = new PictureCallback() {
 			@Override
 			public void onPictureTaken(byte[] data, Camera camera) {
-				Image image = new Image(BitmapUtils.createScaledBitmap(data,
-						CameraFinder.pictureSize, CameraFinder.imageFormat),
-						true);
+
+                BitmapFactory.Options options=new BitmapFactory.Options();
+                options.inSampleSize = 5;
+                Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length, options);
+                Image image;
+
+                if(bmp.getHeight() < bmp.getWidth()) {
+                    android.graphics.Matrix m = new android.graphics.Matrix();
+                    m.postRotate(270);
+                    Bitmap bmpRot = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), m, true);
+                    image = new Image(bmpRot);
+                } else {
+                    image = new Image(bmp);
+                }
 
 				pictureList.add(image);
 				counter += 1;
@@ -230,153 +233,55 @@ public class CameraActivity extends Activity {
 
 		@Override
 		protected Boolean doInBackground(Void... params) {
-			Matrix sMatrix = cameraLighting.getLightMatrixS(numberOfPictures);
-			Matrix sInverse = sMatrix.pseudoInverse();
 
 			int imageWidth = pictureList.get(0).getWidth();
 			int imageHeight = pictureList.get(0).getHeight();
+            int numPics = pictureList.size();
 
-			/* sum images and use as texture */
-			texture = BitmapUtils.imagesToStack(pictureList);
+            /* populate A */
+            double[][] a = new double[imageHeight*imageWidth][numPics];
 
-			/* adjust contrast automagically */
-			texture = BitmapUtils.autoContrast(texture);
-			// texture = BitmapUtils.modAutoContrast(texture);
+            for (int k = 0; k < numPics; k++) {
+                int idx = 0;
+                for (int i = 0; i < imageHeight; i++) {
+                    for (int j = 0; j < imageWidth; j++) {
+                        a[idx++][k] = pictureList.get(k).getIntensity(j,i);
+                    }
+                }
+            }
 
-			/* equalize histogram for more saturated color */
-			// texture = BitmapUtils.equalizeHistogram(texture);
+            DenseMatrix64F A = new DenseMatrix64F(a);
+            SingularValueDecomposition<DenseMatrix64F> svd = DecompositionFactory.svd(A.numRows, A.numCols, true, true, true);
 
-			/* blur the input images */
-			if (useBlurring) {
-				for (int i = 0; i < pictureList.size(); i++) {
-					pictureList.set(i,
-							BitmapUtils.blurBitmap(pictureList.get(i)));
-				}
-			}
-			ArrayList<Vector3f> normalField = new ArrayList<Vector3f>();
-			Matrix pGradients = new Matrix(imageHeight, imageWidth);
-			Matrix qGradients = new Matrix(imageHeight, imageWidth);
+            if( !svd.decompose(A) )
+                throw new RuntimeException("Decomposition failed");
 
-			for (int h = 0; h < imageHeight; h++) {
-				for (int w = 0; w < imageWidth; w++) {
-					Vector3f normal = new Vector3f();
-					VectorNf intensity = new VectorNf(numberOfPictures);
-					for (int i = 0; i < numberOfPictures; i++) {
-						intensity.set(i, pictureList.get(i).getIntensity(w, h));
-					}
-					Vector3f albedo = sInverse.multiply(intensity);
+            DenseMatrix64F U = svd.getU(null,false);
 
-					float reg = (float) Math.sqrt(Math.pow(albedo.x, 2)
-							+ Math.pow(albedo.y, 2) + Math.pow(albedo.z, 2));
-					normal.x = albedo.x / reg;
-					normal.y = albedo.y / reg;
-					normal.z = albedo.z / reg;
+            Bitmap S = Bitmap.createBitmap(imageWidth, imageHeight, Bitmap.Config.RGB_565);
+            int idx = 0;
+            for (int i = 0; i < imageHeight; i++) {
+                for (int j = 0; j < imageWidth; j++) {
 
-					normalField.add(normal);
-					pGradients.set(h, w, normal.x / normal.z);
-					qGradients.set(h, w, normal.y / normal.z);
-				}
-			}
+                    double rSxyz = 1.0f / Math.sqrt( Math.pow(U.get(idx, 0), 2) + Math.pow(U.get(idx, 1), 2) + Math.pow(U.get(idx, 2), 2) );
 
-			double[][] heightField = MathHelper.twoDimIntegration(pGradients,
-					qGradients, imageHeight, imageWidth);
-
-			FloatBuffer vertBuffer = FloatBuffer.allocate(imageHeight
-					* imageWidth * 3);
-			FloatBuffer normBuffer = FloatBuffer.allocate(imageHeight
-					* imageWidth * 3);
-			ArrayList<Short> indexes = new ArrayList<Short>();
-			vertBuffer.rewind();
-			normBuffer.rewind();
-			// Vertices und Normale
-			int idx = 0;
-			for (int x = 0; x < imageHeight; x++) {
-				for (int y = 0; y < imageWidth; y++) {
-					float[] imgPoint = new float[] { Float.valueOf(y),
-							Float.valueOf(x), (float) heightField[x][y] };
-					float[] normVec = new float[] { normalField.get(idx).x,
-							normalField.get(idx).y, normalField.get(idx).z };
-					vertBuffer.put(imgPoint);
-					normBuffer.put(normVec);
-					idx += 1;
-				}
-			}
-			// Faces
-			for (int i = 0; i < imageHeight - 1; i++) {
-				for (int j = 0; j < imageWidth - 1; j++) {
-					short index = (short) (j + (i * imageWidth));
-					indexes.add((short) (index));
-					indexes.add((short) (index + imageWidth));
-					indexes.add((short) (index + 1));
-
-					indexes.add((short) (index + 1));
-					indexes.add((short) (index + imageWidth));
-					indexes.add((short) (index + imageWidth + 1));
-				}
-			}
-			ShortBuffer indexBuffer = ShortBuffer.allocate(indexes.size());
-			indexBuffer.rewind();
-			for (int i = 0; i < indexes.size(); i++) {
-				indexBuffer.put(indexes.get(i));
-			}
-
-			float[] vertices = new float[vertBuffer.limit()];
-			float[] normals = new float[normBuffer.limit()];
-			short[] faces = new short[indexBuffer.limit()];
-			vertices = vertBuffer.array();
-			normals = normBuffer.array();
-			faces = indexBuffer.array();
-
-			objectModel = new ObjectModel(vertices, normals, faces, texture);
+				    /* U contanis eigenvectors of AAT, corresponding to z,x,y components of each pixels surface normal */
+                    int sz = (int) (128.0f + 127.0f * Math.signum(U.get(idx, 0)) * Math.abs(U.get(idx, 0)) * rSxyz);
+                    int sx = (int) (128.0f + 127.0f * Math.signum(U.get(idx, 1)) * Math.abs(U.get(idx, 1)) * rSxyz);
+                    int sy = (int) (128.0f + 127.0f * Math.signum(U.get(idx, 2)) * Math.abs(U.get(idx, 2)) * rSxyz);
+                    S.setPixel(j, i, Color.rgb(sx, sy, sz));
+                    idx += 1;
+                }
+            }
 
 			if (ExternalDirectory.isMounted()) {
-				// storing the newly created 3D object onto hard disk and create
-				// database entries
-				Calendar cal = Calendar.getInstance();
-				String timestamp = String.valueOf(cal.getTimeInMillis());
-				String filename = timestamp + ".kaw";
-				String path = ExternalDirectory.getExternalImageDirectory()
-						+ "/";
-				ContentValues values = new ContentValues();
-				cr = getContentResolver();
-				Uri objectUri = DatabaseProvider.CONTENT_URI.buildUpon()
-						.appendPath("object").build();
-				Uri galleryUri = DatabaseProvider.CONTENT_URI.buildUpon()
-						.appendPath("gallery").build();
 				try {
-					OutputStream out = new FileOutputStream(path + filename);
-					ObjectOutputStream obj_output = new ObjectOutputStream(out);
-					obj_output.writeObject(objectModel);
-					obj_output.close();
-					values.put(DatabaseAdapter.OBJECT_FILE_PATH_KEY, path
-							+ filename);
-					Uri objectResultUri = cr.insert(objectUri, values);
-					String objectID = objectResultUri.getLastPathSegment();
-					values.clear();
-					String thumbnail_path = ExternalDirectory
-							.getExternalImageDirectory()
-							+ "/"
-							+ timestamp
-							+ ".png";
-					FileOutputStream fos = new FileOutputStream(thumbnail_path);
-					BufferedOutputStream bos = new BufferedOutputStream(fos);
-					texture.rotate(-90);
-					texture.compress(CompressFormat.PNG, 100, bos);
-					bos.flush();
-					bos.close();
-					values.put(DatabaseAdapter.GALLERY_THUMBNAIL_PATH_KEY,
-							thumbnail_path);
-					values.put(DatabaseAdapter.GALLERY_NUMBER_OF_PICTURES_KEY,
-							String.valueOf(numberOfPictures));
-					values.put(DatabaseAdapter.GALLERY_DATE_KEY, timestamp);
-					values.put(DatabaseAdapter.GALLERY_DIMENSION_KEY,
-							objectModel.getTextureBitmapSize());
-					values.put(DatabaseAdapter.GALLERY_FACES_KEY, String
-							.valueOf(objectModel.getVertices().length / 3));
-					values.put(DatabaseAdapter.GALLERY_VERTICES_KEY,
-							String.valueOf(objectModel.getVertices().length));
-					values.put(DatabaseAdapter.GALLERY_OBJECT_ID_KEY, objectID);
-					cr.insert(galleryUri, values);
+                    /* temp debugging normalmap */
+                    FileOutputStream fos = new FileOutputStream(ExternalDirectory.getExternalImageDirectory()+"/export.png");
+                    BufferedOutputStream bos = new BufferedOutputStream(fos);
+                    S.compress(CompressFormat.PNG, 100, bos);
+                    bos.flush();
+                    bos.close();
 				} catch (FileNotFoundException e) {
 					Log.e(TAG, e.getLocalizedMessage());
 					e.printStackTrace();
@@ -400,12 +305,12 @@ public class CameraActivity extends Activity {
 							getString(R.string.obj_could_not_be_saved),
 							Toast.LENGTH_SHORT).show();
 				}
-				Intent viewObject = new Intent(context,
-						ObjectViewerActivity.class);
-				Bundle b = new Bundle();
-				b.putParcelable("objectModel", objectModel);
-				viewObject.putExtra("bundle", b);
-				startActivity(viewObject);
+                /* temp debugging normal map */
+                Intent viewNormal = new Intent();
+                viewNormal.setAction(Intent.ACTION_VIEW);
+                File bmp = new File(ExternalDirectory.getExternalImageDirectory()+"/export.png");
+                viewNormal.setDataAndType(Uri.fromFile(bmp), "image/png");
+                startActivity(viewNormal);
 				((Activity) context).finish();
 			} else {
 				Toast.makeText(context,
