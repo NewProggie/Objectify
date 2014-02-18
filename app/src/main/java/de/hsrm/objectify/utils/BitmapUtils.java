@@ -13,7 +13,7 @@ import android.graphics.Color;
 import android.graphics.ImageFormat;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
-import de.hsrm.objectify.camera.CameraFinder;
+
 import de.hsrm.objectify.filter.GaussianFilter;
 
 /**

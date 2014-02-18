@@ -11,7 +11,8 @@ import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.PreferenceActivity;
-import de.hsrm.objectify.camera.CameraFinder;
+
+import de.hsrm.objectify.camera.FrontCameraFinder;
 import de.hsrm.objectify.ui.SliderInputPreference;
 
 /**
@@ -65,7 +66,7 @@ public class SettingsActivity extends PreferenceActivity {
 	private CharSequence[] getAvailableResolutions() {
 		ArrayList<String> tempResolutions = new ArrayList<String>();
 		CharSequence[] resolutions;
-		Camera camera = CameraFinder.INSTANCE.open(context);
+		Camera camera = new FrontCameraFinder().open(context);
 		if (camera != null) {
 			Camera.Parameters params = camera.getParameters();
 			for (Size size : params.getSupportedPictureSizes()) {

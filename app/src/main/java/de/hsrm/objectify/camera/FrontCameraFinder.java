@@ -15,7 +15,10 @@ import de.hsrm.objectify.utils.Size;
  * @author kwolf001
  * 
  */
-public class FrontCameraFinder extends CameraFinder {
+public class FrontCameraFinder {
+
+    static int imageFormat;
+    static Size pictureSize;
 
 	/**
 	 * Returns a new instance from front facing camera or null if none was

@@ -96,7 +96,7 @@ public class CameraActivity extends Activity {
 			}
 		});
 
-		camera = CameraFinder.INSTANCE.open(context);
+		camera = new FrontCameraFinder().open(context);
 		if (camera == null) {
 			showToastAndFinish(getString(R.string.no_ffc_was_found));
 		} else {
@@ -303,14 +303,14 @@ public class CameraActivity extends Activity {
 		protected Boolean doInBackground(Void... params) {
 
             Bitmap S = computeNormals(pictureList);
-            Bitmap Result = localHeightfield(S);
+            //Bitmap Result = localHeightfield(S);
 
 			if (ExternalDirectory.isMounted()) {
 				try {
                     /* temp debugging normalmap */
                     FileOutputStream fos = new FileOutputStream(ExternalDirectory.getExternalImageDirectory()+"/export.png");
                     BufferedOutputStream bos = new BufferedOutputStream(fos);
-                    Result.compress(CompressFormat.PNG, 100, bos);
+                    S.compress(CompressFormat.PNG, 100, bos);
                     bos.flush();
                     bos.close();
 				} catch (FileNotFoundException e) {
