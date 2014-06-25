@@ -1,35 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="de.hsrm.objectify"
-    android:versionCode="3"
-    android:versionName="1.2" >
-
-    <uses-sdk
-        android:minSdkVersion="16"
-        android:targetSdkVersion="19" />
+    package="de.hsrm.objectify" >
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="com.android.vending.CHECK_LICENSE" />
 
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature
         android:name="android.hardware.camera.front"
         android:required="true" />
 
-    <supports-screens
-        android:largeScreens="true"
-        android:normalScreens="true"
-        android:smallScreens="false"
-        android:xlargeScreens="false" />
-
     <application
+        android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".MainActivity"
+            android:name=".activities.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -37,31 +25,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SettingsActivity" />
-        <activity android:name=".AboutActivity" />
         <activity
-            android:name=".camera.CameraActivity"
-            android:screenOrientation="portrait" 
-            android:theme="@android:style/Theme.Black.NoTitleBar" />
-        <activity android:name=".gallery.GalleryActivity" />
-        <activity android:name=".gallery.GalleryDetailsActivity" />
-        <activity android:name=".rendering.ObjectViewerActivity" >
+            android:name=".activities.CameraActivity"
+            android:label="@string/title_activity_camera" >
         </activity>
-        <activity android:name=".howto.HowToActivity" />
-
-        <provider
-            android:name=".database.DatabaseProvider"
-            android:authorities="de.hsrm.objectify.databaseprovider.content" />
-
-        <receiver android:name="ObjectifyWidgetProvider" >
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/objectify_appwidget_info" />
-        </receiver>
     </application>
 
 </manifest>

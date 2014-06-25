@@ -1,21 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <declare-styleable name="galleryStyle">
-        <attr name="android:galleryItemBackground" />
-    </declare-styleable>
-    <declare-styleable name="AppTheme">
-        <attr name="actionbarSeparatorStyle" format="reference" />
-        <attr name="actionbarTextStyle" format="reference" />
-        <attr name="actionbarButtonStyle" format="reference" />
-        <attr name="actionbarCompatTitleStyle" format="reference" />
-        <attr name="actionbarCompatItemStyle" format="reference" />
-        <attr name="actionbarCompatItemHomeStyle" format="reference" />
-        <attr name="actionbarCompatProgressIndicatorStyle" format="reference" />
-    </declare-styleable>
-    <declare-styleable name="BezelImageView">
-        <attr name="maskDrawable" format="reference" />
-        <attr name="borderDrawable" format="reference" />
+    <!-- Declare custom theme attributes that allow changing which styles are
+         used for button bars depending on the API level.
+         ?android:attr/buttonBarStyle is new as of API 11 so this is
+         necessary to support previous API levels. -->
+    <declare-styleable name="ButtonBarContainerTheme">
+        <attr name="metaButtonBarStyle" format="reference" />
+        <attr name="metaButtonBarButtonStyle" format="reference" />
     </declare-styleable>
 
 </resources>

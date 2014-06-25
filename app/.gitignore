@@ -1,8 +1,6 @@
+/build
 .settings/
 .DS_Store
 app/build
 .gradle/
-gradle/
 .idea/
-/local.properties
-/build
