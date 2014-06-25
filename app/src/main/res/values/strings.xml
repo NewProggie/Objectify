@@ -11,5 +11,7 @@
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="scan">Scan</string>
+    <string name="title_reconstruction_list">Reconstructions</string>
+    <string name="title_reconstruction_detail">Reconstruction Detail</string>
 
 </resources>

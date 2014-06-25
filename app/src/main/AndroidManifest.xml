@@ -29,6 +29,18 @@
             android:name=".activities.CameraActivity"
             android:label="@string/title_activity_camera" >
         </activity>
+        <activity
+            android:name=".activities.ReconstructionListActivity"
+            android:label="@string/title_reconstruction_list" >
+        </activity>
+        <activity
+            android:name=".activities.ReconstructionDetailActivity"
+            android:label="@string/title_reconstruction_detail"
+            android:parentActivityName=".activities.ReconstructionListActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="de.hsrm.objectify.activities.ReconstructionListActivity" />
+        </activity>
     </application>
 
 </manifest>

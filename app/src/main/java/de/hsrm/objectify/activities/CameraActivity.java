@@ -28,7 +28,6 @@ import de.hsrm.objectify.utils.Size;
 
 public class CameraActivity extends Activity {
 
-    private final String TAG = "CameraActivity";
     private CameraPreview mCameraPreview;
     private ImageView mCameraLighting;
     private ImageView mCameraLightingMask;
@@ -85,10 +84,12 @@ public class CameraActivity extends Activity {
                     mCameraLighting.setImageBitmap(BitmapUtils.generateLightPattern(mScreenSize,
                             mImageList.size()+1, NUM_PICTURES));
                     mCamera.takePicture(null, null, cameraImageCallback());
+                } else {
+                    Intent view3DModelIntent = new Intent(getApplicationContext(),
+                            ReconstructionDetailActivity.class);
+                    view3DModelIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+                    startActivity(view3DModelIntent);
                 }
-
-                Intent backToMain = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(backToMain);
             }
         };
     }
