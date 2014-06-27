@@ -11,6 +11,8 @@ import android.os.Environment;
 import java.io.File;
 import java.io.FileOutputStream;
 
+import de.hsrm.objectify.camera.Constants;
+
 public class BitmapUtils {
 
     public static Bitmap convertToGrayscale(Bitmap src) {
@@ -55,15 +57,21 @@ public class BitmapUtils {
         return generateLightPattern(screenSize.width, screenSize.height, j, N);
     }
 
+    public static Bitmap generateBlackBitmap(Size screenSize) {
+        /* guaranteed to be initialized with zeros. See generateLightPattern comment */
+        int[] pixels = new int[screenSize.width*screenSize.height];
+        return Bitmap.createBitmap(
+                pixels, screenSize.width, screenSize.height, Bitmap.Config.ARGB_8888);
+    }
+
     public static void saveBitmap(Bitmap src, String filename) {
-        String root = Environment.getExternalStorageDirectory().toString();
-        File imageDir = new File(root + "/saved_images");
-        imageDir.mkdirs();
-        File file = new File(imageDir, filename);
+        File imageDirectory = new File(Storage.getExternalRootDirectory());
+        imageDirectory.mkdirs();
+        File file = new File(imageDirectory, filename);
         if (file.exists ()) file.delete ();
         try {
             FileOutputStream out = new FileOutputStream(file);
-            src.compress(Bitmap.CompressFormat.PNG, 90, out);
+            src.compress(Constants.IMAGE_COMPRESS_FORMAT, 100, out);
             out.flush();
             out.close();
         } catch (Exception e) {

@@ -9,6 +9,7 @@ import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.PictureCallback;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
@@ -25,16 +26,20 @@ import de.hsrm.objectify.camera.Constants;
 import de.hsrm.objectify.utils.BitmapUtils;
 import de.hsrm.objectify.utils.CameraUtils;
 import de.hsrm.objectify.utils.Size;
+import de.hsrm.objectify.utils.Storage;
+import de.hsrm.objectify.views.LightSourceView;
 
-public class CameraActivity extends Activity {
+public class CameraActivity extends Activity implements LightSourceView.OnLightSourceChangeListener {
 
     private CameraPreview mCameraPreview;
-    private ImageView mCameraLighting;
+    private LightSourceView mCameraLighting;
     private ImageView mCameraLightingMask;
     private Camera mCamera;
     private Size mScreenSize;
     private Button mTriggerPicturesButton;
+    private String mImageFileName;
     public ArrayList<Bitmap> mImageList;
+    private ArrayList<Bitmap> mLightSourcesList;
     private final int NUM_PICTURES = 4;
 
     @Override
@@ -53,9 +58,17 @@ public class CameraActivity extends Activity {
         /* opening front facing camera */
         mCamera = openFrontFacingCamera();
 
+        /* prepare the different light sources */
+        mLightSourcesList = new ArrayList<Bitmap>();
+        mLightSourcesList.add(BitmapUtils.generateBlackBitmap(mScreenSize));
+        for (int i=1; i<=NUM_PICTURES; i++) {
+            mLightSourcesList.add(BitmapUtils.generateLightPattern(mScreenSize, i, NUM_PICTURES));
+        }
+
         mCameraPreview = (CameraPreview) findViewById(R.id.camera_surface);
         mCameraPreview.setCamera(mCamera);
-        mCameraLighting = (ImageView) findViewById(R.id.camera_lighting);
+        mCameraLighting = (LightSourceView) findViewById(R.id.camera_lighting);
+        mCameraLighting.setLightSourceChangeListener(this);
         mCameraLightingMask = (ImageView) findViewById(R.id.camera_lighting_mask);
         mImageList = new ArrayList<Bitmap>();
         mTriggerPicturesButton = (Button) findViewById(R.id.trigger_images_button);
@@ -63,12 +76,28 @@ public class CameraActivity extends Activity {
             @Override
             public void onClick(View view) {
                 mImageList.clear();
+                mImageFileName = Storage.getRandomFileName(10);
                 setupDisplayScreen(true);
-                mCameraLighting.setImageBitmap(BitmapUtils.generateLightPattern(mScreenSize,
-                        1, NUM_PICTURES));
-                mCamera.takePicture(null, null, cameraImageCallback());
+                mCameraLighting.setImageBitmap(mLightSourcesList.get(0));
             }
         });
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        releaseCamera();
+    }
+
+    @Override
+    public void lightSourceChanged() {
+        /* give the light source view a little time to update itself */
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mCamera.takePicture(null, null, cameraImageCallback());
+            }
+        }, 100);
     }
 
     private PictureCallback cameraImageCallback() {
@@ -76,14 +105,16 @@ public class CameraActivity extends Activity {
 
             @Override
             public void onPictureTaken(byte[] bytes, Camera camera) {
-                Bitmap bmp = CameraUtils.fixRotateMirrorImage(BitmapFactory.decodeByteArray(bytes,
-                        0, bytes.length));
+                Bitmap bmp = CameraUtils.fixRotateMirrorImage(
+                        BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
+                BitmapUtils.saveBitmap(
+                        bmp,
+                        mImageFileName + "_" + mImageList.size() + "." + Constants.IMAGE_FORMAT);
                 mImageList.add(bmp);
                 mCamera.startPreview();
-                if (mImageList.size() < NUM_PICTURES) {
-                    mCameraLighting.setImageBitmap(BitmapUtils.generateLightPattern(mScreenSize,
-                            mImageList.size()+1, NUM_PICTURES));
-                    mCamera.takePicture(null, null, cameraImageCallback());
+                if (mImageList.size() <= NUM_PICTURES) {
+                    mCameraLighting.setImageBitmap(mLightSourcesList.get(mImageList.size()));
+
                 } else {
                     Intent view3DModelIntent = new Intent(getApplicationContext(),
                             ReconstructionDetailActivity.class);
@@ -103,8 +134,10 @@ public class CameraActivity extends Activity {
             mCameraPreview.setLayoutParams(layoutParams);
             /* hide camera trigger button */
             mTriggerPicturesButton.setVisibility(View.INVISIBLE);
-            mCameraLighting.setVisibility(View.VISIBLE);
+            /* hide lighting mask */
             mCameraLightingMask.setVisibility(View.INVISIBLE);
+            /* show light sources on screen */
+            mCameraLighting.setVisibility(View.VISIBLE);
         } else {
             mCameraLighting.setVisibility(View.INVISIBLE);
             mCameraLightingMask.setVisibility(View.VISIBLE);
@@ -139,6 +172,13 @@ public class CameraActivity extends Activity {
         Point size = new Point();
         display.getSize(size);
         return new Size(size.x, size.y);
+    }
+
+    private void releaseCamera(){
+        if (mCamera != null) {
+            mCamera.release();
+            mCamera = null;
+        }
     }
 
 }
