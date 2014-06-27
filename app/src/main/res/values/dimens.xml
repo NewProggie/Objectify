@@ -5,4 +5,6 @@
     <!-- Screen margins for camera preview. -->
     <dimen name="camera_activity_margins">24dp</dimen>
     <dimen name="scan_button_margin">6dp</dimen>
+    <dimen name="please_wait_text_size">20sp</dimen>
+    <dimen name="progressbar_size">60dp</dimen>
 </resources>

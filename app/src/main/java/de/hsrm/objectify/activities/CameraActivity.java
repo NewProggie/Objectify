@@ -8,6 +8,7 @@ import android.graphics.Point;
 import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.PictureCallback;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Display;
@@ -17,6 +18,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import java.util.ArrayList;
 
@@ -33,8 +35,9 @@ public class CameraActivity extends Activity {
     private CameraPreview mCameraPreview;
     private ImageView mCameraLighting;
     private ImageView mCameraLightingMask;
-    private Camera mCamera;
     private Button mTriggerPicturesButton;
+    private LinearLayout mProgressScreen;
+    private Camera mCamera;
     private String mImageFileName;
     private ArrayList<Bitmap> mImageList;
     private ArrayList<Bitmap> mLightSourcesList;
@@ -49,20 +52,10 @@ public class CameraActivity extends Activity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_camera);
 
-        /* get the display screen size for displaying light pattern */
-        Size mScreenSize = getDisplayScreenSize();
-
         /* opening front facing camera */
         mCamera = openFrontFacingCamera();
 
-        /* prepare the different light sources */
-        mLightSourcesList = new ArrayList<Bitmap>();
-        mLightSourcesList.add(BitmapUtils.generateBlackBitmap(mScreenSize));
-        for (int i=1; i <= Constants.NUM_IMAGES; i++) {
-            mLightSourcesList.add(
-                    BitmapUtils.generateLightPattern(mScreenSize, i, Constants.NUM_IMAGES));
-        }
-
+        mProgressScreen = (LinearLayout) findViewById(R.id.preparing);
         mCameraPreview = (CameraPreview) findViewById(R.id.camera_surface);
         mCameraPreview.setCamera(mCamera);
         mCameraLighting = (ImageView) findViewById(R.id.camera_lighting);
@@ -80,6 +73,9 @@ public class CameraActivity extends Activity {
                 takePicture();
             }
         });
+
+        /* prepare the different light sources */
+        new PrepareLightSources().execute(getDisplayScreenSize());
     }
 
     @Override
@@ -174,8 +170,29 @@ public class CameraActivity extends Activity {
 
     private void releaseCamera(){
         if (mCamera != null) {
+            mCameraPreview.setCamera(null);
             mCamera.release();
             mCamera = null;
+        }
+    }
+
+    private class PrepareLightSources extends AsyncTask<Size, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Size... sizes) {
+            mLightSourcesList = new ArrayList<Bitmap>();
+            mLightSourcesList.add(BitmapUtils.generateBlackBitmap(sizes[0]));
+            for (int i=1; i <= Constants.NUM_IMAGES; i++) {
+                mLightSourcesList.add(
+                        BitmapUtils.generateLightPattern(sizes[0], i, Constants.NUM_IMAGES));
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            mProgressScreen.setVisibility(View.INVISIBLE);
         }
     }
 

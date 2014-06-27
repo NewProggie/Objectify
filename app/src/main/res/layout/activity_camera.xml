@@ -26,10 +26,28 @@
         android:layout_marginRight="@dimen/scan_button_margin"
         android:text="@string/scan" />
 
-    <de.hsrm.objectify.views.LightSourceView
+    <ImageView
         android:id="@+id/camera_lighting"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:visibility="invisible" />
+
+    <LinearLayout
+        android:id="@+id/preparing"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="#FF000000"
+        android:gravity="center"
+        android:orientation="vertical">
+        <ProgressBar
+            android:layout_width="@dimen/progressbar_size"
+            android:layout_height="@dimen/progressbar_size" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/please_wait"
+            android:textSize="@dimen/please_wait_text_size"
+            style="@style/ShadowedText" />
+    </LinearLayout>
 
 </FrameLayout>
