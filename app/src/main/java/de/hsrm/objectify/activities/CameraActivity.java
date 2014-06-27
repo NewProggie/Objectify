@@ -39,7 +39,7 @@ public class CameraActivity extends Activity {
     private LinearLayout mProgressScreen;
     private Camera mCamera;
     private String mImageFileName;
-    private ArrayList<Bitmap> mImageList;
+    private int mImageCounter;
     private ArrayList<Bitmap> mLightSourcesList;
 
     @Override
@@ -60,16 +60,14 @@ public class CameraActivity extends Activity {
         mCameraPreview.setCamera(mCamera);
         mCameraLighting = (ImageView) findViewById(R.id.camera_lighting);
         mCameraLightingMask = (ImageView) findViewById(R.id.camera_lighting_mask);
-        mImageList = new ArrayList<Bitmap>();
         mTriggerPicturesButton = (Button) findViewById(R.id.trigger_images_button);
         mTriggerPicturesButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
-                mImageList.clear();
+                mImageCounter = 0;
                 mImageFileName = Storage.getRandomFileName(10);
-                setupDisplayScreen(true);
-                mCameraLighting.setImageBitmap(mLightSourcesList.get(0));
+                setupDisplayScreen();
                 takePicture();
             }
         });
@@ -85,6 +83,7 @@ public class CameraActivity extends Activity {
     }
 
     private void takePicture() {
+        mCameraLighting.setImageBitmap(mLightSourcesList.get(mImageCounter));
         /* give the light source view a little time to update itself */
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -103,11 +102,10 @@ public class CameraActivity extends Activity {
                         BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
                 BitmapUtils.saveBitmap(
                         bmp,
-                        mImageFileName + "_" + mImageList.size() + "." + Constants.IMAGE_FORMAT);
-                mImageList.add(bmp);
+                        mImageFileName + "_" + mImageCounter + "." + Constants.IMAGE_FORMAT);
+                mImageCounter += 1;
                 mCamera.startPreview();
-                if (mImageList.size() <= Constants.NUM_IMAGES) {
-                    mCameraLighting.setImageBitmap(mLightSourcesList.get(mImageList.size()));
+                if (mImageCounter <= Constants.NUM_IMAGES) {
                     takePicture();
                 } else {
                     Intent view3DModelIntent = new Intent(getApplicationContext(),
@@ -119,23 +117,18 @@ public class CameraActivity extends Activity {
         };
     }
 
-    private void setupDisplayScreen(boolean switchLightPatternsON) {
-        if (switchLightPatternsON) {
-            /* hide camera preview */
-            LayoutParams layoutParams = mCameraPreview.getLayoutParams();
-            layoutParams.width = 0;
-            layoutParams.height = 0;
-            mCameraPreview.setLayoutParams(layoutParams);
+    private void setupDisplayScreen() {
+        /* hide camera preview */
+        LayoutParams layoutParams = mCameraPreview.getLayoutParams();
+        layoutParams.width = 0;
+        layoutParams.height = 0;
+        mCameraPreview.setLayoutParams(layoutParams);
             /* hide camera trigger button */
-            mTriggerPicturesButton.setVisibility(View.INVISIBLE);
+        mTriggerPicturesButton.setVisibility(View.INVISIBLE);
             /* hide lighting mask */
-            mCameraLightingMask.setVisibility(View.INVISIBLE);
+        mCameraLightingMask.setVisibility(View.INVISIBLE);
             /* show light sources on screen */
-            mCameraLighting.setVisibility(View.VISIBLE);
-        } else {
-            mCameraLighting.setVisibility(View.INVISIBLE);
-            mCameraLightingMask.setVisibility(View.VISIBLE);
-        }
+        mCameraLighting.setVisibility(View.VISIBLE);
     }
 
     private Camera openFrontFacingCamera() {

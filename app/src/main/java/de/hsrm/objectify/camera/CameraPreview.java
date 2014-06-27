@@ -14,7 +14,6 @@ import de.hsrm.objectify.utils.CameraUtils;
 
 public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
 
-    private final String TAG = "CameraPreview";
     private SurfaceHolder mHolder;
     private Camera mCamera;
 
@@ -56,6 +55,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         try {
             mCamera.setPreviewDisplay(mHolder);
         } catch (IOException ex) {
+            String TAG = "CameraPreview";
             Log.e(TAG, ex.getLocalizedMessage());
             mCamera.release();
             mCamera = null;
