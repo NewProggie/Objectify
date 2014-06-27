@@ -27,20 +27,17 @@ import de.hsrm.objectify.utils.BitmapUtils;
 import de.hsrm.objectify.utils.CameraUtils;
 import de.hsrm.objectify.utils.Size;
 import de.hsrm.objectify.utils.Storage;
-import de.hsrm.objectify.views.LightSourceView;
 
-public class CameraActivity extends Activity implements LightSourceView.OnLightSourceChangeListener {
+public class CameraActivity extends Activity {
 
     private CameraPreview mCameraPreview;
-    private LightSourceView mCameraLighting;
+    private ImageView mCameraLighting;
     private ImageView mCameraLightingMask;
     private Camera mCamera;
-    private Size mScreenSize;
     private Button mTriggerPicturesButton;
     private String mImageFileName;
-    public ArrayList<Bitmap> mImageList;
+    private ArrayList<Bitmap> mImageList;
     private ArrayList<Bitmap> mLightSourcesList;
-    private final int NUM_PICTURES = 4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +50,7 @@ public class CameraActivity extends Activity implements LightSourceView.OnLightS
         setContentView(R.layout.activity_camera);
 
         /* get the display screen size for displaying light pattern */
-        mScreenSize = getDisplayScreenSize();
+        Size mScreenSize = getDisplayScreenSize();
 
         /* opening front facing camera */
         mCamera = openFrontFacingCamera();
@@ -61,24 +58,26 @@ public class CameraActivity extends Activity implements LightSourceView.OnLightS
         /* prepare the different light sources */
         mLightSourcesList = new ArrayList<Bitmap>();
         mLightSourcesList.add(BitmapUtils.generateBlackBitmap(mScreenSize));
-        for (int i=1; i<=NUM_PICTURES; i++) {
-            mLightSourcesList.add(BitmapUtils.generateLightPattern(mScreenSize, i, NUM_PICTURES));
+        for (int i=1; i <= Constants.NUM_IMAGES; i++) {
+            mLightSourcesList.add(
+                    BitmapUtils.generateLightPattern(mScreenSize, i, Constants.NUM_IMAGES));
         }
 
         mCameraPreview = (CameraPreview) findViewById(R.id.camera_surface);
         mCameraPreview.setCamera(mCamera);
-        mCameraLighting = (LightSourceView) findViewById(R.id.camera_lighting);
-        mCameraLighting.setLightSourceChangeListener(this);
+        mCameraLighting = (ImageView) findViewById(R.id.camera_lighting);
         mCameraLightingMask = (ImageView) findViewById(R.id.camera_lighting_mask);
         mImageList = new ArrayList<Bitmap>();
         mTriggerPicturesButton = (Button) findViewById(R.id.trigger_images_button);
         mTriggerPicturesButton.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View view) {
                 mImageList.clear();
                 mImageFileName = Storage.getRandomFileName(10);
                 setupDisplayScreen(true);
                 mCameraLighting.setImageBitmap(mLightSourcesList.get(0));
+                takePicture();
             }
         });
     }
@@ -89,8 +88,7 @@ public class CameraActivity extends Activity implements LightSourceView.OnLightS
         releaseCamera();
     }
 
-    @Override
-    public void lightSourceChanged() {
+    private void takePicture() {
         /* give the light source view a little time to update itself */
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -112,9 +110,9 @@ public class CameraActivity extends Activity implements LightSourceView.OnLightS
                         mImageFileName + "_" + mImageList.size() + "." + Constants.IMAGE_FORMAT);
                 mImageList.add(bmp);
                 mCamera.startPreview();
-                if (mImageList.size() <= NUM_PICTURES) {
+                if (mImageList.size() <= Constants.NUM_IMAGES) {
                     mCameraLighting.setImageBitmap(mLightSourcesList.get(mImageList.size()));
-
+                    takePicture();
                 } else {
                     Intent view3DModelIntent = new Intent(getApplicationContext(),
                             ReconstructionDetailActivity.class);
