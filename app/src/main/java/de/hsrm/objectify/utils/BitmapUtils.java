@@ -1,12 +1,12 @@
 package de.hsrm.objectify.utils;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
-import android.os.Environment;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -62,6 +62,10 @@ public class BitmapUtils {
         int[] pixels = new int[screenSize.width*screenSize.height];
         return Bitmap.createBitmap(
                 pixels, screenSize.width, screenSize.height, Bitmap.Config.ARGB_8888);
+    }
+
+    public static Bitmap openBitmap(String filepath) {
+        return BitmapFactory.decodeFile(filepath);
     }
 
     public static void saveBitmap(Bitmap src, String filename) {

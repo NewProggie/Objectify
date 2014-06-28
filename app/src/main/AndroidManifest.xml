@@ -41,6 +41,8 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="de.hsrm.objectify.activities.ReconstructionListActivity" />
         </activity>
+        <service android:name=".rendering.ReconstructionService">
+        </service>
     </application>
 
 </manifest>

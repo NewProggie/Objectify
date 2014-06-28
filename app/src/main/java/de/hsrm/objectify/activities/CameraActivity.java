@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import de.hsrm.objectify.R;
 import de.hsrm.objectify.camera.CameraPreview;
 import de.hsrm.objectify.camera.Constants;
+import de.hsrm.objectify.rendering.ReconstructionService;
 import de.hsrm.objectify.utils.BitmapUtils;
 import de.hsrm.objectify.utils.CameraUtils;
 import de.hsrm.objectify.utils.Size;
@@ -108,10 +109,11 @@ public class CameraActivity extends Activity {
                 if (mImageCounter <= Constants.NUM_IMAGES) {
                     takePicture();
                 } else {
-                    Intent view3DModelIntent = new Intent(getApplicationContext(),
-                            ReconstructionDetailActivity.class);
-                    view3DModelIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-                    startActivity(view3DModelIntent);
+                    Intent photometricStereo = new Intent(
+                            getApplicationContext(), ReconstructionService.class);
+                    photometricStereo.putExtra(
+                            ReconstructionService.IMAGE_PREFIX_NAME, mImageFileName);
+                    startService(photometricStereo);
                 }
             }
         };
