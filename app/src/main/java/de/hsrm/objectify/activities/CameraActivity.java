@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.Point;
 import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
@@ -42,6 +43,7 @@ public class CameraActivity extends Activity {
     private Camera mCamera;
     private String mImageFileName;
     private int mImageCounter;
+    private int mCameraRotation;
     private ArrayList<Bitmap> mLightSourcesList;
 
     @Override
@@ -102,6 +104,11 @@ public class CameraActivity extends Activity {
             public void onPictureTaken(byte[] bytes, Camera camera) {
                 Bitmap bmp = CameraUtils.fixRotateMirrorImage(
                         BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
+                /* rotate camera image according to camera rotation (portrait vs. landscape) */
+                Matrix matrix = new Matrix();
+                /* compensate the mirror */
+                matrix.postRotate((360 - mCameraRotation) % 360);
+                bmp = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, true);
                 BitmapUtils.saveBitmap(
                         bmp,
                         mImageFileName + "_" + mImageCounter + "." + Constants.IMAGE_FORMAT);
@@ -117,17 +124,16 @@ public class CameraActivity extends Activity {
                             ReconstructionService.IMAGE_PREFIX_NAME, mImageFileName);
                     startService(photometricStereo);
                     /* move to 3d viewer already */
-                    Intent view3DModelIntent = new Intent(getApplicationContext(),
+                    Intent view3DModel = new Intent(getApplicationContext(),
                             ReconstructionDetailActivity.class);
-                    view3DModelIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-                    startActivity(view3DModelIntent);
-
+                    startActivity(view3DModel);
+                    finish();
                 }
             }
         };
     }
 
-    private void setupDisplayScreen() {
+    private void setupDisplayScreen(    ) {
         /* hide camera preview */
         LayoutParams layoutParams = mCameraPreview.getLayoutParams();
         layoutParams.width = 0;
@@ -154,19 +160,17 @@ public class CameraActivity extends Activity {
         }
 
         /* determine current rotation of device */
-        int rotation = getWindowManager().getDefaultDisplay().getRotation();
-        int degrees = 0;
-        switch (rotation) {
-            case Surface.ROTATION_0:    degrees = 0;    break;
-            case Surface.ROTATION_90:   degrees = 90;   break;
-            case Surface.ROTATION_180:  degrees = 180;  break;
-            case Surface.ROTATION_270:  degrees = 270;  break;
+        switch (getWindowManager().getDefaultDisplay().getRotation()) {
+            case Surface.ROTATION_0:    mCameraRotation = 0;    break;
+            case Surface.ROTATION_90:   mCameraRotation = 90;   break;
+            case Surface.ROTATION_180:  mCameraRotation = 180;  break;
+            case Surface.ROTATION_270:  mCameraRotation = 270;  break;
         }
         CameraInfo info = new CameraInfo();
         Camera.getCameraInfo(camId, info);
 
         /* set front facing camera to portrait mode */
-        int result = (info.orientation + degrees) % 360;
+        int result = (info.orientation + mCameraRotation) % 360;
         /* compensate the mirror */
         result = (360 - result) % 360;
         camera.setDisplayOrientation(result);
