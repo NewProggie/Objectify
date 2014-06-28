@@ -12,6 +12,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Display;
+import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
@@ -109,11 +110,18 @@ public class CameraActivity extends Activity {
                 if (mImageCounter <= Constants.NUM_IMAGES) {
                     takePicture();
                 } else {
+                    /* start 3d reconstruction asynchronously in background */
                     Intent photometricStereo = new Intent(
                             getApplicationContext(), ReconstructionService.class);
                     photometricStereo.putExtra(
                             ReconstructionService.IMAGE_PREFIX_NAME, mImageFileName);
                     startService(photometricStereo);
+                    /* move to 3d viewer already */
+                    Intent view3DModelIntent = new Intent(getApplicationContext(),
+                            ReconstructionDetailActivity.class);
+                    view3DModelIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+                    startActivity(view3DModelIntent);
+
                 }
             }
         };
@@ -135,16 +143,33 @@ public class CameraActivity extends Activity {
 
     private Camera openFrontFacingCamera() {
         Camera camera;
+        int camId = CameraInfo.CAMERA_FACING_FRONT;
         /* opening front facing camera */
         try {
-            camera = Camera.open(CameraInfo.CAMERA_FACING_FRONT);
+            camera = Camera.open(camId);
         } catch (RuntimeException ex) {
             /* no front camera found, trying the first one found */
-            camera = Camera.open(0);
+            camId = 0;
+            camera = Camera.open(camId);
         }
 
-        /* set camera to portrait mode */
-        camera.setDisplayOrientation(90);
+        /* determine current rotation of device */
+        int rotation = getWindowManager().getDefaultDisplay().getRotation();
+        int degrees = 0;
+        switch (rotation) {
+            case Surface.ROTATION_0:    degrees = 0;    break;
+            case Surface.ROTATION_90:   degrees = 90;   break;
+            case Surface.ROTATION_180:  degrees = 180;  break;
+            case Surface.ROTATION_270:  degrees = 270;  break;
+        }
+        CameraInfo info = new CameraInfo();
+        Camera.getCameraInfo(camId, info);
+
+        /* set front facing camera to portrait mode */
+        int result = (info.orientation + degrees) % 360;
+        /* compensate the mirror */
+        result = (360 - result) % 360;
+        camera.setDisplayOrientation(result);
         Camera.Parameters params = camera.getParameters();
 
         /* set camera picture size to preferred image resolution (640x480) */

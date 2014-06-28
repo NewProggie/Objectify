@@ -19,7 +19,7 @@ public class ReconstructionService extends IntentService {
 
     public static final String IMAGE_PREFIX_NAME = "image_name";
     public static final String NOTIFICATION = "de.hsrm.objectify.android.service.receiver";
-    public static final String RESULT = "result";
+    public static final String NORMALMAP = "normalmap";
 
     public ReconstructionService() {
         super("ReconstructionService");
@@ -28,20 +28,26 @@ public class ReconstructionService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         String imagePrefix = intent.getStringExtra(IMAGE_PREFIX_NAME);
-        ArrayList<Bitmap> images = new ArrayList<Bitmap>();
 
         /* read images */
+        ArrayList<Bitmap> images = new ArrayList<Bitmap>();
         for (int i = 0; i <= Constants.NUM_IMAGES; i++) {
-            images.add(BitmapUtils.openBitmap(Storage.getExternalRootDirectory() +
-                    "/" + imagePrefix + "_" + i + "." + Constants.IMAGE_FORMAT));
+            Bitmap img = BitmapUtils.openBitmap(Storage.getExternalRootDirectory() +
+                    "/" + imagePrefix + "_" + i + "." + Constants.IMAGE_FORMAT);
+            images.add(img);
         }
 
         int width = images.get(0).getWidth();
         int height = images.get(0).getHeight();
+
+        /* subtract first ambient image */
+        Bitmap ambient = images.remove(0);
+
+
         Bitmap N = computeNormals(images, width, height);
         BitmapUtils.saveBitmap(N, "normals.png");
 
-        publishResult(1);
+        publishResult(Storage.getExternalRootDirectory()+"/normals.png");
     }
 
     private Bitmap computeNormals(ArrayList<Bitmap> images, int width, int height) {
@@ -68,6 +74,7 @@ public class ReconstructionService extends IntentService {
         SingularValueDecomposition<DenseMatrix64F> svd =
                 DecompositionFactory.svd(A.numRows, A.numCols, true, true, true);
 
+        /* TODO: catch java.lang.OutOfMemoryError */
         if (!svd.decompose(A)) {
             throw new RuntimeException("Decomposition failed");
         }
@@ -97,9 +104,9 @@ public class ReconstructionService extends IntentService {
         return S;
     }
 
-    private void publishResult(int result) {
+    private void publishResult(String normalmap) {
         Intent publish = new Intent(NOTIFICATION);
-        publish.putExtra(RESULT, result);
+        publish.putExtra(NORMALMAP, normalmap);
         sendBroadcast(publish);
     }
 }
