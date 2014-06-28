@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.util.Log;
 
 import org.ejml.data.DenseMatrix64F;
 import org.ejml.factory.DecompositionFactory;
@@ -29,31 +30,104 @@ public class ReconstructionService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         String imagePrefix = intent.getStringExtra(IMAGE_PREFIX_NAME);
 
+
         /* read images */
         ArrayList<Bitmap> images = new ArrayList<Bitmap>();
-        for (int i = 0; i <= Constants.NUM_IMAGES; i++) {
+        for (int i = 0; i < Constants.NUM_IMAGES; i++) {
             Bitmap img = BitmapUtils.openBitmap(Storage.getExternalRootDirectory() +
-                    "/" + imagePrefix + "_" + i + "." + Constants.IMAGE_FORMAT);
+                    "/kai_" + i + ".png");
+//            Bitmap img = BitmapUtils.openBitmap(Storage.getExternalRootDirectory() +
+//                    "/" + imagePrefix + "_" + i + "." + Constants.IMAGE_FORMAT);
             images.add(img);
         }
 
+        Bitmap Mask = BitmapUtils.convertToGrayscale(BitmapUtils.binarize(images.get(0)));
+        BitmapUtils.saveBitmap(Mask, "mask.png");
+//        /* subtract first ambient image from the remaining images */
+//        Bitmap ambient = images.remove(0);
+//        for (int i = 0; i < images.size(); i++) {
+//            images.set(i, BitmapUtils.subtract(images.get(i), ambient));
+//        }
+
         int width = images.get(0).getWidth();
         int height = images.get(0).getHeight();
-
-        /* subtract first ambient image */
-        Bitmap ambient = images.remove(0);
-
-
         Bitmap N = computeNormals(images, width, height);
         BitmapUtils.saveBitmap(N, "normals.png");
+        Bitmap Z = localHeightfield(N, Mask);
+        BitmapUtils.saveBitmap(Z, "heights.png");
 
         publishResult(Storage.getExternalRootDirectory()+"/normals.png");
     }
 
+    private int index(int col, int row, int width) {
+        return (row * width) + col;
+    }
+
+    private Bitmap localHeightfield(Bitmap Normals, Bitmap Mask) {
+        int width = Normals.getWidth();
+        int height = Normals.getHeight();
+        float[][] Z = new float[width][height];
+
+        int[] normals = new int[width*height];
+        int[] mask = new int[width*height];
+        Normals.getPixels(normals, 0, width, 0, 0, width, height);
+        Mask.getPixels(mask, 0, width, 0, 0, width, height);
+
+        for (int k = 0; k < 3000; k++) {
+            Log.i("ReconstructionService", "k: " + k);
+            for (int row = 1; row < height-1; row++) {
+                for (int col = 1; col < width-1; col++) {
+                    int up      = Color.red(mask[index(col,  row-1, width)]);
+                    int down    = Color.red(mask[index(col,  row+1, width)]);
+                    int left    = Color.red(mask[index(col-1,  row, width)]);
+                    int right   = Color.red(mask[index(col+1,  row, width)]);
+                    float zU = Z[col][row-1];
+                    float zD = Z[col][row+1];
+                    float zL = Z[col-1][row];
+                    float zR = Z[col+1][row];
+                    float nxC = Color.red(normals[index(col,   row, width)]);
+                    float nyC = Color.green(normals[index(col, row, width)]);
+                    float nxU = Color.red(normals[index(col, row-1, width)]);
+                    float nyL = Color.green(normals[index(col-1, row, width)]);
+                    if (up > 0 && down > 0 && left > 0 && right > 0)
+                        Z[col][row] = (float) (1.0f/4.0f *
+                                (zD + zU + zR + zL + nxU - nxC + nyL - nyC));
+                }
+            }
+        }
+
+        float min = Float.MAX_VALUE;
+        float max = Float.MIN_VALUE;
+        for (int row = 0; row < height; row++) {
+            for (int col = 0; col < width; col++) {
+                if (Z[col][row] < min) min = Z[col][row];
+                if (Z[col][row] > max) max = Z[col][row];
+            }
+        }
+        Log.i("ReconstructionService", "min, max: " + min + ", " + max);
+
+        /* linear transformation of matrix valies from [min,max] -> [a,b] */
+        float a = 0.0f, b = 150.0f;
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                Z[j][i] = a + (b-a) * (Z[j][i] - min) / (max - min);
+            }
+        }
+
+        int[] heightPixels = new int[width*height];
+        int idx = 0;
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                int z = (int) Z[j][i];
+                heightPixels[idx++] = Color.rgb(z, z, z);
+            }
+        }
+
+        return Bitmap.createBitmap(heightPixels, width, height, Bitmap.Config.ARGB_8888);
+    }
+
     private Bitmap computeNormals(ArrayList<Bitmap> images, int width, int height) {
-        final double GS_RED     = 0.299;
-        final double GS_GREEN   = 0.587;
-        final double GS_BLUE    = 0.114;
+
         double[][] a = new double[width*height][Constants.NUM_IMAGES];
 
         /* populate A */
@@ -61,11 +135,8 @@ public class ReconstructionService extends IntentService {
             int idx = 0;
             for (int i = 0; i < height; i++) {
                 for (int j = 0; j < width; j++) {
-                    /* retrieve pixel intensity */
                     int c = images.get(k).getPixel(j, i);
-                    a[idx++][k] = (Color.red(c) * GS_RED +
-                                   Color.green(c) * GS_GREEN +
-                                   Color.blue(c) * GS_BLUE);
+                    a[idx++][k] = Color.red(c) + Color.green(c) + Color.blue(c);
                 }
             }
         }

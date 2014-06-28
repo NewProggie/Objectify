@@ -61,11 +61,8 @@
     </content>
     <orderEntry type="jdk" jdkName="Android API 19 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" name="jtransforms-2.4.0" level="project" />
     <orderEntry type="library" exported="" name="support-v4-19.1.0" level="project" />
-    <orderEntry type="library" exported="" name="junit-4.8.2" level="project" />
     <orderEntry type="library" exported="" name="ejml-0.25" level="project" />
-    <orderEntry type="library" exported="" name="jama-1.0.3" level="project" />
   </component>
 </module>
 

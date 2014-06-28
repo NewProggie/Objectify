@@ -22,8 +22,6 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'gov.nist.math:jama:1.0.3'
     compile 'com.googlecode.efficient-java-matrix-library:ejml:0.25'
-    compile 'net.sourceforge.jtransforms:jtransforms:2.4.0'
     compile 'com.android.support:support-v4:19.+'
 }
