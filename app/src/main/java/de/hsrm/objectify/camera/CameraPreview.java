@@ -38,10 +38,6 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
     }
 
-    public Camera getCamera() {
-        return mCamera;
-    }
-
     public void setCamera(Camera camera) {
         if (this.mCamera == camera) { return; }
 

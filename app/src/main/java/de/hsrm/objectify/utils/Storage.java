@@ -29,8 +29,9 @@ public class Storage {
         StringBuilder sb = new StringBuilder();
         Random random = new Random();
         for (int i = 0; i < size; i++) {
-            char c = chars[random.nextInt(chars.length)];
-            sb.append(c);
+            /* TODO: remove returning same name during debugging */
+//            char c = chars[random.nextInt(chars.length)];
+            sb.append("a");
         }
         return sb.toString();
     }

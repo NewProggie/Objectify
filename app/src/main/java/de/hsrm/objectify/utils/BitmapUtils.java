@@ -47,7 +47,7 @@ public class BitmapUtils {
     }
 
     public static Bitmap binarize(Bitmap bmp) {
-        int threshold = 17;//getOtsuThreshold(bmp);
+        int threshold = Math.round(getOtsuThreshold(bmp));
         int width = bmp.getWidth();
         int height = bmp.getHeight();
         int[] pixels = new int[width*height];
@@ -108,6 +108,27 @@ public class BitmapUtils {
         if (value > 255) return 255;
         if (value < 0) return 0;
         return value;
+    }
+
+    public static Bitmap sum(Bitmap first, Bitmap second) {
+        assert (first.getWidth()  == second.getWidth() &&
+                first.getHeight() == second.getHeight());
+
+        int width = first.getWidth();
+        int height = first.getHeight();
+        int[] firstPixels = new int[width*height];
+        int[] secPixels = new int[width*height];
+        first.getPixels(firstPixels, 0, width, 0, 0, width, height);
+        second.getPixels(secPixels, 0, width, 0, 0, width, height);
+
+        for (int i = 0; i < width*height; i++) {
+            int srcPixel = getIntensity(firstPixels[i]);
+            int otherPixel = getIntensity(secPixels[i]);
+            int c = clamp(srcPixel + otherPixel);
+            firstPixels[i] = Color.rgb(c, c, c);
+        }
+
+        return Bitmap.createBitmap(firstPixels, width, height, first.getConfig());
     }
 
     public static Bitmap subtract(Bitmap src, Bitmap ambient) {

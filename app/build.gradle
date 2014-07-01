@@ -7,6 +7,7 @@ android {
         applicationId 'de.hsrm.objectify'
         minSdkVersion 15
         targetSdkVersion 19
+        renderscriptTargetApi = 19
         versionCode 3
         versionName '1.2'
     }

@@ -109,9 +109,9 @@ public class CameraActivity extends Activity {
                 /* compensate the mirror */
                 matrix.postRotate((360 - mCameraRotation) % 360);
                 bmp = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, true);
-//                BitmapUtils.saveBitmap(
-//                        BitmapUtils.convertToGrayscale(bmp),
-//                        mImageFileName + "_" + mImageCounter + "." + Constants.IMAGE_FORMAT);
+                BitmapUtils.saveBitmap(
+                        BitmapUtils.convertToGrayscale(bmp),
+                        mImageFileName + "_" + mImageCounter + "." + Constants.IMAGE_FORMAT);
                 mImageCounter += 1;
                 mCamera.startPreview();
                 if (mImageCounter <= Constants.NUM_IMAGES) {
