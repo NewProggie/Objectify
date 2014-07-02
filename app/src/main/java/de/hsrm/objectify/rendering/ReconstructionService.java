@@ -5,7 +5,10 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.renderscript.Allocation;
+import android.renderscript.Element;
+import android.renderscript.Float3;
 import android.renderscript.RenderScript;
+import android.renderscript.Type;
 
 import org.ejml.data.DenseMatrix64F;
 import org.ejml.factory.DecompositionFactory;
@@ -24,7 +27,9 @@ public class ReconstructionService extends IntentService {
     public static final String IMAGE_PREFIX_NAME = "image_name";
     public static final String NOTIFICATION = "de.hsrm.objectify.android.service.receiver";
     public static final String NORMALMAP = "normalmap";
-    private static final int LH_ITERATIONS = 300;
+    private static final int LH_ITERATIONS = 6000;
+    private int mWidth;
+    private int mHeight;
 
     public ReconstructionService() {
         super("ReconstructionService");
@@ -37,28 +42,59 @@ public class ReconstructionService extends IntentService {
         /* read images */
         ArrayList<Bitmap> images = new ArrayList<Bitmap>();
         /* i from 0 to Constants.NUM_IMAGES + ambient image */
-        for (int i = 0; i <= Constants.NUM_IMAGES; i++) {
+//        for (int i = 0; i <= Constants.NUM_IMAGES; i++) {
+//            Bitmap img = BitmapUtils.openBitmap(Storage.getExternalRootDirectory() +
+//                    "/" + imagePrefix + "_" + i + "." + Constants.IMAGE_FORMAT);
+        for (int i = 0; i < Constants.NUM_IMAGES; i++) {
             Bitmap img = BitmapUtils.openBitmap(Storage.getExternalRootDirectory() +
-                    "/" + imagePrefix + "_" + i + "." + Constants.IMAGE_FORMAT);
+                    "/kai_" + i + ".png");
             images.add(img);
         }
 
-        int width = images.get(0).getWidth();
-        int height = images.get(0).getHeight();
+        mWidth = images.get(0).getWidth();
+        mHeight = images.get(0).getHeight();
         /* subtract first ambient image from the remaining images */
-        Bitmap ambient = images.remove(0);
-        for (int i = 0; i < images.size(); i++) {
-            images.set(i, BitmapUtils.subtract(images.get(i), ambient));
-        }
+//        Bitmap ambient = images.remove(0);
+//        for (int i = 0; i < images.size(); i++) {
+//            images.set(i, BitmapUtils.subtract(images.get(i), ambient));
+//        }
 
         /* estimate threshold (otsu) */
         Bitmap Mask = BitmapUtils.convertToGrayscale(BitmapUtils.binarize(images.get(2)));
 
-        Bitmap Normals = computeNormals(images, Mask, width, height);
+        ArrayList<Float3> normals = computeNormals(images, Mask);
+        Bitmap Normals = BitmapUtils.convert(normals, mWidth, mHeight);
         BitmapUtils.saveBitmap(Normals, "normals.png");
 
-        Bitmap Heights = localHeightfield(Normals);
-        BitmapUtils.saveBitmap(Heights, "heights.png");
+        float[] Z = localHeightfield(normals, mWidth, mHeight);
+
+        float min = Float.MAX_VALUE;
+        float max = Float.MIN_VALUE;
+        for (int row = 0; row < mHeight; row++) {
+            for (int col = 0; col < mWidth; col++) {
+                if (Z[index(col, row, mWidth)] < min) min = Z[index(col, row, mWidth)];
+                if (Z[index(col, row, mWidth)] > max) max = Z[index(col, row, mWidth)];
+            }
+        }
+
+        /* linear transformation of matrix valies from [min,max] -> [a,b] */
+        float a = 0.0f, b = 255.0f;
+        for (int i = 0; i < mHeight; i++) {
+            for (int j = 0; j < mWidth; j++) {
+                Z[index(j, i, mWidth)] = a + (b-a) * (Z[index(j, i, mWidth)] - min) / (max - min);
+            }
+        }
+
+        int[] heightPixels = new int[mWidth*mHeight];
+        int idx = 0;
+        for (int i = 0; i < mHeight; i++) {
+            for (int j = 0; j < mWidth; j++) {
+                int z = (int) Z[index(j, i, mWidth)];
+                heightPixels[idx++] = Color.rgb(z, z, z);
+            }
+        }
+
+        BitmapUtils.saveBitmap(Bitmap.createBitmap(heightPixels, mWidth, mHeight, Bitmap.Config.ARGB_8888), "heights.png");
 
         /* clean up and publish results */
         publishResult(Storage.getExternalRootDirectory() + "/normals.png");
@@ -68,10 +104,7 @@ public class ReconstructionService extends IntentService {
         return (row * width) + col;
     }
 
-    private Bitmap localHeightfield(Bitmap Normals) {
-        int width = Normals.getWidth();
-        int height = Normals.getHeight();
-        Bitmap Heights = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+    private float[] localHeightfield(ArrayList<Float3> normals, int width, int height) {
 
         /* create RenderScript context used to communicate with RenderScript. Afterwards create the
          * actual script, which will do the real work */
@@ -83,11 +116,32 @@ public class ReconstructionService extends IntentService {
         lhIntegration.set_height(height);
         lhIntegration.set_iter(LH_ITERATIONS);
 
-        /* create allocations (input/output) to RenderScript */
-        Allocation allInNormals = Allocation.createFromBitmap(rs, Normals);
-        Allocation allOutHeights = Allocation.createFromBitmap(rs, Heights);
+        /* create allocation input to RenderScript */
+        Type myType = new Type.Builder(rs, Element.F32_4(rs)).setX(width).setY(height).create();
+        Allocation allInNormals = Allocation.createTyped(rs, myType);
 
-        /* bind image data to pNormals and pHeights pointer inside the RenderScript */
+        /* Float3 types have the same amount of storage as Float4, although the last float is
+         * always undefined. See: https://code.google.com/p/android/issues/detail?id=66182 */
+        float[] floatnorms = new float[width*height*4];
+        int idx = 0;
+        for (int i = 0; i < floatnorms.length; i+=4) {
+            floatnorms[i]   = normals.get(idx).x;
+            floatnorms[i+1] = normals.get(idx).y;
+            floatnorms[i+2] = normals.get(idx).z;
+            floatnorms[i+3] = 0.0f;
+            idx += 1;
+        }
+        allInNormals.copyFromUnchecked(floatnorms);
+//        allInNormals.copyTo(floatnorms);
+//        allInNormals.copyFromUnchecked(floatnorms);
+
+        /* create allocation output to Renderscript */
+//        Allocation allOutHeights = Allocation.createSized(rs, Element.F32_3(rs), normals.size());
+
+        Type myOtherType = new Type.Builder(rs, Element.F32(rs)).setX(width).setY(height).create();
+        Allocation allOutHeights = Allocation.createTyped(rs, myOtherType);
+
+        /* bind normals and heights data to pNormals and pHeights pointer inside RenderScript */
         lhIntegration.bind_pNormals(allInNormals);
         lhIntegration.bind_pHeights(allOutHeights);
 
@@ -95,20 +149,54 @@ public class ReconstructionService extends IntentService {
         lhIntegration.forEach_integrate(allInNormals, allOutHeights);
 
         /* save output from RenderScript */
-        allOutHeights.copyTo(Heights);
+        float[] heights = new float[width*height];
+        allOutHeights.copyTo(heights);
 
-        return Heights;
+        return heights;
     }
 
-    private Bitmap computeNormals(ArrayList<Bitmap> images, Bitmap Mask, int width, int height) {
+//    private Bitmap localHeightfield(Bitmap Normals) {
+//        int width = Normals.getWidth();
+//        int height = Normals.getHeight();
+//        Bitmap Heights = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+//
+//        /* create RenderScript context used to communicate with RenderScript. Afterwards create the
+//         * actual script, which will do the real work */
+//        RenderScript rs = RenderScript.create(getApplicationContext());
+//        ScriptC_lh_integration lhIntegration = new ScriptC_lh_integration(rs);
+//
+//        /* set params for the generator */
+//        lhIntegration.set_width(width);
+//        lhIntegration.set_height(height);
+//        lhIntegration.set_iter(LH_ITERATIONS);
+//
+//        /* create allocations (input/output) to RenderScript */
+//        Allocation allInNormals = Allocation.createFromBitmap(rs, Normals);
+//        Allocation allOutHeights = Allocation.createFromBitmap(rs, Heights);
+//
+//        /* bind image data to pNormals and pHeights pointer inside the RenderScript */
+////        lhIntegration.bind_pNormals(allInNormals);
+////        lhIntegration.bind_pHeights(allOutHeights);
+//
+//        /* pass the input to RenderScript */
+//        lhIntegration.forEach_integrate(allInNormals, allOutHeights);
+//
+//        /* save output from RenderScript */
+//        allOutHeights.copyTo(Heights);
+//
+//        return Heights;
+//    }
 
-        double[][] a = new double[width*height][Constants.NUM_IMAGES];
+    private ArrayList<Float3> computeNormals(ArrayList<Bitmap> images, Bitmap Mask) {
+
+        ArrayList<Float3> normals = new ArrayList<Float3>();
+        double[][] a = new double[mWidth*mHeight][Constants.NUM_IMAGES];
 
         /* populate A */
         for (int k = 0; k < Constants.NUM_IMAGES; k++) {
             int idx = 0;
-            for (int i = 0; i < height; i++) {
-                for (int j = 0; j < width; j++) {
+            for (int i = 0; i < mHeight; i++) {
+                for (int j = 0; j < mWidth; j++) {
                     int c = images.get(k).getPixel(j, i);
                     a[idx++][k] = Color.red(c) + Color.green(c) + Color.blue(c);
                 }
@@ -127,35 +215,27 @@ public class ReconstructionService extends IntentService {
 
         /* speeding up computation, SVD from A^TA instead of AA^T */
         DenseMatrix64F EV = svd.getV(null, false);
-        Bitmap S = android.graphics.Bitmap.createBitmap(
-                width, height, android.graphics.Bitmap.Config.ARGB_8888);
-        int[] mask = new int[width*height];
-        Mask.getPixels(mask, 0, width, 0, 0, width, height);
-        int idx = 0;
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                double rSxyz = 1.0f / Math.sqrt(Math.pow(EV.get(idx, 0), 2) +
-                                                Math.pow(EV.get(idx, 1), 2) +
-                                                Math.pow(EV.get(idx, 2), 2));
+        int[] mask = new int[mWidth*mHeight];
+        Mask.getPixels(mask, 0, mWidth, 0, 0, mWidth, mHeight);
+        for (int idx = 0; idx < mWidth*mHeight; idx++) {
+            double rSxyz = 1.0f / Math.sqrt(Math.pow(EV.get(idx, 0), 2) +
+                                            Math.pow(EV.get(idx, 1), 2) +
+                                            Math.pow(EV.get(idx, 2), 2));
                 /* EV contains the eigenvectors of A^TA, which are as well the z,x,y components of
                  * the surface normals for each pixel */
-                int sz = (int) (128.0f + 127.0f * Math.signum(EV.get(idx, 0)) *
-                        Math.abs(EV.get(idx, 0)) * rSxyz);
-                int sx = (int) (128.0f + 127.0f * Math.signum(EV.get(idx, 1)) *
-                        Math.abs(EV.get(idx, 1)) * rSxyz);
-                int sy = (int) (128.0f + 127.0f * Math.signum(EV.get(idx, 2)) *
-                        Math.abs(EV.get(idx, 2)) * rSxyz);
-                /* FIXME: optimize, dont use setPixel */
-                if (mask[index(j, i, width)] == Color.WHITE)
-                    S.setPixel(j, i, Color.rgb(sx, sy, sz));
-                else {
-                    S.setPixel(j, i, Color.rgb(0, 0, 255));
-                }
-                idx += 1;
-               }
+            float sz = (float) (128.0f + 127.0f * Math.signum(EV.get(idx, 0)) *
+                    Math.abs(EV.get(idx, 0)) * rSxyz);
+            float sx = (float) (128.0f + 127.0f * Math.signum(EV.get(idx, 1)) *
+                    Math.abs(EV.get(idx, 1)) * rSxyz);
+            float sy = (float) (128.0f + 127.0f * Math.signum(EV.get(idx, 2)) *
+                    Math.abs(EV.get(idx, 2)) * rSxyz);
+            if (mask[idx] == Color.WHITE)
+                normals.add(new Float3(sx, sy, sz));
+            else
+                normals.add(new Float3(0.0f, 0.0f, 255.0f));
         }
 
-        return S;
+        return normals;
     }
 
     private void publishResult(String normalmap) {

@@ -3,9 +3,11 @@ package de.hsrm.objectify.utils;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.renderscript.Float3;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 
 import de.hsrm.objectify.camera.Constants;
 
@@ -60,6 +62,18 @@ public class BitmapUtils {
         }
 
         return Bitmap.createBitmap(pixels, width, height, bmp.getConfig());
+    }
+
+    public static Bitmap convert(ArrayList<Float3> normalVecs, int width, int height) {
+        int[] pixels = new int[width*height];
+
+        for (int i = 0; i <normalVecs.size(); i++) {
+            pixels[i] = Color.rgb((int) normalVecs.get(i).x,
+                                  (int) normalVecs.get(i).y,
+                                  (int) normalVecs.get(i).z);
+        }
+
+        return Bitmap.createBitmap(pixels, width, height, Bitmap.Config.ARGB_8888);
     }
 
     private static int getOtsuThreshold(Bitmap bmp) {
