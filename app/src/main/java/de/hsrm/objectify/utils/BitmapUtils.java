@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.renderscript.Float3;
+import android.renderscript.Float4;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -64,7 +65,7 @@ public class BitmapUtils {
         return Bitmap.createBitmap(pixels, width, height, bmp.getConfig());
     }
 
-    public static Bitmap convert(ArrayList<Float3> normalVecs, int width, int height) {
+    public static Bitmap convert(ArrayList<Float4> normalVecs, int width, int height) {
         int[] pixels = new int[width*height];
 
         for (int i = 0; i <normalVecs.size(); i++) {
