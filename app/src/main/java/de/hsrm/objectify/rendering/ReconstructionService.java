@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.renderscript.Allocation;
 import android.renderscript.Element;
-import android.renderscript.Float3;
 import android.renderscript.Float4;
 import android.renderscript.RenderScript;
 import android.renderscript.Type;
@@ -238,21 +237,20 @@ public class ReconstructionService extends IntentService {
         cmpNormals.set_width(mWidth);
 
         /* create allocation input to RenderScript */
-        Type dataType = new Type.Builder(rs, Element.F32(rs)).setY(mWidth*mHeight).create();
+        Type dataType = new Type.Builder(rs, Element.F32_4(rs)).setX(mWidth).setY(mHeight).create();
         Allocation allInData = Allocation.createTyped(rs, dataType);
         allInData.copyFromUnchecked(data);
 
         /* create allocation for masked image */
-        Type maskType = new Type.Builder(rs, Element.I32(rs)).setY(mWidth*mHeight).create();
+        Type maskType = new Type.Builder(rs, Element.I32(rs)).setX(mWidth).setY(mHeight).create();
         Allocation allMask = Allocation.createTyped(rs, maskType);
         allMask.copyFrom(mask);
 
         /* create allocation for output */
-        Type normalsType = new Type.Builder(rs, Element.F32_4(rs)).setY(mWidth*mHeight).create();
+        Type normalsType = new Type.Builder(rs, Element.F32_4(rs)).setX(mWidth).setY(mHeight).create();
         Allocation allOutNormals = Allocation.createTyped(rs, normalsType);
 
         /* bind pMask and pData pointer inside RenderScript */
-        cmpNormals.bind_pData(allInData);
         cmpNormals.bind_pMask(allMask);
 
         cmpNormals.forEach_compute_normals(allInData, allOutNormals);

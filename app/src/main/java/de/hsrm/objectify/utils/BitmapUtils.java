@@ -3,7 +3,6 @@ package de.hsrm.objectify.utils;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.renderscript.Float3;
 import android.renderscript.Float4;
 
 import java.io.File;
@@ -67,8 +66,7 @@ public class BitmapUtils {
 
     public static Bitmap convert(ArrayList<Float4> normalVecs, int width, int height) {
         int[] pixels = new int[width*height];
-
-        for (int i = 0; i <normalVecs.size(); i++) {
+        for (int i = 0; i < width*height; i++) {
             pixels[i] = Color.rgb((int) normalVecs.get(i).x,
                                   (int) normalVecs.get(i).y,
                                   (int) normalVecs.get(i).z);
