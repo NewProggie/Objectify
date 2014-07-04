@@ -18,7 +18,7 @@ float __attribute__((kernel)) integrate(float4 in, uint32_t x, uint32_t y) {
     float down  = pNormals[((y+1) * width ) + x].w;
     float left  = pNormals[(y * width) + (x-1)].w;
     float right = pNormals[(y * width) + (x+1)].w;
-    
+
     if (up == 1.0f && down == 1.0f && left == 1.0f && right == 1.0f) {
         float zU    = pHeights[((y-1) * width) + x];
         float zD    = pHeights[((y+1) * width) + x];
