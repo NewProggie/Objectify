@@ -133,7 +133,7 @@ public class CameraActivity extends Activity {
         };
     }
 
-    private void setupDisplayScreen(    ) {
+    private void setupDisplayScreen() {
         /* hide camera preview */
         LayoutParams layoutParams = mCameraPreview.getLayoutParams();
         layoutParams.width = 0;
@@ -160,12 +160,7 @@ public class CameraActivity extends Activity {
         }
 
         /* determine current rotation of device */
-        switch (getWindowManager().getDefaultDisplay().getRotation()) {
-            case Surface.ROTATION_0:    mCameraRotation = 0;    break;
-            case Surface.ROTATION_90:   mCameraRotation = 90;   break;
-            case Surface.ROTATION_180:  mCameraRotation = 180;  break;
-            case Surface.ROTATION_270:  mCameraRotation = 270;  break;
-        }
+        mCameraRotation = getWindowManager().getDefaultDisplay().getRotation();
         CameraInfo info = new CameraInfo();
         Camera.getCameraInfo(camId, info);
 

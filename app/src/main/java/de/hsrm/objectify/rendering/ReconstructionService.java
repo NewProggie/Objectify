@@ -43,19 +43,22 @@ public class ReconstructionService extends IntentService {
         /* read images */
         ArrayList<Bitmap> images = new ArrayList<Bitmap>();
         /* i from 0 to Constants.NUM_IMAGES + ambient image */
+//        for (int i = 0; i <= Constants.NUM_IMAGES; i++) {
+//            Bitmap img = BitmapUtils.openBitmap(Storage.getExternalRootDirectory() +
+//                    "/" + imagePrefix + "_" + i + "." + Constants.IMAGE_FORMAT);
         for (int i = 0; i <= Constants.NUM_IMAGES; i++) {
             Bitmap img = BitmapUtils.openBitmap(Storage.getExternalRootDirectory() +
-                    "/" + imagePrefix + "_" + i + "." + Constants.IMAGE_FORMAT);
+                    "/kai_" + i + ".png");
             images.add(img);
         }
 
         mWidth = images.get(0).getWidth();
         mHeight = images.get(0).getHeight();
         /* subtract first ambient image from the remaining images */
-        Bitmap ambient = images.remove(0);
-        for (int i = 0; i < images.size(); i++) {
-            images.set(i, BitmapUtils.subtract(images.get(i), ambient));
-        }
+//        Bitmap ambient = images.remove(0);
+//        for (int i = 0; i < images.size(); i++) {
+//            images.set(i, BitmapUtils.subtract(images.get(i), ambient));
+//        }
 
         /* estimate threshold (otsu) */
         Bitmap Mask = BitmapUtils.convertToGrayscale(BitmapUtils.binarize(images.get(2)));
