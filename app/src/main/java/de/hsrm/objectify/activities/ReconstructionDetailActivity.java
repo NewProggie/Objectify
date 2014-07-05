@@ -1,12 +1,19 @@
 package de.hsrm.objectify.activities;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
+import android.util.Log;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.SpinnerAdapter;
 
 import de.hsrm.objectify.R;
+import de.hsrm.objectify.utils.BitmapUtils;
+import de.hsrm.objectify.utils.Storage;
 
 /**
  * An activity representing a single Reconstruction detail screen. This
@@ -19,6 +26,9 @@ import de.hsrm.objectify.R;
  */
 public class ReconstructionDetailActivity extends Activity {
 
+    private SpinnerAdapter mSpinnerAdapter;
+    private ReconstructionDetailFragment mReconstructionDetailFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,6 +36,32 @@ public class ReconstructionDetailActivity extends Activity {
 
         /* show the Up button in the action bar. */
         getActionBar().setDisplayHomeAsUpEnabled(true);
+
+        mSpinnerAdapter = ArrayAdapter.createFromResource(this, R.array.reconstruction_views,
+                android.R.layout.simple_spinner_dropdown_item);
+
+        getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+        getActionBar().setListNavigationCallbacks(mSpinnerAdapter,
+                new ActionBar.OnNavigationListener() {
+
+            @Override
+            public boolean onNavigationItemSelected(int position, long itemId) {
+                switch (position) {
+                    case 0:
+                        Bitmap norms = BitmapUtils.openBitmap(Storage.getExternalRootDirectory() +
+                                "/aaaaaaaaaa/normals.png");
+                        mReconstructionDetailFragment.setImage(norms);
+                        return true;
+                    case 1:
+                        Bitmap heights = BitmapUtils.openBitmap(Storage.getExternalRootDirectory() +
+                                "/aaaaaaaaaa/heights.png");
+                        mReconstructionDetailFragment.setImage(heights);
+                        return true;
+                }
+
+                return false;
+            }
+        });
 
         /* savedInstanceState is non-null when there is fragment state saved from previous
          * configurations of this activity (e.g. when rotating the screen from portrait to
@@ -36,10 +72,10 @@ public class ReconstructionDetailActivity extends Activity {
             Bundle arguments = new Bundle();
             arguments.putString(ReconstructionDetailFragment.ARG_ITEM_ID,
                     getIntent().getStringExtra(ReconstructionDetailFragment.ARG_ITEM_ID));
-            ReconstructionDetailFragment fragment = new ReconstructionDetailFragment();
-            fragment.setArguments(arguments);
+            mReconstructionDetailFragment = new ReconstructionDetailFragment();
+            mReconstructionDetailFragment.setArguments(arguments);
             getFragmentManager().beginTransaction()
-                    .add(R.id.reconstruction_detail_container, fragment)
+                    .add(R.id.reconstruction_detail_container, mReconstructionDetailFragment)
                     .commit();
         }
     }

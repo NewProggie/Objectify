@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -28,7 +29,7 @@ public class ReconstructionDetailFragment extends Fragment {
      * represents.
      */
     public static final String ARG_ITEM_ID = "item_id";
-    private ImageView mNormalMapView;
+    private ImageView mReconstructionImageView;
     private BroadcastReceiver receiver = new BroadcastReceiver() {
 
         @Override
@@ -36,7 +37,7 @@ public class ReconstructionDetailFragment extends Fragment {
             Bundle bundle = intent.getExtras();
             if (bundle != null) {
                 String normalMapPath = bundle.getString(ReconstructionService.NORMALMAP);
-                mNormalMapView.setImageBitmap(BitmapFactory.decodeFile(normalMapPath));
+                setImage(BitmapFactory.decodeFile(normalMapPath));
             }
         }
     };
@@ -83,8 +84,12 @@ public class ReconstructionDetailFragment extends Fragment {
             Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_reconstruction_detail, container, false);
 
-        mNormalMapView = (ImageView) rootView.findViewById(R.id.normalmap);
+        mReconstructionImageView = (ImageView) rootView.findViewById(R.id.normalmap);
 
         return rootView;
+    }
+
+    public void setImage(Bitmap image) {
+        mReconstructionImageView.setImageBitmap(image);
     }
 }

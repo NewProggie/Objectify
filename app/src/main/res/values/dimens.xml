@@ -7,4 +7,5 @@
     <dimen name="scan_button_margin">6dp</dimen>
     <dimen name="please_wait_text_size">20sp</dimen>
     <dimen name="progressbar_size">60dp</dimen>
+    <dimen name="actionbar_text_size">18sp</dimen>
 </resources>

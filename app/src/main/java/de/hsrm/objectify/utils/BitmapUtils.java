@@ -200,8 +200,8 @@ public class BitmapUtils {
         return BitmapFactory.decodeFile(filepath);
     }
 
-    public static void saveBitmap(Bitmap src, String filename) {
-        File imageDirectory = new File(Storage.getExternalRootDirectory());
+    public static void saveBitmap(Bitmap src, String dir, String filename) {
+        File imageDirectory = new File(Storage.getExternalRootDirectory() + "/" + dir);
         imageDirectory.mkdirs();
         File file = new File(imageDirectory, filename);
         if (file.exists ()) file.delete ();

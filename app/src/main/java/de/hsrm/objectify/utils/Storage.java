@@ -23,7 +23,7 @@ public class Storage {
         return Environment.MEDIA_MOUNTED.equals(state) ? true : false;
     }
 
-    public static String getRandomFileName(int size) {
+    public static String getRandomName(int size) {
         char[] chars = "aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ0123456789"
                 .toCharArray();
         StringBuilder sb = new StringBuilder();

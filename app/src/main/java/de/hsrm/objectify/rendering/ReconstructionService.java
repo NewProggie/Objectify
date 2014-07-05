@@ -25,7 +25,7 @@ import de.hsrm.objectify.utils.Storage;
 
 public class ReconstructionService extends IntentService {
 
-    public static final String IMAGE_PREFIX_NAME = "image_name";
+    public static final String DIRECTORY_NAME = "image_name";
     public static final String NOTIFICATION = "de.hsrm.objectify.android.service.receiver";
     public static final String NORMALMAP = "normalmap";
     private static final int LH_ITERATIONS = 3000;
@@ -38,7 +38,7 @@ public class ReconstructionService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        String imagePrefix = intent.getStringExtra(IMAGE_PREFIX_NAME);
+        String dirName = intent.getStringExtra(DIRECTORY_NAME);
 
         /* read images */
         ArrayList<Bitmap> images = new ArrayList<Bitmap>();
@@ -46,7 +46,7 @@ public class ReconstructionService extends IntentService {
 //        for (int i = 0; i <= Constants.NUM_IMAGES; i++) {
 //            Bitmap img = BitmapUtils.openBitmap(Storage.getExternalRootDirectory() +
 //                    "/" + imagePrefix + "_" + i + "." + Constants.IMAGE_FORMAT);
-        for (int i = 0; i <= Constants.NUM_IMAGES; i++) {
+        for (int i = 0; i < Constants.NUM_IMAGES; i++) {
             Bitmap img = BitmapUtils.openBitmap(Storage.getExternalRootDirectory() +
                     "/kai_" + i + ".png");
             images.add(img);
@@ -67,7 +67,7 @@ public class ReconstructionService extends IntentService {
         float[] normals = computeNormals(images, Mask);
         Log.i("ReconstructionService", "computeNormals took: " + (System.currentTimeMillis() - start)/1000.0f + " sec.");
         Bitmap Normals = BitmapUtils.convert(normals, mWidth, mHeight);
-        BitmapUtils.saveBitmap(Normals, "normals.png");
+        BitmapUtils.saveBitmap(Normals, dirName, "normals.png");
 
         start = System.currentTimeMillis();
         float[] Z = localHeightfield(normals);
@@ -99,10 +99,11 @@ public class ReconstructionService extends IntentService {
             }
         }
 
-        BitmapUtils.saveBitmap(Bitmap.createBitmap(heightPixels, mWidth, mHeight, Bitmap.Config.ARGB_8888), "heights.png");
+        Bitmap Height = Bitmap.createBitmap(heightPixels, mWidth, mHeight, Bitmap.Config.ARGB_8888);
+        BitmapUtils.saveBitmap(Height, dirName, "heights.png");
 
         /* clean up and publish results */
-        publishResult(Storage.getExternalRootDirectory() + "/heights.png");
+        publishResult(Storage.getExternalRootDirectory() + "/" + dirName + "/normals.png");
     }
 
     private float[] localHeightfield(float[] normals) {

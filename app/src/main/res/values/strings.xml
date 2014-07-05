@@ -14,5 +14,10 @@
     <string name="title_reconstruction_list">Reconstructions</string>
     <string name="title_reconstruction_detail">Reconstruction Detail</string>
     <string name="please_wait">Preparing. Please Wait...</string>
+    <string-array name="reconstruction_views">
+        <item>Normalmap</item>
+        <item>Heightmap</item>
+        <item>3D-Reconstruction</item>
+    </string-array>
 
 </resources>

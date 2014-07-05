@@ -2,10 +2,12 @@ package de.hsrm.objectify.activities;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.Point;
+import android.graphics.drawable.NinePatchDrawable;
 import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.PictureCallback;
@@ -13,7 +15,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Display;
-import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
@@ -41,10 +42,10 @@ public class CameraActivity extends Activity {
     private Button mTriggerPicturesButton;
     private LinearLayout mProgressScreen;
     private Camera mCamera;
-    private String mImageFileName;
+    private String mDirName;
     private int mImageCounter;
     private int mCameraRotation;
-    private ArrayList<Bitmap> mLightSourcesList;
+    private ArrayList<NinePatchDrawable> mLightSourcesList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +71,7 @@ public class CameraActivity extends Activity {
             @Override
             public void onClick(View view) {
                 mImageCounter = 0;
-                mImageFileName = Storage.getRandomFileName(10);
+                mDirName = Storage.getRandomName(10);
                 setupDisplayScreen();
                 takePicture();
             }
@@ -87,7 +88,8 @@ public class CameraActivity extends Activity {
     }
 
     private void takePicture() {
-        mCameraLighting.setImageBitmap(mLightSourcesList.get(mImageCounter));
+        mCameraLighting.setImageDrawable(mLightSourcesList.get(mImageCounter));
+//        mCameraLighting.setImageBitmap(mLightSourcesList.get(mImageCounter));
         /* give the light source view a little time to update itself */
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -109,9 +111,9 @@ public class CameraActivity extends Activity {
                 /* compensate the mirror */
                 matrix.postRotate((360 - mCameraRotation) % 360);
                 bmp = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, true);
-                BitmapUtils.saveBitmap(
-                        BitmapUtils.convertToGrayscale(bmp),
-                        mImageFileName + "_" + mImageCounter + "." + Constants.IMAGE_FORMAT);
+
+                String fileName = "image_" + mImageCounter + "." + Constants.IMAGE_FORMAT;
+                BitmapUtils.saveBitmap(BitmapUtils.convertToGrayscale(bmp), mDirName, fileName);
                 mImageCounter += 1;
                 mCamera.startPreview();
                 if (mImageCounter <= Constants.NUM_IMAGES) {
@@ -121,7 +123,7 @@ public class CameraActivity extends Activity {
                     Intent photometricStereo = new Intent(
                             getApplicationContext(), ReconstructionService.class);
                     photometricStereo.putExtra(
-                            ReconstructionService.IMAGE_PREFIX_NAME, mImageFileName);
+                            ReconstructionService.DIRECTORY_NAME, mDirName);
                     startService(photometricStereo);
                     /* move to 3d viewer already */
                     Intent view3DModel = new Intent(getApplicationContext(),
@@ -197,14 +199,23 @@ public class CameraActivity extends Activity {
 
     private class PrepareLightSources extends AsyncTask<Size, Void, Void> {
 
+        private NinePatchDrawable getCamLighting(Resources res, Size size, int drawableId) {
+            NinePatchDrawable npd = (NinePatchDrawable) res.getDrawable(drawableId);
+            npd.setBounds(0, 0, size.width, size.height);
+            return npd;
+        }
+
         @Override
         protected Void doInBackground(Size... sizes) {
-            mLightSourcesList = new ArrayList<Bitmap>();
-            mLightSourcesList.add(BitmapUtils.generateBlackBitmap(sizes[0]));
-            for (int i=1; i <= Constants.NUM_IMAGES; i++) {
-                mLightSourcesList.add(
-                        BitmapUtils.generateLightPattern(sizes[0], i, Constants.NUM_IMAGES));
-            }
+            mLightSourcesList = new ArrayList<NinePatchDrawable>();
+
+            Resources res = getResources();
+            mLightSourcesList.add(getCamLighting(res, sizes[0], R.drawable.camera_lighting_black));
+            mLightSourcesList.add(getCamLighting(res, sizes[0], R.drawable.camera_lighting_left));
+            mLightSourcesList.add(getCamLighting(res, sizes[0], R.drawable.camera_lighting_top));
+            mLightSourcesList.add(getCamLighting(res, sizes[0], R.drawable.camera_lighting_right));
+            mLightSourcesList.add(getCamLighting(res, sizes[0], R.drawable.camera_lighting_bottom));
+
             return null;
         }
 
