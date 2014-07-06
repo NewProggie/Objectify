@@ -26,7 +26,7 @@ import de.hsrm.objectify.utils.Storage;
  * This activity is mostly just a 'shell' activity containing nothing
  * more than a {@link ReconstructionDetailFragment}.
  */
-public class ReconstructionDetailActivity extends Activity implements ModelViewerFragment.OnFragmentInteractionListener {
+public class ReconstructionDetailActivity extends Activity {
 
     private SpinnerAdapter mSpinnerAdapter;
     private ReconstructionDetailFragment mReconstructionDetailFragment;
@@ -43,31 +43,7 @@ public class ReconstructionDetailActivity extends Activity implements ModelViewe
                 android.R.layout.simple_spinner_dropdown_item);
 
         getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-        getActionBar().setListNavigationCallbacks(mSpinnerAdapter,
-                new ActionBar.OnNavigationListener() {
 
-            @Override
-            public boolean onNavigationItemSelected(int position, long itemId) {
-                switch (position) {
-                    case 0:
-                        Bitmap norms = BitmapUtils.openBitmap(Storage.getExternalRootDirectory() +
-                                "/aaaaaaaaaa/normals.png");
-                        mReconstructionDetailFragment.setImage(norms);
-                        return true;
-                    case 1:
-                        Bitmap heights = BitmapUtils.openBitmap(Storage.getExternalRootDirectory() +
-                                "/aaaaaaaaaa/heights.png");
-                        mReconstructionDetailFragment.setImage(heights);
-                        return true;
-                    case 2:
-                        ModelViewerFragment mvFrag = new ModelViewerFragment();
-                        getFragmentManager().beginTransaction().add(R.id.reconstruction_detail_container, mvFrag).commit();
-                        return true;
-                }
-
-                return false;
-            }
-        });
 
         /* savedInstanceState is non-null when there is fragment state saved from previous
          * configurations of this activity (e.g. when rotating the screen from portrait to
@@ -99,8 +75,4 @@ public class ReconstructionDetailActivity extends Activity implements ModelViewe
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-
-    }
 }

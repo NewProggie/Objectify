@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import de.hsrm.objectify.R;
-import de.hsrm.objectify.activities.dummy.DummyContent;
 import de.hsrm.objectify.rendering.ReconstructionService;
 
 /**
@@ -43,11 +42,6 @@ public class ReconstructionDetailFragment extends Fragment {
     };
 
     /**
-     * The dummy content this fragment is presenting.
-     */
-    private DummyContent.DummyItem mItem;
-
-    /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
@@ -62,7 +56,7 @@ public class ReconstructionDetailFragment extends Fragment {
             // Load the dummy content specified by the fragment
             // arguments. In a real-world scenario, use a Loader
             // to load content from a content provider.
-            mItem = DummyContent.ITEM_MAP.get(getArguments().getString(ARG_ITEM_ID));
+//            mItem = DummyContent.ITEM_MAP.get(getArguments().getString(ARG_ITEM_ID));
         }
     }
 
