@@ -1,9 +1,12 @@
 package de.hsrm.objectify.rendering;
 
 import android.app.IntentService;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.net.Uri;
 import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.RenderScript;
@@ -18,8 +21,10 @@ import org.ejml.ops.CommonOps;
 import java.util.ArrayList;
 
 import de.hsrm.objectify.camera.Constants;
+import de.hsrm.objectify.database.DatabaseProvider;
 import de.hsrm.objectify.rendering.compute_normals.ScriptC_compute_normals;
 import de.hsrm.objectify.rendering.lh_integration.ScriptC_lh_integration;
+import de.hsrm.objectify.utils.ArrayUtils;
 import de.hsrm.objectify.utils.BitmapUtils;
 import de.hsrm.objectify.utils.Storage;
 
@@ -70,22 +75,7 @@ public class ReconstructionService extends IntentService {
         float[] Z = localHeightfield(normals);
         Log.i("ReconstructionService", "localHeightfield took: " + (System.currentTimeMillis() - start)/1000.0f + " sec.");
 
-        float min = Float.MAX_VALUE;
-        float max = Float.MIN_VALUE;
-        for (int row = 0; row < mHeight; row++) {
-            for (int col = 0; col < mWidth; col++) {
-                if (Z[row*mWidth+col] < min) min = Z[row*mWidth+col];
-                if (Z[row*mWidth+col] > max) max = Z[row*mWidth+col];
-            }
-        }
-
-        /* linear transformation of matrix valies from [min,max] -> [a,b] */
-        float a = 0.0f, b = 200.0f;
-        for (int i = 0; i < mHeight; i++) {
-            for (int j = 0; j < mWidth; j++) {
-                Z[i*mWidth+j] = a + (b-a) * (Z[i*mWidth+j] - min) / (max - min);
-            }
-        }
+        Z = ArrayUtils.linearTransform(Z, 0.0f, 150.0f);
 
         int[] heightPixels = new int[mWidth*mHeight];
         int idx = 0;
