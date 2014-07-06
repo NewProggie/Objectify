@@ -122,9 +122,6 @@ public class BitmapUtils {
     }
 
     public static Bitmap subtract(Bitmap src, Bitmap ambient) {
-        assert (src.getWidth()  == ambient.getWidth() &&
-                src.getHeight() == ambient.getHeight());
-
         int width = src.getWidth();
         int height = src.getHeight();
         int[] srcPixels = new int[width*height];
