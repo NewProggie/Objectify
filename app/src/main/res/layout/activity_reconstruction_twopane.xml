@@ -23,7 +23,7 @@
 
     <fragment
         android:id="@+id/reconstruction_list"
-        android:name="de.hsrm.objectify.activities.ReconstructionListFragment"
+        android:name="de.hsrm.objectify.activities.fragments.ReconstructionListFragment"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"

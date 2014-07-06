@@ -4,14 +4,16 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
-import android.util.Log;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.SpinnerAdapter;
 
 import de.hsrm.objectify.R;
+import de.hsrm.objectify.activities.fragments.ModelViewerFragment;
+import de.hsrm.objectify.activities.fragments.ReconstructionDetailFragment;
 import de.hsrm.objectify.utils.BitmapUtils;
 import de.hsrm.objectify.utils.Storage;
 
@@ -24,7 +26,7 @@ import de.hsrm.objectify.utils.Storage;
  * This activity is mostly just a 'shell' activity containing nothing
  * more than a {@link ReconstructionDetailFragment}.
  */
-public class ReconstructionDetailActivity extends Activity {
+public class ReconstructionDetailActivity extends Activity implements ModelViewerFragment.OnFragmentInteractionListener {
 
     private SpinnerAdapter mSpinnerAdapter;
     private ReconstructionDetailFragment mReconstructionDetailFragment;
@@ -56,6 +58,10 @@ public class ReconstructionDetailActivity extends Activity {
                         Bitmap heights = BitmapUtils.openBitmap(Storage.getExternalRootDirectory() +
                                 "/aaaaaaaaaa/heights.png");
                         mReconstructionDetailFragment.setImage(heights);
+                        return true;
+                    case 2:
+                        ModelViewerFragment mvFrag = new ModelViewerFragment();
+                        getFragmentManager().beginTransaction().add(R.id.reconstruction_detail_container, mvFrag).commit();
                         return true;
                 }
 
@@ -91,5 +97,10 @@ public class ReconstructionDetailActivity extends Activity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
     }
 }

@@ -1,4 +1,4 @@
-package de.hsrm.objectify.activities;
+package de.hsrm.objectify.activities.fragments;
 
 import android.app.Fragment;
 import android.content.BroadcastReceiver;
@@ -19,8 +19,8 @@ import de.hsrm.objectify.rendering.ReconstructionService;
 
 /**
  * A fragment representing a single Reconstruction detail screen.
- * This fragment is either contained in a {@link ReconstructionListActivity}
- * in two-pane mode (on tablets) or a {@link ReconstructionDetailActivity}
+ * This fragment is either contained in a {@link de.hsrm.objectify.activities.ReconstructionListActivity}
+ * in two-pane mode (on tablets) or a {@link de.hsrm.objectify.activities.ReconstructionDetailActivity}
  * on handsets.
  */
 public class ReconstructionDetailFragment extends Fragment {

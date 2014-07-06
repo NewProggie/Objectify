@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import de.hsrm.objectify.R;
+import de.hsrm.objectify.activities.fragments.ReconstructionDetailFragment;
+import de.hsrm.objectify.activities.fragments.ReconstructionListFragment;
 
 /**
  * An activity representing a list of Reconstructions. This activity
@@ -19,7 +21,7 @@ import de.hsrm.objectify.R;
  * (if present) is a {@link ReconstructionDetailFragment}.
  * <p>
  * This activity also implements the required
- * {@link ReconstructionListFragment.Callbacks} interface
+ * {@link de.hsrm.objectify.activities.fragments.ReconstructionListFragment.Callbacks} interface
  * to listen for item selections.
  */
 public class ReconstructionListActivity extends Activity

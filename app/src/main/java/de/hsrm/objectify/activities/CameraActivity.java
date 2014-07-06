@@ -89,14 +89,13 @@ public class CameraActivity extends Activity {
 
     private void takePicture() {
         mCameraLighting.setImageDrawable(mLightSourcesList.get(mImageCounter));
-//        mCameraLighting.setImageBitmap(mLightSourcesList.get(mImageCounter));
         /* give the light source view a little time to update itself */
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 mCamera.takePicture(null, null, cameraImageCallback());
             }
-        }, 100);
+        }, 25);
     }
 
     private PictureCallback cameraImageCallback() {
