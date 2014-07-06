@@ -3,8 +3,6 @@ package de.hsrm.objectify.activities;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
@@ -12,10 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.SpinnerAdapter;
 
 import de.hsrm.objectify.R;
-import de.hsrm.objectify.activities.fragments.ModelViewerFragment;
-import de.hsrm.objectify.activities.fragments.ReconstructionDetailFragment;
-import de.hsrm.objectify.utils.BitmapUtils;
-import de.hsrm.objectify.utils.Storage;
+import de.hsrm.objectify.activities.fragments.NormalMapViewFragment;
 
 /**
  * An activity representing a single Reconstruction detail screen. This
@@ -24,12 +19,12 @@ import de.hsrm.objectify.utils.Storage;
  * in a {@link ReconstructionListActivity}.
  * <p>
  * This activity is mostly just a 'shell' activity containing nothing
- * more than a {@link ReconstructionDetailFragment}.
+ * more than a {@link de.hsrm.objectify.activities.fragments.NormalMapViewFragment}.
  */
 public class ReconstructionDetailActivity extends Activity {
 
     private SpinnerAdapter mSpinnerAdapter;
-    private ReconstructionDetailFragment mReconstructionDetailFragment;
+    private NormalMapViewFragment mNormalMapViewFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,12 +47,12 @@ public class ReconstructionDetailActivity extends Activity {
         if (savedInstanceState == null) {
             /* create the detail fragment and add it to the activity using a fragment transaction */
             Bundle arguments = new Bundle();
-            arguments.putString(ReconstructionDetailFragment.ARG_ITEM_ID,
-                    getIntent().getStringExtra(ReconstructionDetailFragment.ARG_ITEM_ID));
-            mReconstructionDetailFragment = new ReconstructionDetailFragment();
-            mReconstructionDetailFragment.setArguments(arguments);
+            arguments.putString(NormalMapViewFragment.ARG_ITEM_ID,
+                    getIntent().getStringExtra(NormalMapViewFragment.ARG_ITEM_ID));
+            mNormalMapViewFragment = new NormalMapViewFragment();
+            mNormalMapViewFragment.setArguments(arguments);
             getFragmentManager().beginTransaction()
-                    .add(R.id.reconstruction_detail_container, mReconstructionDetailFragment)
+                    .add(R.id.reconstruction_detail_container, mNormalMapViewFragment)
                     .commit();
         }
     }

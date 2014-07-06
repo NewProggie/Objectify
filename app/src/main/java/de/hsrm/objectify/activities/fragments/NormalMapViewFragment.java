@@ -22,7 +22,7 @@ import de.hsrm.objectify.rendering.ReconstructionService;
  * in two-pane mode (on tablets) or a {@link de.hsrm.objectify.activities.ReconstructionDetailActivity}
  * on handsets.
  */
-public class ReconstructionDetailFragment extends Fragment {
+public class NormalMapViewFragment extends Fragment {
     /**
      * The fragment argument representing the item ID that this fragment
      * represents.
@@ -45,7 +45,7 @@ public class ReconstructionDetailFragment extends Fragment {
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public ReconstructionDetailFragment() {
+    public NormalMapViewFragment() {
     }
 
     @Override

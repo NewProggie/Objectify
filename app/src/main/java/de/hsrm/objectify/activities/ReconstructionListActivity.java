@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import de.hsrm.objectify.R;
-import de.hsrm.objectify.activities.fragments.ReconstructionDetailFragment;
+import de.hsrm.objectify.activities.fragments.NormalMapViewFragment;
 import de.hsrm.objectify.activities.fragments.ReconstructionListFragment;
 
 /**
@@ -18,7 +18,7 @@ import de.hsrm.objectify.activities.fragments.ReconstructionListFragment;
  * <p>
  * The activity makes heavy use of fragments. The list of items is a
  * {@link ReconstructionListFragment} and the item details
- * (if present) is a {@link ReconstructionDetailFragment}.
+ * (if present) is a {@link de.hsrm.objectify.activities.fragments.NormalMapViewFragment}.
  * <p>
  * This activity also implements the required
  * {@link de.hsrm.objectify.activities.fragments.ReconstructionListFragment.Callbacks} interface
@@ -66,8 +66,8 @@ public class ReconstructionListActivity extends Activity
             // adding or replacing the detail fragment using a
             // fragment transaction.
             Bundle arguments = new Bundle();
-            arguments.putString(ReconstructionDetailFragment.ARG_ITEM_ID, id);
-            ReconstructionDetailFragment fragment = new ReconstructionDetailFragment();
+            arguments.putString(NormalMapViewFragment.ARG_ITEM_ID, id);
+            NormalMapViewFragment fragment = new NormalMapViewFragment();
             fragment.setArguments(arguments);
             getFragmentManager().beginTransaction()
                     .replace(R.id.reconstruction_detail_container, fragment)
@@ -77,7 +77,7 @@ public class ReconstructionListActivity extends Activity
             // In single-pane mode, simply start the detail activity
             // for the selected item ID.
             Intent detailIntent = new Intent(this, ReconstructionDetailActivity.class);
-            detailIntent.putExtra(ReconstructionDetailFragment.ARG_ITEM_ID, id);
+            detailIntent.putExtra(NormalMapViewFragment.ARG_ITEM_ID, id);
             startActivity(detailIntent);
         }
     }

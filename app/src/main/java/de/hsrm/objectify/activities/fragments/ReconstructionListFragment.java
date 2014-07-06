@@ -13,7 +13,7 @@ import de.hsrm.objectify.activities.dummy.DummyContent;
  * A list fragment representing a list of Reconstructions. This fragment
  * also supports tablet devices by allowing list items to be given an
  * 'activated' state upon selection. This helps indicate which item is
- * currently being viewed in a {@link de.hsrm.objectify.activities.fragments.ReconstructionDetailFragment}.
+ * currently being viewed in a {@link NormalMapViewFragment}.
  * <p>
  * Activities containing this fragment MUST implement the {@link Callbacks}
  * interface.
