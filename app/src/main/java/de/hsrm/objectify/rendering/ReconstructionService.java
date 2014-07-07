@@ -18,9 +18,16 @@ import org.ejml.factory.DecompositionFactory;
 import org.ejml.interfaces.decomposition.SingularValueDecomposition;
 import org.ejml.ops.CommonOps;
 
+import java.io.BufferedOutputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
+import java.nio.FloatBuffer;
+import java.nio.ShortBuffer;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import de.hsrm.objectify.camera.Constants;
+import de.hsrm.objectify.database.DatabaseAdapter;
 import de.hsrm.objectify.database.DatabaseProvider;
 import de.hsrm.objectify.rendering.compute_normals.ScriptC_compute_normals;
 import de.hsrm.objectify.rendering.lh_integration.ScriptC_lh_integration;
@@ -89,8 +96,100 @@ public class ReconstructionService extends IntentService {
         Bitmap Height = Bitmap.createBitmap(heightPixels, mWidth, mHeight, Bitmap.Config.ARGB_8888);
         BitmapUtils.saveBitmap(Height, dirName, "heights.png");
 
+        ObjectModel obj = createObjectModel(Z, normals, images.get(2));
+        writeDatabaseEntry(obj, images.get(2), dirName);
+
         /* clean up and publish results */
         publishResult(Storage.getExternalRootDirectory() + "/" + dirName + "/normals.png");
+    }
+
+    private ObjectModel createObjectModel(float[] heights, float[] normals, Bitmap texture) {
+
+        FloatBuffer vertBuf    = FloatBuffer.allocate(mWidth * mHeight * 3);
+        FloatBuffer normBuf   = FloatBuffer.allocate(mWidth * mHeight * 3);
+        ArrayList<Short> indexes = new ArrayList<Short>();
+        vertBuf.rewind();
+        normBuf.rewind();
+
+        /* vertices and normals */
+        int idx = 0;
+        for (int y = 0; y < mHeight; y++) {
+            for (int x = 0; x < mWidth; x++) {
+                float[] imgPt = new float[] { Float.valueOf(x), Float.valueOf(y), heights[idx] };
+                float[] nVec  = new float[] { normals[4*idx], normals[4*idx+1], normals[4*idx+2] };
+                vertBuf.put(imgPt);
+                normBuf.put(nVec);
+                idx += 1;
+            }
+        }
+
+        /* faces */
+        for (int i = 0; i < mHeight; i++) {
+            for (int j = 0; j < mWidth; j++) {
+                short index = (short) (j + (i * mWidth));
+                indexes.add(index);
+                indexes.add((short) (index + mWidth));
+                indexes.add((short) (index + 1));
+
+                indexes.add((short) (index + 1));
+                indexes.add((short) (index + mWidth));
+                indexes.add((short) (index + mWidth + 1));
+            }
+        }
+
+        ShortBuffer indexBuf = ShortBuffer.allocate(indexes.size());
+        indexBuf.rewind();
+        for (int i = 0; i < indexes.size(); i++) {
+            indexBuf.put(indexes.get(i));
+        }
+
+        return new ObjectModel(vertBuf.array(), normBuf.array(), indexBuf.array(), texture);
+    }
+
+    private void writeDatabaseEntry(ObjectModel objectModel, Bitmap texture, String dirName) {
+
+        /* initialize content resolver and database write */
+        ContentResolver cr = getContentResolver();
+        ContentValues values = new ContentValues();
+        Uri objUri = DatabaseProvider.CONTENT_URI.buildUpon().appendPath("object").build();
+        Uri galleryUri = DatabaseProvider.CONTENT_URI.buildUpon().appendPath("gallery").build();
+
+        /* get timestamp for saving into database */
+        Calendar cal = Calendar.getInstance();
+        String date = String.valueOf(cal.getTimeInMillis());
+
+        /* write 3d reconstruction to disk */
+        String filePath = Storage.getExternalRootDirectory() + "/" + dirName + "/model.kaw";
+        try {
+            ObjectOutputStream objOutput = new ObjectOutputStream(new FileOutputStream(filePath));
+            objOutput.writeObject(objectModel);
+            objOutput.close();
+
+            /* write object database entry */
+            values.put(DatabaseAdapter.OBJECT_FILE_PATH_KEY, filePath);
+            Uri objResultUri = cr.insert(objUri, values);
+            String objectID = objResultUri.getLastPathSegment();
+            values.clear();
+
+            /* write texture to disk. TODO: maybe unnecessary, use existing one */
+            String imgPath = Storage.getExternalRootDirectory() + "/" + dirName + "/texture.png";
+            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(imgPath));
+            texture.compress(Bitmap.CompressFormat.PNG, 100, bos);
+            bos.flush();
+            bos.close();
+
+            /* write gallery database entry */
+            values.put(DatabaseAdapter.GALLERY_THUMBNAIL_PATH_KEY, imgPath);
+            values.put(DatabaseAdapter.GALLERY_DATE_KEY, date);
+            values.put(DatabaseAdapter.GALLERY_DIMENSION_KEY, "640x480");
+            values.put(DatabaseAdapter.GALLERY_FACES_KEY, "12345");
+            values.put(DatabaseAdapter.GALLERY_VERTICES_KEY, "23456");
+            values.put(DatabaseAdapter.GALLERY_OBJECT_ID_KEY, objectID);
+            cr.insert(galleryUri, values);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private float[] localHeightfield(float[] normals) {
@@ -126,14 +225,6 @@ public class ReconstructionService extends IntentService {
         allOutHeights.copyTo(heights);
 
         return heights;
-    }
-
-    private float[] toFloatArray(double[] arr) {
-        float[] floatArray = new float[arr.length];
-        for (int i = 0 ; i < arr.length; i++) {
-            floatArray[i] = (float) arr[i];
-        }
-        return floatArray;
     }
 
     private float[] computeNormals(ArrayList<Bitmap> images, Bitmap Mask) {
@@ -175,7 +266,7 @@ public class ReconstructionService extends IntentService {
         /* create allocation input to RenderScript */
         Type dataType = new Type.Builder(rs, Element.F32_4(rs)).setX(mWidth).setY(mHeight).create();
         Allocation allInData = Allocation.createTyped(rs, dataType);
-        allInData.copyFromUnchecked(toFloatArray(EV.data));
+        allInData.copyFromUnchecked(ArrayUtils.toFloatArray(EV.data));
 
         /* create allocation for masked image */
         Type maskType = new Type.Builder(rs, Element.I32(rs)).setX(mWidth).setY(mHeight).create();

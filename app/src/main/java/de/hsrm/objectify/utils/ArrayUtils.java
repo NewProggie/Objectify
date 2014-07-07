@@ -27,4 +27,12 @@ public class ArrayUtils {
         return array;
     }
 
+    public static float[] toFloatArray(double[] arr) {
+        float[] floatArray = new float[arr.length];
+        for (int i = 0 ; i < arr.length; i++) {
+            floatArray[i] = (float) arr[i];
+        }
+        return floatArray;
+    }
+
 }

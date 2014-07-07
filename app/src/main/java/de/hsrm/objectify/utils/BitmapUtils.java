@@ -65,7 +65,7 @@ public class BitmapUtils {
     public static Bitmap convert(float[] normals, int width, int height) {
         int[] pixels = new int[width*height];
         for (int i = 0; i < width*height; i++) {
-            pixels[i] = Color.rgb((int) normals[4*i],
+            pixels[i] = Color.rgb((int) normals[4*i+0],
                                   (int) normals[4*i+1],
                                   (int) normals[4*i+2]);
         }
