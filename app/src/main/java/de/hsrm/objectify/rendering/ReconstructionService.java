@@ -97,7 +97,7 @@ public class ReconstructionService extends IntentService {
         BitmapUtils.saveBitmap(Height, dirName, "heights.png");
 
         ObjectModel obj = createObjectModel(Z, normals, images.get(2));
-        writeDatabaseEntry(obj, images.get(2), dirName);
+        //writeDatabaseEntry(obj, images.get(2), dirName);
 
         /* clean up and publish results */
         publishResult(Storage.getExternalRootDirectory() + "/" + dirName + "/normals.png");
