@@ -4,7 +4,11 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
@@ -18,6 +22,7 @@ import de.hsrm.objectify.activities.fragments.InputImagesViewFragment;
 import de.hsrm.objectify.activities.fragments.ModelViewerFragment;
 import de.hsrm.objectify.activities.fragments.NormalMapViewFragment;
 import de.hsrm.objectify.camera.Constants;
+import de.hsrm.objectify.rendering.ReconstructionService;
 
 /**
  * An activity representing a single Reconstruction detail screen. This
@@ -35,6 +40,16 @@ public class ReconstructionDetailActivity extends Activity implements
 
     private SpinnerAdapter mSpinnerAdapter;
     private Fragment mCurrentFragment;
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Bundle bundle = intent.getExtras();
+            if (bundle != null) {
+                String galleryId = bundle.getString(ReconstructionService.GALLERY_ID);
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +76,23 @@ public class ReconstructionDetailActivity extends Activity implements
             transaction.add(R.id.reconstruction_detail_container, mCurrentFragment);
             transaction.commit();
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        registerReceiver(receiver, new IntentFilter(ReconstructionService.NOTIFICATION));
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        unregisterReceiver(receiver);
     }
 
     private ActionBar.OnNavigationListener spinnerNavigationCallback() {

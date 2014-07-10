@@ -29,17 +29,6 @@ public class NormalMapViewFragment extends Fragment {
      */
     public static final String ARG_ITEM_ID = "item_id";
     private ImageView mReconstructionImageView;
-    private BroadcastReceiver receiver = new BroadcastReceiver() {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Bundle bundle = intent.getExtras();
-            if (bundle != null) {
-                String normalMapPath = bundle.getString(ReconstructionService.NORMALMAP);
-                setImage(BitmapFactory.decodeFile(normalMapPath));
-            }
-        }
-    };
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -61,25 +50,10 @@ public class NormalMapViewFragment extends Fragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        getActivity().registerReceiver(
-                receiver, new IntentFilter(ReconstructionService.NOTIFICATION));
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        getActivity().unregisterReceiver(receiver);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_normal_map_view, container, false);
-
         mReconstructionImageView = (ImageView) rootView.findViewById(R.id.normalmap);
-
         return rootView;
     }
 

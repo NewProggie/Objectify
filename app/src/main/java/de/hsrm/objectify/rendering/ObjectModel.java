@@ -43,7 +43,20 @@ public class ObjectModel implements Parcelable, Serializable {
     private final int renderMode = GL10.GL_TRIANGLES;
 
     public ObjectModel(float[] vertices, float[] normals, short[] faces, Bitmap bmp) {
+        onInitialize(vertices, normals, faces, bmp);
+    }
 
+    private ObjectModel(Parcel source) {
+        Bundle b = source.readBundle();
+        textures = new int[1];
+        byte[] bb = b.getByteArray("image");
+        onInitialize(b.getFloatArray("vertices"),
+                     b.getFloatArray("normals"),
+                     b.getShortArray("faces"),
+                     BitmapFactory.decodeByteArray(bb, 0, bb.length));
+    }
+
+    private void onInitialize(float[] vertices, float[] normals, short[] faces, Bitmap bmp) {
         setVertices(vertices);
         setNormalVertices(normals);
         setFaces(faces);
@@ -78,44 +91,6 @@ public class ObjectModel implements Parcelable, Serializable {
         byte[] bb = bos.toByteArray();
         bitmapData = new byte[bb.length];
         System.arraycopy(bb, 0, bitmapData, 0, bb.length);
-    }
-
-    private ObjectModel(Parcel source) {
-        Bundle b = source.readBundle();
-        textures = new int[1];
-        /* TODO: Refactor into init() method */
-        setVertices(b.getFloatArray("vertices"));
-        setNormalVertices(b.getFloatArray("normals"));
-        setFaces(b.getShortArray("faces"));
-        byte[] bb = b.getByteArray("image");
-        bitmapData = new byte[bb.length];
-        System.arraycopy(bb, 0, bitmapData, 0, bb.length);
-        this.bmp = bmp.copy(bmp.getConfig(), true);
-
-        ByteBuffer byteBuf = ByteBuffer.allocateDirect(vertices.length * 4);
-        byteBuf.order(ByteOrder.nativeOrder());
-        vertexBuffer = byteBuf.asFloatBuffer();
-        vertexBuffer.put(vertices);
-        vertexBuffer.rewind();
-
-        byteBuf = ByteBuffer.allocateDirect(normals.length * 4);
-        byteBuf.order(ByteOrder.nativeOrder());
-        normalsBuffer = byteBuf.asFloatBuffer();
-        normalsBuffer.put(normals);
-        normalsBuffer.rewind();
-
-        byteBuf = ByteBuffer.allocateDirect(faces.length * 4);
-        byteBuf.order(ByteOrder.nativeOrder());
-        facesBuffer = byteBuf.asShortBuffer();
-        facesBuffer.put(faces);
-        facesBuffer.rewind();
-
-        computeTextureCoords(this.bmp);
-        byteBuf = ByteBuffer.allocateDirect(texture.length * 4);
-        byteBuf.order(ByteOrder.nativeOrder());
-        textureBuffer = byteBuf.asFloatBuffer();
-        textureBuffer.put(texture);
-        textureBuffer.rewind();
     }
 
     /**

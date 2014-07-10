@@ -4,16 +4,10 @@
     android:layout_height="match_parent"
     tools:context=".activities.ModelViewerFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Normalmap Fragment" />
-
     <ImageView
         android:id="@+id/normalmap"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         tools:context="de.hsrm.objectify.activities.fragments.NormalMapViewFragment" />
 
 </FrameLayout>

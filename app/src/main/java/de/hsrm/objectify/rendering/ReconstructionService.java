@@ -37,9 +37,9 @@ import de.hsrm.objectify.utils.Storage;
 
 public class ReconstructionService extends IntentService {
 
-    public static final String DIRECTORY_NAME = "image_name";
+    public static final String DIRECTORY_NAME = "dir_name";
     public static final String NOTIFICATION = "de.hsrm.objectify.android.service.receiver";
-    public static final String NORMALMAP = "normalmap";
+    public static final String GALLERY_ID = "gallery_id";
     private static final int LH_ITERATIONS = 3000;
     private int mWidth;
     private int mHeight;
@@ -97,10 +97,10 @@ public class ReconstructionService extends IntentService {
         BitmapUtils.saveBitmap(Height, dirName, "heights.png");
 
         ObjectModel obj = createObjectModel(Z, normals, images.get(2));
-        //writeDatabaseEntry(obj, images.get(2), dirName);
+        String galleryId = writeDatabaseEntry(obj, images.get(2), dirName);
 
         /* clean up and publish results */
-        publishResult(Storage.getExternalRootDirectory() + "/" + dirName + "/normals.png");
+        publishResult(galleryId);
     }
 
     private ObjectModel createObjectModel(float[] heights, float[] normals, Bitmap texture) {
@@ -146,7 +146,7 @@ public class ReconstructionService extends IntentService {
         return new ObjectModel(vertBuf.array(), normBuf.array(), indexBuf.array(), texture);
     }
 
-    private void writeDatabaseEntry(ObjectModel objectModel, Bitmap texture, String dirName) {
+    private String writeDatabaseEntry(ObjectModel objectModel, Bitmap texture, String dirName) {
 
         /* initialize content resolver and database write */
         ContentResolver cr = getContentResolver();
@@ -185,11 +185,14 @@ public class ReconstructionService extends IntentService {
             values.put(DatabaseAdapter.GALLERY_FACES_KEY, "12345");
             values.put(DatabaseAdapter.GALLERY_VERTICES_KEY, "23456");
             values.put(DatabaseAdapter.GALLERY_OBJECT_ID_KEY, objectID);
-            cr.insert(galleryUri, values);
+            Uri galleryResultUri = cr.insert(galleryUri, values);
+            return galleryResultUri.getLastPathSegment();
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        return null;
     }
 
     private float[] localHeightfield(float[] normals) {
@@ -291,9 +294,9 @@ public class ReconstructionService extends IntentService {
         return normals;
     }
 
-    private void publishResult(String normalmap) {
+    private void publishResult(String galleryId) {
         Intent publish = new Intent(NOTIFICATION);
-        publish.putExtra(NORMALMAP, normalmap);
+        publish.putExtra(GALLERY_ID, galleryId);
         sendBroadcast(publish);
     }
 }
