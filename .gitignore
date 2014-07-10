@@ -6,4 +6,4 @@ gradle/
 .idea/
 local.properties
 /build
-doc/
+/doc/html
