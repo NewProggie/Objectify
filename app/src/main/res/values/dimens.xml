@@ -5,5 +5,10 @@
     <dimen name="scan_button_margin">6dp</dimen>
     <dimen name="please_wait_text_size">20sp</dimen>
     <dimen name="progressbar_size">60dp</dimen>
-    <dimen name="actionbar_text_size">18sp</dimen>
+
+    <dimen name="action_bar_default_height">48dip</dimen>
+    <dimen name="action_bar_title_text_size">18dp</dimen>
+    <dimen name="action_bar_subtitle_text_size">14dp</dimen>
+    <dimen name="action_bar_subtitle_top_margin">-3dp</dimen>
+    <dimen name="action_bar_subtitle_bottom_margin">5dip</dimen>
 </resources>

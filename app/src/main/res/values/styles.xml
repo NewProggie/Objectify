@@ -28,7 +28,7 @@
 
     <style name="ActionBarDropdownItemTextStyle" parent="@android:style/Widget">
         <item name="android:textColor">@color/white</item>
-        <item name="android:textSize">@dimen/actionbar_text_size</item>
+        <item name="android:textSize">@dimen/action_bar_title_text_size</item>
     </style>
 
     <style name="ShadowedBlackText">

@@ -12,6 +12,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.SpinnerAdapter;
@@ -56,8 +57,8 @@ public class ReconstructionDetailActivity extends Activity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reconstruction_detail);
 
-        mSpinnerAdapter = ArrayAdapter.createFromResource(this, R.array.reconstruction_views,
-                android.R.layout.simple_spinner_dropdown_item);
+        mSpinnerAdapter = new ArrayAdapter<CharSequence>(this, R.layout.subtitled_spinner_item,
+                android.R.id.text1, getResources().getStringArray(R.array.reconstruction_views));
 
         /* show the Up button in the action bar. */
         ActionBar actionBar = getActionBar();
@@ -120,14 +121,25 @@ public class ReconstructionDetailActivity extends Activity implements
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        /* inflate the menu; this adds items to the action bar, if it is present */
+        getMenuInflater().inflate(R.menu.reconstruction, menu);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == android.R.id.home) {
-            /* this ID represents the Home or Up button. In the case of this activity, the Up
-             * button is shown. Use NavUtils to allow users to navigate up one level in the
-             * application structure */
-            NavUtils.navigateUpTo(this, new Intent(this, ReconstructionListActivity.class));
-            return true;
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                return true;
+            case R.id.action_about:
+                return true;
+            case android.R.id.home:
+                /* this ID represents the Home or Up button. In the case of this activity, the Up
+                 * button is shown. Use NavUtils to allow users to navigate up one level in the
+                 * application structure */
+                NavUtils.navigateUpTo(this, new Intent(this, ReconstructionListActivity.class));
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
