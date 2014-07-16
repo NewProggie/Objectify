@@ -8,6 +8,6 @@
         android:id="@+id/normalmap"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="de.hsrm.objectify.activities.fragments.NormalMapViewFragment" />
+        tools:context="de.hsrm.objectify.activities.fragments.ImageViewerFragment" />
 
 </FrameLayout>

@@ -2,13 +2,13 @@ package de.hsrm.objectify.activities;
 
 import android.app.ActionBar;
 import android.app.Activity;
-import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.BitmapFactory;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
@@ -18,11 +18,12 @@ import android.widget.ArrayAdapter;
 import android.widget.SpinnerAdapter;
 
 import de.hsrm.objectify.R;
-import de.hsrm.objectify.activities.fragments.HeightMapViewFragment;
-import de.hsrm.objectify.activities.fragments.InputImagesViewFragment;
+import de.hsrm.objectify.activities.fragments.IReconstructionFragment;
+import de.hsrm.objectify.activities.fragments.ImageViewerFragment;
 import de.hsrm.objectify.activities.fragments.ModelViewerFragment;
-import de.hsrm.objectify.activities.fragments.NormalMapViewFragment;
 import de.hsrm.objectify.camera.Constants;
+import de.hsrm.objectify.database.DatabaseAdapter;
+import de.hsrm.objectify.database.DatabaseProvider;
 import de.hsrm.objectify.rendering.ReconstructionService;
 
 /**
@@ -30,17 +31,14 @@ import de.hsrm.objectify.rendering.ReconstructionService;
  * activity is only used on handset devices. On tablet-size devices,
  * item details are presented side-by-side with a list of items
  * in a {@link ReconstructionListActivity}.
- * <p>
  * This activity is mostly just a 'shell' activity containing nothing
- * more than a {@link de.hsrm.objectify.activities.fragments.NormalMapViewFragment}.
+ * more than a {@link de.hsrm.objectify.activities.fragments.ImageViewerFragment}.
  */
-public class ReconstructionDetailActivity extends Activity implements
-        HeightMapViewFragment.OnFragmentInteractionListener,
-        InputImagesViewFragment.OnFragmentInteractionListener,
-        ModelViewerFragment.OnFragmentInteractionListener{
+public class ReconstructionDetailActivity extends Activity
+        implements IReconstructionFragment.OnFragmentInteractionListener {
 
     private SpinnerAdapter mSpinnerAdapter;
-    private Fragment mCurrentFragment;
+    private IReconstructionFragment mCurrentFragment;
     private BroadcastReceiver receiver = new BroadcastReceiver() {
 
         @Override
@@ -48,6 +46,15 @@ public class ReconstructionDetailActivity extends Activity implements
             Bundle bundle = intent.getExtras();
             if (bundle != null) {
                 String galleryId = bundle.getString(ReconstructionService.GALLERY_ID);
+                ContentResolver cr = getContentResolver();
+                Uri galleryItemUri = DatabaseProvider.CONTENT_URI.buildUpon()
+                        .appendPath("gallery").build();
+                Cursor c = cr.query(galleryItemUri, null, DatabaseAdapter.GALLERY_ID_KEY + "=?",
+                        new String[] { galleryId }, null);
+                c.moveToFirst();
+                mCurrentFragment.update(null);
+                String objectId = c.getString(DatabaseAdapter.GALLERY_OBJECT_ID_COLUMN);
+                c.close();
             }
         }
     };
@@ -72,7 +79,7 @@ public class ReconstructionDetailActivity extends Activity implements
          * so we don't need to manually add it */
         if (savedInstanceState == null) {
             /* create the detail fragment and add it to the activity using a fragment transaction */
-            mCurrentFragment = new NormalMapViewFragment();
+            mCurrentFragment = new ImageViewerFragment();
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
             transaction.add(R.id.reconstruction_detail_container, mCurrentFragment);
             transaction.commit();
@@ -102,10 +109,8 @@ public class ReconstructionDetailActivity extends Activity implements
             public boolean onNavigationItemSelected(int itemPosition, long itemId) {
                 switch (itemPosition) {
                     case Constants.ReconstructionType.NORMALMAP:
-                        mCurrentFragment = new NormalMapViewFragment();
-                        break;
                     case Constants.ReconstructionType.HEIGHTMAP:
-                        mCurrentFragment = new HeightMapViewFragment();
+                        mCurrentFragment = new ImageViewerFragment();
                         break;
                     case Constants.ReconstructionType.RECONSTRUCTION:
                         mCurrentFragment = new ModelViewerFragment();
@@ -115,6 +120,9 @@ public class ReconstructionDetailActivity extends Activity implements
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
                 transaction.replace(R.id.reconstruction_detail_container, mCurrentFragment);
                 transaction.commit();
+
+                /* update current active fragment */
+                mCurrentFragment.update(null);
                 return true;
             }
         };

@@ -7,6 +7,17 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import java.sql.SQLException;
 
+/** @brief Database adapter responsible for creation of db tables and updating db
+ *
+ * This class manages several database tables which look like following:
+ * @code
+ * +-----------------+  +--------------------------------------------------------------------+
+ * |      object     |  |                           gallery                                  |
+ * +-----+-----------+  +-----+------------+------+-----------+-------+----------+-----------+
+ * | _id | file_path |  | _id | image_path | date | dimension | faces | vertices | object_id |
+ * +-----+-----------+  +-----+------------+------+-----------+-------+----------+-----------+
+ * @endcode
+ */
 public class DatabaseAdapter {
 
     private static final String DATABASE_NAME               = "objectify.db";
@@ -21,8 +32,8 @@ public class DatabaseAdapter {
     public static final String DATABASE_TABLE_GALLERY       = "gallery";
     public static final String GALLERY_ID_KEY               = "_id";
     public static final int GALLERY_ID_COLUMN               = 0;
-    public static final String GALLERY_THUMBNAIL_PATH_KEY   = "thumbnail_path";
-    public static final int GALLERY_THUMBNAIL_PATH_COLUMN   = 1;
+    public static final String GALLERY_IMAGE_PATH_KEY       = "image_path";
+    public static final int GALLERY_IMAGE_PATH_COLUMN       = 1;
     public static final String GALLERY_DATE_KEY             = "date";
     public static final int GALLERY_DATE_COLUMN             = 2;
     public static final String GALLERY_DIMENSION_KEY        = "dimension";
@@ -45,7 +56,7 @@ public class DatabaseAdapter {
             + DATABASE_TABLE_GALLERY
             +                               " ("
             + GALLERY_ID_KEY +              " INTEGER PRIMARY KEY AUTOINCREMENT, "
-            + GALLERY_THUMBNAIL_PATH_KEY +  " TEXT NOT NULL, "
+            + GALLERY_IMAGE_PATH_KEY +      " TEXT NOT NULL, "
             + GALLERY_DATE_KEY +            " TEXT NOT NULL, "
             + GALLERY_DIMENSION_KEY +       " TEXT NOT NULL, "
             + GALLERY_FACES_KEY +           " TEXT NOT NULL, "

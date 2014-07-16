@@ -36,6 +36,7 @@ import de.hsrm.objectify.utils.Storage;
 
 public class CameraActivity extends Activity {
 
+    public static final String RECONSTRUCTION = "newReconstruction";
     private CameraPreview mCameraPreview;
     private ImageView mCameraLighting;
     private ImageView mCameraLightingMask;
@@ -126,7 +127,8 @@ public class CameraActivity extends Activity {
                     startService(photometricStereo);
                     /* move to 3d viewer already */
                     Intent view3DModel = new Intent(getApplicationContext(),
-                            ReconstructionDetailActivity.class);
+                            ReconstructionListActivity.class);
+                    view3DModel.putExtra(RECONSTRUCTION, true);
                     startActivity(view3DModel);
                     finish();
                 }
@@ -140,12 +142,9 @@ public class CameraActivity extends Activity {
         layoutParams.width = 0;
         layoutParams.height = 0;
         mCameraPreview.setLayoutParams(layoutParams);
-            /* hide camera trigger button */
-        mTriggerPicturesButton.setVisibility(View.INVISIBLE);
-            /* hide lighting mask */
-        mCameraLightingMask.setVisibility(View.INVISIBLE);
-            /* show light sources on screen */
-        mCameraLighting.setVisibility(View.VISIBLE);
+        mTriggerPicturesButton.setVisibility(View.INVISIBLE);   /* hide camera trigger button */
+        mCameraLightingMask.setVisibility(View.INVISIBLE);      /* hide lighting mask */
+        mCameraLighting.setVisibility(View.VISIBLE);            /* show light sources on screen */
     }
 
     private Camera openFrontFacingCamera() {
@@ -172,7 +171,7 @@ public class CameraActivity extends Activity {
         camera.setDisplayOrientation(result);
         Camera.Parameters params = camera.getParameters();
 
-        /* set camera picture size to preferred image resolution (640x480) */
+        /* set camera picture size to preferred image resolution */
         Camera.Size targetSize = CameraUtils.determineTargetPictureSize(params,
                 Constants.IMAGE_RESOLUTION);
         params.setPictureSize(targetSize.width, targetSize.height);

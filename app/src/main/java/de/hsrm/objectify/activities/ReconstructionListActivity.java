@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import de.hsrm.objectify.R;
-import de.hsrm.objectify.activities.fragments.NormalMapViewFragment;
+import de.hsrm.objectify.activities.fragments.ImageViewerFragment;
 import de.hsrm.objectify.activities.fragments.ReconstructionListFragment;
 
 /**
@@ -15,11 +15,9 @@ import de.hsrm.objectify.activities.fragments.ReconstructionListFragment;
  * lead to a {@link ReconstructionDetailActivity} representing
  * item details. On tablets, the activity presents the list of items and
  * item details side-by-side using two vertical panes.
- * <p>
  * The activity makes heavy use of fragments. The list of items is a
  * {@link ReconstructionListFragment} and the item details
- * (if present) is a {@link de.hsrm.objectify.activities.fragments.NormalMapViewFragment}.
- * <p>
+ * (if present) is a {@link de.hsrm.objectify.activities.fragments.ImageViewerFragment}.
  * This activity also implements the required
  * {@link de.hsrm.objectify.activities.fragments.ReconstructionListFragment.Callbacks} interface
  * to listen for item selections.
@@ -27,10 +25,7 @@ import de.hsrm.objectify.activities.fragments.ReconstructionListFragment;
 public class ReconstructionListActivity extends Activity
         implements ReconstructionListFragment.Callbacks {
 
-    /**
-     * Whether or not the activity is in two-pane mode, i.e. running on a tablet
-     * device.
-     */
+    /** Whether or not the activity is in two-pane mode, i.e. running on a tablet device. */
     private boolean mTwoPane;
 
     @Override
@@ -39,45 +34,46 @@ public class ReconstructionListActivity extends Activity
         setContentView(R.layout.activity_reconstruction_list);
 
         if (findViewById(R.id.reconstruction_detail_container) != null) {
-            // The detail container view will be present only in the
-            // large-screen layouts (res/values-large and
-            // res/values-sw600dp). If this view is present, then the
-            // activity should be in two-pane mode.
+            /** The detail container view will be present only in the large-screen layouts
+             * (res/values-large and res/values-sw600dp). If this view is present, then the activity
+             * should be in two-pane mode. */
             mTwoPane = true;
 
-            // In two-pane mode, list items should be given the
-            // 'activated' state when touched.
+            /* In two-pane mode, list items should be given the 'activated' state when touched. */
             ((ReconstructionListFragment) getFragmentManager()
                     .findFragmentById(R.id.reconstruction_list))
                     .setActivateOnItemClick(true);
+        } else if (getIntent().getBooleanExtra(CameraActivity.RECONSTRUCTION, false)) {
+            /** We are on a small-screen layout and a new reconstruction has been started. Moving
+             * to reconstruction detail activity. */
+            Intent view3DModel = new Intent(getApplicationContext(),
+                    ReconstructionDetailActivity.class);
+            startActivity(view3DModel);
+            finish();
         }
 
         // TODO: If exposing deep links into your app, handle intents here.
     }
 
-    /**
-     * Callback method from {@link ReconstructionListFragment.Callbacks}
-     * indicating that the item with the given ID was selected.
-     */
+    /** Callback method from {@link ReconstructionListFragment.Callbacks} indicating that the item
+     * with the given ID was selected. */
     @Override
     public void onItemSelected(String id) {
         if (mTwoPane) {
-            // In two-pane mode, show the detail view in this activity by
-            // adding or replacing the detail fragment using a
-            // fragment transaction.
+            /** In two-pane mode, show the detail view in this activity by adding or replacing the
+             * detail fragment using a fragment transaction. */
             Bundle arguments = new Bundle();
-            arguments.putString(NormalMapViewFragment.ARG_ITEM_ID, id);
-            NormalMapViewFragment fragment = new NormalMapViewFragment();
+            arguments.putString(ImageViewerFragment.ARG_ITEM_ID, id);
+            ImageViewerFragment fragment = new ImageViewerFragment();
             fragment.setArguments(arguments);
             getFragmentManager().beginTransaction()
                     .replace(R.id.reconstruction_detail_container, fragment)
                     .commit();
 
         } else {
-            // In single-pane mode, simply start the detail activity
-            // for the selected item ID.
+            /** In single-pane mode, simply start the detail activity for the selected item ID. */
             Intent detailIntent = new Intent(this, ReconstructionDetailActivity.class);
-            detailIntent.putExtra(NormalMapViewFragment.ARG_ITEM_ID, id);
+            detailIntent.putExtra(ImageViewerFragment.ARG_ITEM_ID, id);
             startActivity(detailIntent);
         }
     }

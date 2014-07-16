@@ -8,12 +8,14 @@ import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import de.hsrm.objectify.R;
+import de.hsrm.objectify.rendering.ObjectModel;
 import de.hsrm.objectify.rendering.ReconstructionService;
 
 /**
@@ -22,7 +24,7 @@ import de.hsrm.objectify.rendering.ReconstructionService;
  * in two-pane mode (on tablets) or a {@link de.hsrm.objectify.activities.ReconstructionDetailActivity}
  * on handsets.
  */
-public class NormalMapViewFragment extends Fragment {
+public class ImageViewerFragment extends IReconstructionFragment implements Updateable {
     /**
      * The fragment argument representing the item ID that this fragment
      * represents.
@@ -34,7 +36,7 @@ public class NormalMapViewFragment extends Fragment {
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public NormalMapViewFragment() {
+    public ImageViewerFragment() {
     }
 
     @Override
@@ -59,5 +61,10 @@ public class NormalMapViewFragment extends Fragment {
 
     public void setImage(Bitmap image) {
         mReconstructionImageView.setImageBitmap(image);
+    }
+
+    @Override
+    public void update(ObjectModel objectModel) {
+        Log.i("ImageViewerFragment", "objectModel");
     }
 }

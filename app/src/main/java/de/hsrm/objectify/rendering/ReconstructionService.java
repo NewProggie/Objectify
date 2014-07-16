@@ -74,13 +74,15 @@ public class ReconstructionService extends IntentService {
 
         long start = System.currentTimeMillis();
         float[] normals = computeNormals(images, Mask);
-        Log.i("ReconstructionService", "computeNormals took: " + (System.currentTimeMillis() - start)/1000.0f + " sec.");
+        Log.i("ReconstructionService", "computeNormals took: " +
+                (System.currentTimeMillis() - start)/1000.0f + " sec.");
         Bitmap Normals = BitmapUtils.convert(normals, mWidth, mHeight);
         BitmapUtils.saveBitmap(Normals, dirName, "normals.png");
 
         start = System.currentTimeMillis();
         float[] Z = localHeightfield(normals);
-        Log.i("ReconstructionService", "localHeightfield took: " + (System.currentTimeMillis() - start)/1000.0f + " sec.");
+        Log.i("ReconstructionService", "localHeightfield took: " +
+                (System.currentTimeMillis() - start)/1000.0f + " sec.");
 
         Z = ArrayUtils.linearTransform(Z, 0.0f, 150.0f);
 
@@ -97,7 +99,7 @@ public class ReconstructionService extends IntentService {
         BitmapUtils.saveBitmap(Height, dirName, "heights.png");
 
         ObjectModel obj = createObjectModel(Z, normals, images.get(2));
-        String galleryId = writeDatabaseEntry(obj, images.get(2), dirName);
+        String galleryId = writeDatabaseEntry(obj, images.get(3), dirName);
 
         /* clean up and publish results */
         publishResult(galleryId);
@@ -179,7 +181,7 @@ public class ReconstructionService extends IntentService {
             bos.close();
 
             /* write gallery database entry */
-            values.put(DatabaseAdapter.GALLERY_THUMBNAIL_PATH_KEY, imgPath);
+            values.put(DatabaseAdapter.GALLERY_IMAGE_PATH_KEY, imgPath);
             values.put(DatabaseAdapter.GALLERY_DATE_KEY, date);
             values.put(DatabaseAdapter.GALLERY_DIMENSION_KEY, "640x480");
             values.put(DatabaseAdapter.GALLERY_FACES_KEY, "12345");
