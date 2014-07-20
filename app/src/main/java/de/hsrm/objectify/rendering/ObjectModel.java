@@ -5,12 +5,12 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.opengl.GLUtils;
-import android.os.Bundle;
-import android.os.Parcel;
-import android.os.Parcelable;
+import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -49,7 +49,8 @@ public class ObjectModel implements Serializable {
     }
 
     private void onInitialize(float[] vertices, float[] normals, short[] faces, Bitmap bmp) {
-        setmVertices(vertices);
+
+        setVertices(vertices);
         setNormalVertices(normals);
         setFaces(faces);
         ByteBuffer byteBuf = ByteBuffer.allocateDirect(vertices.length * 4);
@@ -89,7 +90,7 @@ public class ObjectModel implements Serializable {
      * Needs to be called right after object has been restored from hard disk
      */
     public void setup() {
-        setmVertices(mVertices);
+        setVertices(mVertices);
         setNormalVertices(mNormals);
         setFaces(mFaces);
         this.mTextureBitmap = BitmapFactory.decodeByteArray(mBitmapData, 0, mBitmapData.length);
@@ -174,7 +175,7 @@ public class ObjectModel implements Serializable {
         return middlepoint;
     }
 
-    public void setmVertices(float[] mVertices) {
+    public void setVertices(float[] mVertices) {
         this.mVertices = new float[mVertices.length];
         System.arraycopy(mVertices, 0, this.mVertices, 0, mVertices.length);
         setVertexBuffer(this.mVertices);
@@ -259,16 +260,49 @@ public class ObjectModel implements Serializable {
         return Bitmap.createBitmap(image, 0, 0, width, height, matrix, true);
     }
 
-    private void writeObject(java.io.ObjectOutputStream out)
-            throws IOException {
-        // write 'this' to 'out'...
-        out.write(17);
+    private void writeObject(ObjectOutputStream out) throws IOException {
+
+        /* write vertices */
+        out.writeInt(mVertices.length);
+        for (int i = 0; i < mVertices.length; i++) {
+            out.writeFloat(mVertices[i]);
+        }
+
+        /* write surface normals */
+        out.writeInt(mNormals.length);
+        for (int i = 0; i < mNormals.length; i++) {
+            out.writeFloat(mNormals[i]);
+        }
+
+        /* write faces */
+        out.writeInt(mFaces.length);
+        for (int i = 0; i < mFaces.length; i++) {
+            out.writeShort(mFaces[i]);
+        }
+
+        out.flush();
     }
 
-    private void readObject(java.io.ObjectInputStream in)
-            throws IOException, ClassNotFoundException {
-        // populate the fields of 'this' from the data in 'in'...
-        in.readInt();
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+
+        /* read vertices */
+        float[] vertices = new float[in.readInt()];
+        for (int i = 0; i < vertices.length; i++) {
+            vertices[i] = in.readFloat();
+        }
+
+        /* read surface normals */
+        float[] normals = new float[in.readInt()];
+        for (int i = 0; i < normals.length; i++) {
+            normals[i] = in.readFloat();
+        }
+
+        /* read faces */
+        short[] faces = new short[in.readInt()];
+        for (int i = 0; i < faces.length; i++) {
+            faces[i] = in.readShort();
+        }
+
     }
 
 }

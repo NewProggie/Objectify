@@ -1,5 +1,10 @@
 package de.hsrm.objectify.utils;
 
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
+import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
+
 public class ArrayUtils {
 
     /**
