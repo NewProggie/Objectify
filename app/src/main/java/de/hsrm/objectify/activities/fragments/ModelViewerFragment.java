@@ -1,6 +1,7 @@
 package de.hsrm.objectify.activities.fragments;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -69,8 +70,8 @@ public class ModelViewerFragment extends IReconstructionFragment implements Upda
     }
 
     @Override
-    public void update(ObjectModel objectModel) {
-        Log.i("ModelViewerFragment", "objectModel");
+    public void update(ObjectModel objectModel, Bitmap heightmap, Bitmap normalmap) {
+
     }
 
 }

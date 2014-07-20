@@ -36,7 +36,7 @@ import de.hsrm.objectify.utils.Storage;
 
 public class CameraActivity extends Activity {
 
-    public static final String RECONSTRUCTION = "newReconstruction";
+    public static final String RECONSTRUCTION = "new_reconstruction";
     private CameraPreview mCameraPreview;
     private ImageView mCameraLighting;
     private ImageView mCameraLightingMask;
@@ -44,7 +44,7 @@ public class CameraActivity extends Activity {
     private LinearLayout mProgressScreen;
     private Camera mCamera;
     private String mDirName;
-    private int mImageCounter;
+    private int mImgCounter;
     private int mCameraRotation;
     private ArrayList<NinePatchDrawable> mLightSourcesList;
 
@@ -71,7 +71,7 @@ public class CameraActivity extends Activity {
 
             @Override
             public void onClick(View view) {
-                mImageCounter = 0;
+                mImgCounter = 0;
                 mDirName = Storage.getRandomName(10);
                 setupDisplayScreen();
                 takePicture();
@@ -89,7 +89,7 @@ public class CameraActivity extends Activity {
     }
 
     private void takePicture() {
-        mCameraLighting.setImageDrawable(mLightSourcesList.get(mImageCounter));
+        mCameraLighting.setImageDrawable(mLightSourcesList.get(mImgCounter));
         /* give the light source view a little time to update itself */
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -112,11 +112,11 @@ public class CameraActivity extends Activity {
                 matrix.postRotate((360 - mCameraRotation) % 360);
                 bmp = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, true);
 
-                String fileName = "image_" + mImageCounter + "." + Constants.IMAGE_FORMAT;
+                String fileName = Constants.IMAGE_NAME + mImgCounter + "." + Constants.IMAGE_FORMAT;
                 BitmapUtils.saveBitmap(BitmapUtils.convertToGrayscale(bmp), mDirName, fileName);
-                mImageCounter += 1;
+                mImgCounter += 1;
                 mCamera.startPreview();
-                if (mImageCounter <= Constants.NUM_IMAGES) {
+                if (mImgCounter <= Constants.NUM_IMAGES) {
                     takePicture();
                 } else {
                     /* start 3d reconstruction asynchronously in background */

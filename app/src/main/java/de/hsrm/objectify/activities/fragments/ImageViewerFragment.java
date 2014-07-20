@@ -64,7 +64,8 @@ public class ImageViewerFragment extends IReconstructionFragment implements Upda
     }
 
     @Override
-    public void update(ObjectModel objectModel) {
-        Log.i("ImageViewerFragment", "objectModel");
+    public void update(ObjectModel objectModel, Bitmap heightmap, Bitmap normalmap) {
+        if (normalmap != null)
+            setImage(normalmap);
     }
 }

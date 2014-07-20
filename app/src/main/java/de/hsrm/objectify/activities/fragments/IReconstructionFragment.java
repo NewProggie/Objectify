@@ -2,6 +2,7 @@ package de.hsrm.objectify.activities.fragments;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.util.Log;
 
@@ -10,11 +11,6 @@ import de.hsrm.objectify.rendering.ObjectModel;
 public class IReconstructionFragment extends Fragment implements Updateable {
 
     private OnFragmentInteractionListener mListener;
-
-    @Override
-    public void update(ObjectModel objectModel) {
-        Log.i("IReconstructionFragment", "objectModel");
-    }
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -38,6 +34,11 @@ public class IReconstructionFragment extends Fragment implements Updateable {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void update(ObjectModel objectModel, Bitmap heightmap, Bitmap normalmap) {
+
     }
 
     /**

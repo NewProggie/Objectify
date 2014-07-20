@@ -35,4 +35,34 @@ public class ArrayUtils {
         return floatArray;
     }
 
+    public static float max(float[] values, int offset) {
+        float maximum = values[offset];
+        for (int i = offset; i < values.length; i += 3) {
+            if (values[i] > maximum) {
+                maximum = values[i];
+            }
+        }
+        return maximum;
+    }
+
+    public static float max(float[] values) {
+        float maximum = values[0];
+        for (int i = 1; i < values.length; i += 3) {
+            if (values[i] > maximum) {
+                maximum = values[i];
+            }
+        }
+        return maximum;
+    }
+
+    public static float min(float[] values, int offset) {
+        float minimum = values[offset];
+        for (int i = offset; i < values.length; i += 3) {
+            if (values[i] < minimum) {
+                minimum = values[i];
+            }
+        }
+        return minimum;
+    }
+
 }

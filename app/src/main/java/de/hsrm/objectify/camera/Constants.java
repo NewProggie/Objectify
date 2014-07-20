@@ -6,6 +6,7 @@ public interface Constants {
 
     public static final int IMAGE_RESOLUTION = 320*240;
     public static final int NUM_IMAGES = 4;
+    public static final String IMAGE_NAME   = "image_";
     public static final String IMAGE_FORMAT = "png";
     public static final Bitmap.CompressFormat IMAGE_COMPRESS_FORMAT = Bitmap.CompressFormat.PNG;
 

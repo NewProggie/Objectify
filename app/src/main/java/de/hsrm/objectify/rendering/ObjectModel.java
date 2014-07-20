@@ -10,6 +10,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -19,52 +20,43 @@ import java.util.ArrayList;
 
 import javax.microedition.khronos.opengles.GL10;
 
-import de.hsrm.objectify.utils.Size;
+import de.hsrm.objectify.utils.ArrayUtils;
 
 /**
- * A representation of a 3D model object. Vertices, normals and texture can be added after an
- * instance of this class is created. This class implements {@link android.os.Parcelable} for
- * sending an instance of it between different activities */
-public class ObjectModel implements Parcelable, Serializable {
+ * A representation of a 3D model object. Vertices, mNormals and mTexture can be added after an
+ * instance of this class is created. This class implements {@link Serializable} for
+ * saving/loading an instance of it */
+public class ObjectModel implements Serializable {
 
     private static final String TAG = "ObjectModel";
-    private transient FloatBuffer vertexBuffer;
-    private transient FloatBuffer textureBuffer;
+    private static final long serialVersionUID = 0L;
+    private transient FloatBuffer mVertexBuffer;
+    private transient FloatBuffer mTextureBuffer;
     private transient FloatBuffer normalsBuffer;
-    private transient ShortBuffer facesBuffer;
-    private int[] textures = new int[1];
-    private float[] texture;
-    private float vertices[];
-    private float normals[];
-    private short faces[];
-    private transient Bitmap bmp;
-    private float[] boundingbox;
-    private byte[] bitmapData;
-    private final int renderMode = GL10.GL_TRIANGLES;
+    private transient ShortBuffer mFacesBuffer;
+    private transient Bitmap mTextureBitmap;
+    private int[] mTextures = new int[1];
+    private float[] mTexture;
+    private float mVertices[];
+    private float mNormals[];
+    private short mFaces[];
+    private float[] mBoundingBox;
+    private byte[] mBitmapData;
+    private final int mRenderMode = GL10.GL_TRIANGLES;
 
     public ObjectModel(float[] vertices, float[] normals, short[] faces, Bitmap bmp) {
         onInitialize(vertices, normals, faces, bmp);
     }
 
-    private ObjectModel(Parcel source) {
-        Bundle b = source.readBundle();
-        textures = new int[1];
-        byte[] bb = b.getByteArray("image");
-        onInitialize(b.getFloatArray("vertices"),
-                     b.getFloatArray("normals"),
-                     b.getShortArray("faces"),
-                     BitmapFactory.decodeByteArray(bb, 0, bb.length));
-    }
-
     private void onInitialize(float[] vertices, float[] normals, short[] faces, Bitmap bmp) {
-        setVertices(vertices);
+        setmVertices(vertices);
         setNormalVertices(normals);
         setFaces(faces);
         ByteBuffer byteBuf = ByteBuffer.allocateDirect(vertices.length * 4);
         byteBuf.order(ByteOrder.nativeOrder());
-        vertexBuffer = byteBuf.asFloatBuffer();
-        vertexBuffer.put(vertices);
-        vertexBuffer.rewind();
+        mVertexBuffer = byteBuf.asFloatBuffer();
+        mVertexBuffer.put(vertices);
+        mVertexBuffer.rewind();
 
         byteBuf = ByteBuffer.allocateDirect(normals.length * 4);
         byteBuf.order(ByteOrder.nativeOrder());
@@ -74,62 +66,62 @@ public class ObjectModel implements Parcelable, Serializable {
 
         byteBuf = ByteBuffer.allocateDirect(faces.length * 4);
         byteBuf.order(ByteOrder.nativeOrder());
-        facesBuffer = byteBuf.asShortBuffer();
-        facesBuffer.put(faces);
-        facesBuffer.rewind();
+        mFacesBuffer = byteBuf.asShortBuffer();
+        mFacesBuffer.put(faces);
+        mFacesBuffer.rewind();
 
         computeTextureCoords(bmp);
-        byteBuf = ByteBuffer.allocateDirect(texture.length * 4);
+        byteBuf = ByteBuffer.allocateDirect(mTexture.length * 4);
         byteBuf.order(ByteOrder.nativeOrder());
-        textureBuffer = byteBuf.asFloatBuffer();
-        textureBuffer.put(texture);
-        textureBuffer.rewind();
+        mTextureBuffer = byteBuf.asFloatBuffer();
+        mTextureBuffer.put(mTexture);
+        mTextureBuffer.rewind();
 
-        this.bmp = bmp.copy(bmp.getConfig(), true);
+        this.mTextureBitmap = bmp.copy(bmp.getConfig(), true);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         bmp.compress(Bitmap.CompressFormat.PNG, 100, bos);
         byte[] bb = bos.toByteArray();
-        bitmapData = new byte[bb.length];
-        System.arraycopy(bb, 0, bitmapData, 0, bb.length);
+        mBitmapData = new byte[bb.length];
+        System.arraycopy(bb, 0, mBitmapData, 0, bb.length);
     }
 
     /**
      * Needs to be called right after object has been restored from hard disk
      */
     public void setup() {
-        setVertices(vertices);
-        setNormalVertices(normals);
-        setFaces(faces);
-        this.bmp = BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.length);
+        setmVertices(mVertices);
+        setNormalVertices(mNormals);
+        setFaces(mFaces);
+        this.mTextureBitmap = BitmapFactory.decodeByteArray(mBitmapData, 0, mBitmapData.length);
     }
 
     public void setNormalVertices(float[] normals) {
-        this.normals = new float[normals.length];
-        System.arraycopy(normals, 0, this.normals, 0, normals.length);
-        setNormalBuffer(this.normals);
+        this.mNormals = new float[normals.length];
+        System.arraycopy(normals, 0, this.mNormals, 0, normals.length);
+        setNormalBuffer(this.mNormals);
     }
 
     public void setFaces(short[] face) {
-        this.faces = new short[face.length];
-        System.arraycopy(face, 0, faces, 0, face.length);
-        setFacesBuffer(this.faces);
+        this.mFaces = new short[face.length];
+        System.arraycopy(face, 0, mFaces, 0, face.length);
+        setFacesBuffer(this.mFaces);
     }
 
     private void setVertexBuffer(float[] vertices) {
         ByteBuffer vbb = ByteBuffer.allocateDirect(vertices.length * 4);
         vbb.order(ByteOrder.nativeOrder());
-        this.vertexBuffer = vbb.asFloatBuffer();
+        this.mVertexBuffer = vbb.asFloatBuffer();
         for (float f : vertices) {
-            vertexBuffer.put(f);
+            mVertexBuffer.put(f);
         }
-        vertexBuffer.rewind();
+        mVertexBuffer.rewind();
     }
 
     private void setNormalBuffer(float[] normal) {
         ByteBuffer nbb = ByteBuffer.allocateDirect(normal.length * 4);
         nbb.order(ByteOrder.nativeOrder());
         this.normalsBuffer = nbb.asFloatBuffer();
-        for (float f : normals) {
+        for (float f : mNormals) {
             normalsBuffer.put(f);
         }
         normalsBuffer.rewind();
@@ -138,91 +130,54 @@ public class ObjectModel implements Parcelable, Serializable {
     private void setFacesBuffer(short[] faces) {
         ByteBuffer fbb = ByteBuffer.allocateDirect(faces.length * 2);
         fbb.order(ByteOrder.nativeOrder());
-        facesBuffer = fbb.asShortBuffer();
+        mFacesBuffer = fbb.asShortBuffer();
         for (short s : faces) {
-            facesBuffer.put(s);
+            mFacesBuffer.put(s);
         }
-        facesBuffer.rewind();
-    }
-
-    public Size getTextureSize() {
-        return new Size(this.bmp.getWidth(), this.bmp.getHeight());
+        mFacesBuffer.rewind();
     }
 
     public float getLength() {
-        if (boundingbox == null) {
+        if (mBoundingBox == null) {
             setupBoundingBox();
         }
-        float[] tmp = new float[] { (boundingbox[1] - boundingbox[0]),
-                (boundingbox[3] - boundingbox[2]),
-                (boundingbox[5] - boundingbox[4]) };
-        return 2.0f / max(tmp);
-    }
-
-    /** TODO: Refactor me */
-    private float max(float[] values, int offset) {
-        float maximum = values[offset];
-        for (int i = offset; i < values.length; i += 3) {
-            if (values[i] > maximum) {
-                maximum = values[i];
-            }
-        }
-        return maximum;
-    }
-
-    /** TODO: Refactor me */
-    private float max(float[] values) {
-        float maximum = values[0];
-        for (int i = 1; i < values.length; i += 3) {
-            if (values[i] > maximum) {
-                maximum = values[i];
-            }
-        }
-        return maximum;
-    }
-
-    /** TODO: Refactor me */
-    private float min(float[] values, int offset) {
-        float minimum = values[offset];
-        for (int i = offset; i < values.length; i += 3) {
-            if (values[i] < minimum) {
-                minimum = values[i];
-            }
-        }
-        return minimum;
+        float[] tmp = new float[] { (mBoundingBox[1] - mBoundingBox[0]),
+                                    (mBoundingBox[3] - mBoundingBox[2]),
+                                    (mBoundingBox[5] - mBoundingBox[4]) };
+        return 2.0f / ArrayUtils.max(tmp);
     }
 
     private void setupBoundingBox() {
         float x1 = 0, x2 = 0, y1 = 0, y2 = 0, z1 = 0, z2 = 0;
-        x1 = min(vertices, 0);
-        x2 = max(vertices, 0);
-        y1 = min(vertices, 1);
-        y2 = max(vertices, 1);
-        z1 = min(vertices, 2);
-        z2 = max(vertices, 2);
-        boundingbox = new float[] { x1, x2, y1, y2, z1, z2 };
+        x1 = ArrayUtils.min(mVertices, 0);
+        x2 = ArrayUtils.max(mVertices, 0);
+        y1 = ArrayUtils.min(mVertices, 1);
+        y2 = ArrayUtils.max(mVertices, 1);
+        z1 = ArrayUtils.min(mVertices, 2);
+        z2 = ArrayUtils.max(mVertices, 2);
+        mBoundingBox = new float[] { x1, x2, y1, y2, z1, z2 };
     }
 
     /**
-     * Returns the middle point of this objects' boundingbox
+     * Returns the middle point of this objects' mBoundingBox
      *
      * @return the middle point of this object.
      */
     public float[] getMiddlePoint() {
-        if (boundingbox == null) {
+        if (mBoundingBox == null) {
             setupBoundingBox();
         }
-        float xmiddle = (boundingbox[0] + boundingbox[1]) / 2.0f;
-        float ymiddle = (boundingbox[2] + boundingbox[3]) / 2.0f;
-        float zmiddle = (boundingbox[4] + boundingbox[5]) / 2.0f;
+        float xmiddle = (mBoundingBox[0] + mBoundingBox[1]) / 2.0f;
+        float ymiddle = (mBoundingBox[2] + mBoundingBox[3]) / 2.0f;
+        float zmiddle = (mBoundingBox[4] + mBoundingBox[5]) / 2.0f;
         float[] middlepoint = new float[] { xmiddle, ymiddle, zmiddle };
         return middlepoint;
     }
 
-    public void setVertices(float[] vertices) {
-        this.vertices = new float[vertices.length];
-        System.arraycopy(vertices, 0, this.vertices, 0, vertices.length);
-        setVertexBuffer(this.vertices);
+    public void setmVertices(float[] mVertices) {
+        this.mVertices = new float[mVertices.length];
+        System.arraycopy(mVertices, 0, this.mVertices, 0, mVertices.length);
+        setVertexBuffer(this.mVertices);
     }
 
     private void computeTextureCoords(Bitmap bmp) {
@@ -237,25 +192,25 @@ public class ObjectModel implements Parcelable, Serializable {
             }
         }
 
-        this.texture = new float[texCoords.size()];
+        this.mTexture = new float[texCoords.size()];
         for (int i = 0; i <texCoords.size(); i++) {
-            texture[i] = texCoords.get(i);
+            mTexture[i] = texCoords.get(i);
         }
     }
 
     public void draw(GL10 gl) {
-        gl.glBindTexture(GL10.GL_TEXTURE_2D, textures[0]);
+        gl.glBindTexture(GL10.GL_TEXTURE_2D, mTextures[0]);
 
         gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
         gl.glEnableClientState(GL10.GL_NORMAL_ARRAY);
         gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 
-        gl.glVertexPointer(3, GL10.GL_FLOAT, 0, vertexBuffer);
+        gl.glVertexPointer(3, GL10.GL_FLOAT, 0, mVertexBuffer);
         gl.glNormalPointer(GL10.GL_FLOAT, 0, normalsBuffer);
-        gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, textureBuffer);
+        gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, mTextureBuffer);
 
-        gl.glDrawElements(renderMode, faces.length, GL10.GL_UNSIGNED_SHORT,
-                facesBuffer);
+        gl.glDrawElements(mRenderMode, mFaces.length, GL10.GL_UNSIGNED_SHORT,
+                mFacesBuffer);
 
         gl.glDisableClientState(GL10.GL_NORMAL_ARRAY);
         gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
@@ -263,16 +218,16 @@ public class ObjectModel implements Parcelable, Serializable {
     }
 
     /**
-     * Loading texture
+     * Loading mTexture
      *
      * @param gl
      *            the GL Context
      */
     public void loadGLTexture(GL10 gl, Context context) {
-        Bitmap texture = scaleTexture(this.bmp, 256);
+        Bitmap texture = scaleTexture(this.mTextureBitmap, 256);
 
-        gl.glGenTextures(1, textures, 0);
-        gl.glBindTexture(GL10.GL_TEXTURE_2D, textures[0]);
+        gl.glGenTextures(1, mTextures, 0);
+        gl.glBindTexture(GL10.GL_TEXTURE_2D, mTextures[0]);
 
         gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_NEAREST);
         gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_LINEAR);
@@ -286,7 +241,7 @@ public class ObjectModel implements Parcelable, Serializable {
     }
 
     /**
-     * Scales image to valid texture
+     * Scales image to valid mTexture
      *
      * @param image
      *            original image
@@ -304,33 +259,16 @@ public class ObjectModel implements Parcelable, Serializable {
         return Bitmap.createBitmap(image, 0, 0, width, height, matrix, true);
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
+    private void writeObject(java.io.ObjectOutputStream out)
+            throws IOException {
+        // write 'this' to 'out'...
+        out.write(17);
     }
 
-    @Override
-    public void writeToParcel(Parcel parcel, int flags) {
-        Bundle b = new Bundle();
-        b.putFloatArray("vertices", vertices);
-        b.putFloatArray("normals", normals);
-        b.putShortArray("faces", faces);
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        this.bmp.compress(Bitmap.CompressFormat.PNG, 100, baos);
-        b.putByteArray("image", baos.toByteArray());
-        parcel.writeBundle(b);
+    private void readObject(java.io.ObjectInputStream in)
+            throws IOException, ClassNotFoundException {
+        // populate the fields of 'this' from the data in 'in'...
+        in.readInt();
     }
 
-    public static final Parcelable.Creator<ObjectModel> CREATOR = new Creator<ObjectModel>() {
-
-        @Override
-        public ObjectModel[] newArray(int size) {
-            return new ObjectModel[size];
-        }
-
-        @Override
-        public ObjectModel createFromParcel(Parcel source) {
-            return new ObjectModel(source);
-        }
-    };
 }

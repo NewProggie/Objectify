@@ -48,18 +48,24 @@ public class ReconstructionService extends IntentService {
         super("ReconstructionService");
     }
 
-    @Override
-    protected void onHandleIntent(Intent intent) {
-        String dirName = intent.getStringExtra(DIRECTORY_NAME);
-
-        /* read images */
+    private ArrayList<Bitmap> readImages(String dirName) {
         ArrayList<Bitmap> images = new ArrayList<Bitmap>();
-        /* i from 0 to Constants.NUM_IMAGES + ambient image */
+        /* i from 0 to number of images + ambient image */
         for (int i = 0; i <= Constants.NUM_IMAGES; i++) {
             Bitmap img = BitmapUtils.openBitmap(Storage.getExternalRootDirectory() +
-                    "/" + dirName + "/image_" + i + "." + Constants.IMAGE_FORMAT);
+                    "/" + dirName + "/" + Constants.IMAGE_NAME + i + "." + Constants.IMAGE_FORMAT);
             images.add(img);
         }
+
+        return images;
+    }
+
+    @Override
+    protected void onHandleIntent(Intent intent) {
+
+        /* get images */
+        String dirName = intent.getStringExtra(DIRECTORY_NAME);
+        ArrayList<Bitmap> images = readImages(dirName);
 
         mWidth = images.get(0).getWidth();
         mHeight = images.get(0).getHeight();
@@ -69,23 +75,15 @@ public class ReconstructionService extends IntentService {
             images.set(i, BitmapUtils.subtract(images.get(i), ambient));
         }
 
-        /* estimate threshold (otsu) */
-        Bitmap Mask = BitmapUtils.convertToGrayscale(BitmapUtils.binarize(images.get(2)));
-
-        long start = System.currentTimeMillis();
-        float[] normals = computeNormals(images, Mask);
-        Log.i("ReconstructionService", "computeNormals took: " +
-                (System.currentTimeMillis() - start)/1000.0f + " sec.");
+        /* compute normals */
+        float[] normals = computeNormals(images,
+                BitmapUtils.convertToGrayscale(BitmapUtils.binarize(images.get(2))));
         Bitmap Normals = BitmapUtils.convert(normals, mWidth, mHeight);
         BitmapUtils.saveBitmap(Normals, dirName, "normals.png");
 
-        start = System.currentTimeMillis();
+        /* TODO: linear transformation depending on image size */
         float[] Z = localHeightfield(normals);
-        Log.i("ReconstructionService", "localHeightfield took: " +
-                (System.currentTimeMillis() - start)/1000.0f + " sec.");
-
         Z = ArrayUtils.linearTransform(Z, 0.0f, 150.0f);
-
         int[] heightPixels = new int[mWidth*mHeight];
         int idx = 0;
         for (int i = 0; i < mHeight; i++) {
@@ -98,17 +96,20 @@ public class ReconstructionService extends IntentService {
         Bitmap Height = Bitmap.createBitmap(heightPixels, mWidth, mHeight, Bitmap.Config.ARGB_8888);
         BitmapUtils.saveBitmap(Height, dirName, "heights.png");
 
+        Log.i("ReconstructionService", "createObjectModel");
         ObjectModel obj = createObjectModel(Z, normals, images.get(2));
+        Log.i("ReconstructionService", "writeDatabaseEntry");
         String galleryId = writeDatabaseEntry(obj, images.get(3), dirName);
 
         /* clean up and publish results */
+        Log.i("ReconstructionService", "publishResult");
         publishResult(galleryId);
     }
 
     private ObjectModel createObjectModel(float[] heights, float[] normals, Bitmap texture) {
 
-        FloatBuffer vertBuf    = FloatBuffer.allocate(mWidth * mHeight * 3);
-        FloatBuffer normBuf   = FloatBuffer.allocate(mWidth * mHeight * 3);
+        FloatBuffer vertBuf = FloatBuffer.allocate(mWidth * mHeight * 3);
+        FloatBuffer normBuf = FloatBuffer.allocate(mWidth * mHeight * 3);
         ArrayList<Short> indexes = new ArrayList<Short>();
         vertBuf.rewind();
         normBuf.rewind();
@@ -145,6 +146,9 @@ public class ReconstructionService extends IntentService {
             indexBuf.put(indexes.get(i));
         }
 
+        Log.i("ReconstructionService", "vertices: " + vertBuf.array().length);
+        Log.i("ReconstructionService", "normals: " + normBuf.array().length);
+        Log.i("ReconstructionService", "faces: " + indexBuf.array().length);
         return new ObjectModel(vertBuf.array(), normBuf.array(), indexBuf.array(), texture);
     }
 
@@ -181,7 +185,7 @@ public class ReconstructionService extends IntentService {
             bos.close();
 
             /* write gallery database entry */
-            values.put(DatabaseAdapter.GALLERY_IMAGE_PATH_KEY, imgPath);
+            values.put(DatabaseAdapter.GALLERY_IMAGE_PATH_KEY, dirName);
             values.put(DatabaseAdapter.GALLERY_DATE_KEY, date);
             values.put(DatabaseAdapter.GALLERY_DIMENSION_KEY, "640x480");
             values.put(DatabaseAdapter.GALLERY_FACES_KEY, "12345");
@@ -297,6 +301,7 @@ public class ReconstructionService extends IntentService {
     }
 
     private void publishResult(String galleryId) {
+        Log.i("ReconstructionService", "sendBroadcast");
         Intent publish = new Intent(NOTIFICATION);
         publish.putExtra(GALLERY_ID, galleryId);
         sendBroadcast(publish);
