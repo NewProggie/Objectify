@@ -11,14 +11,12 @@ import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.RenderScript;
 import android.renderscript.Type;
-import android.util.Log;
 
 import org.ejml.data.DenseMatrix64F;
 import org.ejml.factory.DecompositionFactory;
 import org.ejml.interfaces.decomposition.SingularValueDecomposition;
 import org.ejml.ops.CommonOps;
 
-import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 import java.nio.FloatBuffer;
@@ -29,18 +27,23 @@ import java.util.Calendar;
 import de.hsrm.objectify.camera.Constants;
 import de.hsrm.objectify.database.DatabaseAdapter;
 import de.hsrm.objectify.database.DatabaseProvider;
+import de.hsrm.objectify.export.OBJExport;
 import de.hsrm.objectify.rendering.compute_normals.ScriptC_compute_normals;
 import de.hsrm.objectify.rendering.lh_integration.ScriptC_lh_integration;
 import de.hsrm.objectify.utils.ArrayUtils;
 import de.hsrm.objectify.utils.BitmapUtils;
+import de.hsrm.objectify.utils.Size;
 import de.hsrm.objectify.utils.Storage;
 
 public class ReconstructionService extends IntentService {
 
-    public static final String DIRECTORY_NAME = "dir_name";
-    public static final String NOTIFICATION = "de.hsrm.objectify.android.service.receiver";
-    public static final String GALLERY_ID = "gallery_id";
-    private static final int LH_ITERATIONS = 3000;
+    public static final String DIRECTORY_NAME   = "dir_name";
+    public static final String NOTIFICATION     = "de.hsrm.objectify.android.service.receiver";
+    public static final String GALLERY_ID       = "gallery_id";
+    public static final String MODEL_NAME       = "model.kaw";
+    public static final String NORMAL_IMG_NAME  = "normals.png";
+    public static final String HEIGHT_IMG_NAME  = "heights.png";
+    private static final int LH_ITERATIONS      = 3000;
     private int mWidth;
     private int mHeight;
 
@@ -79,11 +82,11 @@ public class ReconstructionService extends IntentService {
         float[] normals = computeNormals(images,
                 BitmapUtils.convertToGrayscale(BitmapUtils.binarize(images.get(2))));
         Bitmap Normals = BitmapUtils.convert(normals, mWidth, mHeight);
-        BitmapUtils.saveBitmap(Normals, dirName, "normals.png");
+        BitmapUtils.saveBitmap(Normals, dirName, NORMAL_IMG_NAME);
 
         /* TODO: linear transformation depending on image size */
         float[] Z = localHeightfield(normals);
-        Z = ArrayUtils.linearTransform(Z, 0.0f, 150.0f);
+        Z = ArrayUtils.linearTransform(Z, 0.0f, 90.0f);
         int[] heightPixels = new int[mWidth*mHeight];
         int idx = 0;
         for (int i = 0; i < mHeight; i++) {
@@ -94,15 +97,13 @@ public class ReconstructionService extends IntentService {
         }
 
         Bitmap Height = Bitmap.createBitmap(heightPixels, mWidth, mHeight, Bitmap.Config.ARGB_8888);
-        BitmapUtils.saveBitmap(Height, dirName, "heights.png");
+        BitmapUtils.saveBitmap(Height, dirName, HEIGHT_IMG_NAME);
 
-        Log.i("ReconstructionService", "createObjectModel");
         ObjectModel obj = createObjectModel(Z, normals, images.get(2));
-        Log.i("ReconstructionService", "writeDatabaseEntry");
-        String galleryId = writeDatabaseEntry(obj, images.get(3), dirName);
+        OBJExport.write(obj, dirName);
+        String galleryId = writeDatabaseEntry(obj, new Size(mWidth, mHeight), dirName);
 
         /* clean up and publish results */
-        Log.i("ReconstructionService", "publishResult");
         publishResult(galleryId);
     }
 
@@ -119,7 +120,7 @@ public class ReconstructionService extends IntentService {
         for (int y = 0; y < mHeight; y++) {
             for (int x = 0; x < mWidth; x++) {
                 float[] imgPt = new float[] { Float.valueOf(x), Float.valueOf(y), heights[idx] };
-                float[] nVec  = new float[] { normals[4*idx], normals[4*idx+1], normals[4*idx+2] };
+                float[] nVec  = new float[] { normals[4*idx+0], normals[4*idx+1], normals[4*idx+2] };
                 vertBuf.put(imgPt);
                 normBuf.put(nVec);
                 idx += 1;
@@ -146,26 +147,25 @@ public class ReconstructionService extends IntentService {
             indexBuf.put(indexes.get(i));
         }
 
-        Log.i("ReconstructionService", "vertices: " + vertBuf.array().length);
-        Log.i("ReconstructionService", "normals: " + normBuf.array().length);
-        Log.i("ReconstructionService", "faces: " + indexBuf.array().length);
         return new ObjectModel(vertBuf.array(), normBuf.array(), indexBuf.array(), texture);
     }
 
-    private String writeDatabaseEntry(ObjectModel objectModel, Bitmap texture, String dirName) {
+    private String writeDatabaseEntry(ObjectModel objectModel, Size dim, String dirName) {
 
         /* initialize content resolver and database write */
         ContentResolver cr = getContentResolver();
         ContentValues values = new ContentValues();
-        Uri objUri = DatabaseProvider.CONTENT_URI.buildUpon().appendPath("object").build();
-        Uri galleryUri = DatabaseProvider.CONTENT_URI.buildUpon().appendPath("gallery").build();
+        Uri objUri = DatabaseProvider.CONTENT_URI.buildUpon().
+                appendPath(DatabaseAdapter.DATABASE_TABLE_OBJECT).build();
+        Uri galleryUri = DatabaseProvider.CONTENT_URI.buildUpon().
+                appendPath(DatabaseAdapter.DATABASE_TABLE_GALLERY).build();
 
         /* get timestamp for saving into database */
         Calendar cal = Calendar.getInstance();
         String date = String.valueOf(cal.getTimeInMillis());
 
         /* write 3d reconstruction to disk */
-        String filePath = Storage.getExternalRootDirectory() + "/" + dirName + "/model.kaw";
+        String filePath = Storage.getExternalRootDirectory() + "/" + dirName + "/" + MODEL_NAME;
         try {
             ObjectOutputStream objOutput = new ObjectOutputStream(new FileOutputStream(filePath));
             objOutput.writeObject(objectModel);
@@ -177,19 +177,12 @@ public class ReconstructionService extends IntentService {
             String objectID = objResultUri.getLastPathSegment();
             values.clear();
 
-            /* write texture to disk. TODO: maybe unnecessary, use existing one */
-            String imgPath = Storage.getExternalRootDirectory() + "/" + dirName + "/texture.png";
-            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(imgPath));
-            texture.compress(Bitmap.CompressFormat.PNG, 100, bos);
-            bos.flush();
-            bos.close();
-
             /* write gallery database entry */
             values.put(DatabaseAdapter.GALLERY_IMAGE_PATH_KEY, dirName);
             values.put(DatabaseAdapter.GALLERY_DATE_KEY, date);
-            values.put(DatabaseAdapter.GALLERY_DIMENSION_KEY, "640x480");
-            values.put(DatabaseAdapter.GALLERY_FACES_KEY, "12345");
-            values.put(DatabaseAdapter.GALLERY_VERTICES_KEY, "23456");
+            values.put(DatabaseAdapter.GALLERY_DIMENSION_KEY, dim.toString());
+            values.put(DatabaseAdapter.GALLERY_FACES_KEY, objectModel.getFacesSize());
+            values.put(DatabaseAdapter.GALLERY_VERTICES_KEY, objectModel.getVerticesSize());
             values.put(DatabaseAdapter.GALLERY_OBJECT_ID_KEY, objectID);
             Uri galleryResultUri = cr.insert(galleryUri, values);
             return galleryResultUri.getLastPathSegment();
@@ -301,7 +294,6 @@ public class ReconstructionService extends IntentService {
     }
 
     private void publishResult(String galleryId) {
-        Log.i("ReconstructionService", "sendBroadcast");
         Intent publish = new Intent(NOTIFICATION);
         publish.putExtra(GALLERY_ID, galleryId);
         sendBroadcast(publish);

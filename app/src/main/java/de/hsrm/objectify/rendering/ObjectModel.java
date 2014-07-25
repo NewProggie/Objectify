@@ -96,6 +96,14 @@ public class ObjectModel implements Serializable {
         this.mTextureBitmap = BitmapFactory.decodeByteArray(mBitmapData, 0, mBitmapData.length);
     }
 
+    public int getVerticesSize() {
+        return mVertices.length;
+    }
+
+    public int getFacesSize() {
+        return mFaces.length;
+    }
+
     public void setNormalVertices(float[] normals) {
         this.mNormals = new float[normals.length];
         System.arraycopy(normals, 0, this.mNormals, 0, normals.length);
@@ -106,6 +114,10 @@ public class ObjectModel implements Serializable {
         this.mFaces = new short[face.length];
         System.arraycopy(face, 0, mFaces, 0, face.length);
         setFacesBuffer(this.mFaces);
+    }
+
+    public short[] getFaces() {
+        return mFaces;
     }
 
     private void setVertexBuffer(float[] vertices) {
@@ -179,6 +191,10 @@ public class ObjectModel implements Serializable {
         this.mVertices = new float[mVertices.length];
         System.arraycopy(mVertices, 0, this.mVertices, 0, mVertices.length);
         setVertexBuffer(this.mVertices);
+    }
+
+    public float[] getVertices() {
+        return mVertices;
     }
 
     private void computeTextureCoords(Bitmap bmp) {
