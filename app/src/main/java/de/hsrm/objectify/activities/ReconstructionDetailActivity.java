@@ -2,6 +2,7 @@ package de.hsrm.objectify.activities;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
@@ -21,7 +22,6 @@ import android.widget.ArrayAdapter;
 import android.widget.SpinnerAdapter;
 
 import de.hsrm.objectify.R;
-import de.hsrm.objectify.activities.fragments.IReconstructionFragment;
 import de.hsrm.objectify.activities.fragments.ImageViewerFragment;
 import de.hsrm.objectify.activities.fragments.ModelViewerFragment;
 import de.hsrm.objectify.camera.Constants;
@@ -39,40 +39,21 @@ import de.hsrm.objectify.utils.Storage;
  * more than a {@link de.hsrm.objectify.activities.fragments.ImageViewerFragment}.
  */
 public class ReconstructionDetailActivity extends Activity
-        implements IReconstructionFragment.OnFragmentInteractionListener {
+        implements  ImageViewerFragment.OnFragmentInteractionListener,
+                    ModelViewerFragment.OnFragmentInteractionListener {
 
     private final String TAG = "ReconstructionDetailActivity";
     private SpinnerAdapter mSpinnerAdapter;
-    private IReconstructionFragment mCurrentFragment;
-    private Bitmap heights;
-    private Bitmap normals;
+    private Fragment mCurrentFragment;
+    private String mGalleryId;
     private BroadcastReceiver receiver = new BroadcastReceiver() {
 
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            Log.i(TAG, "inside BroadcastReceiver");
             Bundle bundle = intent.getExtras();
             if (bundle != null) {
-                String galleryId = bundle.getString(ReconstructionService.GALLERY_ID);
-                ContentResolver cr = getContentResolver();
-                Uri galleryItemUri = DatabaseProvider.CONTENT_URI.buildUpon()
-                        .appendPath("gallery").build();
-                Cursor c = cr.query(galleryItemUri, null, DatabaseAdapter.GALLERY_ID_KEY + "=?",
-                        new String[] { galleryId }, null);
-                c.moveToFirst();
-                // Storage.getExternalRootDirectory() + "/" + dirName + "/model.kaw";
-                String dirName = c.getString(DatabaseAdapter.GALLERY_IMAGE_PATH_COLUMN);
-                String objectId = c.getString(DatabaseAdapter.GALLERY_OBJECT_ID_COLUMN);
-                c.close();
-
-                heights = BitmapFactory.decodeFile(
-                        Storage.getExternalRootDirectory() + "/" + dirName + "/heights.png");
-                normals = BitmapFactory.decodeFile(
-                        Storage.getExternalRootDirectory() + "/" + dirName + "/normals.png");
-
-                Log.i(TAG, "update current fragment");
-                mCurrentFragment.update(null, heights, normals);
+                mGalleryId = bundle.getString(ReconstructionService.GALLERY_ID);
             }
         }
     };
@@ -112,14 +93,12 @@ public class ReconstructionDetailActivity extends Activity
     @Override
     public void onResume() {
         super.onResume();
-        Log.i(TAG, "registerReceiver");
         registerReceiver(receiver, new IntentFilter(ReconstructionService.NOTIFICATION));
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        Log.i(TAG, "unregisterReceiver");
         unregisterReceiver(receiver);
     }
 
@@ -133,7 +112,7 @@ public class ReconstructionDetailActivity extends Activity
                         mCurrentFragment = new ImageViewerFragment();
                         break;
                     case Constants.ReconstructionType.RECONSTRUCTION:
-                        mCurrentFragment = new ModelViewerFragment();
+                        mCurrentFragment = ModelViewerFragment.newInstance(mGalleryId);
                         break;
                 }
 
@@ -142,7 +121,7 @@ public class ReconstructionDetailActivity extends Activity
                 transaction.commit();
 
                 /* update current active fragment */
-                mCurrentFragment.update(null, heights, normals);
+//                mCurrentFragment.update(null, heights, normals);
                 return true;
             }
         };

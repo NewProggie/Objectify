@@ -47,8 +47,6 @@ public class ReconstructionListActivity extends Activity
             startActivity(view3DModel);
             finish();
         }
-
-        // TODO: If exposing deep links into your app, handle intents here.
     }
 
     /** Callback method from {@link ReconstructionListFragment.Callbacks} indicating that the item
@@ -59,7 +57,7 @@ public class ReconstructionListActivity extends Activity
             /** In two-pane mode, show the detail view in this activity by adding or replacing the
              * detail fragment using a fragment transaction. */
             Bundle arguments = new Bundle();
-            arguments.putString(ImageViewerFragment.ARG_ITEM_ID, id);
+            arguments.putString(ImageViewerFragment.ARG_GALLERY_ID, id);
             ImageViewerFragment fragment = new ImageViewerFragment();
             fragment.setArguments(arguments);
             getFragmentManager().beginTransaction()
@@ -69,7 +67,7 @@ public class ReconstructionListActivity extends Activity
         } else {
             /** In single-pane mode, simply start the detail activity for the selected item ID. */
             Intent detailIntent = new Intent(this, ReconstructionDetailActivity.class);
-            detailIntent.putExtra(ImageViewerFragment.ARG_ITEM_ID, id);
+            detailIntent.putExtra(ImageViewerFragment.ARG_GALLERY_ID, id);
             startActivity(detailIntent);
         }
     }

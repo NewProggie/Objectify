@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,31 +25,26 @@ import de.hsrm.objectify.rendering.ReconstructionService;
  * in two-pane mode (on tablets) or a {@link de.hsrm.objectify.activities.ReconstructionDetailActivity}
  * on handsets.
  */
-public class ImageViewerFragment extends IReconstructionFragment implements Updateable {
-    /**
-     * The fragment argument representing the item ID that this fragment
-     * represents.
-     */
-    public static final String ARG_ITEM_ID = "item_id";
+public class ImageViewerFragment extends Fragment {
+
+    public static final String ARG_GALLERY_ID = "gallery_id";
+    public static final String ARG_IMAGE_TYPE = "image_type";
+    private String mGalleryId;
+    private String mImageType;
     private ImageView mReconstructionImageView;
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
-    public ImageViewerFragment() {
-    }
+    /** Mandatory empty constructor for the fragment manager to instantiate the fragment (e.g. upon
+     * screen orientation changes) */
+    public ImageViewerFragment() { }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-//        if (getArguments().containsKey(ARG_ITEM_ID)) {
-            // Load the dummy content specified by the fragment
-            // arguments. In a real-world scenario, use a Loader
-            // to load content from a content provider.
-//            mItem = DummyContent.ITEM_MAP.get(getArguments().getString(ARG_ITEM_ID));
-//        }
+        if (getArguments() != null) {
+            mGalleryId = getArguments().getString(ARG_GALLERY_ID);
+            mImageType = getArguments().getString(ARG_IMAGE_TYPE);
+        }
     }
 
     @Override
@@ -63,9 +59,14 @@ public class ImageViewerFragment extends IReconstructionFragment implements Upda
         mReconstructionImageView.setImageBitmap(image);
     }
 
-    @Override
-    public void update(ObjectModel objectModel, Bitmap heightmap, Bitmap normalmap) {
-        if (normalmap != null)
-            setImage(normalmap);
+    /**
+     * This interface must be implemented by activities that contain this fragment to allow an
+     * interaction in this fragment to be communicated to the activity and potentially other
+     * fragments contained in that activity. */
+    public interface OnFragmentInteractionListener {
+        // TODO: Update argument type and name
+        public void onFragmentInteraction(Uri uri);
     }
+
+
 }

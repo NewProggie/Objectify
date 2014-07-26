@@ -1,65 +1,54 @@
 package de.hsrm.objectify.activities.fragments;
 
-import android.app.Activity;
-import android.graphics.Bitmap;
+import android.app.Fragment;
+import android.content.ContentResolver;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import de.hsrm.objectify.R;
-import de.hsrm.objectify.rendering.ObjectModel;
+import de.hsrm.objectify.database.DatabaseAdapter;
+import de.hsrm.objectify.database.DatabaseProvider;
 
 /**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link ModelViewerFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link ModelViewerFragment#newInstance} factory method to
- * create an instance of this fragment.
- *
- */
-public class ModelViewerFragment extends IReconstructionFragment implements Updateable {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+ * A simple {@link Fragment} subclass. Activities that contain this fragment must implement the
+ * {@link ModelViewerFragment.OnFragmentInteractionListener} interface to handle interactions */
+public class ModelViewerFragment extends Fragment {
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private static final String ARG_GALLERY_ID = "gallery_id";
+    private String mGalleryId;
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ModelViewerFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ModelViewerFragment newInstance(String param1, String param2) {
-        ModelViewerFragment fragment = new ModelViewerFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-    public ModelViewerFragment() {
-        // Required empty public constructor
-    }
+    /** Mandatory empty constructor for the fragment manager to instantiate the fragment (e.g. upon
+     * screen orientation changes) */
+    public ModelViewerFragment() { }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            mGalleryId = getArguments().getString(ARG_GALLERY_ID);
+            String path = getModelPathFromDatabase(mGalleryId);
+            /* TODO: load object asynchronously */
         }
+    }
+
+    /**
+     * Use this factory method to create a new instance of this fragment using the provided
+     * parameters.
+     * @param galleryId gallery database id
+     * @return A new instance of fragment ModelViewerFragment.
+     */
+    // TODO: Rename and change types and number of parameters
+    public static ModelViewerFragment newInstance(String galleryId) {
+        ModelViewerFragment fragment = new ModelViewerFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_GALLERY_ID, galleryId);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
@@ -69,9 +58,32 @@ public class ModelViewerFragment extends IReconstructionFragment implements Upda
         return inflater.inflate(R.layout.fragment_model_viewer, container, false);
     }
 
-    @Override
-    public void update(ObjectModel objectModel, Bitmap heightmap, Bitmap normalmap) {
+    private String getModelPathFromDatabase(String galleryId) {
+        ContentResolver cr = getActivity().getContentResolver();
+        Uri galleryItemUri = DatabaseProvider.CONTENT_URI.buildUpon()
+                .appendPath(DatabaseAdapter.DATABASE_TABLE_GALLERY).build();
+        Cursor c = cr.query(galleryItemUri, null, DatabaseAdapter.GALLERY_ID_KEY + "=?",
+                new String[] { mGalleryId}, null);
+        c.moveToFirst();
+        String objectId = c.getString(DatabaseAdapter.GALLERY_OBJECT_ID_COLUMN);
+        c.close();
 
+        Uri objectItemUri = DatabaseProvider.CONTENT_URI.buildUpon()
+                .appendPath(DatabaseAdapter.DATABASE_TABLE_OBJECT).build();
+        c = cr.query(objectItemUri, null, DatabaseAdapter.OBJECT_ID_KEY + "=?",
+                new String[] { objectId }, null);
+        c.moveToFirst();
+        String objFilePath = c.getString(DatabaseAdapter.OBJECT_FILE_PATH_COLUMN);
+        c.close();
+
+        return objFilePath;
     }
 
+    /** This interface must be implemented by activities that contain this fragment to allow an
+     * interaction in this fragment to be communicated to the activity and potentially other
+     * fragments contained in that activity. */
+    public interface OnFragmentInteractionListener {
+        // TODO: Update argument type and name
+        public void onFragmentInteraction(Uri uri);
+    }
 }
