@@ -41,7 +41,7 @@ public class ObjectModel implements Serializable {
     private float mNormals[];
     private short mFaces[];
     private float[] mBoundingBox;
-    private byte[] mBitmapData;
+    public byte[] mBitmapData;
     private final int mRenderMode = GL10.GL_TRIANGLES;
 
     public ObjectModel(float[] vertices, float[] normals, short[] faces, Bitmap bmp) {

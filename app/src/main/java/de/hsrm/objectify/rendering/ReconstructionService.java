@@ -100,7 +100,7 @@ public class ReconstructionService extends IntentService {
         BitmapUtils.saveBitmap(Height, dirName, HEIGHT_IMG_NAME);
 
         ObjectModel obj = createObjectModel(Z, normals, images.get(2));
-        OBJExport.write(obj, dirName);
+        OBJExport.write(obj, images.get(0), dirName);
         String galleryId = writeDatabaseEntry(obj, new Size(mWidth, mHeight), dirName);
 
         /* clean up and publish results */

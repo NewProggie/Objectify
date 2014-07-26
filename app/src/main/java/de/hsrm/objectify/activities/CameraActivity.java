@@ -14,7 +14,9 @@ import android.hardware.Camera.PictureCallback;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Display;
+import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
@@ -150,7 +152,6 @@ public class CameraActivity extends Activity {
     private Camera openFrontFacingCamera() {
         Camera camera;
         int camId = CameraInfo.CAMERA_FACING_FRONT;
-        /* opening front facing camera */
         try {
             camera = Camera.open(camId);
         } catch (RuntimeException ex) {
@@ -160,7 +161,7 @@ public class CameraActivity extends Activity {
         }
 
         /* determine current rotation of device */
-        mCameraRotation = getWindowManager().getDefaultDisplay().getRotation();
+        mCameraRotation = getDisplayRotation();
         CameraInfo info = new CameraInfo();
         Camera.getCameraInfo(camId, info);
 
@@ -178,6 +179,17 @@ public class CameraActivity extends Activity {
         camera.setParameters(params);
 
         return camera;
+    }
+
+    private int getDisplayRotation() {
+        switch (getWindowManager().getDefaultDisplay().getRotation()) {
+            case Surface.ROTATION_0:    return 0;
+            case Surface.ROTATION_90:   return 90;
+            case Surface.ROTATION_180:  return 180;
+            case Surface.ROTATION_270:  return 270;
+        }
+
+        return 0;
     }
 
     private Size getDisplayScreenSize() {
