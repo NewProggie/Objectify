@@ -60,9 +60,10 @@ public class TouchSurfaceView extends GLSurfaceView {
         this.displayHeight = height;
 
         arcBall.setBounds((float) width, (float) height);
-        renderer = new ObjectModelRenderer(context, objectModel);
-        setRenderer(renderer);
-        setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+//        renderer = new ObjectModelRenderer(context, objectModel);
+//        setRenderer(renderer);
+        setRenderer(new ClearRenderer());
+//        setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
         scaleDetector = new ScaleGestureDetector(context,
                 new SimpleScaleListener());
     }
@@ -104,12 +105,6 @@ public class TouchSurfaceView extends GLSurfaceView {
         return true;
     }
 
-    public Bitmap getSurfaceBitmap() {
-        renderer.shouldCopySurface = true;
-        requestRender();
-        return renderer.getSurfaceBitmap();
-    }
-
     /**
      * Pinch-and-Zoom implementation. New since Android 2.2 Froyo
      *
@@ -129,6 +124,21 @@ public class TouchSurfaceView extends GLSurfaceView {
                 skalierung = 1.5f;
             invalidate();
             return true;
+        }
+    }
+
+    class ClearRenderer implements GLSurfaceView.Renderer {
+        public void onSurfaceCreated(GL10 gl, EGLConfig config) {
+            // Do nothing special.
+        }
+
+        public void onSurfaceChanged(GL10 gl, int w, int h) {
+            gl.glViewport(0, 0, w, h);
+        }
+
+        public void onDrawFrame(GL10 gl) {
+            gl.glClearColor(0.3f, 0.9f, 0.1f, 1.0f);
+            gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
         }
     }
 

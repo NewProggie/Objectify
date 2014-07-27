@@ -1,23 +1,22 @@
 package de.hsrm.objectify.activities.fragments;
 
 import android.app.Fragment;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.content.ContentResolver;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import de.hsrm.objectify.R;
-import de.hsrm.objectify.rendering.ObjectModel;
+import de.hsrm.objectify.activities.ReconstructionDetailActivity;
+import de.hsrm.objectify.database.DatabaseAdapter;
+import de.hsrm.objectify.database.DatabaseProvider;
 import de.hsrm.objectify.rendering.ReconstructionService;
+import de.hsrm.objectify.utils.BitmapUtils;
+import de.hsrm.objectify.utils.Storage;
 
 /**
  * A fragment representing a single Reconstruction detail screen.
@@ -31,11 +30,26 @@ public class ImageViewerFragment extends Fragment {
     public static final String ARG_IMAGE_TYPE = "image_type";
     private String mGalleryId;
     private String mImageType;
+    private String mImagePath;
     private ImageView mReconstructionImageView;
 
     /** Mandatory empty constructor for the fragment manager to instantiate the fragment (e.g. upon
      * screen orientation changes) */
     public ImageViewerFragment() { }
+
+    /** Use this factory method to create a new instance of this fragment using the provided
+     * parameters.
+     * @param galleryId gallery database id
+     * @return A new instance of fragment ModelViewerFragment.
+     */
+    public static ImageViewerFragment newInstance(String galleryId, String recType) {
+        ImageViewerFragment fragment = new ImageViewerFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_GALLERY_ID, galleryId);
+        args.putString(ARG_IMAGE_TYPE, recType);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -44,19 +58,42 @@ public class ImageViewerFragment extends Fragment {
         if (getArguments() != null) {
             mGalleryId = getArguments().getString(ARG_GALLERY_ID);
             mImageType = getArguments().getString(ARG_IMAGE_TYPE);
+            String dirPath = getDirectoryPathFromDatabase(mGalleryId);
+            mImagePath = getReconstructionTypeImagePath(dirPath, mImageType);
         }
+    }
+
+    private String getReconstructionTypeImagePath(String dirPath, String recType) {
+        if (recType.equalsIgnoreCase(ReconstructionDetailActivity.REC_NORMALMAP)) {
+            return Storage.getExternalRootDirectory() + "/" + dirPath + "/" +
+                    ReconstructionService.NORMAL_IMG_NAME;
+        } else if (recType.equalsIgnoreCase(ReconstructionDetailActivity.REC_HEIGHTMAP)) {
+            return Storage.getExternalRootDirectory() + "/" + dirPath + "/" +
+                    ReconstructionService.HEIGHT_IMG_NAME;
+        }
+
+        return null;
+    }
+    private String getDirectoryPathFromDatabase(String galleryId) {
+        ContentResolver cr = getActivity().getContentResolver();
+        Uri galleryItemUri = DatabaseProvider.CONTENT_URI.buildUpon()
+                .appendPath(DatabaseAdapter.DATABASE_TABLE_GALLERY).build();
+        Cursor c = cr.query(galleryItemUri, null, DatabaseAdapter.GALLERY_ID_KEY + "=?",
+                new String[] { mGalleryId}, null);
+        c.moveToFirst();
+        String imgFilePath = c.getString(DatabaseAdapter.GALLERY_IMAGE_PATH_COLUMN);
+        c.close();
+
+        return imgFilePath;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_normal_map_view, container, false);
-        mReconstructionImageView = (ImageView) rootView.findViewById(R.id.normalmap);
+        mReconstructionImageView = (ImageView) rootView.findViewById(R.id.reconstruction_image);
+        mReconstructionImageView.setImageBitmap(BitmapUtils.openBitmap(mImagePath));
         return rootView;
-    }
-
-    public void setImage(Bitmap image) {
-        mReconstructionImageView.setImageBitmap(image);
     }
 
     /**

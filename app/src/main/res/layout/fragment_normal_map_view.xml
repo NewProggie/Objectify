@@ -5,7 +5,7 @@
     tools:context=".activities.ModelViewerFragment">
 
     <ImageView
-        android:id="@+id/normalmap"
+        android:id="@+id/reconstruction_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context="de.hsrm.objectify.activities.fragments.ImageViewerFragment" />

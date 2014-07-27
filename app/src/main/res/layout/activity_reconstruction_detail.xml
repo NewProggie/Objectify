@@ -5,4 +5,25 @@
     android:layout_height="match_parent"
     android:background="@color/black"
     tools:context="de.hsrm.objectify.activities.ReconstructionDetailActivity"
-    tools:ignore="MergeRootFrame" />
+    tools:ignore="MergeRootFrame">
+
+    <LinearLayout
+        android:id="@+id/progress_screen"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
+        <ProgressBar
+            android:layout_width="@dimen/progressbar_size"
+            android:layout_height="@dimen/progressbar_size"
+            android:visibility="visible" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/please_wait"
+            style="@style/ShadowedText"
+            android:textSize="@dimen/please_wait_text_size" />
+
+        </LinearLayout>
+    </FrameLayout>

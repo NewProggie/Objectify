@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/RelativeLayout1"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+    style="?android:attr/spinnerDropDownItemStyle"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_margin="10dp"
@@ -15,17 +15,17 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_marginBottom="-4dip"
-        android:text="My Title"
+        android:text="Title"
         android:textSize="@dimen/action_bar_title_text_size"
         android:textAppearance="@style/ActionBarDropdownItemTextStyle"/>
 
     <TextView
-        android:id="@+id/TextView1"
+        android:id="@android:id/text2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@android:id/text1"
-        android:text="Display surface normals in rgb"
+        android:text="Subtitle"
         android:textColor="@color/gray"
         android:textSize="@dimen/action_bar_subtitle_text_size"
         android:textAppearance="@style/ActionBarDropdownItemTextStyle"/>

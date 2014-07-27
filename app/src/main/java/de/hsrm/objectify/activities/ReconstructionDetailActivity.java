@@ -5,44 +5,43 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.SimpleAdapter;
 import android.widget.SpinnerAdapter;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import de.hsrm.objectify.R;
 import de.hsrm.objectify.activities.fragments.ImageViewerFragment;
 import de.hsrm.objectify.activities.fragments.ModelViewerFragment;
 import de.hsrm.objectify.camera.Constants;
-import de.hsrm.objectify.database.DatabaseAdapter;
-import de.hsrm.objectify.database.DatabaseProvider;
 import de.hsrm.objectify.rendering.ReconstructionService;
-import de.hsrm.objectify.utils.Storage;
 
-/**
- * An activity representing a single Reconstruction detail screen. This
- * activity is only used on handset devices. On tablet-size devices,
- * item details are presented side-by-side with a list of items
- * in a {@link ReconstructionListActivity}.
- * This activity is mostly just a 'shell' activity containing nothing
- * more than a {@link de.hsrm.objectify.activities.fragments.ImageViewerFragment}.
- */
+/** An activity representing a single Reconstruction detail screen. This activity is only used on
+ * handset devices. On tablet-size devices, item details are presented side-by-side with a list of
+ * items in a {@link ReconstructionListActivity}. This activity is mostly just a 'shell' activity
+ * containing no more than a {@link de.hsrm.objectify.activities.fragments.ImageViewerFragment} */
 public class ReconstructionDetailActivity extends Activity
         implements  ImageViewerFragment.OnFragmentInteractionListener,
                     ModelViewerFragment.OnFragmentInteractionListener {
 
     private final String TAG = "ReconstructionDetailActivity";
+    public static final String REC_NORMALMAP = "normalmap";
+    public static final String REC_HEIGHTMAP = "heightmap";
+    public static final String REC_3DMODEL   = "3dmodel";
+    private LinearLayout mProgressScreen;
     private SpinnerAdapter mSpinnerAdapter;
     private Fragment mCurrentFragment;
     private String mGalleryId;
@@ -53,7 +52,10 @@ public class ReconstructionDetailActivity extends Activity
 
             Bundle bundle = intent.getExtras();
             if (bundle != null) {
+                disableProgressScreen();
                 mGalleryId = bundle.getString(ReconstructionService.GALLERY_ID);
+                mCurrentFragment = ImageViewerFragment.newInstance(mGalleryId, REC_NORMALMAP);
+                updateCurrentViewFragment();
             }
         }
     };
@@ -63,28 +65,40 @@ public class ReconstructionDetailActivity extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reconstruction_detail);
 
-        mSpinnerAdapter = new ArrayAdapter<CharSequence>(this, R.layout.subtitled_spinner_item,
-                android.R.id.text1, getResources().getStringArray(R.array.reconstruction_views));
+        /* populate android actionbar dropdown list for all fragments */
+        List<Map<String, String>> data = new ArrayList<Map<String, String>>();
+        String[] titles = getResources().getStringArray(R.array.reconstruction_views);
+        String[] subs = getResources().getStringArray(R.array.reconstruction_views_sub);
+        for (int i = 0; i < titles.length; i++) {
+            Map<String, String> entry = new HashMap<String, String>(2);
+            entry.put("title", titles[i]);
+            entry.put("subtitle", subs[i]);
+            data.add(entry);
+        }
+
+        mProgressScreen = (LinearLayout) findViewById(R.id.progress_screen);
+        mSpinnerAdapter = new SimpleAdapter(this, data, R.layout.subtitled_spinner_item,
+                new String[] {"title", "subtitle"},
+                new int[] {android.R.id.text1, android.R.id.text2});
 
         /* show the Up button in the action bar. */
         ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
         actionBar.setListNavigationCallbacks(mSpinnerAdapter, spinnerNavigationCallback());
-
-        /* savedInstanceState is non-null when there is fragment state saved from previous
-         * configurations of this activity (e.g. when rotating the screen from portrait to
-         * landscape). In this case, the fragment will automatically be re-added to its container
-         * so we don't need to manually add it */
-        if (savedInstanceState == null) {
-            /* create the detail fragment and add it to the activity using a fragment transaction */
-            mCurrentFragment = new ImageViewerFragment();
-            FragmentTransaction transaction = getFragmentManager().beginTransaction();
-            transaction.add(R.id.reconstruction_detail_container, mCurrentFragment);
-            transaction.commit();
-        }
+        actionBar.hide();
     }
 
+    private void updateCurrentViewFragment() {
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        transaction.replace(R.id.reconstruction_detail_container, mCurrentFragment);
+        transaction.commit();
+    }
+
+    private void disableProgressScreen() {
+        getActionBar().show();
+        mProgressScreen.setVisibility(View.INVISIBLE);
+    }
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -108,20 +122,19 @@ public class ReconstructionDetailActivity extends Activity
             public boolean onNavigationItemSelected(int itemPosition, long itemId) {
                 switch (itemPosition) {
                     case Constants.ReconstructionType.NORMALMAP:
+                        mCurrentFragment = ImageViewerFragment.newInstance(mGalleryId,
+                                REC_NORMALMAP);
+                        break;
                     case Constants.ReconstructionType.HEIGHTMAP:
-                        mCurrentFragment = new ImageViewerFragment();
+                        mCurrentFragment = ImageViewerFragment.newInstance(mGalleryId,
+                                REC_HEIGHTMAP);
                         break;
                     case Constants.ReconstructionType.RECONSTRUCTION:
                         mCurrentFragment = ModelViewerFragment.newInstance(mGalleryId);
                         break;
                 }
 
-                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.replace(R.id.reconstruction_detail_container, mCurrentFragment);
-                transaction.commit();
-
-                /* update current active fragment */
-//                mCurrentFragment.update(null, heights, normals);
+                updateCurrentViewFragment();
                 return true;
             }
         };

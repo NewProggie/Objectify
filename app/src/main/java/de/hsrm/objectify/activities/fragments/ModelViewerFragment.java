@@ -6,13 +6,18 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 
 import de.hsrm.objectify.R;
 import de.hsrm.objectify.database.DatabaseAdapter;
 import de.hsrm.objectify.database.DatabaseProvider;
+import de.hsrm.objectify.rendering.TouchSurfaceView;
+import de.hsrm.objectify.utils.BitmapUtils;
 
 /**
  * A simple {@link Fragment} subclass. Activities that contain this fragment must implement the
@@ -20,6 +25,7 @@ import de.hsrm.objectify.database.DatabaseProvider;
 public class ModelViewerFragment extends Fragment {
 
     private static final String ARG_GALLERY_ID = "gallery_id";
+    private TouchSurfaceView mGlSurfaceView;
     private String mGalleryId;
 
     /** Mandatory empty constructor for the fragment manager to instantiate the fragment (e.g. upon
@@ -36,8 +42,7 @@ public class ModelViewerFragment extends Fragment {
         }
     }
 
-    /**
-     * Use this factory method to create a new instance of this fragment using the provided
+    /** Use this factory method to create a new instance of this fragment using the provided
      * parameters.
      * @param galleryId gallery database id
      * @return A new instance of fragment ModelViewerFragment.
@@ -54,8 +59,17 @@ public class ModelViewerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_model_viewer, container, false);
+
+        /* view container, in this case FrameLayout */
+        View rootView = inflater.inflate(R.layout.fragment_model_viewer, container, false);
+        FrameLayout frameLayout = (FrameLayout) rootView.findViewById(R.id.modelview_container);
+
+        /* add touchsurface view, for displaying object model */
+        Display d = getActivity().getWindowManager().getDefaultDisplay();
+        mGlSurfaceView = new TouchSurfaceView(getActivity(), null, d.getWidth(), d.getHeight());
+        frameLayout.addView(mGlSurfaceView);
+
+        return rootView;
     }
 
     private String getModelPathFromDatabase(String galleryId) {

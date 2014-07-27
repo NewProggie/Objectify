@@ -16,6 +16,10 @@
         <item>3D-Reconstruction</item>
     </string-array>
 
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string-array name="reconstruction_views_sub">
+        <item>Display surface normals in rgb</item>
+        <item>Display heights in grayscale</item>
+        <item>Display 3D-Reconstruction</item>
+    </string-array>
 
 </resources>
