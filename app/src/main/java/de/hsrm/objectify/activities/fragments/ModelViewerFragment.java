@@ -3,6 +3,7 @@ package de.hsrm.objectify.activities.fragments;
 import android.app.Fragment;
 import android.content.ContentResolver;
 import android.database.Cursor;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -66,7 +67,9 @@ public class ModelViewerFragment extends Fragment {
 
         /* add touchsurface view, for displaying object model */
         Display d = getActivity().getWindowManager().getDefaultDisplay();
-        mGlSurfaceView = new TouchSurfaceView(getActivity(), null, d.getWidth(), d.getHeight());
+        Point size = new Point();
+        d.getSize(size);
+        mGlSurfaceView = new TouchSurfaceView(getActivity(), size.x, size.y);
         frameLayout.addView(mGlSurfaceView);
 
         return rootView;
