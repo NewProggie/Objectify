@@ -4,7 +4,7 @@ import android.graphics.Bitmap;
 
 public interface Constants {
 
-    public static final int IMAGE_RESOLUTION = 320*240;
+    public static final int IMAGE_RESOLUTION = 240*320;
     public static final int NUM_IMAGES = 4;
     public static final String IMAGE_NAME   = "image_";
     public static final String IMAGE_FORMAT = "png";

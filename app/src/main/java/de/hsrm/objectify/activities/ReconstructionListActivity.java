@@ -29,7 +29,14 @@ public class ReconstructionListActivity extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reconstruction_list);
 
-        if (findViewById(R.id.reconstruction_detail_container) != null) {
+        if (getIntent().getBooleanExtra(CameraActivity.RECONSTRUCTION, false)) {
+            /** We are on a small-screen layout and a new reconstruction has been started. Moving
+             * to reconstruction detail activity. */
+            Intent view3DModel = new Intent(getApplicationContext(),
+                    ReconstructionDetailActivity.class);
+            startActivity(view3DModel);
+            finish();
+        } else if (findViewById(R.id.reconstruction_detail_container) != null) {
             /** The detail container view will be present only in the large-screen layouts
              * (res/values-large and res/values-sw600dp). If this view is present, then the activity
              * should be in two-pane mode. */
@@ -39,13 +46,6 @@ public class ReconstructionListActivity extends Activity
             ((ReconstructionListFragment) getFragmentManager()
                     .findFragmentById(R.id.reconstruction_list))
                     .setActivateOnItemClick(true);
-        } else if (getIntent().getBooleanExtra(CameraActivity.RECONSTRUCTION, false)) {
-            /** We are on a small-screen layout and a new reconstruction has been started. Moving
-             * to reconstruction detail activity. */
-            Intent view3DModel = new Intent(getApplicationContext(),
-                    ReconstructionDetailActivity.class);
-            startActivity(view3DModel);
-            finish();
         }
     }
 

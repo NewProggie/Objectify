@@ -105,7 +105,7 @@ public class TouchSurfaceView extends GLSurfaceView {
         public boolean onScale(ScaleGestureDetector detector) {
             mScaling *= detector.getScaleFactor();
             if (mScaling < 0.5f) mScaling = 0.5f;
-            if (mScaling > 1.5f) mScaling = 1.5f;
+            if (mScaling > 100.5f) mScaling = 100.5f;
             invalidate();
             return true;
         }
@@ -145,7 +145,7 @@ public class TouchSurfaceView extends GLSurfaceView {
             gl.glEnable(GL10.GL_LIGHT0);
             // LIGHT0
             // define ambient component of first light
-            float[] light0Ambient = new float[] { 0.7f, 0.7f, 0.7f, 1.0f };
+            float[] light0Ambient = new float[] { 0.9f, 0.9f, 0.9f, 1.0f };
             ByteBuffer byteBuf = ByteBuffer.allocateDirect(light0Ambient.length * 4);
             byteBuf.order(ByteOrder.nativeOrder());
             FloatBuffer light0AmbientBuffer = byteBuf.asFloatBuffer();
@@ -153,18 +153,18 @@ public class TouchSurfaceView extends GLSurfaceView {
             light0AmbientBuffer.rewind();
             gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_AMBIENT, light0AmbientBuffer);
             // define diffuse component of first light
-            float[] light0Diffuse = new float[] { 0.7f, 0.7f, 0.7f, 1.0f };
+            float[] light0Diffuse = new float[] { 0.8f, 0.8f, 0.8f, 1.0f };
             FloatBuffer light0diffuseBuffer = byteBuf.asFloatBuffer();
             light0diffuseBuffer.put(light0Diffuse);
             light0diffuseBuffer.rewind();
             gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_DIFFUSE, light0diffuseBuffer);
             // define specular component of first light
-            float[] light0Specular = new float[] { 0.7f, 0.7f, 0.7f, 1.0f };
+            float[] light0Specular = new float[] { 0.8f, 0.8f, 0.8f, 1.0f };
             FloatBuffer light0specularBuffer = byteBuf.asFloatBuffer();
             light0specularBuffer.put(light0Specular);
             light0specularBuffer.rewind();
             gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_SPECULAR, light0specularBuffer);
-            float[] light0Position = new float[] { 0.0f, 5.0f, 5.0f, 1.0f };
+            float[] light0Position = new float[] { 1.0f, 3.0f, 3.0f, 1.0f };
             FloatBuffer lightPosBuffer = byteBuf.asFloatBuffer();
             lightPosBuffer.put(light0Position);
             lightPosBuffer.rewind();

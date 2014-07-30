@@ -73,9 +73,14 @@ public class ReconstructionService extends IntentService {
         mWidth = images.get(0).getWidth();
         mHeight = images.get(0).getHeight();
         /* subtract first ambient image from the remaining images */
-        Bitmap ambient = images.remove(0);
-        for (int i = 0; i < images.size(); i++) {
-            images.set(i, BitmapUtils.subtract(images.get(i), ambient));
+//        Bitmap ambient = images.remove(0);
+//        for (int i = 0; i < images.size(); i++) {
+//            images.set(i, BitmapUtils.subtract(images.get(i), ambient));
+//        }
+        images.clear();
+        for (int i = 0; i < Constants.NUM_IMAGES; i++) {
+            images.add(BitmapUtils.openBitmap(Storage.getExternalRootDirectory() +
+                "/" + dirName + "/kai_medium_" + i + ".jpg"));
         }
 
         /* compute normals */
@@ -86,7 +91,7 @@ public class ReconstructionService extends IntentService {
 
         /* TODO: linear transformation depending on image size */
         float[] Z = localHeightfield(normals);
-        Z = ArrayUtils.linearTransform(Z, 0.0f, 90.0f);
+        Z = ArrayUtils.linearTransform(Z, 0.0f, 50.0f);
         int[] heightPixels = new int[mWidth*mHeight];
         int idx = 0;
         for (int i = 0; i < mHeight; i++) {
@@ -128,8 +133,8 @@ public class ReconstructionService extends IntentService {
         }
 
         /* faces */
-        for (int i = 0; i < mHeight; i++) {
-            for (int j = 0; j < mWidth; j++) {
+        for (int i = 0; i < mHeight-1; i++) {
+            for (int j = 0; j < mWidth-1; j++) {
                 short index = (short) (j + (i * mWidth));
                 indexes.add(index);
                 indexes.add((short) (index + mWidth));
