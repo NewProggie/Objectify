@@ -147,7 +147,7 @@ public class ReconstructionService extends IntentService {
             indexBuf.put(indexes.get(i));
         }
 
-        return new ObjectModel(vertBuf.array(), normBuf.array(), indexBuf.array(), texture);
+        return new ObjectModel(vertBuf.array(), normBuf.array(), indexBuf.array());
     }
 
     private String writeDatabaseEntry(ObjectModel objectModel, Size dim, String dirName) {

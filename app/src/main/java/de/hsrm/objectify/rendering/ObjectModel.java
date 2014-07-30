@@ -1,13 +1,7 @@
 package de.hsrm.objectify.rendering;
 
-import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
-import android.opengl.GLUtils;
-import android.util.Log;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -16,7 +10,6 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
-import java.util.ArrayList;
 
 import javax.microedition.khronos.opengles.GL10;
 
@@ -42,13 +35,13 @@ public class ObjectModel implements Serializable {
     private short mFaces[];
     private float[] mBoundingBox;
     public byte[] mBitmapData;
-    private final int mRenderMode = GL10.GL_TRIANGLES;
+    private final int mRenderMode = GL10.GL_POINTS;
 
-    public ObjectModel(float[] vertices, float[] normals, short[] faces, Bitmap bmp) {
-        onInitialize(vertices, normals, faces, bmp);
+    public ObjectModel(float[] vertices, float[] normals, short[] faces) {
+        onInitialize(vertices, normals, faces);
     }
 
-    private void onInitialize(float[] vertices, float[] normals, short[] faces, Bitmap bmp) {
+    private void onInitialize(float[] vertices, float[] normals, short[] faces) {
 
         setVertices(vertices);
         setNormalVertices(normals);
@@ -70,30 +63,10 @@ public class ObjectModel implements Serializable {
         mFacesBuffer = byteBuf.asShortBuffer();
         mFacesBuffer.put(faces);
         mFacesBuffer.rewind();
-
-        computeTextureCoords(bmp);
-        byteBuf = ByteBuffer.allocateDirect(mTexture.length * 4);
-        byteBuf.order(ByteOrder.nativeOrder());
-        mTextureBuffer = byteBuf.asFloatBuffer();
-        mTextureBuffer.put(mTexture);
-        mTextureBuffer.rewind();
-
-        this.mTextureBitmap = bmp.copy(bmp.getConfig(), true);
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        bmp.compress(Bitmap.CompressFormat.PNG, 100, bos);
-        byte[] bb = bos.toByteArray();
-        mBitmapData = new byte[bb.length];
-        System.arraycopy(bb, 0, mBitmapData, 0, bb.length);
     }
 
-    /**
-     * Needs to be called right after object has been restored from hard disk
-     */
-    public void setup() {
-        setVertices(mVertices);
-        setNormalVertices(mNormals);
-        setFaces(mFaces);
-        this.mTextureBitmap = BitmapFactory.decodeByteArray(mBitmapData, 0, mBitmapData.length);
+    public void setTextureBitmap(Bitmap texture) {
+        mTextureBitmap = texture.copy(texture.getConfig(), true);
     }
 
     public int getVerticesSize() {
@@ -197,83 +170,18 @@ public class ObjectModel implements Serializable {
         return mVertices;
     }
 
-    private void computeTextureCoords(Bitmap bmp) {
-        /* TODO: Optimize me, no need for texCoords Array */
-        int width = bmp.getWidth();
-        int height = bmp.getHeight();
-        ArrayList<Float> texCoords = new ArrayList<Float>();
-        for (int x = 0; x < height; x++) {
-            for (int y = 0; y < width; y++) {
-                texCoords.add(1.0f / (width - 1.0f) * y);
-                texCoords.add(1.0f / (height - 1.0f) * x);
-            }
-        }
-
-        this.mTexture = new float[texCoords.size()];
-        for (int i = 0; i <texCoords.size(); i++) {
-            mTexture[i] = texCoords.get(i);
-        }
-    }
-
     public void draw(GL10 gl) {
-        gl.glBindTexture(GL10.GL_TEXTURE_2D, mTextures[0]);
-
         gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
         gl.glEnableClientState(GL10.GL_NORMAL_ARRAY);
-        gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 
         gl.glVertexPointer(3, GL10.GL_FLOAT, 0, mVertexBuffer);
         gl.glNormalPointer(GL10.GL_FLOAT, 0, normalsBuffer);
-        gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, mTextureBuffer);
 
         gl.glDrawElements(mRenderMode, mFaces.length, GL10.GL_UNSIGNED_SHORT,
                 mFacesBuffer);
 
         gl.glDisableClientState(GL10.GL_NORMAL_ARRAY);
         gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
-        gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
-    }
-
-    /**
-     * Loading mTexture
-     *
-     * @param gl
-     *            the GL Context
-     */
-    public void loadGLTexture(GL10 gl, Context context) {
-        Bitmap texture = scaleTexture(this.mTextureBitmap, 256);
-
-        gl.glGenTextures(1, mTextures, 0);
-        gl.glBindTexture(GL10.GL_TEXTURE_2D, mTextures[0]);
-
-        gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_NEAREST);
-        gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_LINEAR);
-
-        gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_S, GL10.GL_REPEAT);
-        gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T, GL10.GL_REPEAT);
-
-        GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, texture, 0);
-
-        texture.recycle();
-    }
-
-    /**
-     * Scales image to valid mTexture
-     *
-     * @param image
-     *            original image
-     * @param size
-     *            preferred width and height size
-     * @return scaled image
-     */
-    private Bitmap scaleTexture(Bitmap image, int size) {
-        int width = image.getWidth();
-        int height = image.getHeight();
-        float scaleWidth = ((float) size) / width;
-        float scaleHeight = ((float) size) / height;
-        Matrix matrix = new Matrix();
-        matrix.postScale(scaleWidth, scaleHeight);
-        return Bitmap.createBitmap(image, 0, 0, width, height, matrix, true);
     }
 
     private void writeObject(ObjectOutputStream out) throws IOException {
@@ -295,7 +203,6 @@ public class ObjectModel implements Serializable {
         for (int i = 0; i < mFaces.length; i++) {
             out.writeShort(mFaces[i]);
         }
-
         out.flush();
     }
 
@@ -318,7 +225,7 @@ public class ObjectModel implements Serializable {
         for (int i = 0; i < faces.length; i++) {
             faces[i] = in.readShort();
         }
-
+        onInitialize(vertices, normals, faces);
     }
 
 }

@@ -4,12 +4,17 @@ import android.content.Context;
 import android.graphics.PointF;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
+import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
+import android.view.Window;
+import android.view.WindowManager;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+import java.nio.ShortBuffer;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -91,12 +96,10 @@ public class TouchSurfaceView extends GLSurfaceView {
         return true;
     }
 
-    /**
-     * Pinch-and-Zoom implementation. New since Android 2.2 Froyo
-     *
-     * @author kwolf001
-     *
-     */
+    public void setObjectModel(ObjectModel objectModel) {
+        renderer.setObjectModel(objectModel);
+    }
+
     private class SimpleScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
 
         public boolean onScale(ScaleGestureDetector detector) {
@@ -129,7 +132,6 @@ public class TouchSurfaceView extends GLSurfaceView {
 
         @Override
         public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-//            mObjectModel.loadGLTexture(gl, mContext);
             gl.glEnable(GL10.GL_TEXTURE_2D);
             gl.glShadeModel(GL10.GL_SMOOTH);
             gl.glClearColor(0.2f, 0.3f, 0.5f, 1.0f);
@@ -174,6 +176,7 @@ public class TouchSurfaceView extends GLSurfaceView {
 
         @Override
         public void onDrawFrame(GL10 gl) {
+
             gl.glColor4f(0, 0, 0, 0);
             gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
@@ -182,9 +185,8 @@ public class TouchSurfaceView extends GLSurfaceView {
             GLU.gluLookAt(gl, 0, 0, -2, 0, 0, 0, 0, 1, 0);
             thisRot.map(matrix);
             gl.glMultMatrixf(matrix, 0);
-            gl.glRotatef(180, 1, 0, 0);
-            gl.glRotatef(270, 0, 0, 1);
             gl.glScalef(mScaling, mScaling, mScaling);
+
             if (mObjectModel != null) {
                 gl.glScalef(mObjectModel.getLength(),
                             mObjectModel.getLength(),
@@ -207,7 +209,7 @@ public class TouchSurfaceView extends GLSurfaceView {
 
         public void setObjectModel(ObjectModel objectModel) {
             mObjectModel = objectModel;
-            invalidate();
+            requestRender();
         }
 
     }

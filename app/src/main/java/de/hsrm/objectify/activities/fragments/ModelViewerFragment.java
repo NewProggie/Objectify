@@ -3,6 +3,8 @@ package de.hsrm.objectify.activities.fragments;
 import android.app.Fragment;
 import android.content.ContentResolver;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
@@ -14,11 +16,19 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 import de.hsrm.objectify.R;
 import de.hsrm.objectify.database.DatabaseAdapter;
 import de.hsrm.objectify.database.DatabaseProvider;
+import de.hsrm.objectify.rendering.ObjectModel;
 import de.hsrm.objectify.rendering.TouchSurfaceView;
 import de.hsrm.objectify.utils.BitmapUtils;
+import de.hsrm.objectify.utils.Storage;
 
 /**
  * A simple {@link Fragment} subclass. Activities that contain this fragment must implement the
@@ -27,6 +37,7 @@ public class ModelViewerFragment extends Fragment {
 
     private static final String ARG_GALLERY_ID = "gallery_id";
     private TouchSurfaceView mGlSurfaceView;
+    private ObjectModel mObjectModel;
     private String mGalleryId;
 
     /** Mandatory empty constructor for the fragment manager to instantiate the fragment (e.g. upon
@@ -36,11 +47,33 @@ public class ModelViewerFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
+        if (savedInstanceState != null) {
+            mGalleryId = savedInstanceState.getString(ARG_GALLERY_ID);
+        } else if (getArguments().getString(ARG_GALLERY_ID) != null) {
             mGalleryId = getArguments().getString(ARG_GALLERY_ID);
+            Log.i("ModelViewerFragment", "galleryID: " + mGalleryId);
             String path = getModelPathFromDatabase(mGalleryId);
             /* TODO: load object asynchronously */
+            try {
+                ObjectInputStream ois = new ObjectInputStream(new FileInputStream(path));
+                mObjectModel = (ObjectModel) ois.readObject();
+                ois.close();
+                mObjectModel.setTextureBitmap(getTextureFromDatabase(mGalleryId));
+            } catch (IOException e) {
+                e.printStackTrace();
+                Log.e("ModelViewerFragment", "Could not read objectmodel file");
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+                Log.e("ModelViewerFragment", "Could not cast to ObjectModel");
+            }
+
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putString(ARG_GALLERY_ID, mGalleryId);
+        super.onSaveInstanceState(outState);
     }
 
     /** Use this factory method to create a new instance of this fragment using the provided
@@ -71,8 +104,22 @@ public class ModelViewerFragment extends Fragment {
         d.getSize(size);
         mGlSurfaceView = new TouchSurfaceView(getActivity(), size.x, size.y);
         frameLayout.addView(mGlSurfaceView);
+        mGlSurfaceView.setObjectModel(mObjectModel);
 
         return rootView;
+    }
+
+    private Bitmap getTextureFromDatabase(String galleryId) {
+        ContentResolver cr = getActivity().getContentResolver();
+        Uri galleryItemUri = DatabaseProvider.CONTENT_URI.buildUpon()
+                .appendPath(DatabaseAdapter.DATABASE_TABLE_GALLERY).build();
+        Cursor c = cr.query(galleryItemUri, null, DatabaseAdapter.GALLERY_ID_KEY + "=?",
+                new String[] { mGalleryId}, null);
+        c.moveToFirst();
+        Bitmap texture = BitmapFactory.decodeFile(Storage.getExternalRootDirectory() + "/" +
+                c.getString(DatabaseAdapter.GALLERY_IMAGE_PATH_COLUMN) + "/image_1.png");
+        c.close();
+        return texture;
     }
 
     private String getModelPathFromDatabase(String galleryId) {
