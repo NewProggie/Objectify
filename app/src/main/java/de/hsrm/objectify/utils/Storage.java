@@ -8,14 +8,9 @@ import java.util.Random;
 public class Storage {
 
     private static final String DIRECTORY_NAME  = "/Android/data/de.hsrm.objectify";
-    private static final String IMAGE_DIRECTORY = DIRECTORY_NAME + "/img";
 
     public static String getExternalRootDirectory() {
         return getDirectoryPath(DIRECTORY_NAME);
-    }
-
-    public static String getExternalImageDirectory() {
-        return getDirectoryPath(IMAGE_DIRECTORY);
     }
 
     public boolean isMounted() {
@@ -28,11 +23,7 @@ public class Storage {
                 .toCharArray();
         StringBuilder sb = new StringBuilder();
         Random random = new Random();
-        for (int i = 0; i < size; i++) {
-            /* TODO: remove returning same name during debugging */
-//            char c = chars[random.nextInt(chars.length)];
-            sb.append("a");
-        }
+        for (int i = 0; i < size; i++) sb.append(chars[random.nextInt(chars.length)]);
         return sb.toString();
     }
 

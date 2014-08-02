@@ -86,7 +86,16 @@ public class ReconstructionDetailActivity extends Activity
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
         actionBar.setListNavigationCallbacks(mSpinnerAdapter, spinnerNavigationCallback());
-        actionBar.hide();
+
+        /* check if called from reconstruction list or if new scan is happening */
+        if (getIntent().hasExtra(ImageViewerFragment.ARG_GALLERY_ID)) {
+            disableProgressScreen();
+            mGalleryId = getIntent().getStringExtra(ImageViewerFragment.ARG_GALLERY_ID);
+            mCurrentFragment = ImageViewerFragment.newInstance(mGalleryId, REC_NORMALMAP);
+            updateCurrentViewFragment();
+        } else {
+            actionBar.hide();
+        }
     }
 
     private void updateCurrentViewFragment() {

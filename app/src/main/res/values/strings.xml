@@ -9,6 +9,7 @@
     <string name="scan">Scan</string>
     <string name="title_reconstruction_list">Reconstructions</string>
     <string name="please_wait">Preparing. Please Wait…</string>
+    <string name="show_gallery">Show Gallery</string>
 
     <string-array name="reconstruction_views">
         <item>Normalmap</item>

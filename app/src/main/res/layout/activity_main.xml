@@ -12,9 +12,16 @@
     <Button
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:text="@string/show_gallery"
+        android:id="@+id/show_gallery"
+        android:onClick="galleryButtonClick" />
+
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
         android:text="@string/new_scan"
         android:id="@+id/new_scan"
         android:onClick="scanButtonClick"
-        android:layout_alignParentBottom="true" />
+        android:layout_below="@id/show_gallery"/>
 
 </RelativeLayout>

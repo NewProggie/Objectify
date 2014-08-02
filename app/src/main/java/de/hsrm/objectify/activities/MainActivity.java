@@ -37,6 +37,11 @@ public class MainActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
+    public void galleryButtonClick(View target) {
+        Intent gallActivity = new Intent(getApplicationContext(), ReconstructionListActivity.class);
+        startActivity(gallActivity);
+    }
+
     public void scanButtonClick(View target) {
         Intent camActivity = new Intent(getApplicationContext(), CameraActivity.class);
         startActivity(camActivity);

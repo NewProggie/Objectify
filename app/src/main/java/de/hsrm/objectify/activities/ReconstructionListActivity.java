@@ -56,10 +56,8 @@ public class ReconstructionListActivity extends Activity
         if (mTwoPane) {
             /** In two-pane mode, show the detail view in this activity by adding or replacing the
              * detail fragment using a fragment transaction. */
-            Bundle arguments = new Bundle();
-            arguments.putString(ImageViewerFragment.ARG_GALLERY_ID, id);
-            ImageViewerFragment fragment = new ImageViewerFragment();
-            fragment.setArguments(arguments);
+            ImageViewerFragment fragment = ImageViewerFragment.newInstance(id,
+                    ReconstructionDetailActivity.REC_NORMALMAP);
             getFragmentManager().beginTransaction()
                     .replace(R.id.reconstruction_detail_container, fragment)
                     .commit();

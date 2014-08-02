@@ -11,6 +11,7 @@ import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.RenderScript;
 import android.renderscript.Type;
+import android.util.Log;
 
 import org.ejml.data.DenseMatrix64F;
 import org.ejml.factory.DecompositionFactory;
@@ -73,15 +74,15 @@ public class ReconstructionService extends IntentService {
         mWidth = images.get(0).getWidth();
         mHeight = images.get(0).getHeight();
         /* subtract first ambient image from the remaining images */
-//        Bitmap ambient = images.remove(0);
-//        for (int i = 0; i < images.size(); i++) {
-//            images.set(i, BitmapUtils.subtract(images.get(i), ambient));
-//        }
-        images.clear();
-        for (int i = 0; i < Constants.NUM_IMAGES; i++) {
-            images.add(BitmapUtils.openBitmap(Storage.getExternalRootDirectory() +
-                "/" + dirName + "/kai_medium_" + i + ".jpg"));
+        Bitmap ambient = images.remove(0);
+        for (int i = 0; i < images.size(); i++) {
+            images.set(i, BitmapUtils.subtract(images.get(i), ambient));
         }
+//        images.clear();
+//        for (int i = 0; i < Constants.NUM_IMAGES; i++) {
+//            images.add(BitmapUtils.openBitmap(Storage.getExternalRootDirectory() +
+//                "/" + dirName + "/kai_small_" + i + ".png"));
+//        }
 
         /* compute normals */
         float[] normals = computeNormals(images,
