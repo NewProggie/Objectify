@@ -2,26 +2,26 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/background_noise"
+    android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:background="@drawable/background_noise"
     tools:context=".MainActivity">
 
     <Button
+        android:id="@+id/show_gallery"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="@string/show_gallery"
-        android:id="@+id/show_gallery"
-        android:onClick="galleryButtonClick" />
+        android:onClick="galleryButtonClick"
+        android:text="@string/show_gallery" />
 
     <Button
+        android:id="@+id/new_scan"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="@string/new_scan"
-        android:id="@+id/new_scan"
+        android:layout_below="@id/show_gallery"
         android:onClick="scanButtonClick"
-        android:layout_below="@id/show_gallery"/>
+        android:text="@string/new_scan" />
 
 </RelativeLayout>

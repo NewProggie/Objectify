@@ -14,7 +14,6 @@ import android.hardware.Camera.PictureCallback;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.Display;
 import android.view.Surface;
 import android.view.View;
@@ -183,10 +182,14 @@ public class CameraActivity extends Activity {
 
     private int getDisplayRotation() {
         switch (getWindowManager().getDefaultDisplay().getRotation()) {
-            case Surface.ROTATION_0:    return 0;
-            case Surface.ROTATION_90:   return 90;
-            case Surface.ROTATION_180:  return 180;
-            case Surface.ROTATION_270:  return 270;
+            case Surface.ROTATION_0:
+                return 0;
+            case Surface.ROTATION_90:
+                return 90;
+            case Surface.ROTATION_180:
+                return 180;
+            case Surface.ROTATION_270:
+                return 270;
         }
 
         return 0;
@@ -199,7 +202,7 @@ public class CameraActivity extends Activity {
         return new Size(size.x, size.y);
     }
 
-    private void releaseCamera(){
+    private void releaseCamera() {
         if (mCamera != null) {
             mCameraPreview.setCamera(null);
             mCamera.release();

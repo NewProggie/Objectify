@@ -17,11 +17,14 @@ import de.hsrm.objectify.activities.fragments.ReconstructionListFragment;
  * {@link ReconstructionListFragment} and the item details (if present) is a
  * {@link de.hsrm.objectify.activities.fragments.ImageViewerFragment}. This activity also implements
  * the required {@link de.hsrm.objectify.activities.fragments.ReconstructionListFragment.Callbacks}
- * interface to listen for item selections. */
+ * interface to listen for item selections.
+ */
 public class ReconstructionListActivity extends Activity
         implements ReconstructionListFragment.Callbacks {
 
-    /** Whether or not the activity is in two-pane mode, i.e. running on a tablet device. */
+    /**
+     * Whether or not the activity is in two-pane mode, i.e. running on a tablet device.
+     */
     private boolean mTwoPane;
 
     @Override
@@ -49,8 +52,10 @@ public class ReconstructionListActivity extends Activity
         }
     }
 
-    /** Callback method from {@link ReconstructionListFragment.Callbacks} indicating that the item
-     * with the given ID was selected. */
+    /**
+     * Callback method from {@link ReconstructionListFragment.Callbacks} indicating that the item
+     * with the given ID was selected.
+     */
     @Override
     public void onItemSelected(String id) {
         if (mTwoPane) {

@@ -4,17 +4,12 @@ import android.content.Context;
 import android.graphics.PointF;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
-import android.view.Window;
-import android.view.WindowManager;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
-import java.nio.ShortBuffer;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -30,18 +25,17 @@ import de.hsrm.objectify.utils.ArcBall;
  * (Froyo).
  *
  * @author kwolf001
- *
  */
 public class TouchSurfaceView extends GLSurfaceView {
 
     private static final String TAG = "TouchSurfaceView";
+    private final Object matrixLock = new Object();
+    private final float TRACKBALL_SCALE_FACTOR = 36.0f;
     private Matrix4f lastRot = new Matrix4f();
     private Matrix4f thisRot = new Matrix4f();
     private float[] matrix = new float[16];
-    private final Object matrixLock = new Object();
     private ArcBall arcBall = new ArcBall(getWidth(), getHeight());
     private int displayWidth, displayHeight;
-    private final float TRACKBALL_SCALE_FACTOR = 36.0f;
     private ObjectModelRenderer renderer;
     private ScaleGestureDetector scaleDetector;
     private float mScaling = 1;
@@ -116,13 +110,12 @@ public class TouchSurfaceView extends GLSurfaceView {
      * {@link GLSurfaceView.Renderer} and adapting for our needs.
      *
      * @author kwolf001
-     *
      */
     private class ObjectModelRenderer implements GLSurfaceView.Renderer {
 
-        private ObjectModel mObjectModel = null;
         public float mAngleX;
         public float mAngleY;
+        private ObjectModel mObjectModel = null;
 
         public ObjectModelRenderer() {
             lastRot.setIdentity();
@@ -145,7 +138,7 @@ public class TouchSurfaceView extends GLSurfaceView {
             gl.glEnable(GL10.GL_LIGHT0);
             // LIGHT0
             // define ambient component of first light
-            float[] light0Ambient = new float[] { 0.9f, 0.9f, 0.9f, 1.0f };
+            float[] light0Ambient = new float[]{0.9f, 0.9f, 0.9f, 1.0f};
             ByteBuffer byteBuf = ByteBuffer.allocateDirect(light0Ambient.length * 4);
             byteBuf.order(ByteOrder.nativeOrder());
             FloatBuffer light0AmbientBuffer = byteBuf.asFloatBuffer();
@@ -153,18 +146,18 @@ public class TouchSurfaceView extends GLSurfaceView {
             light0AmbientBuffer.rewind();
             gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_AMBIENT, light0AmbientBuffer);
             // define diffuse component of first light
-            float[] light0Diffuse = new float[] { 0.8f, 0.8f, 0.8f, 1.0f };
+            float[] light0Diffuse = new float[]{0.8f, 0.8f, 0.8f, 1.0f};
             FloatBuffer light0diffuseBuffer = byteBuf.asFloatBuffer();
             light0diffuseBuffer.put(light0Diffuse);
             light0diffuseBuffer.rewind();
             gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_DIFFUSE, light0diffuseBuffer);
             // define specular component of first light
-            float[] light0Specular = new float[] { 0.8f, 0.8f, 0.8f, 1.0f };
+            float[] light0Specular = new float[]{0.8f, 0.8f, 0.8f, 1.0f};
             FloatBuffer light0specularBuffer = byteBuf.asFloatBuffer();
             light0specularBuffer.put(light0Specular);
             light0specularBuffer.rewind();
             gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_SPECULAR, light0specularBuffer);
-            float[] light0Position = new float[] { 1.0f, 3.0f, 3.0f, 1.0f };
+            float[] light0Position = new float[]{1.0f, 3.0f, 3.0f, 1.0f};
             FloatBuffer lightPosBuffer = byteBuf.asFloatBuffer();
             lightPosBuffer.put(light0Position);
             lightPosBuffer.rewind();
@@ -189,11 +182,11 @@ public class TouchSurfaceView extends GLSurfaceView {
 
             if (mObjectModel != null) {
                 gl.glScalef(mObjectModel.getLength(),
-                            mObjectModel.getLength(),
-                            mObjectModel.getLength());
+                        mObjectModel.getLength(),
+                        mObjectModel.getLength());
                 gl.glTranslatef(-mObjectModel.getMiddlePoint()[0],
-                                -mObjectModel.getMiddlePoint()[1],
-                                -mObjectModel.getMiddlePoint()[2]);
+                        -mObjectModel.getMiddlePoint()[1],
+                        -mObjectModel.getMiddlePoint()[2]);
                 mObjectModel.draw(gl);
             }
         }

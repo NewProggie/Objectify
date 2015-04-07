@@ -39,14 +39,18 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     }
 
     public void setCamera(Camera camera) {
-        if (this.mCamera == camera) { return; }
+        if (this.mCamera == camera) {
+            return;
+        }
 
         this.mCamera = camera;
     }
 
     @Override
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
-        if (mCamera == null) { return; }
+        if (mCamera == null) {
+            return;
+        }
 
         try {
             mCamera.setPreviewDisplay(mHolder);
@@ -60,7 +64,9 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
     @Override
     public void surfaceChanged(SurfaceHolder surfaceHolder, int format, int width, int height) {
-        if (mCamera == null) { return; }
+        if (mCamera == null) {
+            return;
+        }
 
         Camera.Parameters params = mCamera.getParameters();
         Size targetSize = CameraUtils.determineTargetPictureSize(params,
@@ -72,7 +78,9 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
     @Override
     public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
-        if (mCamera == null) { return; }
+        if (mCamera == null) {
+            return;
+        }
 
         mCamera.stopPreview();
         mCamera.release();

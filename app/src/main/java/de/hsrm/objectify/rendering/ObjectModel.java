@@ -18,11 +18,14 @@ import de.hsrm.objectify.utils.ArrayUtils;
 /**
  * A representation of a 3D model object. Vertices, mNormals and mTexture can be added after an
  * instance of this class is created. This class implements {@link Serializable} for
- * saving/loading an instance of it */
+ * saving/loading an instance of it
+ */
 public class ObjectModel implements Serializable {
 
     private static final String TAG = "ObjectModel";
     private static final long serialVersionUID = 0L;
+    private final int mRenderMode = GL10.GL_LINES;
+    public byte[] mBitmapData;
     private transient FloatBuffer mVertexBuffer;
     private transient FloatBuffer mTextureBuffer;
     private transient FloatBuffer normalsBuffer;
@@ -34,8 +37,6 @@ public class ObjectModel implements Serializable {
     private float mNormals[];
     private short mFaces[];
     private float[] mBoundingBox;
-    public byte[] mBitmapData;
-    private final int mRenderMode = GL10.GL_LINES;
 
     public ObjectModel(float[] vertices, float[] normals, short[] faces) {
         onInitialize(vertices, normals, faces);
@@ -83,14 +84,14 @@ public class ObjectModel implements Serializable {
         setNormalBuffer(this.mNormals);
     }
 
+    public short[] getFaces() {
+        return mFaces;
+    }
+
     public void setFaces(short[] face) {
         this.mFaces = new short[face.length];
         System.arraycopy(face, 0, mFaces, 0, face.length);
         setFacesBuffer(this.mFaces);
-    }
-
-    public short[] getFaces() {
-        return mFaces;
     }
 
     private void setVertexBuffer(float[] vertices) {
@@ -127,9 +128,9 @@ public class ObjectModel implements Serializable {
         if (mBoundingBox == null) {
             setupBoundingBox();
         }
-        float[] tmp = new float[] { (mBoundingBox[1] - mBoundingBox[0]),
-                                    (mBoundingBox[3] - mBoundingBox[2]),
-                                    (mBoundingBox[5] - mBoundingBox[4]) };
+        float[] tmp = new float[]{(mBoundingBox[1] - mBoundingBox[0]),
+                (mBoundingBox[3] - mBoundingBox[2]),
+                (mBoundingBox[5] - mBoundingBox[4])};
         return 2.0f / ArrayUtils.max(tmp);
     }
 
@@ -141,7 +142,7 @@ public class ObjectModel implements Serializable {
         y2 = ArrayUtils.max(mVertices, 1);
         z1 = ArrayUtils.min(mVertices, 2);
         z2 = ArrayUtils.max(mVertices, 2);
-        mBoundingBox = new float[] { x1, x2, y1, y2, z1, z2 };
+        mBoundingBox = new float[]{x1, x2, y1, y2, z1, z2};
     }
 
     /**
@@ -156,18 +157,18 @@ public class ObjectModel implements Serializable {
         float xmiddle = (mBoundingBox[0] + mBoundingBox[1]) / 2.0f;
         float ymiddle = (mBoundingBox[2] + mBoundingBox[3]) / 2.0f;
         float zmiddle = (mBoundingBox[4] + mBoundingBox[5]) / 2.0f;
-        float[] middlepoint = new float[] { xmiddle, ymiddle, zmiddle };
+        float[] middlepoint = new float[]{xmiddle, ymiddle, zmiddle};
         return middlepoint;
+    }
+
+    public float[] getVertices() {
+        return mVertices;
     }
 
     public void setVertices(float[] mVertices) {
         this.mVertices = new float[mVertices.length];
         System.arraycopy(mVertices, 0, this.mVertices, 0, mVertices.length);
         setVertexBuffer(this.mVertices);
-    }
-
-    public float[] getVertices() {
-        return mVertices;
     }
 
     public void draw(GL10 gl) {

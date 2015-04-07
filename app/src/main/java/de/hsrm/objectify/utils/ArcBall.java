@@ -22,10 +22,8 @@ public class ArcBall {
     /**
      * creates new arcball
      *
-     * @param width
-     *            arcball width
-     * @param height
-     *            arcball height
+     * @param width  arcball width
+     * @param height arcball height
      */
     public ArcBall(int width, int height) {
         StVec = new Vector3f();
@@ -38,10 +36,8 @@ public class ArcBall {
     /**
      * maps finger touch onto arcballs sphere
      *
-     * @param point
-     *            finger touch
-     * @param vector
-     *            vector from objects middlepoint to fingertouch
+     * @param point  finger touch
+     * @param vector vector from objects middlepoint to fingertouch
      */
     public void mapToSphere(PointF point, Vector3f vector) {
         PointF tempPoint = new PointF(point.x, point.y);
@@ -69,10 +65,8 @@ public class ArcBall {
     /**
      * sets new bounds for arcball
      *
-     * @param width
-     *            new width
-     * @param height
-     *            new height
+     * @param width  new width
+     * @param height new height
      */
     public void setBounds(float width, float height) {
         assert ((width > 1.0f) && (height > 1.0f));
@@ -89,10 +83,8 @@ public class ArcBall {
     /**
      * finger dragging while rotating with arcball
      *
-     * @param NewPt
-     *            new point
-     * @param NewRot
-     *            new rotation
+     * @param NewPt  new point
+     * @param NewRot new rotation
      */
     public void drag(PointF NewPt, Quat4f NewRot) {
 

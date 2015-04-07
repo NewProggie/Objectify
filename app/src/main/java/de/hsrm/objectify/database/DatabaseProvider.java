@@ -11,28 +11,24 @@ import android.util.Log;
 public class DatabaseProvider extends ContentProvider {
 
     private static final String AUTHORITY = "de.hsrm.objectify.database.databaseprovider.content";
-    private static final String TAG = "DatabaseProvider";
     private static final String CONTENT_URI_STRING = "content://" + AUTHORITY;
     public static final Uri CONTENT_URI = Uri.parse(CONTENT_URI_STRING);
-
+    private static final String TAG = "DatabaseProvider";
     private static final int GALLERY = 1;
     private static final int OBJECT = 2;
 
     private static final UriMatcher uriMatcher;
-
-    private DatabaseAdapter dbadapter;
-    private SQLiteDatabase db;
-
     private static final String VND_GALLERY_DIR = "vnd.android.cursor.dir/vnd.de.android.gallery";
     private static final String VND_GALLERY_ITEM = "vnd.android.cursor.item/vnd.de.android.gallery";
     private static final String VND_OBJECT_DIR = "vnd.android.cursor.dir/vnd.de.android.object";
     private static final String VND_OBJECT_ITEM = "vnd.android.cursor.item/vnd.de.android.object";
-
     static {
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         uriMatcher.addURI(AUTHORITY, "gallery", GALLERY);
         uriMatcher.addURI(AUTHORITY, "object", OBJECT);
     }
+    private DatabaseAdapter dbadapter;
+    private SQLiteDatabase db;
 
     @Override
     public boolean onCreate() {

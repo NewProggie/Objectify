@@ -11,7 +11,6 @@ import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.RenderScript;
 import android.renderscript.Type;
-import android.util.Log;
 
 import org.ejml.data.DenseMatrix64F;
 import org.ejml.factory.DecompositionFactory;
@@ -28,7 +27,6 @@ import java.util.Calendar;
 import de.hsrm.objectify.camera.Constants;
 import de.hsrm.objectify.database.DatabaseAdapter;
 import de.hsrm.objectify.database.DatabaseProvider;
-import de.hsrm.objectify.export.OBJExport;
 import de.hsrm.objectify.rendering.compute_normals.ScriptC_compute_normals;
 import de.hsrm.objectify.rendering.lh_integration.ScriptC_lh_integration;
 import de.hsrm.objectify.utils.ArrayUtils;
@@ -38,13 +36,13 @@ import de.hsrm.objectify.utils.Storage;
 
 public class ReconstructionService extends IntentService {
 
-    public static final String DIRECTORY_NAME   = "dir_name";
-    public static final String NOTIFICATION     = "de.hsrm.objectify.android.service.receiver";
-    public static final String GALLERY_ID       = "gallery_id";
-    public static final String MODEL_NAME       = "model.kaw";
-    public static final String NORMAL_IMG_NAME  = "normals.png";
-    public static final String HEIGHT_IMG_NAME  = "heights.png";
-    private static final int LH_ITERATIONS      = 3000;
+    public static final String DIRECTORY_NAME = "dir_name";
+    public static final String NOTIFICATION = "de.hsrm.objectify.android.service.receiver";
+    public static final String GALLERY_ID = "gallery_id";
+    public static final String MODEL_NAME = "model.kaw";
+    public static final String NORMAL_IMG_NAME = "normals.png";
+    public static final String HEIGHT_IMG_NAME = "heights.png";
+    private static final int LH_ITERATIONS = 3000;
     private int mWidth;
     private int mHeight;
 
@@ -93,11 +91,11 @@ public class ReconstructionService extends IntentService {
         /* TODO: linear transformation depending on image size */
         float[] Z = localHeightfield(normals);
         Z = ArrayUtils.linearTransform(Z, 0.0f, 50.0f);
-        int[] heightPixels = new int[mWidth*mHeight];
+        int[] heightPixels = new int[mWidth * mHeight];
         int idx = 0;
         for (int i = 0; i < mHeight; i++) {
             for (int j = 0; j < mWidth; j++) {
-                int z = (int) Z[i*mWidth+j];
+                int z = (int) Z[i * mWidth + j];
                 heightPixels[idx++] = Color.rgb(z, z, z);
             }
         }
@@ -125,8 +123,8 @@ public class ReconstructionService extends IntentService {
         int idx = 0;
         for (int y = 0; y < mHeight; y++) {
             for (int x = 0; x < mWidth; x++) {
-                float[] imgPt = new float[] { Float.valueOf(x), Float.valueOf(y), heights[idx] };
-                float[] nVec  = new float[] { normals[4*idx+0], normals[4*idx+1], normals[4*idx+2] };
+                float[] imgPt = new float[]{Float.valueOf(x), Float.valueOf(y), heights[idx]};
+                float[] nVec = new float[]{normals[4 * idx + 0], normals[4 * idx + 1], normals[4 * idx + 2]};
                 vertBuf.put(imgPt);
                 normBuf.put(nVec);
                 idx += 1;
@@ -134,8 +132,8 @@ public class ReconstructionService extends IntentService {
         }
 
         /* faces */
-        for (int i = 0; i < mHeight-1; i++) {
-            for (int j = 0; j < mWidth-1; j++) {
+        for (int i = 0; i < mHeight - 1; i++) {
+            for (int j = 0; j < mWidth - 1; j++) {
                 short index = (short) (j + (i * mWidth));
                 indexes.add(index);
                 indexes.add((short) (index + mWidth));
@@ -229,7 +227,7 @@ public class ReconstructionService extends IntentService {
         }
 
         /* save output from RenderScript */
-        float[] heights = new float[mWidth*mHeight];
+        float[] heights = new float[mWidth * mHeight];
         allOutHeights.copyTo(heights);
 
         return heights;
@@ -238,14 +236,14 @@ public class ReconstructionService extends IntentService {
     private float[] computeNormals(ArrayList<Bitmap> images, Bitmap Mask) {
 
         /* populate A */
-        double[][] a = new double[mWidth*mHeight][Constants.NUM_IMAGES];
-        int[] imgData = new int[mWidth*mHeight];
+        double[][] a = new double[mWidth * mHeight][Constants.NUM_IMAGES];
+        int[] imgData = new int[mWidth * mHeight];
         for (int k = 0; k < Constants.NUM_IMAGES; k++) {
             int idx = 0;
             images.get(k).getPixels(imgData, 0, mWidth, 0, 0, mWidth, mHeight);
             for (int i = 0; i < mHeight; i++) {
                 for (int j = 0; j < mWidth; j++) {
-                    int c = imgData[i*mWidth+j];
+                    int c = imgData[i * mWidth + j];
                     a[idx++][k] = Color.red(c) + Color.green(c) + Color.blue(c);
                 }
             }
@@ -279,7 +277,7 @@ public class ReconstructionService extends IntentService {
         /* create allocation for masked image */
         Type maskType = new Type.Builder(rs, Element.I32(rs)).setX(mWidth).setY(mHeight).create();
         Allocation allMask = Allocation.createTyped(rs, maskType);
-        int[] mask = new int[mWidth*mHeight];
+        int[] mask = new int[mWidth * mHeight];
         Mask.getPixels(mask, 0, mWidth, 0, 0, mWidth, mHeight);
         allMask.copyFrom(mask);
 
@@ -293,7 +291,7 @@ public class ReconstructionService extends IntentService {
         cmpNormals.forEach_compute_normals(allInData, allOutNormals);
 
         /* save output from RenderScript */
-        float[] normals = new float[mWidth*mHeight*4];
+        float[] normals = new float[mWidth * mHeight * 4];
         allOutNormals.copyTo(normals);
 
         return normals;

@@ -40,15 +40,17 @@
         android:background="#FF000000"
         android:gravity="center"
         android:orientation="vertical">
+
         <ProgressBar
             android:layout_width="@dimen/progressbar_size"
             android:layout_height="@dimen/progressbar_size" />
+
         <TextView
+            style="@style/ShadowedText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/please_wait"
-            android:textSize="@dimen/please_wait_text_size"
-            style="@style/ShadowedText" />
+            android:textSize="@dimen/please_wait_text_size" />
     </LinearLayout>
 
 </FrameLayout>

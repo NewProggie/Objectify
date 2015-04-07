@@ -29,18 +29,20 @@ import de.hsrm.objectify.activities.fragments.ModelViewerFragment;
 import de.hsrm.objectify.camera.Constants;
 import de.hsrm.objectify.rendering.ReconstructionService;
 
-/** An activity representing a single Reconstruction detail screen. This activity is only used on
+/**
+ * An activity representing a single Reconstruction detail screen. This activity is only used on
  * handset devices. On tablet-size devices, item details are presented side-by-side with a list of
  * items in a {@link ReconstructionListActivity}. This activity is mostly just a 'shell' activity
- * containing no more than a {@link de.hsrm.objectify.activities.fragments.ImageViewerFragment} */
+ * containing no more than a {@link de.hsrm.objectify.activities.fragments.ImageViewerFragment}
+ */
 public class ReconstructionDetailActivity extends Activity
-        implements  ImageViewerFragment.OnFragmentInteractionListener,
-                    ModelViewerFragment.OnFragmentInteractionListener {
+        implements ImageViewerFragment.OnFragmentInteractionListener,
+        ModelViewerFragment.OnFragmentInteractionListener {
 
-    private final String TAG = "ReconstructionDetailActivity";
     public static final String REC_NORMALMAP = "normalmap";
     public static final String REC_HEIGHTMAP = "heightmap";
-    public static final String REC_3DMODEL   = "3dmodel";
+    public static final String REC_3DMODEL = "3dmodel";
+    private final String TAG = "ReconstructionDetailActivity";
     private LinearLayout mProgressScreen;
     private SpinnerAdapter mSpinnerAdapter;
     private Fragment mCurrentFragment;
@@ -78,8 +80,8 @@ public class ReconstructionDetailActivity extends Activity
 
         mProgressScreen = (LinearLayout) findViewById(R.id.progress_screen);
         mSpinnerAdapter = new SimpleAdapter(this, data, R.layout.subtitled_spinner_item,
-                new String[] {"title", "subtitle"},
-                new int[] {android.R.id.text1, android.R.id.text2});
+                new String[]{"title", "subtitle"},
+                new int[]{android.R.id.text1, android.R.id.text2});
 
         /* show the Up button in the action bar. */
         ActionBar actionBar = getActionBar();
@@ -108,6 +110,7 @@ public class ReconstructionDetailActivity extends Activity
         getActionBar().show();
         mProgressScreen.setVisibility(View.INVISIBLE);
     }
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);

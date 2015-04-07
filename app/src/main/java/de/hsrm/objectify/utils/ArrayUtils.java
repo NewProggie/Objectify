@@ -1,17 +1,13 @@
 package de.hsrm.objectify.utils;
 
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
-
 public class ArrayUtils {
 
     /**
      * Transform all array values from its current min, max range to a, b range
+     *
      * @param array array to transform
-     * @param a new minimum value of array
-     * @param b new maximum value of array
+     * @param a     new minimum value of array
+     * @param b     new maximum value of array
      * @return transformed array
      */
     public static float[] linearTransform(float[] array, float a, float b) {
@@ -34,7 +30,7 @@ public class ArrayUtils {
 
     public static float[] toFloatArray(double[] arr) {
         float[] floatArray = new float[arr.length];
-        for (int i = 0 ; i < arr.length; i++) {
+        for (int i = 0; i < arr.length; i++) {
             floatArray[i] = (float) arr[i];
         }
         return floatArray;

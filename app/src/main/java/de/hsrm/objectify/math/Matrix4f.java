@@ -15,61 +15,10 @@ public class Matrix4f {
     public float _41, _42, _43, _44;
 
     /**
-     * Copies the values of a given Matrix4f.
-     *
-     * @param pm
-     *            A matrix for copy.
-     */
-    public void copy(Matrix4f pm) {
-        _11 = pm._11;
-        _12 = pm._12;
-        _13 = pm._13;
-        _14 = pm._14;
-        _21 = pm._21;
-        _22 = pm._22;
-        _23 = pm._23;
-        _24 = pm._24;
-        _31 = pm._31;
-        _32 = pm._32;
-        _33 = pm._33;
-        _34 = pm._34;
-        _41 = pm._41;
-        _42 = pm._42;
-        _43 = pm._43;
-        _44 = pm._44;
-    }
-
-    /**
      * Constructs a 0 value matrix.
      */
     public Matrix4f() {
         //
-    }
-
-    public void setIdentity() {
-        _11 = _22 = _33 = _44 = 1.0f;
-    }
-
-    public void map(float[] pdata) {
-        pdata[0] = _11;
-        pdata[1] = _12;
-        pdata[2] = _13;
-        pdata[3] = _14;
-        //
-        pdata[4] = _21;
-        pdata[5] = _22;
-        pdata[6] = _23;
-        pdata[7] = _24;
-        //
-        pdata[8] = _31;
-        pdata[9] = _32;
-        pdata[10] = _33;
-        pdata[11] = _34;
-        //
-        pdata[12] = _41;
-        pdata[13] = _42;
-        pdata[14] = _43;
-        pdata[15] = _44;
     }
 
     /**
@@ -80,34 +29,9 @@ public class Matrix4f {
     }
 
     /**
-     * Converts matrix to string.
-     */
-    @Override
-    public String toString() {
-        String res = "";
-        String tab = Character.toString((char) 9);
-
-        res += this._11 + tab + this._12 + tab + this._13 + tab + this._14
-                + "\n";
-        res += this._21 + tab + this._22 + tab + this._23 + tab + this._24
-                + "\n";
-        res += this._31 + tab + this._32 + tab + this._33 + tab + this._34
-                + "\n";
-        res += this._41 + tab + this._42 + tab + this._43 + tab + this._44
-                + "\n";
-
-        return res;
-    }
-
-    // ----------------------------------------------------------------
-    // static methods
-    // ----------------------------------------------------------------
-
-    /**
      * Returns the determinant of a matrix build by the 4th row.
      *
-     * @param pm
-     *            The matrix.
+     * @param pm The matrix.
      */
     public static float determinant(Matrix4f pm) {
 
@@ -153,10 +77,8 @@ public class Matrix4f {
      * invertible false if matrix has determinant of 0. If false was returned
      * this method has on effect on the destination matrix.
      *
-     * @param pm
-     *            The matrix which is to invert.
-     * @param pdest
-     *            The source matrix reference.
+     * @param pm    The matrix which is to invert.
+     * @param pdest The source matrix reference.
      * @return The invertibility of the given matrix.
      */
     public static boolean invert(Matrix4f pm, Matrix4f pdest) {
@@ -291,8 +213,7 @@ public class Matrix4f {
     /**
      * Makes a given matrix to a identity matrix with a diagonal of 1.0f.
      *
-     * @param pm
-     *            The matrix to set.
+     * @param pm The matrix to set.
      */
     public static void identity(Matrix4f pm) {
         pm._11 = 1.0f;
@@ -335,6 +256,10 @@ public class Matrix4f {
         pm._44 = 0.0f;
     }
 
+    // ----------------------------------------------------------------
+    // static methods
+    // ----------------------------------------------------------------
+
     /**
      * Returns a new a identity matrix with a diagonal of 1.0f.
      */
@@ -347,12 +272,9 @@ public class Matrix4f {
     /**
      * Multiplies a matrix with another an stores the result in pmret.
      *
-     * @param pm1
-     *            The left operand matrix (A).
-     * @param pm2
-     *            The right operand matrix (B).
-     * @param pmret
-     *            The result matrix.
+     * @param pm1   The left operand matrix (A).
+     * @param pm2   The right operand matrix (B).
+     * @param pmret The result matrix.
      */
     public static void mul(Matrix4f pm1, Matrix4f pm2, Matrix4f pmret) {
         float c11, c12, c13, c14;
@@ -418,10 +340,8 @@ public class Matrix4f {
      * Return a new matrix within the result of the first matrix multiplied with
      * the second matrix.
      *
-     * @param pm1
-     *            The left operand matrix.
-     * @param pm2
-     *            The right operand matrix.
+     * @param pm1 The left operand matrix.
+     * @param pm2 The right operand matrix.
      * @return A new matrix.
      */
     public static Matrix4f mul(Matrix4f pm1, Matrix4f pm2) {
@@ -434,12 +354,9 @@ public class Matrix4f {
      * Multiplies a matrix with a vector and stores the result which also is a
      * vector in pvret.
      *
-     * @param pm
-     *            The left operand matrix.
-     * @param pv
-     *            The right operand vector.
-     * @param pvret
-     *            The result vector.
+     * @param pm    The left operand matrix.
+     * @param pv    The right operand vector.
+     * @param pvret The result vector.
      */
     public static void mul(Matrix4f pm, Vector3f pv, Vector3f pvret) {
         float x;
@@ -462,10 +379,8 @@ public class Matrix4f {
     /**
      * Multiplies a matrix with a vector and returns the result as new vector.
      *
-     * @param pm
-     *            The left operand matrix.
-     * @param pv
-     *            The right operand vector.
+     * @param pm The left operand matrix.
+     * @param pv The right operand vector.
      * @return A new vector.
      */
     public static Vector3f mul(Matrix4f pm, Vector3f pv) {
@@ -477,10 +392,8 @@ public class Matrix4f {
     /**
      * Stores a matrix for rotation around the x-axis in pmret.
      *
-     * @param pmret
-     *            The matrix which is to fill.
-     * @param pangle
-     *            The angle of rotation.
+     * @param pmret  The matrix which is to fill.
+     * @param pangle The angle of rotation.
      */
     public static void rotateXMatrix(Matrix4f pmret, float pangle) {
         float cosa = (float) Math.cos(pangle);
@@ -497,8 +410,7 @@ public class Matrix4f {
     /**
      * Returns a new matrix for rotation around the x-axis.
      *
-     * @param pangle
-     *            The angle of rotation.
+     * @param pangle The angle of rotation.
      */
     public static Matrix4f rotateXMatrix(float pangle) {
         Matrix4f m = new Matrix4f();
@@ -509,10 +421,8 @@ public class Matrix4f {
     /**
      * Stores a matrix for rotation around the y-axis in pmret.
      *
-     * @param pmret
-     *            The matrix which is to fill.
-     * @param pangle
-     *            The angle of rotation.
+     * @param pmret  The matrix which is to fill.
+     * @param pangle The angle of rotation.
      */
     public static void rotateYMatrix(Matrix4f pmret, float pangle) {
         float cosa = (float) Math.cos(pangle);
@@ -529,8 +439,7 @@ public class Matrix4f {
     /**
      * Returns a new matrix for rotation around the y-axis.
      *
-     * @param pangle
-     *            The angle of rotation.
+     * @param pangle The angle of rotation.
      */
     public static Matrix4f rotateYMatrix(float pangle) {
         Matrix4f m = new Matrix4f();
@@ -541,10 +450,8 @@ public class Matrix4f {
     /**
      * Stores a matrix for rotation around the z-axis in pmret.
      *
-     * @param pmret
-     *            The matrix which is to fill.
-     * @param pangle
-     *            The angle of rotation.
+     * @param pmret  The matrix which is to fill.
+     * @param pangle The angle of rotation.
      */
     public static void rotateZMatrix(Matrix4f pmret, float pangle) {
         float cosa = (float) Math.cos(pangle);
@@ -561,8 +468,7 @@ public class Matrix4f {
     /**
      * Returns a new matrix for rotation around the z-axis.
      *
-     * @param pangle
-     *            The angle of rotation.
+     * @param pangle The angle of rotation.
      */
     public static Matrix4f rotateZMatrix(float pangle) {
         Matrix4f m = new Matrix4f();
@@ -573,14 +479,10 @@ public class Matrix4f {
     /**
      * Stores a matrix for scale x, y, z in pmret.
      *
-     * @param pmret
-     *            The matrix which is to fill.
-     * @param px
-     *            The x scale factor.
-     * @param py
-     *            The y scale factor.
-     * @param pz
-     *            The z scale factor.
+     * @param pmret The matrix which is to fill.
+     * @param px    The x scale factor.
+     * @param py    The y scale factor.
+     * @param pz    The z scale factor.
      */
     public static void scaleMatrix(Matrix4f pmret, float px, float py, float pz) {
         identity(pmret);
@@ -593,12 +495,9 @@ public class Matrix4f {
     /**
      * Returns a new matrix for scale x, y, z
      *
-     * @param px
-     *            The x scale factor.
-     * @param py
-     *            The y scale factor.
-     * @param pz
-     *            The z scale factor.
+     * @param px The x scale factor.
+     * @param py The y scale factor.
+     * @param pz The z scale factor.
      */
     public static Matrix4f scaleMatrix(float px, float py, float pz) {
         Matrix4f m = new Matrix4f();
@@ -609,14 +508,10 @@ public class Matrix4f {
     /**
      * Stores a matrix for translate x, y, z in pmret.
      *
-     * @param pmret
-     *            The matrix which is to fill.
-     * @param px
-     *            The x translate offset.
-     * @param py
-     *            The y translate offset.
-     * @param pz
-     *            The z translate offset.
+     * @param pmret The matrix which is to fill.
+     * @param px    The x translate offset.
+     * @param py    The y translate offset.
+     * @param pz    The z translate offset.
      */
     public static void translateMatrix(Matrix4f pmret, float px, float py,
                                        float pz) {
@@ -630,17 +525,84 @@ public class Matrix4f {
     /**
      * Returns a new matrix for translate x, y, z
      *
-     * @param px
-     *            The x translate offset.
-     * @param py
-     *            The y translate offset.
-     * @param pz
-     *            The z translate offset.
+     * @param px The x translate offset.
+     * @param py The y translate offset.
+     * @param pz The z translate offset.
      */
     public static Matrix4f translateMatrix(float px, float py, float pz) {
         Matrix4f m = new Matrix4f();
         translateMatrix(m, px, py, pz);
         return m;
+    }
+
+    /**
+     * Copies the values of a given Matrix4f.
+     *
+     * @param pm A matrix for copy.
+     */
+    public void copy(Matrix4f pm) {
+        _11 = pm._11;
+        _12 = pm._12;
+        _13 = pm._13;
+        _14 = pm._14;
+        _21 = pm._21;
+        _22 = pm._22;
+        _23 = pm._23;
+        _24 = pm._24;
+        _31 = pm._31;
+        _32 = pm._32;
+        _33 = pm._33;
+        _34 = pm._34;
+        _41 = pm._41;
+        _42 = pm._42;
+        _43 = pm._43;
+        _44 = pm._44;
+    }
+
+    public void setIdentity() {
+        _11 = _22 = _33 = _44 = 1.0f;
+    }
+
+    public void map(float[] pdata) {
+        pdata[0] = _11;
+        pdata[1] = _12;
+        pdata[2] = _13;
+        pdata[3] = _14;
+        //
+        pdata[4] = _21;
+        pdata[5] = _22;
+        pdata[6] = _23;
+        pdata[7] = _24;
+        //
+        pdata[8] = _31;
+        pdata[9] = _32;
+        pdata[10] = _33;
+        pdata[11] = _34;
+        //
+        pdata[12] = _41;
+        pdata[13] = _42;
+        pdata[14] = _43;
+        pdata[15] = _44;
+    }
+
+    /**
+     * Converts matrix to string.
+     */
+    @Override
+    public String toString() {
+        String res = "";
+        String tab = Character.toString((char) 9);
+
+        res += this._11 + tab + this._12 + tab + this._13 + tab + this._14
+                + "\n";
+        res += this._21 + tab + this._22 + tab + this._23 + tab + this._24
+                + "\n";
+        res += this._31 + tab + this._32 + tab + this._33 + tab + this._34
+                + "\n";
+        res += this._41 + tab + this._42 + tab + this._43 + tab + this._44
+                + "\n";
+
+        return res;
     }
 
     public void setRotation(Quat4f q1) {

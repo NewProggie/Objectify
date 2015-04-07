@@ -5,7 +5,6 @@ import android.app.ListFragment;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 
@@ -13,31 +12,31 @@ import de.hsrm.objectify.activities.adapter.ReconstructionListAdapter;
 import de.hsrm.objectify.database.DatabaseAdapter;
 import de.hsrm.objectify.database.DatabaseProvider;
 
-/** A list fragment representing a list of Reconstructions. This fragment also supports tablet
+/**
+ * A list fragment representing a list of Reconstructions. This fragment also supports tablet
  * devices by allowing list items to be given an 'activated' state upon selection. This helps
  * indicate which item is currently being viewed in a {@link ImageViewerFragment}. Activities
- * containing this fragment MUST implement the {@link Callbacks} interface */
+ * containing this fragment MUST implement the {@link Callbacks} interface
+ */
 public class ReconstructionListFragment extends ListFragment {
 
     private static final String STATE_ACTIVATED_POSITION = "activated_position";
     private ReconstructionListAdapter mAdapter;
 
-    /** The fragment's current callback object, which is notified of list item clicks */
+    /**
+     * The fragment's current callback object, which is notified of list item clicks
+     */
     private Callbacks mCallbacks;
 
-    /** The current activated item position. Only used on tablets */
+    /**
+     * The current activated item position. Only used on tablets
+     */
     private int mActivatedPosition = ListView.INVALID_POSITION;
-
-    /** A callback interface that all activities containing this fragment must implement. This
-     * mechanism allows activities to be notified of item selections */
-    public interface Callbacks {
-
-        public void onItemSelected(String id);
-    }
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the fragment (e.g. upon
-     * screen orientation changes) */
+     * screen orientation changes)
+     */
     public ReconstructionListFragment() {
     }
 
@@ -80,7 +79,7 @@ public class ReconstructionListFragment extends ListFragment {
 
         /* notify the active callbacks interface (the activity, if the fragment is attached to one)
          * that an item has been selected */
-         mCallbacks.onItemSelected(String.valueOf(id));
+        mCallbacks.onItemSelected(String.valueOf(id));
     }
 
     @Override
@@ -92,8 +91,10 @@ public class ReconstructionListFragment extends ListFragment {
         }
     }
 
-    /** Turns on activate-on-click mode. When this mode is on, list items will be given the
-     * 'activated' state when touched */
+    /**
+     * Turns on activate-on-click mode. When this mode is on, list items will be given the
+     * 'activated' state when touched
+     */
     public void setActivateOnItemClick(boolean activateOnItemClick) {
         /* when setting CHOICE_MODE_SINGLE, ListView will automatically give items the 'activated'
          * state when touched */
@@ -110,5 +111,14 @@ public class ReconstructionListFragment extends ListFragment {
         }
 
         mActivatedPosition = position;
+    }
+
+    /**
+     * A callback interface that all activities containing this fragment must implement. This
+     * mechanism allows activities to be notified of item selections
+     */
+    public interface Callbacks {
+
+        public void onItemSelected(String id);
     }
 }

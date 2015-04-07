@@ -2,7 +2,6 @@ package de.hsrm.objectify.export;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Log;
 
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
@@ -36,18 +35,18 @@ public class OBJExport {
 
             /* write vertices */
             for (int i = 0; i < vertices.length; i += 3) {
-                out.write("v " + vertices[i] + " " + vertices[i+1] + " " + vertices[i+2] + "\n");
+                out.write("v " + vertices[i] + " " + vertices[i + 1] + " " + vertices[i + 2] + "\n");
             }
 
             /* writing texture coords */
             int width = texture.getWidth();
             int height = texture.getHeight();
-            for (int h = height-1; h >= 0; h--) {
-                for(int w = 0; w < width; w++) {
-                    out.write("vt " + (float) w/ (float) (width-1) + " " + (float) h/ (float) (height-1) + "\n");
+            for (int h = height - 1; h >= 0; h--) {
+                for (int w = 0; w < width; w++) {
+                    out.write("vt " + (float) w / (float) (width - 1) + " " + (float) h / (float) (height - 1) + "\n");
                 }
             }
-			/* writing faces */
+            /* writing faces */
             out.write("usemtl picture\n");
             for (int i = 0; i < faces.length; i += 3) {
                 int one = faces[i] + 1;

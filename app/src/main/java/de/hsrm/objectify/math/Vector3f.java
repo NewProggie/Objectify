@@ -6,36 +6,12 @@ public class Vector3f {
     public float y = 0.0f;
     public float z = 0.0f;
 
-    @Override
-    public boolean equals(Object pvec) {
-        if (!(pvec instanceof Vector3f))
-            return false;
-
-        Vector3f vec = (Vector3f) pvec;
-        return ((this.x == vec.x) && (this.y == vec.y) && (this.z == vec.z));
-    }
-
-    /**
-     * Copies the values of a given Vector3f.
-     *
-     * @param pv
-     *            A vector for copy.
-     */
-    public void copy(Vector3f pv) {
-        this.x = pv.x;
-        this.y = pv.y;
-        this.z = pv.z;
-    }
-
     /**
      * Constructs Vector3f by three float parameter.
      *
-     * @param px
-     *            The x value.
-     * @param py
-     *            The y value.
-     * @param pz
-     *            The z value.
+     * @param px The x value.
+     * @param py The y value.
+     * @param pz The z value.
      */
     public Vector3f(float px, float py, float pz) {
         this.x = px;
@@ -46,8 +22,7 @@ public class Vector3f {
     /**
      * Constructs Vector3f by an other Vector3f.
      *
-     * @param pv
-     *            Reference of other Vector3f.
+     * @param pv Reference of other Vector3f.
      */
     public Vector3f(Vector3f pv) {
         this.x = pv.x;
@@ -63,41 +38,11 @@ public class Vector3f {
     }
 
     /**
-     * Return the length of the vector in R3.
-     *
-     * @return Vector length.
-     */
-    public float length() {
-        return (float) Math.sqrt((this.x * this.x) + (this.y * this.y)
-                + (this.z * this.z));
-    }
-
-    /**
-     * Return the length of the vector in R3 without sqrt.
-     *
-     * @return Vector length.
-     */
-    public float length2() {
-        return (this.x * this.x) + (this.y * this.y) + (this.z * this.z);
-    }
-
-    public String toString() {
-        return "Vector3f(" + this.x + "," + this.y + "," + this.z + ")";
-    }
-
-    // ----------------------------------------------------------------
-    // static methods
-    // ----------------------------------------------------------------
-
-    /**
      * Adds two vectors and stores the result into third vector.
      *
-     * @param pv1
-     *            The left operand vector.
-     * @param pv2
-     *            The right operand vector.
-     * @param pvret
-     *            The result vector.
+     * @param pv1   The left operand vector.
+     * @param pv2   The right operand vector.
+     * @param pvret The result vector.
      */
     public static void add(Vector3f pv1, Vector3f pv2, Vector3f pvret) {
         pvret.x = pv1.x + pv2.x;
@@ -108,10 +53,8 @@ public class Vector3f {
     /**
      * Adds two vectors and returns a new vector within the result.
      *
-     * @param pv1
-     *            The left operand vector.
-     * @param pv2
-     *            The right operand vector.
+     * @param pv1 The left operand vector.
+     * @param pv2 The right operand vector.
      * @return A new vector within the result of the operation.
      */
     public static Vector3f add(Vector3f pv1, Vector3f pv2) {
@@ -121,12 +64,9 @@ public class Vector3f {
     /**
      * Subtracts two vectors and stores the result into third vector.
      *
-     * @param pv1
-     *            The left operand vector.
-     * @param pv2
-     *            The right operand vector.
-     * @param pvret
-     *            The result vector.
+     * @param pv1   The left operand vector.
+     * @param pv2   The right operand vector.
+     * @param pvret The result vector.
      */
     public static void sub(Vector3f pv1, Vector3f pv2, Vector3f pvret) {
         pvret.x = pv1.x - pv2.x;
@@ -137,10 +77,8 @@ public class Vector3f {
     /**
      * Subtracts two vectors and returns a new vector within the result.
      *
-     * @param pv1
-     *            The left operand vector.
-     * @param pv2
-     *            The right operand vector.
+     * @param pv1 The left operand vector.
+     * @param pv2 The right operand vector.
      * @return A new vector within the result of the operation.
      */
     public static Vector3f sub(Vector3f pv1, Vector3f pv2) {
@@ -150,12 +88,9 @@ public class Vector3f {
     /**
      * Multiplies a vector with a scalar and stores the result in second vector.
      *
-     * @param pv
-     *            The left operand vector.
-     * @param psc
-     *            The right operand scalar.
-     * @param pvret
-     *            The result vector.
+     * @param pv    The left operand vector.
+     * @param psc   The right operand scalar.
+     * @param pvret The result vector.
      */
     public static void mul(Vector3f pv, float psc, Vector3f pvret) {
         pvret.x = pv.x * psc;
@@ -163,13 +98,15 @@ public class Vector3f {
         pvret.z = pv.z * psc;
     }
 
+    // ----------------------------------------------------------------
+    // static methods
+    // ----------------------------------------------------------------
+
     /**
      * Multiplies a vector with a scalar and returns the result as new vector.
      *
-     * @param pv
-     *            The left operand vector.
-     * @param psc
-     *            The right operand scalar.
+     * @param pv  The left operand vector.
+     * @param psc The right operand scalar.
      * @return A new vector within the result of the operation.
      */
     public static Vector3f mul(Vector3f pv, float psc) {
@@ -179,12 +116,9 @@ public class Vector3f {
     /**
      * Divides a vector by a scalar and stores the result in second vector.
      *
-     * @param pv
-     *            The left operand vector.
-     * @param psc
-     *            The right operand scalar.
-     * @param pvret
-     *            The result vector.
+     * @param pv    The left operand vector.
+     * @param psc   The right operand scalar.
+     * @param pvret The result vector.
      */
     public static void div(Vector3f pv, float psc, Vector3f pvret) {
         float iv = 1 / psc;
@@ -196,10 +130,8 @@ public class Vector3f {
     /**
      * Divides a vector by a scalar and returns the result as new vector.
      *
-     * @param pv
-     *            The left operand vector.
-     * @param psc
-     *            The right operand scalar.
+     * @param pv  The left operand vector.
+     * @param psc The right operand scalar.
      * @return A new vector within the result of the operation.
      */
     public static Vector3f div(Vector3f pv, float psc) {
@@ -211,10 +143,8 @@ public class Vector3f {
      * Normalizes a vector and stores the result that is a vector in the same
      * direction with length of 1 in pvret.
      *
-     * @param pv
-     *            Source vector.
-     * @param pvret
-     *            Normalized vector.
+     * @param pv    Source vector.
+     * @param pvret Normalized vector.
      */
     public static void normalize(Vector3f pv, Vector3f pvret) {
         float l = 1 / pv.length();
@@ -227,8 +157,7 @@ public class Vector3f {
      * Normalizes a vector and returns the result that is a vector in the same
      * direction with length of 1 as a new vector.
      *
-     * @param pv
-     *            The source vector.
+     * @param pv The source vector.
      * @return A new normalized vector.
      */
     public static Vector3f normalize(Vector3f pv) {
@@ -239,10 +168,8 @@ public class Vector3f {
     /**
      * Inverts a given vector and stores the result into pvret.
      *
-     * @param pv
-     *            The source vector.
-     * @param pvret
-     *            Inverted vector.
+     * @param pv    The source vector.
+     * @param pvret Inverted vector.
      */
     public static void invert(Vector3f pv, Vector3f pvret) {
         pvret.x = -pv.x;
@@ -253,8 +180,7 @@ public class Vector3f {
     /**
      * Inverts a given vector and returns a new inverted vector.
      *
-     * @param pv
-     *            The source vector.
+     * @param pv The source vector.
      * @return A new inverted vector.
      */
     public static Vector3f invert(Vector3f pv) {
@@ -264,10 +190,8 @@ public class Vector3f {
     /**
      * Returns the scalar product of two vectors.
      *
-     * @param pv1
-     *            Left operand vector.
-     * @param pv2
-     *            Right operand vector.
+     * @param pv1 Left operand vector.
+     * @param pv2 Right operand vector.
      * @return The scalar product.
      */
     public static float scalar(Vector3f pv1, Vector3f pv2) {
@@ -277,12 +201,9 @@ public class Vector3f {
     /**
      * Builds the cross product of two vectors an stores the result into pvret.
      *
-     * @param pv1
-     *            Left operand vector.
-     * @param pv2
-     *            Right operand vector.
-     * @param pvret
-     *            The result vector.
+     * @param pv1   Left operand vector.
+     * @param pv2   Right operand vector.
+     * @param pvret The result vector.
      */
     public static void cross(Vector3f pv1, Vector3f pv2, Vector3f pvret) {
         pvret.x = (pv1.y * pv2.z) - (pv1.z * pv2.y);
@@ -297,10 +218,8 @@ public class Vector3f {
     /**
      * Returns the cross product of two vectors.
      *
-     * @param pv1
-     *            Left operand vector.
-     * @param pv2
-     *            Right operand vector.
+     * @param pv1 Left operand vector.
+     * @param pv2 Right operand vector.
      * @return A new vector within the result of the operation.
      */
     public static Vector3f cross(Vector3f pv1, Vector3f pv2) {
@@ -311,10 +230,8 @@ public class Vector3f {
     /**
      * Returns the angle (phi) between two vectors.
      *
-     * @param pv1
-     *            The first vector.
-     * @param pv2
-     *            The second vector.
+     * @param pv1 The first vector.
+     * @param pv2 The second vector.
      * @return The angle.
      */
     public static float phi(Vector3f pv1, Vector3f pv2) {
@@ -325,12 +242,9 @@ public class Vector3f {
     /**
      * Rotates a vector around the x-axis and stores the result into pvret.
      *
-     * @param pv
-     *            The vector which is to rotate.
-     * @param pangle
-     *            The angle in rad of the rotation.
-     * @param pvret
-     *            The return vector.
+     * @param pv     The vector which is to rotate.
+     * @param pangle The angle in rad of the rotation.
+     * @param pvret  The return vector.
      */
     public static void rotateX(Vector3f pv, float pangle, Vector3f pvret) {
         float cosa = (float) Math.cos(pangle);
@@ -344,10 +258,8 @@ public class Vector3f {
     /**
      * Rotates a vector around the x-axis and returns the result as new vector.
      *
-     * @param pv
-     *            The vector which is to rotate.
-     * @param pangle
-     *            The angle in rad of the rotation.
+     * @param pv     The vector which is to rotate.
+     * @param pangle The angle in rad of the rotation.
      * @return The return vector.
      */
     public static Vector3f rotateX(Vector3f pv, float pangle) {
@@ -359,12 +271,9 @@ public class Vector3f {
     /**
      * Rotates a vector around the y-axis and stores the result into pvret.
      *
-     * @param pv
-     *            The vector which is to rotate.
-     * @param pangle
-     *            The angle in rad of the rotation.
-     * @param pvret
-     *            The return vector.
+     * @param pv     The vector which is to rotate.
+     * @param pangle The angle in rad of the rotation.
+     * @param pvret  The return vector.
      */
     public static void rotateY(Vector3f pv, float pangle, Vector3f pvret) {
         float cosa = (float) Math.cos(pangle);
@@ -378,10 +287,8 @@ public class Vector3f {
     /**
      * Rotates a vector around the y-axis and returns the result as new vector.
      *
-     * @param pv
-     *            The vector which is to rotate.
-     * @param pangle
-     *            The angle in rad of the rotation.
+     * @param pv     The vector which is to rotate.
+     * @param pangle The angle in rad of the rotation.
      * @return The return vector.
      */
     public static Vector3f rotateY(Vector3f pv, float pangle) {
@@ -393,12 +300,9 @@ public class Vector3f {
     /**
      * Rotates a vector around the z-axis and stores the result into pvret.
      *
-     * @param pv
-     *            The vector which is to rotate.
-     * @param pangle
-     *            The angle in rad of the rotation.
-     * @param pvret
-     *            The return vector.
+     * @param pv     The vector which is to rotate.
+     * @param pangle The angle in rad of the rotation.
+     * @param pvret  The return vector.
      */
     public static void rotateZ(Vector3f pv, float pangle, Vector3f pvret) {
         //
@@ -413,10 +317,8 @@ public class Vector3f {
     /**
      * Rotates a vector around the z-axis and returns the result as new vector.
      *
-     * @param pv
-     *            The vector which is to rotate.
-     * @param pangle
-     *            The angle in rad of the rotation.
+     * @param pv     The vector which is to rotate.
+     * @param pangle The angle in rad of the rotation.
      * @return The return vector.
      */
     public static Vector3f rotateZ(Vector3f pv, float pangle) {
@@ -432,12 +334,9 @@ public class Vector3f {
      * rule. <br>
      * </br>
      *
-     * @param pvec1
-     *            The first vector "a".
-     * @param pvec2
-     *            The second vector "b".
-     * @param pvec3
-     *            The third vector "c".
+     * @param pvec1 The first vector "a".
+     * @param pvec2 The second vector "b".
+     * @param pvec3 The third vector "c".
      * @param pvret
      */
     public static void normal(Vector3f pvec1, Vector3f pvec2, Vector3f pvec3,
@@ -461,18 +360,58 @@ public class Vector3f {
      * hand rule. <br>
      * </br>
      *
-     * @param pvec1
-     *            The first vector "a".
-     * @param pvec2
-     *            The second vector "b".
-     * @param pvec3
-     *            The third vector "c".
+     * @param pvec1 The first vector "a".
+     * @param pvec2 The second vector "b".
+     * @param pvec3 The third vector "c".
      */
     public static Vector3f normal(Vector3f pvec1, Vector3f pvec2, Vector3f pvec3) {
         //
         Vector3f ret = new Vector3f();
         normal(pvec1, pvec2, pvec3, ret);
         return ret;
+    }
+
+    @Override
+    public boolean equals(Object pvec) {
+        if (!(pvec instanceof Vector3f))
+            return false;
+
+        Vector3f vec = (Vector3f) pvec;
+        return ((this.x == vec.x) && (this.y == vec.y) && (this.z == vec.z));
+    }
+
+    /**
+     * Copies the values of a given Vector3f.
+     *
+     * @param pv A vector for copy.
+     */
+    public void copy(Vector3f pv) {
+        this.x = pv.x;
+        this.y = pv.y;
+        this.z = pv.z;
+    }
+
+    /**
+     * Return the length of the vector in R3.
+     *
+     * @return Vector length.
+     */
+    public float length() {
+        return (float) Math.sqrt((this.x * this.x) + (this.y * this.y)
+                + (this.z * this.z));
+    }
+
+    /**
+     * Return the length of the vector in R3 without sqrt.
+     *
+     * @return Vector length.
+     */
+    public float length2() {
+        return (this.x * this.x) + (this.y * this.y) + (this.z * this.z);
+    }
+
+    public String toString() {
+        return "Vector3f(" + this.x + "," + this.y + "," + this.z + ")";
     }
 
 }

@@ -33,12 +33,17 @@ public class ImageViewerFragment extends Fragment {
     private String mImagePath;
     private ImageView mReconstructionImageView;
 
-    /** Mandatory empty constructor for the fragment manager to instantiate the fragment (e.g. upon
-     * screen orientation changes) */
-    public ImageViewerFragment() { }
+    /**
+     * Mandatory empty constructor for the fragment manager to instantiate the fragment (e.g. upon
+     * screen orientation changes)
+     */
+    public ImageViewerFragment() {
+    }
 
-    /** Use this factory method to create a new instance of this fragment using the provided
+    /**
+     * Use this factory method to create a new instance of this fragment using the provided
      * parameters.
+     *
      * @param galleryId gallery database id
      * @return A new instance of fragment ModelViewerFragment.
      */
@@ -74,12 +79,13 @@ public class ImageViewerFragment extends Fragment {
 
         return null;
     }
+
     private String getDirectoryPathFromDatabase(String galleryId) {
         ContentResolver cr = getActivity().getContentResolver();
         Uri galleryItemUri = DatabaseProvider.CONTENT_URI.buildUpon()
                 .appendPath(DatabaseAdapter.DATABASE_TABLE_GALLERY).build();
         Cursor c = cr.query(galleryItemUri, null, DatabaseAdapter.GALLERY_ID_KEY + "=?",
-                new String[] { mGalleryId}, null);
+                new String[]{mGalleryId}, null);
         c.moveToFirst();
         String imgFilePath = c.getString(DatabaseAdapter.GALLERY_IMAGE_PATH_COLUMN);
         c.close();
@@ -89,16 +95,18 @@ public class ImageViewerFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_normal_map_view, container, false);
         mReconstructionImageView = (ImageView) rootView.findViewById(R.id.reconstruction_image);
         mReconstructionImageView.setImageBitmap(BitmapUtils.openBitmap(mImagePath));
         return rootView;
     }
 
-    /** This interface must be implemented by activities that contain this fragment to allow an
+    /**
+     * This interface must be implemented by activities that contain this fragment to allow an
      * interaction in this fragment to be communicated to the activity and potentially other
-     * fragments contained in that activity. */
+     * fragments contained in that activity.
+     */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);

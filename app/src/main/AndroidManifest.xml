@@ -1,22 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="de.hsrm.objectify" >
+    package="de.hsrm.objectify">
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
     <uses-feature android:name="android.hardware.camera" />
-    <uses-feature android:name="android.hardware.camera.front" android:required="true" />
+    <uses-feature
+        android:name="android.hardware.camera.front"
+        android:required="true" />
 
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
         <activity
             android:name=".activities.MainActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -24,24 +26,22 @@
         </activity>
         <activity
             android:name=".activities.CameraActivity"
-            android:label="@string/title_activity_camera" >
-        </activity>
+            android:label="@string/title_activity_camera"></activity>
         <activity
             android:name=".activities.ReconstructionListActivity"
-            android:label="@string/title_reconstruction_list" >
-        </activity>
+            android:label="@string/title_reconstruction_list"></activity>
         <activity
             android:name=".activities.ReconstructionDetailActivity"
-            android:label="" >
+            android:label="">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="de.hsrm.objectify.activities.ReconstructionListActivity" />
         </activity>
-        <service android:name=".rendering.ReconstructionService">
-        </service>
+
+        <service android:name=".rendering.ReconstructionService"></service>
         <provider
-            android:authorities="de.hsrm.objectify.database.databaseprovider.content"
-            android:name=".database.DatabaseProvider" />
+            android:name=".database.DatabaseProvider"
+            android:authorities="de.hsrm.objectify.database.databaseprovider.content" />
     </application>
 
 </manifest>

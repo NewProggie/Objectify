@@ -6,7 +6,6 @@ import android.hardware.Camera;
 import android.hardware.Camera.Size;
 
 import java.util.List;
-import java.lang.Math;
 
 public class CameraUtils {
 
@@ -29,7 +28,7 @@ public class CameraUtils {
     public static Bitmap fixRotateMirrorImage(Bitmap src) {
 
         Matrix rotateRight = new Matrix();
-        float[] mirrorY = { -1, 0, 0, 0, 1, 0, 0, 0, 1 };
+        float[] mirrorY = {-1, 0, 0, 0, 1, 0, 0, 0, 1};
         Matrix matrixMirrorY = new Matrix();
         matrixMirrorY.setValues(mirrorY);
         rotateRight.postConcat(matrixMirrorY);

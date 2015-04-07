@@ -7,15 +7,10 @@ import java.util.Random;
 
 public class Storage {
 
-    private static final String DIRECTORY_NAME  = "/Android/data/de.hsrm.objectify";
+    private static final String DIRECTORY_NAME = "/Android/data/de.hsrm.objectify";
 
     public static String getExternalRootDirectory() {
         return getDirectoryPath(DIRECTORY_NAME);
-    }
-
-    public boolean isMounted() {
-        String state = Environment.getExternalStorageState();
-        return Environment.MEDIA_MOUNTED.equals(state) ? true : false;
     }
 
     public static String getRandomName(int size) {
@@ -30,7 +25,7 @@ public class Storage {
     private static String getDirectoryPath(String directory) {
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
             File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() +
-            directory);
+                    directory);
             if (dir.mkdirs() || dir.exists()) {
                 return dir.getAbsolutePath();
             } else {
@@ -39,5 +34,10 @@ public class Storage {
         } else {
             throw new RuntimeException("External Storage is currently not available");
         }
+    }
+
+    public boolean isMounted() {
+        String state = Environment.getExternalStorageState();
+        return Environment.MEDIA_MOUNTED.equals(state) ? true : false;
     }
 }
