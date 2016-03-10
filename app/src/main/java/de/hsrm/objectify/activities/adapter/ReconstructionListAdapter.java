@@ -1,3 +1,8 @@
+/*
+ * Objectify. Copyright (c) 2011-2016. Kai Wolf. All rights reserved.
+ * Redistribution and use in source form with or without modification is not permitted.
+ */
+
 package de.hsrm.objectify.activities.adapter;
 
 import android.content.Context;
@@ -10,18 +15,13 @@ import android.widget.TextView;
 import de.hsrm.objectify.database.DatabaseAdapter;
 
 public class ReconstructionListAdapter extends CursorAdapter {
-
-    private Cursor mCursor;
-
     public ReconstructionListAdapter(Context context, Cursor cursor) {
         super(context, cursor);
-        mCursor = cursor;
     }
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup viewGroup) {
-        TextView textView = new TextView(context);
-        return textView;
+        return new TextView(context);
     }
 
     @Override

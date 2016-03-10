@@ -1,3 +1,8 @@
+/*
+ * Objectify. Copyright (c) 2011-2016. Kai Wolf. All rights reserved.
+ * Redistribution and use in source form with or without modification is not permitted.
+ */
+
 package de.hsrm.objectify.activities.fragments;
 
 import android.app.Activity;
@@ -13,15 +18,14 @@ import de.hsrm.objectify.database.DatabaseAdapter;
 import de.hsrm.objectify.database.DatabaseProvider;
 
 /**
- * A list fragment representing a list of Reconstructions. This fragment also supports tablet
- * devices by allowing list items to be given an 'activated' state upon selection. This helps
- * indicate which item is currently being viewed in a {@link ImageViewerFragment}. Activities
- * containing this fragment MUST implement the {@link Callbacks} interface
+ * A list fragment representing a list of Reconstructions. This fragment also supports
+ * tablet devices by allowing list items to be given an 'activated' state upon selection.
+ * This helps indicate which item is currently being viewed in a {@link
+ * ImageViewerFragment}.
+ * Activities containing this fragment MUST implement the {@link Callbacks} interface
  */
 public class ReconstructionListFragment extends ListFragment {
-
     private static final String STATE_ACTIVATED_POSITION = "activated_position";
-    private ReconstructionListAdapter mAdapter;
 
     /**
      * The fragment's current callback object, which is notified of list item clicks
@@ -34,21 +38,23 @@ public class ReconstructionListFragment extends ListFragment {
     private int mActivatedPosition = ListView.INVALID_POSITION;
 
     /**
-     * Mandatory empty constructor for the fragment manager to instantiate the fragment (e.g. upon
+     * Mandatory empty constructor for the fragment manager to instantiate the fragment
+     * (e.g. upon
      * screen orientation changes)
      */
-    public ReconstructionListFragment() {
-    }
+    public ReconstructionListFragment() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         Uri galleryUri = DatabaseProvider.CONTENT_URI.buildUpon()
-                .appendPath(DatabaseAdapter.DATABASE_TABLE_GALLERY).build();
+                             .appendPath(DatabaseAdapter.DATABASE_TABLE_GALLERY)
+                             .build();
         Cursor cursor = getActivity().managedQuery(galleryUri, null, null, null, null);
-        mAdapter = new ReconstructionListAdapter(getActivity().getApplicationContext(), cursor);
-        setListAdapter(mAdapter);
+        ReconstructionListAdapter adapter =
+            new ReconstructionListAdapter(getActivity().getApplicationContext(), cursor);
+        setListAdapter(adapter);
     }
 
     @Override
@@ -56,7 +62,8 @@ public class ReconstructionListFragment extends ListFragment {
         super.onViewCreated(view, savedInstance);
 
         /* restore the previously serialized activated item position */
-        if (savedInstance != null && savedInstance.containsKey(STATE_ACTIVATED_POSITION)) {
+        if (savedInstance != null
+            && savedInstance.containsKey(STATE_ACTIVATED_POSITION)) {
             setActivatedPosition(savedInstance.getInt(STATE_ACTIVATED_POSITION));
         }
     }
@@ -67,7 +74,8 @@ public class ReconstructionListFragment extends ListFragment {
 
         /* activities containing this fragment must implement its callbacks */
         if (!(activity instanceof Callbacks)) {
-            throw new IllegalStateException("Activity must implement fragment's callbacks.");
+            throw new IllegalStateException(
+                "Activity must implement fragment's callbacks.");
         }
 
         mCallbacks = (Callbacks) activity;
@@ -77,7 +85,8 @@ public class ReconstructionListFragment extends ListFragment {
     public void onListItemClick(ListView listView, View view, int position, long id) {
         super.onListItemClick(listView, view, position, id);
 
-        /* notify the active callbacks interface (the activity, if the fragment is attached to one)
+        /* notify the active callbacks interface (the activity, if the fragment is
+         * attached to one)
          * that an item has been selected */
         mCallbacks.onItemSelected(String.valueOf(id));
     }
@@ -96,11 +105,11 @@ public class ReconstructionListFragment extends ListFragment {
      * 'activated' state when touched
      */
     public void setActivateOnItemClick(boolean activateOnItemClick) {
-        /* when setting CHOICE_MODE_SINGLE, ListView will automatically give items the 'activated'
+        /* when setting CHOICE_MODE_SINGLE, ListView will automatically give items the
+         * 'activated'
          * state when touched */
-        getListView().setChoiceMode(activateOnItemClick
-                ? ListView.CHOICE_MODE_SINGLE
-                : ListView.CHOICE_MODE_NONE);
+        getListView().setChoiceMode(activateOnItemClick ? ListView.CHOICE_MODE_SINGLE
+                                                        : ListView.CHOICE_MODE_NONE);
     }
 
     private void setActivatedPosition(int position) {
@@ -114,11 +123,9 @@ public class ReconstructionListFragment extends ListFragment {
     }
 
     /**
-     * A callback interface that all activities containing this fragment must implement. This
+     * A callback interface that all activities containing this fragment must implement.
+     * This
      * mechanism allows activities to be notified of item selections
      */
-    public interface Callbacks {
-
-        public void onItemSelected(String id);
-    }
+    public interface Callbacks { void onItemSelected(String id); }
 }

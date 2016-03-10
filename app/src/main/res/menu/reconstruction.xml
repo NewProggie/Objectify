@@ -1,3 +1,8 @@
+<!--
+  ~ Objectify. Copyright (c) 2011-2016. Kai Wolf. All rights reserved.
+  ~ Redistribution and use in source form with or without modification is not permitted.
+  -->
+
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".ReconstructionDetailActivity">
@@ -7,7 +12,7 @@
         android:icon="@drawable/ic_action_export"
         android:orderInCategory="100"
         android:showAsAction="always"
-        android:title="Export 3D model" />
+        android:title="@string/export_3d_model" />
 
     <item
         android:id="@+id/action_settings"

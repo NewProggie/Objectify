@@ -1,3 +1,8 @@
+<!--
+  ~ Objectify. Copyright (c) 2011-2016. Kai Wolf. All rights reserved.
+  ~ Redistribution and use in source form with or without modification is not permitted.
+  -->
+
 <resources>
     <!-- Example customization of dimensions originally defined in res/values/dimens.xml
          (such as screen margins) for screens with more than 820dp of available width. This

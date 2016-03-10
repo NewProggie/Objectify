@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Objectify. Copyright (c) 2011-2016. Kai Wolf. All rights reserved.
+  ~ Redistribution and use in source form with or without modification is not permitted.
+  -->
+
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="de.hsrm.objectify">
 
@@ -26,10 +31,10 @@
         </activity>
         <activity
             android:name=".activities.CameraActivity"
-            android:label="@string/title_activity_camera"></activity>
+            android:label="@string/title_activity_camera"/>
         <activity
             android:name=".activities.ReconstructionListActivity"
-            android:label="@string/title_reconstruction_list"></activity>
+            android:label="@string/title_reconstruction_list"/>
         <activity
             android:name=".activities.ReconstructionDetailActivity"
             android:label="">
@@ -38,7 +43,7 @@
                 android:value="de.hsrm.objectify.activities.ReconstructionListActivity" />
         </activity>
 
-        <service android:name=".rendering.ReconstructionService"></service>
+        <service android:name=".rendering.ReconstructionService"/>
         <provider
             android:name=".database.DatabaseProvider"
             android:authorities="de.hsrm.objectify.database.databaseprovider.content" />

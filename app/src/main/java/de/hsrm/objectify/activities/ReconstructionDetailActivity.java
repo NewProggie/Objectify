@@ -1,3 +1,8 @@
+/*
+ * Objectify. Copyright (c) 2011-2016. Kai Wolf. All rights reserved.
+ * Redistribution and use in source form with or without modification is not permitted.
+ */
+
 package de.hsrm.objectify.activities;
 
 import android.app.ActionBar;
@@ -30,33 +35,34 @@ import de.hsrm.objectify.camera.Constants;
 import de.hsrm.objectify.rendering.ReconstructionService;
 
 /**
- * An activity representing a single Reconstruction detail screen. This activity is only used on
- * handset devices. On tablet-size devices, item details are presented side-by-side with a list of
- * items in a {@link ReconstructionListActivity}. This activity is mostly just a 'shell' activity
- * containing no more than a {@link de.hsrm.objectify.activities.fragments.ImageViewerFragment}
+ * An activity representing a single Reconstruction detail screen. This activity is only
+ * used on handset devices. On tablet-size devices, item details are presented
+ * side-by-side with a
+ * list of items in a {@link ReconstructionListActivity}. This activity is mostly just a
+ * 'shell'
+ * activity containing no more than a {@link
+ * de.hsrm.objectify.activities.fragments.ImageViewerFragment}
  */
-public class ReconstructionDetailActivity extends Activity
-        implements ImageViewerFragment.OnFragmentInteractionListener,
-        ModelViewerFragment.OnFragmentInteractionListener {
-
+public class ReconstructionDetailActivity
+    extends Activity implements ImageViewerFragment.OnFragmentInteractionListener,
+                                ModelViewerFragment.OnFragmentInteractionListener {
     public static final String REC_NORMALMAP = "normalmap";
     public static final String REC_HEIGHTMAP = "heightmap";
     public static final String REC_3DMODEL = "3dmodel";
     private final String TAG = "ReconstructionDetailActivity";
     private LinearLayout mProgressScreen;
-    private SpinnerAdapter mSpinnerAdapter;
     private Fragment mCurrentFragment;
     private String mGalleryId;
     private BroadcastReceiver receiver = new BroadcastReceiver() {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-
             Bundle bundle = intent.getExtras();
             if (bundle != null) {
                 disableProgressScreen();
                 mGalleryId = bundle.getString(ReconstructionService.GALLERY_ID);
-                mCurrentFragment = ImageViewerFragment.newInstance(mGalleryId, REC_NORMALMAP);
+                mCurrentFragment =
+                    ImageViewerFragment.newInstance(mGalleryId, REC_NORMALMAP);
                 updateCurrentViewFragment();
             }
         }
@@ -79,15 +85,15 @@ public class ReconstructionDetailActivity extends Activity
         }
 
         mProgressScreen = (LinearLayout) findViewById(R.id.progress_screen);
-        mSpinnerAdapter = new SimpleAdapter(this, data, R.layout.subtitled_spinner_item,
-                new String[]{"title", "subtitle"},
-                new int[]{android.R.id.text1, android.R.id.text2});
+        SpinnerAdapter spinnerAdapter = new SimpleAdapter(this, data,
+            R.layout.subtitled_spinner_item, new String[] {"title", "subtitle"},
+            new int[] {android.R.id.text1, android.R.id.text2});
 
         /* show the Up button in the action bar. */
         ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-        actionBar.setListNavigationCallbacks(mSpinnerAdapter, spinnerNavigationCallback());
+        actionBar.setListNavigationCallbacks(spinnerAdapter, spinnerNavigationCallback());
 
         /* check if called from reconstruction list or if new scan is happening */
         if (getIntent().hasExtra(ImageViewerFragment.ARG_GALLERY_ID)) {
@@ -134,12 +140,12 @@ public class ReconstructionDetailActivity extends Activity
             public boolean onNavigationItemSelected(int itemPosition, long itemId) {
                 switch (itemPosition) {
                     case Constants.ReconstructionType.NORMALMAP:
-                        mCurrentFragment = ImageViewerFragment.newInstance(mGalleryId,
-                                REC_NORMALMAP);
+                        mCurrentFragment =
+                            ImageViewerFragment.newInstance(mGalleryId, REC_NORMALMAP);
                         break;
                     case Constants.ReconstructionType.HEIGHTMAP:
-                        mCurrentFragment = ImageViewerFragment.newInstance(mGalleryId,
-                                REC_HEIGHTMAP);
+                        mCurrentFragment =
+                            ImageViewerFragment.newInstance(mGalleryId, REC_HEIGHTMAP);
                         break;
                     case Constants.ReconstructionType.RECONSTRUCTION:
                         mCurrentFragment = ModelViewerFragment.newInstance(mGalleryId);
@@ -167,17 +173,17 @@ public class ReconstructionDetailActivity extends Activity
             case R.id.action_about:
                 return true;
             case android.R.id.home:
-                /* this ID represents the Home or Up button. In the case of this activity, the Up
-                 * button is shown. Use NavUtils to allow users to navigate up one level in the
-                 * application structure */
-                NavUtils.navigateUpTo(this, new Intent(this, ReconstructionListActivity.class));
+                /* this ID represents the Home or Up button. In the case of this activity,
+                 * the Up button is shown. Use NavUtils to allow users to navigate up one
+                 * level
+                 * in the application structure */
+                NavUtils.navigateUpTo(
+                    this, new Intent(this, ReconstructionListActivity.class));
                 return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
-    public void onFragmentInteraction(Uri uri) {
-
-    }
+    public void onFragmentInteraction(Uri uri) {}
 }

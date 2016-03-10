@@ -1,3 +1,8 @@
+/*
+ * Objectify. Copyright (c) 2011-2016. Kai Wolf. All rights reserved.
+ * Redistribution and use in source form with or without modification is not permitted.
+ */
+
 package de.hsrm.objectify.database;
 
 import android.content.Context;
@@ -9,6 +14,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  * @brief Database adapter responsible for creation of db tables and updating db
  * <p/>
  * This class manages several database tables which look like following:
+ * clang-format off
  * @code
  * +-----------------+  +--------------------------------------------------------------------+
  * |      object     |  |                           gallery                                  |
@@ -16,6 +22,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  * | _id | file_path |  | _id | image_path | date | dimension | faces | vertices | object_id |
  * +-----+-----------+  +-----+------------+------+-----------+-------+----------+-----------+
  * @endcode
+ * clang-format on
  */
 public class DatabaseAdapter {
 
@@ -82,13 +89,12 @@ public class DatabaseAdapter {
     }
 
     /**
-     * Helper class for managing {@link android.database.sqlite.SQLiteDatabase} that stores data for
-     * {@link DatabaseProvider}
+     * Helper class for managing {@link android.database.sqlite.SQLiteDatabase} that
+     * stores data for {@link DatabaseProvider}
      */
     private static class DatabaseHelper extends SQLiteOpenHelper {
-
-        public DatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory,
-                              int version) {
+        public DatabaseHelper(Context context, String name,
+            SQLiteDatabase.CursorFactory factory, int version) {
             super(context, name, factory, version);
         }
 

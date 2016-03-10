@@ -1,3 +1,8 @@
+/*
+ * Objectify. Copyright (c) 2011-2016. Kai Wolf. All rights reserved.
+ * Redistribution and use in source form with or without modification is not permitted.
+ */
+
 package de.hsrm.objectify.rendering;
 
 import android.app.IntentService;
@@ -35,9 +40,9 @@ import de.hsrm.objectify.utils.Size;
 import de.hsrm.objectify.utils.Storage;
 
 public class ReconstructionService extends IntentService {
-
     public static final String DIRECTORY_NAME = "dir_name";
-    public static final String NOTIFICATION = "de.hsrm.objectify.android.service.receiver";
+    public static final String NOTIFICATION =
+        "de.hsrm.objectify.android.service.receiver";
     public static final String GALLERY_ID = "gallery_id";
     public static final String MODEL_NAME = "model.kaw";
     public static final String NORMAL_IMG_NAME = "normals.png";
@@ -54,8 +59,9 @@ public class ReconstructionService extends IntentService {
         ArrayList<Bitmap> images = new ArrayList<Bitmap>();
         /* i from 0 to number of images + ambient image */
         for (int i = 0; i <= Constants.NUM_IMAGES; i++) {
-            Bitmap img = BitmapUtils.openBitmap(Storage.getExternalRootDirectory() +
-                    "/" + dirName + "/" + Constants.IMAGE_NAME + i + "." + Constants.IMAGE_FORMAT);
+            Bitmap img =
+                BitmapUtils.openBitmap(Storage.getExternalRootDirectory() + "/" + dirName
+                    + "/" + Constants.IMAGE_NAME + i + "." + Constants.IMAGE_FORMAT);
             images.add(img);
         }
 
@@ -64,7 +70,6 @@ public class ReconstructionService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-
         /* get images */
         String dirName = intent.getStringExtra(DIRECTORY_NAME);
         ArrayList<Bitmap> images = readImages(dirName);
@@ -76,15 +81,16 @@ public class ReconstructionService extends IntentService {
         for (int i = 0; i < images.size(); i++) {
             images.set(i, BitmapUtils.subtract(images.get(i), ambient));
         }
-//        images.clear();
-//        for (int i = 0; i < Constants.NUM_IMAGES; i++) {
-//            images.add(BitmapUtils.openBitmap(Storage.getExternalRootDirectory() +
-//                "/" + dirName + "/kai_small_" + i + ".png"));
-//        }
+        //        images.clear();
+        //        for (int i = 0; i < Constants.NUM_IMAGES; i++) {
+        //            images.add(BitmapUtils.openBitmap(Storage.getExternalRootDirectory()
+        //            +
+        //                "/" + dirName + "/kai_small_" + i + ".png"));
+        //        }
 
         /* compute normals */
-        float[] normals = computeNormals(images,
-                BitmapUtils.convertToGrayscale(BitmapUtils.binarize(images.get(2))));
+        float[] normals = computeNormals(
+            images, BitmapUtils.convertToGrayscale(BitmapUtils.binarize(images.get(2))));
         Bitmap Normals = BitmapUtils.convert(normals, mWidth, mHeight);
         BitmapUtils.saveBitmap(Normals, dirName, NORMAL_IMG_NAME);
 
@@ -100,19 +106,20 @@ public class ReconstructionService extends IntentService {
             }
         }
 
-        Bitmap Height = Bitmap.createBitmap(heightPixels, mWidth, mHeight, Bitmap.Config.ARGB_8888);
+        Bitmap Height =
+            Bitmap.createBitmap(heightPixels, mWidth, mHeight, Bitmap.Config.ARGB_8888);
         BitmapUtils.saveBitmap(Height, dirName, HEIGHT_IMG_NAME);
 
         ObjectModel obj = createObjectModel(Z, normals, images.get(2));
-//        OBJExport.write(obj, images.get(0), dirName);
+        //        OBJExport.write(obj, images.get(0), dirName);
         String galleryId = writeDatabaseEntry(obj, new Size(mWidth, mHeight), dirName);
 
         /* clean up and publish results */
         publishResult(galleryId);
     }
 
-    private ObjectModel createObjectModel(float[] heights, float[] normals, Bitmap texture) {
-
+    private ObjectModel createObjectModel(
+        float[] heights, float[] normals, Bitmap texture) {
         FloatBuffer vertBuf = FloatBuffer.allocate(mWidth * mHeight * 3);
         FloatBuffer normBuf = FloatBuffer.allocate(mWidth * mHeight * 3);
         ArrayList<Short> indexes = new ArrayList<Short>();
@@ -123,8 +130,10 @@ public class ReconstructionService extends IntentService {
         int idx = 0;
         for (int y = 0; y < mHeight; y++) {
             for (int x = 0; x < mWidth; x++) {
-                float[] imgPt = new float[]{Float.valueOf(x), Float.valueOf(y), heights[idx]};
-                float[] nVec = new float[]{normals[4 * idx + 0], normals[4 * idx + 1], normals[4 * idx + 2]};
+                float[] imgPt =
+                    new float[] {Float.valueOf(x), Float.valueOf(y), heights[idx]};
+                float[] nVec = new float[] {
+                    normals[4 * idx + 0], normals[4 * idx + 1], normals[4 * idx + 2]};
                 vertBuf.put(imgPt);
                 normBuf.put(nVec);
                 idx += 1;
@@ -155,23 +164,26 @@ public class ReconstructionService extends IntentService {
     }
 
     private String writeDatabaseEntry(ObjectModel objectModel, Size dim, String dirName) {
-
         /* initialize content resolver and database write */
         ContentResolver cr = getContentResolver();
         ContentValues values = new ContentValues();
-        Uri objUri = DatabaseProvider.CONTENT_URI.buildUpon().
-                appendPath(DatabaseAdapter.DATABASE_TABLE_OBJECT).build();
-        Uri galleryUri = DatabaseProvider.CONTENT_URI.buildUpon().
-                appendPath(DatabaseAdapter.DATABASE_TABLE_GALLERY).build();
+        Uri objUri = DatabaseProvider.CONTENT_URI.buildUpon()
+                         .appendPath(DatabaseAdapter.DATABASE_TABLE_OBJECT)
+                         .build();
+        Uri galleryUri = DatabaseProvider.CONTENT_URI.buildUpon()
+                             .appendPath(DatabaseAdapter.DATABASE_TABLE_GALLERY)
+                             .build();
 
         /* get timestamp for saving into database */
         Calendar cal = Calendar.getInstance();
         String date = String.valueOf(cal.getTimeInMillis());
 
         /* write 3d reconstruction to disk */
-        String filePath = Storage.getExternalRootDirectory() + "/" + dirName + "/" + MODEL_NAME;
+        String filePath =
+            Storage.getExternalRootDirectory() + "/" + dirName + "/" + MODEL_NAME;
         try {
-            ObjectOutputStream objOutput = new ObjectOutputStream(new FileOutputStream(filePath));
+            ObjectOutputStream objOutput =
+                new ObjectOutputStream(new FileOutputStream(filePath));
             objOutput.writeObject(objectModel);
             objOutput.close();
 
@@ -186,7 +198,8 @@ public class ReconstructionService extends IntentService {
             values.put(DatabaseAdapter.GALLERY_DATE_KEY, date);
             values.put(DatabaseAdapter.GALLERY_DIMENSION_KEY, dim.toString());
             values.put(DatabaseAdapter.GALLERY_FACES_KEY, objectModel.getFacesSize());
-            values.put(DatabaseAdapter.GALLERY_VERTICES_KEY, objectModel.getVerticesSize());
+            values.put(
+                DatabaseAdapter.GALLERY_VERTICES_KEY, objectModel.getVerticesSize());
             values.put(DatabaseAdapter.GALLERY_OBJECT_ID_KEY, objectID);
             Uri galleryResultUri = cr.insert(galleryUri, values);
             return galleryResultUri.getLastPathSegment();
@@ -199,8 +212,8 @@ public class ReconstructionService extends IntentService {
     }
 
     private float[] localHeightfield(float[] normals) {
-
-        /* create RenderScript context used to communicate with RenderScript. Afterwards create the
+        /* create RenderScript context used to communicate with RenderScript. Afterwards
+         * create the
          * actual script, which will do the real work */
         RenderScript rs = RenderScript.create(getApplicationContext());
         ScriptC_lh_integration lhIntegration = new ScriptC_lh_integration(rs);
@@ -210,14 +223,17 @@ public class ReconstructionService extends IntentService {
         lhIntegration.set_height(mHeight);
 
         /* create allocation input to RenderScript */
-        Type normType = new Type.Builder(rs, Element.F32_4(rs)).setX(mWidth).setY(mHeight).create();
+        Type normType =
+            new Type.Builder(rs, Element.F32_4(rs)).setX(mWidth).setY(mHeight).create();
         Allocation allInNormals = Allocation.createTyped(rs, normType);
         allInNormals.copyFromUnchecked(normals);
 
-        Type heightType = new Type.Builder(rs, Element.F32(rs)).setX(mWidth).setY(mHeight).create();
+        Type heightType =
+            new Type.Builder(rs, Element.F32(rs)).setX(mWidth).setY(mHeight).create();
         Allocation allOutHeights = Allocation.createTyped(rs, heightType);
 
-        /* bind normals and heights data to pNormals and pHeights pointer inside RenderScript */
+        /* bind normals and heights data to pNormals and pHeights pointer inside
+         * RenderScript */
         lhIntegration.bind_pNormals(allInNormals);
         lhIntegration.bind_pHeights(allOutHeights);
 
@@ -234,7 +250,6 @@ public class ReconstructionService extends IntentService {
     }
 
     private float[] computeNormals(ArrayList<Bitmap> images, Bitmap Mask) {
-
         /* populate A */
         double[][] a = new double[mWidth * mHeight][Constants.NUM_IMAGES];
         int[] imgData = new int[mWidth * mHeight];
@@ -252,7 +267,7 @@ public class ReconstructionService extends IntentService {
         DenseMatrix64F A = new DenseMatrix64F(a);
         CommonOps.transpose(A);
         SingularValueDecomposition<DenseMatrix64F> svd =
-                DecompositionFactory.svd(A.numRows, A.numCols, false, true, true);
+            DecompositionFactory.svd(A.numRows, A.numCols, false, true, true);
 
         /* TODO: catch java.lang.OutOfMemoryError */
         if (!svd.decompose(A)) {
@@ -270,12 +285,14 @@ public class ReconstructionService extends IntentService {
         cmpNormals.set_width(mWidth);
 
         /* create allocation input to RenderScript */
-        Type dataType = new Type.Builder(rs, Element.F32_4(rs)).setX(mWidth).setY(mHeight).create();
+        Type dataType =
+            new Type.Builder(rs, Element.F32_4(rs)).setX(mWidth).setY(mHeight).create();
         Allocation allInData = Allocation.createTyped(rs, dataType);
         allInData.copyFromUnchecked(ArrayUtils.toFloatArray(EV.data));
 
         /* create allocation for masked image */
-        Type maskType = new Type.Builder(rs, Element.I32(rs)).setX(mWidth).setY(mHeight).create();
+        Type maskType =
+            new Type.Builder(rs, Element.I32(rs)).setX(mWidth).setY(mHeight).create();
         Allocation allMask = Allocation.createTyped(rs, maskType);
         int[] mask = new int[mWidth * mHeight];
         Mask.getPixels(mask, 0, mWidth, 0, 0, mWidth, mHeight);
@@ -285,7 +302,8 @@ public class ReconstructionService extends IntentService {
         cmpNormals.bind_pMask(allMask);
 
         /* create allocation for output */
-        Type normalsType = new Type.Builder(rs, Element.F32_4(rs)).setX(mWidth).setY(mHeight).create();
+        Type normalsType =
+            new Type.Builder(rs, Element.F32_4(rs)).setX(mWidth).setY(mHeight).create();
         Allocation allOutNormals = Allocation.createTyped(rs, normalsType);
 
         cmpNormals.forEach_compute_normals(allInData, allOutNormals);

@@ -1,7 +1,11 @@
+/*
+ * Objectify. Copyright (c) 2011-2016. Kai Wolf. All rights reserved.
+ * Redistribution and use in source form with or without modification is not permitted.
+ */
+
 package de.hsrm.objectify.math;
 
 public class Vector3f {
-
     public float x = 0.0f;
     public float y = 0.0f;
     public float z = 0.0f;
@@ -223,8 +227,8 @@ public class Vector3f {
      * @return A new vector within the result of the operation.
      */
     public static Vector3f cross(Vector3f pv1, Vector3f pv2) {
-        return new Vector3f((pv1.y * pv2.z) - (pv1.z * pv2.y), (pv1.z * pv2.x)
-                - (pv1.x * pv2.z), (pv1.x * pv2.y) - (pv1.y * pv2.x));
+        return new Vector3f((pv1.y * pv2.z) - (pv1.z * pv2.y),
+            (pv1.z * pv2.x) - (pv1.x * pv2.z), (pv1.x * pv2.y) - (pv1.y * pv2.x));
     }
 
     /**
@@ -235,8 +239,7 @@ public class Vector3f {
      * @return The angle.
      */
     public static float phi(Vector3f pv1, Vector3f pv2) {
-        return (float) Math.acos(scalar(pv1, pv2)
-                / (pv1.length() * pv2.length()));
+        return (float) Math.acos(scalar(pv1, pv2) / (pv1.length() * pv2.length()));
     }
 
     /**
@@ -339,8 +342,8 @@ public class Vector3f {
      * @param pvec3 The third vector "c".
      * @param pvret
      */
-    public static void normal(Vector3f pvec1, Vector3f pvec2, Vector3f pvec3,
-                              Vector3f pvret) {
+    public static void normal(
+        Vector3f pvec1, Vector3f pvec2, Vector3f pvec3, Vector3f pvret) {
         //
         // Build plane with two vectors with source point pvec1.
         //
@@ -397,8 +400,8 @@ public class Vector3f {
      * @return Vector length.
      */
     public float length() {
-        return (float) Math.sqrt((this.x * this.x) + (this.y * this.y)
-                + (this.z * this.z));
+        return (float) Math.sqrt(
+            (this.x * this.x) + (this.y * this.y) + (this.z * this.z));
     }
 
     /**
@@ -413,5 +416,4 @@ public class Vector3f {
     public String toString() {
         return "Vector3f(" + this.x + "," + this.y + "," + this.z + ")";
     }
-
 }

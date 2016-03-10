@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Objectify. Copyright (c) 2011-2016. Kai Wolf. All rights reserved.
+  ~ Redistribution and use in source form with or without modification is not permitted.
+  -->
+
 <resources>
 
     <string name="app_name">Objectify</string>
@@ -10,6 +15,7 @@
     <string name="title_reconstruction_list">Reconstructions</string>
     <string name="please_wait">Preparing. Please Wait…</string>
     <string name="show_gallery">Show Gallery</string>
+    <string name="export_3d_model">Export 3D model</string>
 
     <string-array name="reconstruction_views">
         <item>Normalmap</item>

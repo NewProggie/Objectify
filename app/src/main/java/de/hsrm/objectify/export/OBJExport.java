@@ -1,3 +1,8 @@
+/*
+ * Objectify. Copyright (c) 2011-2016. Kai Wolf. All rights reserved.
+ * Redistribution and use in source form with or without modification is not permitted.
+ */
+
 package de.hsrm.objectify.export;
 
 import android.graphics.Bitmap;
@@ -12,15 +17,10 @@ import java.io.IOException;
 import de.hsrm.objectify.rendering.ObjectModel;
 import de.hsrm.objectify.utils.Storage;
 
-/**
- * Created by kai on 25.07.14.
- */
 public class OBJExport {
-
     public static final String OBJ_NAME = "export.obj";
 
     public static boolean write(ObjectModel objectModel, Bitmap texture, String dirName) {
-
         String suffix = Storage.getExternalRootDirectory() + "/" + dirName + "/";
         String objPath = suffix + OBJ_NAME;
         String mtlPath = suffix + "objectify_model.mtl";
@@ -35,7 +35,8 @@ public class OBJExport {
 
             /* write vertices */
             for (int i = 0; i < vertices.length; i += 3) {
-                out.write("v " + vertices[i] + " " + vertices[i + 1] + " " + vertices[i + 2] + "\n");
+                out.write("v " + vertices[i] + " " + vertices[i + 1] + " "
+                    + vertices[i + 2] + "\n");
             }
 
             /* writing texture coords */
@@ -43,7 +44,8 @@ public class OBJExport {
             int height = texture.getHeight();
             for (int h = height - 1; h >= 0; h--) {
                 for (int w = 0; w < width; w++) {
-                    out.write("vt " + (float) w / (float) (width - 1) + " " + (float) h / (float) (height - 1) + "\n");
+                    out.write("vt " + (float) w / (float) (width - 1) + " "
+                        + (float) h / (float) (height - 1) + "\n");
                 }
             }
             /* writing faces */
@@ -52,7 +54,8 @@ public class OBJExport {
                 int one = faces[i] + 1;
                 int two = faces[i + 1] + 1;
                 int three = faces[i + 2] + 1;
-                out.write("f " + one + "/" + one + " " + two + "/" + two + " " + three + "/" + three + "\n");
+                out.write("f " + one + "/" + one + " " + two + "/" + two + " " + three
+                    + "/" + three + "\n");
             }
 
             out.write("\n");
@@ -67,7 +70,7 @@ public class OBJExport {
             FileOutputStream fout = new FileOutputStream(texPath);
             fout.write(baos.toByteArray());
 
-			/* Create mtl for texture */
+            /* Create mtl for texture */
             out = new BufferedWriter(new FileWriter(mtlPath));
             out.write("newmtl picture\n");
             out.write("map_Kd objectify_model.jpg\n");

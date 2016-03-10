@@ -1,3 +1,8 @@
+/*
+ * Objectify. Copyright (c) 2011-2016. Kai Wolf. All rights reserved.
+ * Redistribution and use in source form with or without modification is not permitted.
+ */
+
 package de.hsrm.objectify.rendering;
 
 import android.content.Context;
@@ -27,7 +32,6 @@ import de.hsrm.objectify.utils.ArcBall;
  * @author kwolf001
  */
 public class TouchSurfaceView extends GLSurfaceView {
-
     private static final String TAG = "TouchSurfaceView";
     private final Object matrixLock = new Object();
     private final float TRACKBALL_SCALE_FACTOR = 36.0f;
@@ -49,8 +53,7 @@ public class TouchSurfaceView extends GLSurfaceView {
         renderer = new ObjectModelRenderer();
         setRenderer(renderer);
         setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
-        scaleDetector = new ScaleGestureDetector(context,
-                new SimpleScaleListener());
+        scaleDetector = new ScaleGestureDetector(context, new SimpleScaleListener());
     }
 
     @Override
@@ -94,12 +97,14 @@ public class TouchSurfaceView extends GLSurfaceView {
         renderer.setObjectModel(objectModel);
     }
 
-    private class SimpleScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
-
+    private class SimpleScaleListener
+        extends ScaleGestureDetector.SimpleOnScaleGestureListener {
         public boolean onScale(ScaleGestureDetector detector) {
             mScaling *= detector.getScaleFactor();
-            if (mScaling < 0.5f) mScaling = 0.5f;
-            if (mScaling > 100.5f) mScaling = 100.5f;
+            if (mScaling < 0.5f)
+                mScaling = 0.5f;
+            if (mScaling > 100.5f)
+                mScaling = 100.5f;
             invalidate();
             return true;
         }
@@ -112,7 +117,6 @@ public class TouchSurfaceView extends GLSurfaceView {
      * @author kwolf001
      */
     private class ObjectModelRenderer implements GLSurfaceView.Renderer {
-
         public float mAngleX;
         public float mAngleY;
         private ObjectModel mObjectModel = null;
@@ -138,7 +142,7 @@ public class TouchSurfaceView extends GLSurfaceView {
             gl.glEnable(GL10.GL_LIGHT0);
             // LIGHT0
             // define ambient component of first light
-            float[] light0Ambient = new float[]{0.9f, 0.9f, 0.9f, 1.0f};
+            float[] light0Ambient = new float[] {0.9f, 0.9f, 0.9f, 1.0f};
             ByteBuffer byteBuf = ByteBuffer.allocateDirect(light0Ambient.length * 4);
             byteBuf.order(ByteOrder.nativeOrder());
             FloatBuffer light0AmbientBuffer = byteBuf.asFloatBuffer();
@@ -146,18 +150,18 @@ public class TouchSurfaceView extends GLSurfaceView {
             light0AmbientBuffer.rewind();
             gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_AMBIENT, light0AmbientBuffer);
             // define diffuse component of first light
-            float[] light0Diffuse = new float[]{0.8f, 0.8f, 0.8f, 1.0f};
+            float[] light0Diffuse = new float[] {0.8f, 0.8f, 0.8f, 1.0f};
             FloatBuffer light0diffuseBuffer = byteBuf.asFloatBuffer();
             light0diffuseBuffer.put(light0Diffuse);
             light0diffuseBuffer.rewind();
             gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_DIFFUSE, light0diffuseBuffer);
             // define specular component of first light
-            float[] light0Specular = new float[]{0.8f, 0.8f, 0.8f, 1.0f};
+            float[] light0Specular = new float[] {0.8f, 0.8f, 0.8f, 1.0f};
             FloatBuffer light0specularBuffer = byteBuf.asFloatBuffer();
             light0specularBuffer.put(light0Specular);
             light0specularBuffer.rewind();
             gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_SPECULAR, light0specularBuffer);
-            float[] light0Position = new float[]{1.0f, 3.0f, 3.0f, 1.0f};
+            float[] light0Position = new float[] {1.0f, 3.0f, 3.0f, 1.0f};
             FloatBuffer lightPosBuffer = byteBuf.asFloatBuffer();
             lightPosBuffer.put(light0Position);
             lightPosBuffer.rewind();
@@ -169,7 +173,6 @@ public class TouchSurfaceView extends GLSurfaceView {
 
         @Override
         public void onDrawFrame(GL10 gl) {
-
             gl.glColor4f(0, 0, 0, 0);
             gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
@@ -181,12 +184,10 @@ public class TouchSurfaceView extends GLSurfaceView {
             gl.glScalef(mScaling, mScaling, mScaling);
 
             if (mObjectModel != null) {
-                gl.glScalef(mObjectModel.getLength(),
-                        mObjectModel.getLength(),
-                        mObjectModel.getLength());
+                gl.glScalef(mObjectModel.getLength(), mObjectModel.getLength(),
+                    mObjectModel.getLength());
                 gl.glTranslatef(-mObjectModel.getMiddlePoint()[0],
-                        -mObjectModel.getMiddlePoint()[1],
-                        -mObjectModel.getMiddlePoint()[2]);
+                    -mObjectModel.getMiddlePoint()[1], -mObjectModel.getMiddlePoint()[2]);
                 mObjectModel.draw(gl);
             }
         }
@@ -204,7 +205,5 @@ public class TouchSurfaceView extends GLSurfaceView {
             mObjectModel = objectModel;
             requestRender();
         }
-
     }
-
 }

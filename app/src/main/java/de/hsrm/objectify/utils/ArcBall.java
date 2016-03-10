@@ -1,3 +1,8 @@
+/*
+ * Objectify. Copyright (c) 2011-2016. Kai Wolf. All rights reserved.
+ * Redistribution and use in source form with or without modification is not permitted.
+ */
+
 package de.hsrm.objectify.utils;
 
 import android.graphics.PointF;
@@ -45,8 +50,7 @@ public class ArcBall {
         tempPoint.x = (tempPoint.x * this.adjustWidth) - 1.0f;
         tempPoint.y = (tempPoint.y * this.adjustHeight) - 1.0f;
 
-        float length = (tempPoint.x * tempPoint.x)
-                + (tempPoint.y * tempPoint.y);
+        float length = (tempPoint.x * tempPoint.x) + (tempPoint.y * tempPoint.y);
 
         if (length > 1.0f) {
             float norm = (float) (1.0 / Math.sqrt(length));
@@ -59,7 +63,6 @@ public class ArcBall {
             vector.y = tempPoint.y;
             vector.z = (float) Math.sqrt(1.0f - length);
         }
-
     }
 
     /**
@@ -69,15 +72,12 @@ public class ArcBall {
      * @param height new height
      */
     public void setBounds(float width, float height) {
-        assert ((width > 1.0f) && (height > 1.0f));
-
         adjustWidth = 1.0f / ((width - 1.0f) * 0.5f);
         adjustHeight = 1.0f / ((height - 1.0f) * 0.5f);
     }
 
     public void click(PointF NewPt) {
         mapToSphere(NewPt, this.StVec);
-
     }
 
     /**
@@ -87,7 +87,6 @@ public class ArcBall {
      * @param NewRot new rotation
      */
     public void drag(PointF NewPt, Quat4f NewRot) {
-
         this.mapToSphere(NewPt, EnVec);
 
         if (NewRot != null) {

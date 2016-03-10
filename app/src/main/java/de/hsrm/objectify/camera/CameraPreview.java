@@ -1,3 +1,8 @@
+/*
+ * Objectify. Copyright (c) 2011-2016. Kai Wolf. All rights reserved.
+ * Redistribution and use in source form with or without modification is not permitted.
+ */
+
 package de.hsrm.objectify.camera;
 
 import android.content.Context;
@@ -13,7 +18,6 @@ import java.io.IOException;
 import de.hsrm.objectify.utils.CameraUtils;
 
 public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
-
     private SurfaceHolder mHolder;
     private Camera mCamera;
 
@@ -63,14 +67,15 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     }
 
     @Override
-    public void surfaceChanged(SurfaceHolder surfaceHolder, int format, int width, int height) {
+    public void surfaceChanged(
+        SurfaceHolder surfaceHolder, int format, int width, int height) {
         if (mCamera == null) {
             return;
         }
 
         Camera.Parameters params = mCamera.getParameters();
-        Size targetSize = CameraUtils.determineTargetPictureSize(params,
-                Constants.IMAGE_RESOLUTION);
+        Size targetSize =
+            CameraUtils.determineTargetPictureSize(params, Constants.IMAGE_RESOLUTION);
         params.setPreviewSize(targetSize.width, targetSize.height);
         mCamera.setParameters(params);
         mCamera.startPreview();
@@ -86,5 +91,4 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         mCamera.release();
         mCamera = null;
     }
-
 }

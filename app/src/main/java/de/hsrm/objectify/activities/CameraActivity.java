@@ -1,3 +1,8 @@
+/*
+ * Objectify. Copyright (c) 2011-2016. Kai Wolf. All rights reserved.
+ * Redistribution and use in source form with or without modification is not permitted.
+ */
+
 package de.hsrm.objectify.activities;
 
 import android.app.Activity;
@@ -36,7 +41,6 @@ import de.hsrm.objectify.utils.Size;
 import de.hsrm.objectify.utils.Storage;
 
 public class CameraActivity extends Activity {
-
     public static final String RECONSTRUCTION = "new_reconstruction";
     private CameraPreview mCameraPreview;
     private ImageView mCameraLighting;
@@ -56,7 +60,7 @@ public class CameraActivity extends Activity {
         /* make the activity fullscreen */
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_camera);
 
         /* opening front facing camera */
@@ -106,29 +110,33 @@ public class CameraActivity extends Activity {
             @Override
             public void onPictureTaken(byte[] bytes, Camera camera) {
                 Bitmap bmp = CameraUtils.fixRotateMirrorImage(
-                        BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
-                /* rotate camera image according to camera rotation (portrait vs. landscape) */
+                    BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
+                /* rotate camera image according to camera rotation (portrait vs.
+                 * landscape) */
                 Matrix matrix = new Matrix();
                 /* compensate the mirror */
                 matrix.postRotate((360 - mCameraRotation) % 360);
-                bmp = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, true);
+                bmp = Bitmap.createBitmap(
+                    bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, true);
 
-                String fileName = Constants.IMAGE_NAME + mImgCounter + "." + Constants.IMAGE_FORMAT;
-                BitmapUtils.saveBitmap(BitmapUtils.convertToGrayscale(bmp), mDirName, fileName);
+                String fileName =
+                    Constants.IMAGE_NAME + mImgCounter + "." + Constants.IMAGE_FORMAT;
+                BitmapUtils.saveBitmap(
+                    BitmapUtils.convertToGrayscale(bmp), mDirName, fileName);
                 mImgCounter += 1;
                 mCamera.startPreview();
                 if (mImgCounter <= Constants.NUM_IMAGES) {
                     takePicture();
                 } else {
                     /* start 3d reconstruction asynchronously in background */
-                    Intent photometricStereo = new Intent(
-                            getApplicationContext(), ReconstructionService.class);
+                    Intent photometricStereo =
+                        new Intent(getApplicationContext(), ReconstructionService.class);
                     photometricStereo.putExtra(
-                            ReconstructionService.DIRECTORY_NAME, mDirName);
+                        ReconstructionService.DIRECTORY_NAME, mDirName);
                     startService(photometricStereo);
                     /* move to 3d viewer already */
-                    Intent view3DModel = new Intent(getApplicationContext(),
-                            ReconstructionListActivity.class);
+                    Intent view3DModel = new Intent(
+                        getApplicationContext(), ReconstructionListActivity.class);
                     view3DModel.putExtra(RECONSTRUCTION, true);
                     startActivity(view3DModel);
                     finish();
@@ -143,9 +151,10 @@ public class CameraActivity extends Activity {
         layoutParams.width = 0;
         layoutParams.height = 0;
         mCameraPreview.setLayoutParams(layoutParams);
-        mTriggerPicturesButton.setVisibility(View.INVISIBLE);   /* hide camera trigger button */
-        mCameraLightingMask.setVisibility(View.INVISIBLE);      /* hide lighting mask */
-        mCameraLighting.setVisibility(View.VISIBLE);            /* show light sources on screen */
+        mTriggerPicturesButton.setVisibility(
+            View.INVISIBLE); /* hide camera trigger button */
+        mCameraLightingMask.setVisibility(View.INVISIBLE); /* hide lighting mask */
+        mCameraLighting.setVisibility(View.VISIBLE); /* show light sources on screen */
     }
 
     private Camera openFrontFacingCamera() {
@@ -172,8 +181,8 @@ public class CameraActivity extends Activity {
         Camera.Parameters params = camera.getParameters();
 
         /* set camera picture size to preferred image resolution */
-        Camera.Size targetSize = CameraUtils.determineTargetPictureSize(params,
-                Constants.IMAGE_RESOLUTION);
+        Camera.Size targetSize =
+            CameraUtils.determineTargetPictureSize(params, Constants.IMAGE_RESOLUTION);
         params.setPictureSize(targetSize.width, targetSize.height);
         camera.setParameters(params);
 
@@ -211,8 +220,8 @@ public class CameraActivity extends Activity {
     }
 
     private class PrepareLightSources extends AsyncTask<Size, Void, Void> {
-
-        private NinePatchDrawable getCamLighting(Resources res, Size size, int drawableId) {
+        private NinePatchDrawable getCamLighting(
+            Resources res, Size size, int drawableId) {
             NinePatchDrawable npd = (NinePatchDrawable) res.getDrawable(drawableId);
             npd.setBounds(0, 0, size.width, size.height);
             return npd;
@@ -223,11 +232,16 @@ public class CameraActivity extends Activity {
             mLightSourcesList = new ArrayList<NinePatchDrawable>();
 
             Resources res = getResources();
-            mLightSourcesList.add(getCamLighting(res, sizes[0], R.drawable.camera_lighting_black));
-            mLightSourcesList.add(getCamLighting(res, sizes[0], R.drawable.camera_lighting_left));
-            mLightSourcesList.add(getCamLighting(res, sizes[0], R.drawable.camera_lighting_top));
-            mLightSourcesList.add(getCamLighting(res, sizes[0], R.drawable.camera_lighting_right));
-            mLightSourcesList.add(getCamLighting(res, sizes[0], R.drawable.camera_lighting_bottom));
+            mLightSourcesList.add(
+                getCamLighting(res, sizes[0], R.drawable.camera_lighting_black));
+            mLightSourcesList.add(
+                getCamLighting(res, sizes[0], R.drawable.camera_lighting_left));
+            mLightSourcesList.add(
+                getCamLighting(res, sizes[0], R.drawable.camera_lighting_top));
+            mLightSourcesList.add(
+                getCamLighting(res, sizes[0], R.drawable.camera_lighting_right));
+            mLightSourcesList.add(
+                getCamLighting(res, sizes[0], R.drawable.camera_lighting_bottom));
 
             return null;
         }
@@ -237,5 +251,4 @@ public class CameraActivity extends Activity {
             mProgressScreen.setVisibility(View.INVISIBLE);
         }
     }
-
 }

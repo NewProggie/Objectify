@@ -1,3 +1,8 @@
+/*
+ * Objectify. Copyright (c) 2011-2016. Kai Wolf. All rights reserved.
+ * Redistribution and use in source form with or without modification is not permitted.
+ */
+
 package de.hsrm.objectify.utils;
 
 import android.graphics.Bitmap;
@@ -10,7 +15,6 @@ import java.io.FileOutputStream;
 import de.hsrm.objectify.camera.Constants;
 
 public class BitmapUtils {
-
     public static final double GS_RED = 0.299;
     public static final double GS_GREEN = 0.587;
     public static final double GS_BLUE = 0.114;
@@ -57,7 +61,8 @@ public class BitmapUtils {
 
         for (int i = 0; i < width * height; i++) {
             int p = 0;
-            if (Color.red(pixels[i]) > threshold) p = 255;
+            if (Color.red(pixels[i]) > threshold)
+                p = 255;
             pixels[i] = Color.rgb(p, p, p);
         }
 
@@ -67,9 +72,8 @@ public class BitmapUtils {
     public static Bitmap convert(float[] normals, int width, int height) {
         int[] pixels = new int[width * height];
         for (int i = 0; i < width * height; i++) {
-            pixels[i] = Color.rgb((int) normals[4 * i + 0],
-                    (int) normals[4 * i + 1],
-                    (int) normals[4 * i + 2]);
+            pixels[i] = Color.rgb((int) normals[4 * i + 0], (int) normals[4 * i + 1],
+                (int) normals[4 * i + 2]);
         }
 
         return Bitmap.createBitmap(pixels, width, height, Bitmap.Config.ARGB_8888);
@@ -80,21 +84,21 @@ public class BitmapUtils {
         int pixelCount = bmp.getWidth() * bmp.getHeight();
 
         float sum = 0.0f;
-        for (int i = 0; i < 256; i++)
-            sum += i * histogram[i];
+        for (int i = 0; i < 256; i++) sum += i * histogram[i];
 
         float sumB = 0.0f;
         int wB = 0;
-        int wF = 0;
         float varMax = 0.0f;
         int threshold = 0;
 
         for (int i = 0; i < 256; i++) {
             wB += histogram[i];
-            if (wB == 0) continue;
-            wF = pixelCount - wB;
+            if (wB == 0)
+                continue;
+            int wF = pixelCount - wB;
 
-            if (wF == 0) break;
+            if (wF == 0)
+                break;
 
             sumB += (float) (i * histogram[i]);
             float mB = sumB / wB;
@@ -112,14 +116,16 @@ public class BitmapUtils {
     }
 
     private static int getIntensity(int rgb) {
-        return (int) (Color.red(rgb) * BitmapUtils.GS_RED +
-                Color.green(rgb) * BitmapUtils.GS_GREEN +
-                Color.blue(rgb) * BitmapUtils.GS_BLUE);
+        return (int) (Color.red(rgb) * BitmapUtils.GS_RED
+            + Color.green(rgb) * BitmapUtils.GS_GREEN
+            + Color.blue(rgb) * BitmapUtils.GS_BLUE);
     }
 
     private static int clamp(int value) {
-        if (value > 255) return 255;
-        if (value < 0) return 0;
+        if (value > 255)
+            return 255;
+        if (value < 0)
+            return 0;
         return value;
     }
 
@@ -149,7 +155,8 @@ public class BitmapUtils {
         File imageDirectory = new File(Storage.getExternalRootDirectory() + "/" + dir);
         imageDirectory.mkdirs();
         File file = new File(imageDirectory, filename);
-        if (file.exists()) file.delete();
+        if (file.exists())
+            file.delete();
         try {
             FileOutputStream out = new FileOutputStream(file);
             src.compress(Constants.IMAGE_COMPRESS_FORMAT, 100, out);
@@ -159,5 +166,4 @@ public class BitmapUtils {
             e.printStackTrace();
         }
     }
-
 }

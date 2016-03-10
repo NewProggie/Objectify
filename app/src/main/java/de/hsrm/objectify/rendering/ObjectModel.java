@@ -1,3 +1,8 @@
+/*
+ * Objectify. Copyright (c) 2011-2016. Kai Wolf. All rights reserved.
+ * Redistribution and use in source form with or without modification is not permitted.
+ */
+
 package de.hsrm.objectify.rendering;
 
 import android.graphics.Bitmap;
@@ -16,21 +21,18 @@ import javax.microedition.khronos.opengles.GL10;
 import de.hsrm.objectify.utils.ArrayUtils;
 
 /**
- * A representation of a 3D model object. Vertices, mNormals and mTexture can be added after an
- * instance of this class is created. This class implements {@link Serializable} for
- * saving/loading an instance of it
+ * A representation of a 3D model object. Vertices, mNormals and mTexture can be added
+ * after an instance of this class is created. This class implements {@link Serializable}
+ * for saving/loading an instance of it
  */
 public class ObjectModel implements Serializable {
-
     private static final String TAG = "ObjectModel";
     private static final long serialVersionUID = 0L;
-    private final int mRenderMode = GL10.GL_LINES;
     public byte[] mBitmapData;
     private transient FloatBuffer mVertexBuffer;
     private transient FloatBuffer mTextureBuffer;
     private transient FloatBuffer normalsBuffer;
     private transient ShortBuffer mFacesBuffer;
-    private transient Bitmap mTextureBitmap;
     private int[] mTextures = new int[1];
     private float[] mTexture;
     private float mVertices[];
@@ -43,7 +45,6 @@ public class ObjectModel implements Serializable {
     }
 
     private void onInitialize(float[] vertices, float[] normals, short[] faces) {
-
         setVertices(vertices);
         setNormalVertices(normals);
         setFaces(faces);
@@ -67,7 +68,7 @@ public class ObjectModel implements Serializable {
     }
 
     public void setTextureBitmap(Bitmap texture) {
-        mTextureBitmap = texture.copy(texture.getConfig(), true);
+        Bitmap textureBitmap = texture.copy(texture.getConfig(), true);
     }
 
     public int getVerticesSize() {
@@ -128,9 +129,8 @@ public class ObjectModel implements Serializable {
         if (mBoundingBox == null) {
             setupBoundingBox();
         }
-        float[] tmp = new float[]{(mBoundingBox[1] - mBoundingBox[0]),
-                (mBoundingBox[3] - mBoundingBox[2]),
-                (mBoundingBox[5] - mBoundingBox[4])};
+        float[] tmp = new float[] {(mBoundingBox[1] - mBoundingBox[0]),
+            (mBoundingBox[3] - mBoundingBox[2]), (mBoundingBox[5] - mBoundingBox[4])};
         return 2.0f / ArrayUtils.max(tmp);
     }
 
@@ -142,7 +142,7 @@ public class ObjectModel implements Serializable {
         y2 = ArrayUtils.max(mVertices, 1);
         z1 = ArrayUtils.min(mVertices, 2);
         z2 = ArrayUtils.max(mVertices, 2);
-        mBoundingBox = new float[]{x1, x2, y1, y2, z1, z2};
+        mBoundingBox = new float[] {x1, x2, y1, y2, z1, z2};
     }
 
     /**
@@ -157,8 +157,7 @@ public class ObjectModel implements Serializable {
         float xmiddle = (mBoundingBox[0] + mBoundingBox[1]) / 2.0f;
         float ymiddle = (mBoundingBox[2] + mBoundingBox[3]) / 2.0f;
         float zmiddle = (mBoundingBox[4] + mBoundingBox[5]) / 2.0f;
-        float[] middlepoint = new float[]{xmiddle, ymiddle, zmiddle};
-        return middlepoint;
+        return new float[] {xmiddle, ymiddle, zmiddle};
     }
 
     public float[] getVertices() {
@@ -178,15 +177,15 @@ public class ObjectModel implements Serializable {
         gl.glVertexPointer(3, GL10.GL_FLOAT, 0, mVertexBuffer);
         gl.glNormalPointer(GL10.GL_FLOAT, 0, normalsBuffer);
 
-        gl.glDrawElements(mRenderMode, mFaces.length, GL10.GL_UNSIGNED_SHORT,
-                mFacesBuffer);
+        int renderMode = GL10.GL_LINES;
+        gl.glDrawElements(
+            renderMode, mFaces.length, GL10.GL_UNSIGNED_SHORT, mFacesBuffer);
 
         gl.glDisableClientState(GL10.GL_NORMAL_ARRAY);
         gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
     }
 
     private void writeObject(ObjectOutputStream out) throws IOException {
-
         /* write vertices */
         out.writeInt(mVertices.length);
         for (int i = 0; i < mVertices.length; i++) {
@@ -207,8 +206,8 @@ public class ObjectModel implements Serializable {
         out.flush();
     }
 
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-
+    private void readObject(ObjectInputStream in)
+        throws IOException, ClassNotFoundException {
         /* read vertices */
         float[] vertices = new float[in.readInt()];
         for (int i = 0; i < vertices.length; i++) {
@@ -228,5 +227,4 @@ public class ObjectModel implements Serializable {
         }
         onInitialize(vertices, normals, faces);
     }
-
 }

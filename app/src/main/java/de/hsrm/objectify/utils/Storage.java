@@ -1,3 +1,8 @@
+/*
+ * Objectify. Copyright (c) 2011-2016. Kai Wolf. All rights reserved.
+ * Redistribution and use in source form with or without modification is not permitted.
+ */
+
 package de.hsrm.objectify.utils;
 
 import android.os.Environment;
@@ -6,7 +11,6 @@ import java.io.File;
 import java.util.Random;
 
 public class Storage {
-
     private static final String DIRECTORY_NAME = "/Android/data/de.hsrm.objectify";
 
     public static String getExternalRootDirectory() {
@@ -15,7 +19,7 @@ public class Storage {
 
     public static String getRandomName(int size) {
         char[] chars = "aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ0123456789"
-                .toCharArray();
+                           .toCharArray();
         StringBuilder sb = new StringBuilder();
         Random random = new Random();
         for (int i = 0; i < size; i++) sb.append(chars[random.nextInt(chars.length)]);
@@ -24,8 +28,8 @@ public class Storage {
 
     private static String getDirectoryPath(String directory) {
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-            File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() +
-                    directory);
+            File dir = new File(
+                Environment.getExternalStorageDirectory().getAbsolutePath() + directory);
             if (dir.mkdirs() || dir.exists()) {
                 return dir.getAbsolutePath();
             } else {
@@ -38,6 +42,6 @@ public class Storage {
 
     public boolean isMounted() {
         String state = Environment.getExternalStorageState();
-        return Environment.MEDIA_MOUNTED.equals(state) ? true : false;
+        return Environment.MEDIA_MOUNTED.equals(state);
     }
 }

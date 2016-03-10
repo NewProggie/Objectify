@@ -1,3 +1,8 @@
+/*
+ * Objectify. Copyright (c) 2011-2016. Kai Wolf. All rights reserved.
+ * Redistribution and use in source form with or without modification is not permitted.
+ */
+
 package de.hsrm.objectify.activities.fragments;
 
 import android.app.Fragment;
@@ -27,25 +32,26 @@ import de.hsrm.objectify.rendering.TouchSurfaceView;
 import de.hsrm.objectify.utils.Storage;
 
 /**
- * A simple {@link Fragment} subclass. Activities that contain this fragment must implement the
- * {@link ModelViewerFragment.OnFragmentInteractionListener} interface to handle interactions
+ * A simple {@link Fragment} subclass. Activities that contain this fragment must
+ * implement the
+ * {@link ModelViewerFragment.OnFragmentInteractionListener} interface to handle
+ * interactions
  */
 public class ModelViewerFragment extends Fragment {
-
     private static final String ARG_GALLERY_ID = "gallery_id";
-    private TouchSurfaceView mGlSurfaceView;
     private ObjectModel mObjectModel;
     private String mGalleryId;
 
     /**
-     * Mandatory empty constructor for the fragment manager to instantiate the fragment (e.g. upon
+     * Mandatory empty constructor for the fragment manager to instantiate the fragment
+     * (e.g. upon
      * screen orientation changes)
      */
-    public ModelViewerFragment() {
-    }
+    public ModelViewerFragment() {}
 
     /**
-     * Use this factory method to create a new instance of this fragment using the provided
+     * Use this factory method to create a new instance of this fragment using the
+     * provided
      * parameters.
      *
      * @param galleryId gallery database id
@@ -82,7 +88,6 @@ public class ModelViewerFragment extends Fragment {
                 e.printStackTrace();
                 Log.e("ModelViewerFragment", "Could not cast to ObjectModel");
             }
-
         }
     }
 
@@ -93,20 +98,22 @@ public class ModelViewerFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
+    public View onCreateView(
+        LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         /* view container, in this case FrameLayout */
-        View rootView = inflater.inflate(R.layout.fragment_model_viewer, container, false);
-        FrameLayout frameLayout = (FrameLayout) rootView.findViewById(R.id.modelview_container);
+        View rootView =
+            inflater.inflate(R.layout.fragment_model_viewer, container, false);
+        FrameLayout frameLayout =
+            (FrameLayout) rootView.findViewById(R.id.modelview_container);
 
         /* add touchsurface view, for displaying object model */
         Display d = getActivity().getWindowManager().getDefaultDisplay();
         Point size = new Point();
         d.getSize(size);
-        mGlSurfaceView = new TouchSurfaceView(getActivity(), size.x, size.y);
-        frameLayout.addView(mGlSurfaceView);
-        mGlSurfaceView.setObjectModel(mObjectModel);
+        TouchSurfaceView glSurfaceView =
+            new TouchSurfaceView(getActivity(), size.x, size.y);
+        frameLayout.addView(glSurfaceView);
+        glSurfaceView.setObjectModel(mObjectModel);
 
         return rootView;
     }
@@ -114,12 +121,13 @@ public class ModelViewerFragment extends Fragment {
     private Bitmap getTextureFromDatabase(String galleryId) {
         ContentResolver cr = getActivity().getContentResolver();
         Uri galleryItemUri = DatabaseProvider.CONTENT_URI.buildUpon()
-                .appendPath(DatabaseAdapter.DATABASE_TABLE_GALLERY).build();
+                                 .appendPath(DatabaseAdapter.DATABASE_TABLE_GALLERY)
+                                 .build();
         Cursor c = cr.query(galleryItemUri, null, DatabaseAdapter.GALLERY_ID_KEY + "=?",
-                new String[]{mGalleryId}, null);
+            new String[] {mGalleryId}, null);
         c.moveToFirst();
-        Bitmap texture = BitmapFactory.decodeFile(Storage.getExternalRootDirectory() + "/" +
-                c.getString(DatabaseAdapter.GALLERY_IMAGE_PATH_COLUMN) + "/image_1.png");
+        Bitmap texture = BitmapFactory.decodeFile(Storage.getExternalRootDirectory() + "/"
+            + c.getString(DatabaseAdapter.GALLERY_IMAGE_PATH_COLUMN) + "/image_1.png");
         c.close();
         return texture;
     }
@@ -127,17 +135,19 @@ public class ModelViewerFragment extends Fragment {
     private String getModelPathFromDatabase(String galleryId) {
         ContentResolver cr = getActivity().getContentResolver();
         Uri galleryItemUri = DatabaseProvider.CONTENT_URI.buildUpon()
-                .appendPath(DatabaseAdapter.DATABASE_TABLE_GALLERY).build();
+                                 .appendPath(DatabaseAdapter.DATABASE_TABLE_GALLERY)
+                                 .build();
         Cursor c = cr.query(galleryItemUri, null, DatabaseAdapter.GALLERY_ID_KEY + "=?",
-                new String[]{mGalleryId}, null);
+            new String[] {mGalleryId}, null);
         c.moveToFirst();
         String objectId = c.getString(DatabaseAdapter.GALLERY_OBJECT_ID_COLUMN);
         c.close();
 
         Uri objectItemUri = DatabaseProvider.CONTENT_URI.buildUpon()
-                .appendPath(DatabaseAdapter.DATABASE_TABLE_OBJECT).build();
+                                .appendPath(DatabaseAdapter.DATABASE_TABLE_OBJECT)
+                                .build();
         c = cr.query(objectItemUri, null, DatabaseAdapter.OBJECT_ID_KEY + "=?",
-                new String[]{objectId}, null);
+            new String[] {objectId}, null);
         c.moveToFirst();
         String objFilePath = c.getString(DatabaseAdapter.OBJECT_FILE_PATH_COLUMN);
         c.close();
@@ -146,12 +156,14 @@ public class ModelViewerFragment extends Fragment {
     }
 
     /**
-     * This interface must be implemented by activities that contain this fragment to allow an
-     * interaction in this fragment to be communicated to the activity and potentially other
+     * This interface must be implemented by activities that contain this fragment to
+     * allow an
+     * interaction in this fragment to be communicated to the activity and potentially
+     * other
      * fragments contained in that activity.
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        public void onFragmentInteraction(Uri uri);
+        void onFragmentInteraction(Uri uri);
     }
 }

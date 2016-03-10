@@ -1,3 +1,8 @@
+/*
+ * Objectify. Copyright (c) 2011-2016. Kai Wolf. All rights reserved.
+ * Redistribution and use in source form with or without modification is not permitted.
+ */
+
 package de.hsrm.objectify.activities;
 
 import android.app.Activity;
@@ -9,15 +14,12 @@ import android.view.View;
 
 import de.hsrm.objectify.R;
 
-
 public class MainActivity extends Activity {
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -38,7 +40,8 @@ public class MainActivity extends Activity {
     }
 
     public void galleryButtonClick(View target) {
-        Intent gallActivity = new Intent(getApplicationContext(), ReconstructionListActivity.class);
+        Intent gallActivity =
+            new Intent(getApplicationContext(), ReconstructionListActivity.class);
         startActivity(gallActivity);
     }
 
