@@ -340,7 +340,7 @@ public class Vector3f {
      * @param pvec1 The first vector "a".
      * @param pvec2 The second vector "b".
      * @param pvec3 The third vector "c".
-     * @param pvret
+     * @param pvret The returning vector.
      */
     public static void normal(
         Vector3f pvec1, Vector3f pvec2, Vector3f pvec3, Vector3f pvret) {

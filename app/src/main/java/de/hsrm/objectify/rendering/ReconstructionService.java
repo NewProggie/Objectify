@@ -39,6 +39,8 @@ import de.hsrm.objectify.utils.BitmapUtils;
 import de.hsrm.objectify.utils.Size;
 import de.hsrm.objectify.utils.Storage;
 
+import static android.renderscript.Type.Builder;
+
 public class ReconstructionService extends IntentService {
     public static final String DIRECTORY_NAME = "dir_name";
     public static final String NOTIFICATION =
@@ -222,14 +224,16 @@ public class ReconstructionService extends IntentService {
         lhIntegration.set_width(mWidth);
         lhIntegration.set_height(mHeight);
 
-        /* create allocation input to RenderScript */
+        /* create allocation input to RenderScript. Avoid error since API 20:
+           API 20+ only allows simple 1D allocations to be used with bind. */
         Type normType =
-            new Type.Builder(rs, Element.F32_4(rs)).setX(mWidth).setY(mHeight).create();
+            new Builder(rs, Element.F32_4(rs)).setX(mWidth * mHeight).create();
+
         Allocation allInNormals = Allocation.createTyped(rs, normType);
         allInNormals.copyFromUnchecked(normals);
 
         Type heightType =
-            new Type.Builder(rs, Element.F32(rs)).setX(mWidth).setY(mHeight).create();
+            new Builder(rs, Element.F32(rs)).setX(mWidth * mHeight).create();
         Allocation allOutHeights = Allocation.createTyped(rs, heightType);
 
         /* bind normals and heights data to pNormals and pHeights pointer inside
@@ -284,15 +288,15 @@ public class ReconstructionService extends IntentService {
         /* set params for the generator */
         cmpNormals.set_width(mWidth);
 
-        /* create allocation input to RenderScript */
+        /* create allocation input to RenderScriptAvoid error since API 20:
+           API 20+ only allows simple 1D allocations to be used with bind. */
         Type dataType =
-            new Type.Builder(rs, Element.F32_4(rs)).setX(mWidth).setY(mHeight).create();
+            new Builder(rs, Element.F32_4(rs)).setX(mWidth * mHeight).create();
         Allocation allInData = Allocation.createTyped(rs, dataType);
         allInData.copyFromUnchecked(ArrayUtils.toFloatArray(EV.data));
 
         /* create allocation for masked image */
-        Type maskType =
-            new Type.Builder(rs, Element.I32(rs)).setX(mWidth).setY(mHeight).create();
+        Type maskType = new Builder(rs, Element.I32(rs)).setX(mWidth * mHeight).create();
         Allocation allMask = Allocation.createTyped(rs, maskType);
         int[] mask = new int[mWidth * mHeight];
         Mask.getPixels(mask, 0, mWidth, 0, 0, mWidth, mHeight);
@@ -303,7 +307,7 @@ public class ReconstructionService extends IntentService {
 
         /* create allocation for output */
         Type normalsType =
-            new Type.Builder(rs, Element.F32_4(rs)).setX(mWidth).setY(mHeight).create();
+            new Builder(rs, Element.F32_4(rs)).setX(mWidth * mHeight).create();
         Allocation allOutNormals = Allocation.createTyped(rs, normalsType);
 
         cmpNormals.forEach_compute_normals(allInData, allOutNormals);

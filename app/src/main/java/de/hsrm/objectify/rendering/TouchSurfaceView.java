@@ -34,7 +34,6 @@ import de.hsrm.objectify.utils.ArcBall;
 public class TouchSurfaceView extends GLSurfaceView {
     private static final String TAG = "TouchSurfaceView";
     private final Object matrixLock = new Object();
-    private final float TRACKBALL_SCALE_FACTOR = 36.0f;
     private Matrix4f lastRot = new Matrix4f();
     private Matrix4f thisRot = new Matrix4f();
     private float[] matrix = new float[16];
@@ -58,6 +57,7 @@ public class TouchSurfaceView extends GLSurfaceView {
 
     @Override
     public boolean onTrackballEvent(MotionEvent event) {
+        float TRACKBALL_SCALE_FACTOR = 36.0f;
         renderer.mAngleX += event.getX() * TRACKBALL_SCALE_FACTOR;
         renderer.mAngleY += event.getY() * TRACKBALL_SCALE_FACTOR;
         requestRender();

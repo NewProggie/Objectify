@@ -223,7 +223,9 @@ public class CameraActivity extends Activity {
         private NinePatchDrawable getCamLighting(
             Resources res, Size size, int drawableId) {
             NinePatchDrawable npd = (NinePatchDrawable) res.getDrawable(drawableId);
-            npd.setBounds(0, 0, size.width, size.height);
+            if (npd != null) {
+                npd.setBounds(0, 0, size.width, size.height);
+            }
             return npd;
         }
 

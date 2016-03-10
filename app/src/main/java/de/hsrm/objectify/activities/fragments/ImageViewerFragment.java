@@ -90,10 +90,13 @@ public class ImageViewerFragment extends Fragment {
                                  .appendPath(DatabaseAdapter.DATABASE_TABLE_GALLERY)
                                  .build();
         Cursor c = cr.query(galleryItemUri, null, DatabaseAdapter.GALLERY_ID_KEY + "=?",
-            new String[] {mGalleryId}, null);
-        c.moveToFirst();
-        String imgFilePath = c.getString(DatabaseAdapter.GALLERY_IMAGE_PATH_COLUMN);
-        c.close();
+                new String[]{mGalleryId}, null);
+        String imgFilePath = null;
+        if (c != null) {
+            c.moveToFirst();
+            imgFilePath = c.getString(DatabaseAdapter.GALLERY_IMAGE_PATH_COLUMN);
+            c.close();
+        }
 
         return imgFilePath;
     }
